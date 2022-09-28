@@ -5,8 +5,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 
 [[{$div]]
 [[{doc_has.ext_resource]]
-● 
-● External  Links
+● External Links
 -<a href="https://docs.oracle.com/javase/specs/">Lang&amp;VM specs</a>
 -<a href="https://docs.oracle.com/javase/8/docs/api/index.html">API</a>
 -<a href="https://adoptopenjdk.net/">Adpot OpenJDK prebuilt binaries</a>
@@ -553,7 +552,7 @@ New major features:
 
 [[}]]
 
-[[{JVM,java_lang.profiling,architecture.real-time," id="JVM_safepoints]]
+[[{JVM,java_lang.profiling,architecture.real-time]] #[JVM_safepoints]
 ● JVM Safepoints
 - @[http://psy-lob-saw.blogspot.com/2015/12/safepoints.html]    [TODO]
    - Definition: Mutator threads: threads which manipulate the JVM heap.
@@ -629,7 +628,7 @@ New major features:
 [[}]]
 
 
-[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,_PM.troubleshooting,_PM.low_code,_PM.WiP" id="micrometer_summary]]
+[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,_PM.troubleshooting,_PM.low_code,_PM.WiP]] #[micrometer_summary]
 ● Micrometer <!-- @ma -->
 - simple facade to instrumentation clients for
 - instrument JVM-based apps without vendor lock-in.
@@ -1106,7 +1105,7 @@ $ $ sudo update-alternatives --config java
   final String
      output1 = String .format ("%s = %d", "joe", 35), ← Format string
      output2 = String .format ("%4d",100);            ←
-  See also: [[Format String Checker?]]
+  See also notes about "Format String Checker"
 
   final String[] args = ...
   final String s1 = String.join(List.of(args),"'" )); // ← alt 1: String array to CSV
@@ -2078,7 +2077,7 @@ ValueGraph<N,V>         An interface for graph- structured data, whose edges hav
 
 [[}]]
 
-[[{data_structures.101,qa" id="data_structures_101_summary]]
+[[{data_structures.101,qa]] #[data_structures_101_summary]
 ● Lists
  INITIALIZING A LIST 
 final List<String> myList =                  ← final forbid re-asigning the list,
@@ -8856,8 +8855,7 @@ $   registry.localhost/hello-world:latest
   </project>
 
 
-See also: jKube
-[[jkube?]]
+See also: jKube notes
 [[}]]
 [[$div}]]
 
