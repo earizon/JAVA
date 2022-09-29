@@ -3092,18 +3092,70 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
 [[}]]
 
 
-[[{JVM.monitoring,java_lang.profiling,_PM.troubleshooting,monitoring.flight_recorder,_PM.TODO]]
-● jcmd
-$ $ man 1 jcmd  
+● 'man 1 jcmd' Summary: [[{101,JVM.monitoring.101,java_lang.debugging]]
+                        [[java_lang.profiling,_PM.troubleshooting,monitoring.flight_recorder]]
+- 'jcmd' must run on same machine+user+group on which the JVM is running.
 
-- Sends diagnostic command requests to a running JVM.
+  $ jcmd [-l]                              <- Print list of running Java PIDs.
 
-- It must be used on the same machine on which the JVM is running and
-have the same effective user and group identifiers that were used to
-launch the JVM.
+  $ jcmd $pid Thread.print -l              <- Prints all threads with stacktraces. [[_PM.troubleshooting]]
+                                              -l: dump java.util.concurrent locks  [[concurrency.lock]]
+  Ex. Output:
+  | 2022-09-29 06:38:08
+  | Full thread dump OpenJDK 64-Bit Server VM (11.0.14.1+1 mixed mode):
+  | 
+  | Threads class SMR info:
+  | _java_thread_list=0x00007fa9e4002e70, length=44, elements={
+  | 0x00007faa2c1f8000, 0x00007faa2c1fa800, 0x00007faa2c218000, 0x00007faa2c21a000,
+  | 0x00007faa2c21c000, 0x00007faa2c21e000, 0x00007faa2c220000, 0x00007faa2c2d7800,
+  | 0x00007faa2d2ab000, 0x00007faa2d44a800, 0x00007faa2d4b1800, 0x00007faa2d556000,
+  | 0x00007fa9b0004000, 0x00007faa2c02a000, 0x00007fa9a80e7000, 0x00007fa9a80ee000,
+  | 0x00007fa9a8111800, 0x00007fa9a8113800, 0x00007fa9a8118000, 0x00007fa9a80f0000,
+  | 0x00007fa9a8115000, 0x00007fa99005d000, 0x00007fa9a409a000, 0x00007fa9a0011800,
+  | 0x00007fa99c03d000, 0x00007fa998095800, 0x0000556d44845800, 0x00007fa99405d800,
+  | 0x00007fa990083000, 0x00007fa9a8143000, 0x00007fa9a8121800, 0x00007fa9a8123000,
+  | 0x00007fa9a814b800, 0x00007fa9a814d000, 0x00007fa9a814f000, 0x00007fa9a815d000,
+  | 0x00007fa9a8160800, 0x00007fa9a8148000, 0x00007fa9a8149800, 0x00007fa9a8165800,
+  | 0x00007fa9a8167000, 0x00007fa9a8169000, 0x00007fa9f0026000, 0x00007fa9e4002000
+  | }
+  | 
+  | "Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.35ms elapsed=256333.77s
+  |                     tid=0x00007faa2c1f8000 nid=0x1e waiting on condition [0x00007faa18866000]
+  |    java.lang.Thread.State: RUNNABLE   <- := RUNNABLE, TIMED_WAITING (on object monitor),
+  |                                             WAITING (on object monitor|parking), ...
+  | 	at java.lang.ref.Reference.waitForReferencePendingList(java.base@11.0.14.1/Native Method)
+  | 	at java.lang.ref.Reference.processPendingReferences(java.base@11.0.14.1/Unknown Source)
+  | 	at java.lang.ref.Reference$ReferenceHandler.run(java.base@11.0.14.1/Unknown Source)
+  | 
+  |    Locked ownable synchronizers:
+  | 	- None
+  | 
+  | "Signal Dispatcher" ...
+  | "Service Thread"     ...
+  | "C2 CompilerThread0" ...
+  | "C1 CompilerThread0" ...
+  | "Sweeper thread" ...
+  | 
+  | "Common-Cleaner" ...
+  | "vert.x-eventloop-thread-0" ...
+  | "vert.x-acceptor-thread-0" ...
+  | vert.x-eventloop-thread-2" ...
+  | "vert.x-eventloop-thread-4" ...
+  | "vert.x-eventloop-thread-0|" ...  [0...19]
+  |   Locked ownable synchronizers:
+  | 	- None
+  | ...
+  | "VM Thread"   os_prio=0 cpu=28658.34ms elapsed=256333.80s tid=0x00007faa2c1ef000 nid=0x1d runnable  
+  | "GC Thread#0" os_prio=0 cpu=6640.67ms  elapsed=256333.90s tid=0x00007faa2c041800 nid=0x18 runnable  
+  | "GC Thread#1" os_prio=0 cpu=6667.69ms  elapsed=256332.51s tid=0x00007fa9f8001000 nid=0x27 runnable  
+  | "GC Thread#2" os_prio=0 cpu=6647.53ms  elapsed=256332.51s tid=0x00007fa9f8002800 nid=0x28 runnable  
+  | "GC Thread#3" os_prio=0 cpu=6655.38ms  elapsed=256332.51s tid=0x00007fa9f8004000 nid=0x29 runnable  
+  | "G1 Main Marker" os_prio=0 cpu=4.05ms  elapsed=256333.90s tid=0x00007faa2c09f000 nid=0x19 runnable  
+  | "G1 Conc#0" os_prio=0 cpu=51.33ms elapsed=256333.90s tid=0x00007faa2c0a1000 nid=0x1a runnable  
+  | "G1 Refine#0" os_prio=0 cpu=4.17ms elapsed=256333.89s tid=0x00007faa2c190000 nid=0x1b runnable  
+  | "G1 Young RemSet Sampling" os_prio=0 cpu=92484.58ms elapsed=256333.89s tid=0x00007faa2c192000 nid=0x1c runnable  
+  | "VM Periodic Task Thread" os_prio=0 cpu=378619.90ms elapsed=256333.58s tid=0x00007faa2c2db800 nid=0x26 waiting on condition  
 
-- Ussage Summary:
-  $ jcmd [-l]  # ← print list of running Java PIDs.
 
   $ jcmd pid|main-class PerfCounter.print  ← Send diagnostic command PerfCounter.print to PID JVM
                                              $ jcmd help to see the list of available diagnostic command
@@ -3115,34 +3167,25 @@ launch the JVM.
  Ex:
  $ $ jcmd $PID  
   → The following commands are available:
-  → Compiler.CodeHeap_Analytics  → GC.class_histogram
-  → Compiler.codecache           → GC.class_stats
-  → Compiler.codelist            → GC.finalizer_info
-  → Compiler.directives_add      → GC.heap_dump
+  → Compiler.CodeHeap_Analytics  → GC.class_histogram    → ManagementAgent.start
+  → Compiler.codecache           → GC.class_stats        → ManagementAgent.start_local
+  → Compiler.codelist            → GC.finalizer_info     → ManagementAgent.status
+  → Compiler.directives_add      → GC.heap_dump          → ManagementAgent.stop
   → Compiler.directives_clear    → GC.heap_info
-  → Compiler.directives_print    → GC.run
+  → Compiler.directives_print    → GC.run                → Thread.print
   → Compiler.directives_remove   → GC.run_finalization
   → Compiler.queue
 
-  → VM.class_hierarchy          → ManagementAgent.start
-  → VM.classloader_stats        → ManagementAgent.start_local
-  → VM.classloaders             → ManagementAgent.status
-  → VM.command_line             → ManagementAgent.stop
-  → VM.dynlibs
-  → VM.flags                    → Thread.print
-  → VM.info
-  → VM.log
-  → VM.metaspace                → JFR.check
-  → VM.native_memory            → JFR.configure
-  → VM.print_touched_methods    → JFR.dump
-  → VM.set_flag                 → JFR.start
-  → VM.stringtable              → JFR.stop
-  → VM.symboltable
-  → VM.system_properties        → JVMTI.agent_load
-  → VM.systemdictionary         → JVMTI.data_dump
-  → VM.uptime
-  → VM.version
-  → help
+  → VM.class_hierarchy    → VM.print_touched_methods    → JFR.check
+  → VM.classloader_stats  → VM.set_flag                 → JFR.configure      
+  → VM.classloaders       → VM.stringtable              → JFR.dump       
+  → VM.command_line       → VM.symboltable              → JFR.start
+  → VM.dynlibs            → VM.system_properties        → JFR.stop
+  → VM.flags              → VM.systemdictionary                                  
+  → VM.info               → VM.uptime                   → JVMTI.agent_load
+  → VM.log                → VM.version                  → JVMTI.data_dump
+  → VM.metaspace          → help                      
+  → VM.native_memory            
 [[}]]
 
 
