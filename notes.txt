@@ -1,6 +1,18 @@
-This "cheat-sheet with steroids" presents an always-growing set of 
-"TOP Java recipes" well ordered&amp;classified extracted from 
-DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code, 
+●  Apropos:
+- Visit next Web site for a great experience:
+  https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/notes.txt
+
+- If you want to contribute to great gistory of this
+  document you can take the next flight to:
+@[https://www.github.com/earizon/JAVA]
+  Your commits and pull-request will be immortalized
+  in the Pantheon of the Unicode Gods.
+────────────────────────────────────────────────────────────────────────────────
+
+
+This "cheat-sheet with steroids" presents an always-growing set of
+"TOP Java recipes" well ordered&amp;classified extracted from
+DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 ... as well as author's own experience in different projects.
 
 [[{$div]]
@@ -39,7 +51,7 @@ https://hg.openjdk.java.net/jdk/jdk
 #[java_donts]
 ● JAVA DONT's
 • Avoid Nulls, prefer final:
-  WRONG: 
+  WRONG:
   ========================
   SomeClass instance = null;
   if (condition1) {   ← Initialization depends on runtime checks (condition1/2/...).
@@ -54,7 +66,7 @@ https://hg.openjdk.java.net/jdk/jdk
   ...
   serviceX.functionN(..., instance, ...) ← At this point instance can be undefined
 
-  RIGHT: 
+  RIGHT:
   ========================
   final int instance;  ← "final" keywords force compiler to check every possible execution
   if (condition1) {     condition and fail to compile is some branch does not initiliaze
@@ -75,7 +87,7 @@ https://hg.openjdk.java.net/jdk/jdk
 • Catch blocks must rethrow if the exception can not be fixed on the catch block.
   HINT: 99% of times it can NOT be fixed on the catch block.
 
-  WRONG                        RIGHT 
+  WRONG                        RIGHT
   ========================     ========================
   try { ...                    try { ...
   } catch (IOException e) {    } catch (IOException e) {
@@ -163,7 +175,7 @@ https://hg.openjdk.java.net/jdk/jdk
 ● v.17 2021-09-14
 - 1st long-term support (LTS) release after JDK 11 (2018).
 - 14 JEPs includes:
-  - 409: Sealed Classes 
+  - 409: Sealed Classes
          package com.example.geometry;
 
          public abstract sealed class Shape           ← Syntax 1: Permitted classes in
@@ -182,9 +194,9 @@ https://hg.openjdk.java.net/jdk/jdk
          API by which Java programs can interoperate with code and
          data outside of the Java runtime. By efficiently invoking foreign
          functions (i.e., code outside the JVM), and by safely accessing
-         foreign memory (i.e., memory not managed by the JVM), the API enables  
-         Java programs to call native libraries and process native data  
-         without the brittleness and danger of JNI. 
+         foreign memory (i.e., memory not managed by the JVM), the API enables
+         Java programs to call native libraries and process native data
+         without the brittleness and danger of JNI.
          - Goals:
            - Ease of use, replacing JNI with better, pure-Java development model.
            - Performance: comparable or better than JNI and sun.misc.Unsafe.
@@ -221,7 +233,7 @@ https://hg.openjdk.java.net/jdk/jdk
 ● v.15 2020-09-15
 @[https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features]
 
--   RECORDS!!!: non-verbose inmutable classes. 
+-   RECORDS!!!: non-verbose inmutable classes.
     Ex.:
     Alt 1: short writing
     record Person (String name, int age) { }
@@ -262,10 +274,10 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    - NUMA container support added to hotspot (JDK-8198715)
    - Add Container MBean to JMX (JDK-8199944)
 
- └  Record-types in Java 14: 
+ └  Record-types in Java 14:
    https://www.infoq.com/articles/java-14-feature-spotlight/
    Records aim to enhance the language's ability to model
-   "plain data" aggregates with less ceremony. 
+   "plain data" aggregates with less ceremony.
 
  └ Shenandoah GC
    Shenandoah GC in JDK 14, Part 1: Self-fixing barriers
@@ -294,7 +306,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    - Improve container support when Join Contollers option is used (JDK-8217766)
    - Impove systemd slice memory limit suppot (JDK-8217338)
    - JFR jdk.CPUInformation event epots incorrect info. when running in  [[{devops.containarization]]
-     Docker container (JDK-8219999)                                    
+     Docker container (JDK-8219999)
 <hr/>
 ● v.11(LTS) 2018/09
 @[https://www.journaldev.com/24601/java-11-features]
@@ -304,7 +316,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
   - jcmd -l and jps commands do not list JVMs in Docker containers (JDK-8193710)
   - Container Metrics (-XshowSettings:system) (JDK-8204107)
   - Update CPU count algorithm when both cpu shares and quotas are used (JDK-8197867)
-    --XX:+PrefectContainerQuotaForCPUCount                             
+    --XX:+PrefectContainerQuotaForCPUCount
 
 New major features:
 - Autocompilation(JEP 330). Next code will execute:
@@ -339,7 +351,7 @@ New major features:
   - Experimental
   - Unlike the JVM GC which is responsible for allocating memory
     and releasing it, Epsilon only allocates memory. Useful for:
-    - Extremely short lived jobs 
+    - Extremely short lived jobs
     - Performance testing
     - Memory pressure testing
     - VM interface testing
@@ -358,10 +370,10 @@ New major features:
 - Flight Recorder(JEP 328)
   - profiling tool gathering diagnostics and profiling data
   - negligible performance overhead (<1%):
-    - Can be used in production 
+    - Can be used in production
 
 - HTTP Client (JEP 321)
-  - HTTP/1.1, HTTP/2 and WebSockets 
+  - HTTP/1.1, HTTP/2 and WebSockets
   - Designed to improve overall performance of
     sending requests by a client and receiving
     responses from the server.
@@ -379,7 +391,7 @@ New major features:
   System.out.println(s); //This was posted on JD
 
 - ChaCha20,Poly1305 Crypto (JEP 329)            [[{security.cryptography]]
-  - implemented in the SunJCE provider.       
+  - implemented in the SunJCE provider.
 
 - Improve (string and array)Aarch64 processor Intrinsics(JEP 315)
   - implement also new intrinsics for
@@ -396,7 +408,7 @@ New major features:
 - More container awareness...                                 [[{devops.containarization]]
   - Improve heap memory allocations (JDK-8196595):
     o --XX:InitialRAMPercentage, --X:MaxRAMPercentage and -XX:MinRAMPercentage
-      --XX:InitialRAMFraction  , --X:MaxRAMFraction   and -XX:MinRAMFraction   deprecated 
+      --XX:InitialRAMFraction  , --X:MaxRAMFraction   and -XX:MinRAMFraction   deprecated
   - Total number of CPUs available to the Java Process calculated from
     --cpus, --cpu-shares, --cpu-quota (JDK-8146115)
     o Use --XX:-UseContainerSupport to return to the old behaviour
@@ -405,7 +417,7 @@ New major features:
 
   - Read also: https://aboullaite.me/docker-java-10/
     JVMs before 10 had been implemented before cgroups, hence not
-    optimized for executing inside a container.            
+    optimized for executing inside a container.
 
 - Application Data-Class Sharing (JEP ???)
   -  extends existing Class-Data Sharing ("CDS")
@@ -419,7 +431,7 @@ New major features:
 - Consolidate JDK Forest into a Single Repository
 - Local-Variable Type Inference
   - declarations of local variables with initializers
-  - introduces var 
+  - introduces var
 - Remove Native-Header Generator Tool (javah)
   superseded by superior functionality in javac.
 - Thread-Local Handshakes:
@@ -444,7 +456,7 @@ New major features:
 ● v.9(2017/09)                                                  [[{devops.containarization]]
   └ --XX:ParallerGCThreads and --XX:CICompilerCount are set based on
     Containers CPU limits (can be overriden)
-    - Calculated from --cpuset-cpus                           
+    - Calculated from --cpuset-cpus
 
   └ Memory Configuration for containers
     -XX:+UnlockExperimentalVMOptions
@@ -481,7 +493,7 @@ New major features:
 
 - ahead-of-time (AoT) compilation (experimental)
   - improve startup time, with limited impact on peak performance.
-- REPL (read-eval-print loop) 
+- REPL (read-eval-print loop)
   - jShell: interactively evaluates statements "a la script".
     - tab completion
     - automatic addition of needed terminal semicolons.
@@ -515,7 +527,7 @@ New major features:
 <hr/>
 ● JAVA 8                                              [[{devops.containarization]]
   └ 8u131  First version to support Containers
-      WARN : Do not use any version below that.     
+      WARN : Do not use any version below that.
   TODO:
   @[https://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html]
   @[https://www.qwant.com/?q=what+new+java+8]
@@ -589,13 +601,13 @@ New major features:
         const UP = Integer.MAX_VALUE;
         final Thread t = new Thread(() -> {
           long l = 0;
-          for (int i = 0; i < UP ; i++) {     ┐  Result: 
+          for (int i = 0; i < UP ; i++) {     ┐  Result:
             for (int j = 0; j < UP ; j++) {   │
-              if ((j ⅋ 1) == 1) l++;          ├ long-type loops: 'uncounted' code.    safepoints injected at each loop. 
-            }                                 │  int-type loops:   'counted' code. No safepoints injected. 
+              if ((j ⅋ 1) == 1) l++;          ├ long-type loops: 'uncounted' code.    safepoints injected at each loop.
+            }                                 │  int-type loops:   'counted' code. No safepoints injected.
           }                                   ┘                  -   (Much) Better performance   BUT ...
-          System.out.println("How Odd:" + l);                        other threads forced to suspend at their 
-        });                                                          next safepoint operation. 
+          System.out.println("How Odd:" + l);                        other threads forced to suspend at their
+        });                                                          next safepoint operation.
         t.setDaemon(true);                    ┐
         t.start();                            ├  Expected: exit in ~5 seconds.
         Thread.sleep(5000);                   ┘  Result  : no safepoints means threads, JMX connections, ...
@@ -606,11 +618,11 @@ New major features:
 
     (See original source for many interesing details on safepoint tunning)
 
-    SUMMARY: 
+    SUMMARY:
      - Safepoint polls are dispersed at fairly arbitrary points and depending
        on execution mode, mostly at uncounted loop back edge or method return/entry.
      - Bringing the JVM to   GLOBAL safepoint is high cost
-   ☞ - For real-time applications,  it's critical to know about safepoints 
+   ☞ - For real-time applications,  it's critical to know about safepoints
        avoiding 'counted' code.
      -XX:+PrintApplicationStoppedTime will log contained safepoint pauses.
 
@@ -620,9 +632,9 @@ New major features:
   - profiler should sample all points in a program run with equal probability
   - Generic profilers rely on the JVMTI spec:
     - JVMTI offers   only safepoint sampling stack trace collection options :
-      -   only the safepoint polls in the running code are visible  skipping optimized 
-          (counted-code) for-loops!!! 
-      -   samples are biased towards the next available safepoint poll location 
+      -   only the safepoint polls in the running code are visible  skipping optimized
+          (counted-code) for-loops!!!
+      -   samples are biased towards the next available safepoint poll location
       - A sample profiler can blame a "cheap method" 9 levels down the stack when the
         real culprit is the topmost method loop.
 [[}]]
@@ -640,7 +652,7 @@ New major features:
 - Recorded metrics are intended to be used to
   observe/alert/react to current/recent operational state.
 
-  out-of-the-box instrumentation provided by Micrometer 
+  out-of-the-box instrumentation provided by Micrometer
   - JVM Metrics on classloaders, memory, garbage collection,
     threads, etc.
   - Spring Boot 2.0.0.M5+: Micrometer used as instrumentation library powering
@@ -685,7 +697,7 @@ Guides: [TODO]
      ││││││││    ││      ││││││││││││││
      ········    ··      ··············
 
-  JIT compiler optimization levels: 
+  JIT compiler optimization levels:
   - cold
   - warm
   - hot
@@ -751,7 +763,7 @@ In practical terms, there is only one set of source code for the JDK.
     └──────────┬────────────────┘
      Tune current values like:
                                             Modify Kernel limits (permanently)
-  + sysctl -w vm.max_map_count=524288     ← by adding those lines to  /etc/sysctl.conf 
+  + sysctl -w vm.max_map_count=524288     ← by adding those lines to  /etc/sysctl.conf
   + sysctl -w fs.file-max=131072            (or /etc/sysctl.d/99-sonarqube.conf )
 
   $ $ ulimit -n 131072                    ← Modify user-limits (temporally)
@@ -798,7 +810,7 @@ Reference Types regarding how the object on the heap is eligible for garbage col
 │         │ - Is created like
 │         │    WeakReference<StringBuilder> reference =
 │         │     = new WeakReference<>(new StringBuilder());
-│         │ -  Ex.use case: caching: 
+│         │ -  Ex.use case: caching:
 │         │   We let the GC remove the object pointed to by the weak reference,
 │         │   after which a null will be returned
 │         │   See JDK implementation at
@@ -806,8 +818,8 @@ Reference Types regarding how the object on the heap is eligible for garbage col
 ├─────────┼───────────────────────────────────────────────────────────────────────────
 │ SOFT    │ - used for more memory-sensitive scenarios
 │         │ - Will be garbage collected only when the application is running low on memory.
-│         │ -  Java guarantees that all soft referenced objects 
-│         │   are cleaned up before throwing OutOfMemoryError 
+│         │ -  Java guarantees that all soft referenced objects
+│         │   are cleaned up before throwing OutOfMemoryError
 │         │ - is created as follows:
 │         │   SoftReference<StringBuilder> reference = new SoftReference<>(new StringBuilder());
 ├─────────┼───────────────────────────────────────────────────────────────────────────
@@ -815,7 +827,7 @@ Reference Types regarding how the object on the heap is eligible for garbage col
 │         │   sure that objects are no longer alive.
 │         │ - Used only with a reference queue, since the .get() method of
 │         │   such references will always return null.
-│         │ -  These types of references are considered preferable to finalizers 
+│         │ -  These types of references are considered preferable to finalizers
 └─────────┴───────────────────────────────────────────────────────────────────────────
 [[}]]
 
@@ -827,13 +839,13 @@ Reference Types regarding how the object on the heap is eligible for garbage col
   reusing strings whenever possible.
 
 String string01 = "297",                                string01 == string02 : true
-       string02 = "297",                                string01 == string03 :   false 
+       string02 = "297",                                string01 == string03 :   false
        string03 = new Integer(297).toString(),          string01 == string04 : true
-       string04 = new Integer(297).toString()           string05 == string01 :   false 
+       string04 = new Integer(297).toString()           string05 == string01 :   false
                   .intern() ;
        string05 = new String("297")
 
- 1:   Pool reuse does not work for dynamically created strings 
+ 1:   Pool reuse does not work for dynamically created strings
 *2: If we consider that the computed String will be used quite often,
     we can force the JVM to add it to the string pool by adding the
     .intern() method at the end of computed string.
@@ -883,23 +895,23 @@ To optimize even more heap memory actually consists of multiple parts (Java 8+):
    GC TYPE     | Description  / Use-Cases
 +--------------+-----------------------------------------------------------------------------
 |Serial GC     | - Single thread collector.
-|              | -  Halt all app threads while executing 
-|              | - Mostly applies to  small apps with small data usage 
-|              | - Can be enabled through :   -XX:+UseSerialGC 
+|              | -  Halt all app threads while executing
+|              | - Mostly applies to  small apps with small data usage
+|              | - Can be enabled through :   -XX:+UseSerialGC
 +--------------+-----------------------------------------------------------------------------
 |Parallel GC   | - Multiple threads used for GC
-|              | -  Halt all app threads while executing 
+|              | -  Halt all app threads while executing
 |              | - Also known as throughput collector
-|              | - Can be enabled through :   -XX:+UseParallelGC 
+|              | - Can be enabled through :   -XX:+UseParallelGC
 +--------------+-----------------------------------------------------------------------------
 |Mostly        | - works concurrent to the application, "mostly" not halting threads
 |Concurrent GC | - "mostly": There is a period of time for which the threads are paused.
 |              |    Still, the pause is kept as short as possible to achieve the best GC performance.
 |              | - 2 types of mostly concurrent GCs:
 |              |   * Garbage First - high throughput with a reasonable application pause time.
-|              |                   - Enabled with the option:   -XX:+UseG1GC 
+|              |                   - Enabled with the option:   -XX:+UseG1GC
 |              |     Concurrent Mark Sweep: app pause is kept to minimum.  Deprecated as Java9+*
-|              |                   - Enabled with the option:   -XX:+UseConcMarkSweepGC 
+|              |                   - Enabled with the option:   -XX:+UseConcMarkSweepGC
 +--------------+-----------------------------------------------------------------------------
 
 See also:
@@ -916,8 +928,8 @@ See also:
   Prefer phantom references for cleanup work.
 
 - Do not use strong references where weak or soft references apply.
-  The most common memory pitfalls are caching scenarios,when data 
-  is held in memory even if it might not be needed. 
+  The most common memory pitfalls are caching scenarios,when data
+  is held in memory even if it might not be needed.
 
 - Explicitly specify heap size for the JVM when running the application:
   -  allocate a reasonable initial and maximum amount of memory for the heap.
@@ -948,10 +960,10 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
                       -XX:InitiatingHeapOccupancyPercent=70 ← Use 0 to force constant
                                                               GC cycles
 
-       WARN, WARN, WARN: 
-       There are 600+ arguments that you can pass to JVM to fine-tune GC and memory  
-       If you include other aspects, the number of JVM arguments will easily cross   
-       1000+.  
+       WARN, WARN, WARN:
+       There are 600+ arguments that you can pass to JVM to fine-tune GC and memory
+       If you include other aspects, the number of JVM arguments will easily cross
+       1000+.
        (Or why Data Scientist end up using Python)
 
 
@@ -967,8 +979,8 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
   Commom Memory Leaks pitfalls :
 @[http://java.jiderhamn.se/2012/02/26/classloader-leaks-v-common-mistakes-and-known-offenders/]
 - Logging frameworks (Apache Commons Logging/log4j/java.util.logging/...)
-  trigger classloader leaks if   logging framework is supplied outside of 
-  the web application, such as within the Application Server. 
+  trigger classloader leaks if   logging framework is supplied outside of
+  the web application, such as within the Application Server.
   -  Add next cleanup code to ServletContextListener :
     org.apache.commons.logging.LogFactory.                    // Alt.1
       release(Thread.currentThread().getContextClassLoader());
@@ -1016,16 +1028,16 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
       void useManyResourcesManyTimes(String path)  {
 
         for (int repeat=0; repeat<100; repeat++) {
-          try (MyClassWithExternalResources i =  
+          try (MyClassWithExternalResources i =
                 new MyClassWithExternalResources(...))  {
                 ...
-          } catch( ... ) { 
+          } catch( ... ) {
             //
-          } 
+          }
 
-          // At this point all resouces have been closed.   
-          // If a runtime exception exits the function the  
-          // resource is also closed.                       
+          // At this point all resouces have been closed.
+          // If a runtime exception exits the function the
+          // resource is also closed.
         }
     }
 [[$div}]]
@@ -1053,9 +1065,9 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
   · Amazon Corretto
 
 • INSTALL/UPGRADE:
-$ $ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash  
-$ $. ~/.jabba/jabba.sh                                                      
- 
+$ $ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash
+$ $. ~/.jabba/jabba.sh
+
    Use $ ... | bash --skip-rc   to avoid modifying common rc files.
    In that case add next lines to .bashrc / ...
  + export JABBA_VERSION=...
@@ -1064,12 +1076,12 @@ $ $. ~/.jabba/jabba.sh
 • USAGE
 $ $ jabba ls-remote                   ←  list available JDK's
 $ $ jabba ls-remote zulu@~1.8.60      ← Narrow results
-$ $ jabba ls-remote --latest=minor\   ← semver allowed 
-$        "*@>=1.6.45 <1.9"           
+$ $ jabba ls-remote --latest=minor\   ← semver allowed
+$        "*@>=1.6.45 <1.9"
 
 $ $ jabba ls                          ← list all installed JDK's
-$ $ jabba use adopt@1.8              
-$ $ jabba use zulu@~1.6.97           
+$ $ jabba use adopt@1.8
+$ $ jabba use zulu@~1.6.97
 $ $ echo "1.8" > .jabbarc             ← switch to JDK in .jabbarc
                                         It must be a valid YAML file.
                                         'jdk: 1.8' or simply '1.8' are valid
@@ -1089,13 +1101,13 @@ $ $ jabba install openjdk-shenandoah@1.10-0   ← install OpenJDK with Shenandoa
    everything is installed under ~/.jabba. Removing this directory clean install
 $ $ jabba uninstall zulu@1.6.77               ← uninstall JDK
 $ $ jabba link system@1.8.72 \                ← link system JDK
-$   /usr/lib/jvm/jdk1.8.0_72.jdk             
+$   /usr/lib/jvm/jdk1.8.0_72.jdk
 
 • To modify JDK system-wide:
-$ $ sudo update-alternatives --install /usr/bin/java java ${JAVA_HOME%*/}/bin/java 20000    
-$ $ sudo update-alternatives --install /usr/bin/javac javac ${JAVA_HOME%*/}/bin/javac 20000 
+$ $ sudo update-alternatives --install /usr/bin/java java ${JAVA_HOME%*/}/bin/java 20000
+$ $ sudo update-alternatives --install /usr/bin/javac javac ${JAVA_HOME%*/}/bin/javac 20000
 • To swith among GLOBAL JDK system-wide:
-$ $ sudo update-alternatives --config java  
+$ $ sudo update-alternatives --config java
 
 
 [[}]]
@@ -1135,27 +1147,27 @@ $ $ sudo update-alternatives --config java
   - StringBuilder  is faster. (when thread-safety is not needed)
 @[https://stackoverflow.com/questions/355089/difference-between-stringbuilder-and-stringbuffer]
     for (int i = 0; i < 0 ; i++) { sbuffer.append(""); } // ← 2241 millisec
-    for (int i = 0; i < 0 ; i++) { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!! 
+    for (int i = 0; i < 0 ; i++) { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
 [[}]]
 
 [[{java_lang.101,persistence.FS]]
 ● Reading file
-  Reading as lines of text 
+  Reading as lines of text
   final File input = new File("input.txt");
   final String result =
         Files.toString(input, Charsets.UTF_8);   // ← Alt 1.(Guava) Read to String
-                                                       WARN: Only for small sizes 
+                                                       WARN: Only for small sizes
 
   final File input = new File("input.txt");
   final List<String> result =
        Files.readLines(input, Charsets.UTF_8);   // ← Alt 2.(Guava) Read to List
-             ^^^^^^^^^                                WARN: Only for small sizes 
+             ^^^^^^^^^                                WARN: Only for small sizes
              readFirstLine() can be useful sometimes
 
   final File input = new File("input.txt");
   final CharSource source =
       Files.asCharSource(input, Charsets.UTF_8); // ← Alt 3.(Guava) Use CharSource
-  final String result = source.read();           // ←   WARN: Only for small sizes 
+  final String result = source.read();           // ←   WARN: Only for small sizes
 
   final File input1 = new File("input1.txt"),
              input2 = new File("input1.txt");
@@ -1171,7 +1183,7 @@ $ $ sudo update-alternatives --config java
         CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
   reader.close();                              // ←   WARN:  Don't forget to close
 
-  Read file as bytes 
+  Read file as bytes
   final File file = new File("input.raw");
   final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
         = Files.asByteSource(file).
@@ -1190,11 +1202,11 @@ $ $ sudo update-alternatives --config java
        Resources.toString(url, Charsets.UTF_8);
 <hr/>
 ● Reading big files
-     try ( 
+     try (
   final FileInputStream inputStream = new FileInputStream(path);
   final Scanner sc =                        ← Use Scanner to read line-by-line
             new Scanner(inputStream, "UTF-8");
-     ) { 
+     ) {
   while (sc.hasNextLine()) {
       final String line = sc.nextLine();
       // ... do any process ...
@@ -1202,9 +1214,9 @@ $ $ sudo update-alternatives --config java
           // handle error                  // It's good to have a look
       }
   }
-     } finally { 
+     } finally {
   ...
-     } 
+     }
 
 final LineIterator it =                       ← Alt 2. From  Apache Commons IO
    FileUtils.lineIterator(theFile, "UTF-8");
@@ -1266,10 +1278,10 @@ java.time.*
 - JDK 1.8+
 - "deprecates" java.util.(Date|Calendar|TimeZome)
 - All the classes are IMMUTABLE and THREAD-SAFE
-  import java.time.Instant; 
-  import java.time.ZonedDateTime; 
-  import java.time.ZoneId; 
-  import java.util.concurrent.TimeUnit; 
+  import java.time.Instant;
+  import java.time.ZonedDateTime;
+  import java.time.ZoneId;
+  import java.util.concurrent.TimeUnit;
 ...
   Instant   timestamp  =   Instant .now();              // Create from system clock
             timestamp .plus(Duration.ofSeconds(10));    // Add 10 seconds
@@ -1307,7 +1319,7 @@ time  (none)           DateFormat.getTimeInstance(DateFormat.DEFAULT, getLocale(
       full             DateFormat.getTimeInstance(DateFormat.FULL, getLocale())
       SubformatPattern new SimpleDateFormat(subformatPattern, getLocale())
 
- Compatibility with Java <=1.  
+ Compatibility with Java <=1.
 - (java.util.) Date, Calendar and TimeZone
   "buggy" classes/subclasses were used.
   ^^^^^^^
@@ -1324,7 +1336,7 @@ time  (none)           DateFormat.getTimeInstance(DateFormat.DEFAULT, getLocale(
   - Date.toInstant()
   - TimeZone.toZoneId()
 
- java.time. Package summary 
+ java.time. Package summary
                    Description
 -----------------------------------------------------------------------------------
 Clock              A clock providing access to the current instant, date and
@@ -1436,7 +1448,7 @@ Enums: DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
 
 <pre zoom  labels="java_lang.101,qa" >
 <a xsmall href="http://docs.oracle.com/javase/tutorial/java/annotations/">ANNOTATIONS</a>
- predefined annotation types in java.lang: 
+ predefined annotation types in java.lang:
 - @Deprecated
 - @Override
 - @SuppressWarnings
@@ -1446,7 +1458,7 @@ Enums: DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
                            on its varargs parameter.
                            removing  related warnings
 
- Annotation types are a form of interface 
+ Annotation types are a form of interface
 DECLARATION(interface is preceded by the @ sign) │ USAGE
   @Documented                                    │
   @interface ClassPreamble {                     │   @ClassPreamble (
@@ -1482,12 +1494,12 @@ void myMethod() { ... }
 ● META-ANNOTATTONS
 (Annotations applying to other annotations)
 
- @Retention 
+ @Retention
 RetentionPolicy.SOURCE: retained only in source (ignored by the compiler)
 RetentionPolicy.CLASS : retained by compiler    (ignored by the JVM)
 RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
 
- @Documented                       @Repeatable 
+ @Documented                       @Repeatable
 - indicates that whenever the     - (1.8+)
   specified annotation is used    - targeted annotation can be applied
   those elements should be          more than once to the same
@@ -1498,7 +1510,7 @@ RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
                                     class MyClass { ... }
 
 
- @Target                            @Inherited 
+ @Target                            @Inherited
  (field,type,class..)              - targeted annotation type can be inherited
 - restrict targeted java-language    from the super class. (false by default.)
   elements where the annotation      When the user queries the annotation type
@@ -1519,7 +1531,7 @@ Simple Log Facade or abstraction for various logging frameworks
 (e.g. java.util.logging, logback, log4j) allowing the end user
 to plug in the desired logging framework at deployment time.
 
-  (.../src/main/resources/)logback.xml 
+  (.../src/main/resources/)logback.xml
   <?xml version="1.0" encoding="UTF-8"?>
   <configuration>
     <root level="ALL">                                  ← Apply to all packages/levels
@@ -1542,7 +1554,7 @@ to plug in the desired logging framework at deployment time.
       <appender   name="APPENDER_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
           <pattern>%d{HH:mm:ss.SSS} | %-5level | %thread | %logger{1} |
-    %m%n%rEx{full,                                      ←☞ filter "Noise" in stack trace.  REF   
+    %m%n%rEx{full,                                      ←☞ filter "Noise" in stack trace.  REF
               java.lang.reflect.Method,                 ← remove Java reflection
               sun.reflect,
               org.apache.catalina,                      ← remove catalina engine
@@ -1573,7 +1585,7 @@ to plug in the desired logging framework at deployment time.
 
 </configuration>
 
-  pom.xml 
+  pom.xml
   <dependency>*
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-api</artifactId>
@@ -1584,7 +1596,7 @@ to plug in the desired logging framework at deployment time.
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>            ← add   logback  facade
     <version>1.1.7</version>
-    <exclusions> 
+    <exclusions>
       <exclusion>
         <groupId>org.slf4j</groupId>                    ←  Avoid error next start-up:
         <artifactId>slf4j-jdk14</artifactId>               "SLF4J: Class path contains multiple SLF4J bindings."
@@ -1592,7 +1604,7 @@ to plug in the desired logging framework at deployment time.
     </exclusions>                                          "logback-classic-1.1.7.jar!...StaticLoggerBinder.class"
   </dependency>
 
-  Example Ussage 
+  Example Ussage
   import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
   ...
@@ -1623,17 +1635,17 @@ to plug in the desired logging framework at deployment time.
   - MDC allows to capture custom  key/value  diagnostic data,
     accessible to the appender when the log message is actually
     written.
-  - MDC structure is internally attached to the executing thread 
+  - MDC structure is internally attached to the executing thread
     in the same way a ThreadLocal variable would be.
 
-  MDC How To: 
+  MDC How To:
   - At the start of the thread, fill MDC with custom information
     (MDC API also allows to remove info later on if it doesn't apply)
   - Log the message
   - MDC Summarized API :
     public class MDC {
-      public static void   put   (String key, String val); // ← Add to  current Thread 
-      public static String get   (String key);                          Context Map 
+      public static void   put   (String key, String val); // ← Add to  current Thread
+      public static String get   (String key);                          Context Map
       public static void   remove(String key);
       public static void clear(); // ← Clear all entries
     }
@@ -1642,7 +1654,7 @@ to plug in the desired logging framework at deployment time.
 
   - Best pattern for microservices:
     - Ex:
-      // STEP 1: Override   interceptor layer 
+      // STEP 1: Override   interceptor layer
                             ^^^^^^^^^^^^^^^^^
       //                """single place where call
       //                   execution passes through""".
@@ -1652,7 +1664,7 @@ to plug in the desired logging framework at deployment time.
           private final static Logger LOGGER =
                   Logger.getLogger(ServiceInterceptor.class);
 
-          @Override 
+          @Override
           public boolean preHandle(
                    HttpServletRequest request,
                    HttpServletResponse response,
@@ -1710,7 +1722,7 @@ to plug in the desired logging framework at deployment time.
 
    query = "SELECT ... WHERE lastname = ?";               // ← Correct
    PreparedStatement stm01 = con.prepareStatement(query);
-   statementB .setString(1, parameter); 
+   statementB .setString(1, parameter);
 
    ...  stm01.executeQuery(query);
 
@@ -1732,14 +1744,14 @@ to plug in the desired logging framework at deployment time.
    │    oauth2:
    │      client:
    │        registration:
-   │          github: 
+   │          github:
    │            client─id: ...
    │            client─secret: ....
-   │          okta: 
+   │          okta:
    │            client─id: ...
    │            client─secret: ...
    │            client─name: ...
-   │          google: 
+   │          google:
    │            ...
    │        provider:
    │          okta:
@@ -1787,7 +1799,7 @@ to plug in the desired logging framework at deployment time.
 
 8. Avoid Java serialization as much as possible
    • Java serialization is also called   “the gift that keeps on giving” .
-     Oracle is planning to eventually remove Java serialization as part 
+     Oracle is planning to eventually remove Java serialization as part
      of Project Amber.
 
      If you really need to implement serializable on your domain entities,
@@ -1815,7 +1827,7 @@ to plug in the desired logging framework at deployment time.
      (@[https://snyk.io/blog/jackson-deserialization-vulnerability/])
 
 9. Use strong encryption and hashing algorithms.                   [[{security.cryptography}]]
-   TIP: Prefer Google Tink  (vs Low Level Java crypto libraries) 
+   TIP: Prefer Google Tink  (vs Low Level Java crypto libraries)
 
 10. Enable the Java Security Manager                               [[{security.jvm]]
    · By default, JVM imposes no restrictions to running apps.
@@ -1965,7 +1977,7 @@ Obj(Double|Int|Long)Consumer‹T›             │opt. accepting an object-valu
                                                                │    └────────────┘   │
                                                                │                     │
                                                                v                     v
-                                                            HashSet              TreeSet 
+                                                            HashSet              TreeSet
 
    ● Comparative
 Standard   non-concurrent  SDK:
@@ -1988,7 +2000,7 @@ Standard   non-concurrent  SDK:
          - when there is a large number of add/remove operations LinkedList is much faster.
          - When there is a lot of random access operations ArrayList is much faster.
 
- INTERFACES 
+ INTERFACES
 @[http://download.oracle.com/javase/6/docs/api/java/util/HashSet.html]
 @[http://download.oracle.com/javase/6/docs/api/java/util/TreeSet.html]
 @[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashSet.html]
@@ -2079,7 +2091,7 @@ ValueGraph<N,V>         An interface for graph- structured data, whose edges hav
 
 [[{data_structures.101,qa]] #[data_structures_101_summary]
 ● Lists
- INITIALIZING A LIST 
+ INITIALIZING A LIST
 final List<String> myList =                  ← final forbid re-asigning the list,
       Arrays.asList("one", "two", "three");     but its content is still mutable
       myList.add("four");
@@ -2118,9 +2130,9 @@ final ArrayList<String> mutableList   ← Mutable list.
 <hr/>
 
 ● Maps ("Dictionaries")
-  ###################### 
-  # INITIALIZING A MAP # 
-  ###################### 
+  ######################
+  # INITIALIZING A MAP #
+  ######################
 final Map<String,String> myMap =                          ← Mutable map (WARN: even if 'final' used)
       new HashMap<String,String>();
   myMap.put("k1", "k2");
@@ -2146,9 +2158,9 @@ final Map<String,String> myMap =                          ← Mutable map (WARN:
         ...
         .build();
 
-  ########################### 
-  # WALK-OVER/ITERATE A MAP # 
-  ########################### 
+  ###########################
+  # WALK-OVER/ITERATE A MAP #
+  ###########################
 
  Map<String, String> map = ...
  for ( Map.pair<String, String>   pair  :
@@ -2181,9 +2193,9 @@ final Map<String,String> myMap =                          ← Mutable map (WARN:
   ... pair.getKey() ... pair.getValue() ...
   ) );
 
-  ############## 
-  # UPDATE MAP # 
-  ############## 
+  ##############
+  # UPDATE MAP #
+  ##############
 
 Map<String, Double> map01 = new HashMap<>();
   map01.put("key1", 1);
@@ -2321,7 +2333,7 @@ Map<String, Double> map01 = new HashMap<>();
 
 
 
-- Iterator should be preferred over Enumeration 
+- Iterator should be preferred over Enumeration
   taking the place of Enumeration in collections framework
 
 
@@ -2390,7 +2402,7 @@ Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
 │try (  /* try-with 1.7+ */                     │SUMMARY│
 │  RandomAccessFile   aFile  =                  ├───────┴──────────────────────────
 │    new RandomAccessFile("nio-data.txt", "rw") │-1 ) Write data into the Buffer
-│) throws IOException {                         │-2 ) Call buffer. flip() 
+│) throws IOException {                         │-2 ) Call buffer. flip()
 │  FileChannel   inChannel  =                   │     switch writing/reading mode
 │      aFile .getChannel();                     │-3 ) Read data out of the Buffer
 │                                               │-4a) buffer.clear();  ← alt1: clear all buffer
@@ -2402,7 +2414,7 @@ Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
 │         inChannel .read(  buf );  // ←   buf  now
 │                                          in write mode
 │  while  ( bytesRead  != -1)
-│  { 
+│  {
 │      buf . flip ();               // ←   buf  now
 │    while(  buf .hasRemaining()){         in read mode
 │        System.out.print(
@@ -2414,7 +2426,7 @@ Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
 │                                        ready-for-writing
 │     bytesRead  =   inChannel      // ←   buf  now
 │                    .read(  buf );        in write mode
-│  } 
+│  }
 │}
 └──────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -2433,7 +2445,7 @@ Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
 │ (not suited for undefined size messages)         │                                                  │
 └──────────────────────────────────────────────────┴──────────────────────────────────────────────────┘
 
-  CHANNEL-TO-CHANNEL 
+  CHANNEL-TO-CHANNEL
  - If one the the channels is FileChannel :
    - FileChannel transferTo()/transferFrom()  can be used to move data between channels
      WARN: Some SocketChannel implementations may transfer only the data the SocketChannel
@@ -2523,9 +2535,9 @@ JDK 8
 
 - A channel that "fires an event" is also said to be "ready" for that event.
 
- REGISTERING A SELECTOR                               │ USING SELECTORS 
+ REGISTERING A SELECTOR                               │ USING SELECTORS
  AND ASSIGNING CHANNELS                               │
-    │  Selector   selectoR  = Selector.open();        │  STEP   
+    │  Selector   selectoR  = Selector.open();        │  STEP
     │  channel.configureBlocking(false);              │  call one of the select() methods
     │          ^^^^^^^^^^^^^^^^^^^^^^^^               │  (upon registering 1+ channels)
     │   //     non-blocking-mode required             │  int select(long mSecTimeout) ← block until channel/s ready
@@ -2534,7 +2546,7 @@ JDK 8
     │   //   they can NOT be used with selectors.     │  └┬┘
 ┌───→  SelectionKey key  = channel.register(          │  indicates how many channels became ready since last select() call.
 │   │      selector ,                                 │
-│   │    SelectionKey.OP_READ |                       │  STEP   
+│   │    SelectionKey.OP_READ |                       │  STEP
 │   │    SelectionKey.OP_WRITE);                      │  examine ready channels returned by select like:
 │   │                 ^^^^^^^                         │  Set<SelectionKey> selectedKeys =
 │   │                 Or-set of interest:             │                      selectoR .  selectedKeys() ;
@@ -2554,7 +2566,7 @@ JDK 8
 │ │ │ // Alternative 1:                               │      }
 │ │ │ int   readySet =   key .readyOps();             │      keyIterator.remove();
 │ │ │ boolean isAcceptable  =                         │  }
-│ │ │           readySet  ⅋ SelectionKey.OP_ACCEPT;   │  STEP   
+│ │ │           readySet  ⅋ SelectionKey.OP_ACCEPT;   │  STEP
 │ │ │ ...                                             │  selector .close()
 │ │ │ // Alternative 2:                               │            ^^^^^
 │ │ │   key .isAcceptable();                          │   must be called after finishing ussage,
@@ -2620,7 +2632,7 @@ JDK 8
   |   buf .clear();
   |   buf .put(newData.getBytes());
   |   buf .flip(); // change buffer from write to read
-  |  while(  buf .hasRemaining()) {  channelO .write (  buf );  } 
+  |  while(  buf .hasRemaining()) {  channelO .write (  buf );  }
   | channel.close();
 
 
@@ -2772,23 +2784,23 @@ REF:
 - @[http://tutorials.jenkov.com/java-nio/non-blocking-server.html]
 - @[https://github.com/jjenkov/java-nio-server]
 - Non-blocking IO Pipelines:
-read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut 
+read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut
 read-only  pipeline:  channelIn  → selector → component → ... → componentN
-write-only pipeline:                        component → ... → componentN →  channelOut 
+write-only pipeline:                        component → ... → componentN →  channelOut
 Note: It is the component that initiates reading of data from the Channel via the Selector
 read-pipeline read from stream/channelIn and split data into messages like:
 
 Data   → Message → Message
 Stream   Reader    Stream
 
-- A blocking Message Reader/Writer is simpler, since it 
-  has never to handle situations where no data was read 
-  from the stream, or where only a partial message was 
-  read from the stream and message parsing needs to be 
-  resumed later. 
-- The drawback of blocking is the requirement of separate 
-  threads for each parallel stream, which is a problem if the 
-  server has thousands of concurrent connections 
+- A blocking Message Reader/Writer is simpler, since it
+  has never to handle situations where no data was read
+  from the stream, or where only a partial message was
+  read from the stream and message parsing needs to be
+  resumed later.
+- The drawback of blocking is the requirement of separate
+  threads for each parallel stream, which is a problem if the
+  server has thousands of concurrent connections
 - Each thread will take between 320K (32 bit JVM) and
   1024K (64 bit JVM) memory for its stack
 - Queue messages can be used to reduce the problem. However,
@@ -2808,9 +2820,9 @@ Stream   Reader    Stream
   gives you only the SelectableChannel instances ("connected
   clients") that actually has data to read.
 
-  Component ──→ STEP 1: select() ──→ Selector ←──┬─→ Channel1 
-      ↑                                │         ┼─→ Channel2 
-      └───← STEP 2: ready channels ←───┘         └─→ Channel3 
+  Component ──→ STEP 1: select() ──→ Selector ←──┬─→ Channel1
+      ↑                                │         ┼─→ Channel2
+      └───← STEP 2: ready channels ←───┘         └─→ Channel3
 
 
 - Reading Partial Messages: Data sent by "ready" channels can
@@ -2840,8 +2852,8 @@ Stream   Reader    Stream
     per channel to handle all the details.
    (partial writes, message queues, resizable buffers, protocol aware tricks,...)
 
-- All in all a non-blocking server ends up with three "pipelines" it 
-  needs to execute regularly: 
+- All in all a non-blocking server ends up with three "pipelines" it
+  needs to execute regularly:
   - The read pipeline which checks for new incoming data from
     the open connections.
   - The process pipeline which processes any full messages received.
@@ -2957,7 +2969,7 @@ TODO: HTTPClient Quick intro:
     @[https://openjdk.java.net/groups/net/httpclient/intro.html]
 
 - Example JShell script for GET request:
-  import java.io.PrintWriter;                                                                                                                    
+  import java.io.PrintWriter;
   import java.net.http.HttpClient
   import java.net.http.HttpRequest
   import java.net.http.HttpResponse
@@ -2975,17 +2987,17 @@ TODO: HTTPClient Quick intro:
 
 
 ● OkHTTP
--   OkHTTP vs java.net.http.HTTPClient 
+-   OkHTTP vs java.net.http.HTTPClient
 From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
-   OkHTTP PROs over                     OkHTTP CONs over         
-   java.net.http.HTTPClient             java.net.http.HTTPClient 
+   OkHTTP PROs over                     OkHTTP CONs over
+   java.net.http.HTTPClient             java.net.http.HTTPClient
  - built-in response cache.           - timeout like configuration can not be
  - web sockets.                         modified after singleton connection.
  - Simpler API.                       - Requires (small) extra non-JDK dependencies
  - Better defaults                      (okIO and okHTTP itself) in non-Android
  - easier to use efficiently.           deployments
  - Better URL model.
- - Android support. (  HTTPClient 
+ - Android support. (  HTTPClient
    supported in Android? )
  - Better cookie model.
  - Better headers model.
@@ -3056,7 +3068,7 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
    OkHttp supports modern TLS features (TLS 1.3, ALPN, certificate pinning). It
   can be configured to fall back for broad connectivity.
 
-- request/response API is designed with  fluent builders and immutability 
+- request/response API is designed with  fluent builders and immutability
 -.synch/sync+callback API.
 
 - Ex: Balancing connections with OKHttp:
@@ -3103,7 +3115,7 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   Ex. Output:
   | 2022-09-29 06:38:08
   | Full thread dump OpenJDK 64-Bit Server VM (11.0.14.1+1 mixed mode):
-  | 
+  |
   | Threads class SMR info:
   | _java_thread_list=0x00007fa9e4002e70, length=44, elements={
   | 0x00007faa2c1f8000, 0x00007faa2c1fa800, 0x00007faa2c218000, 0x00007faa2c21a000,
@@ -3118,7 +3130,7 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   | 0x00007fa9a8160800, 0x00007fa9a8148000, 0x00007fa9a8149800, 0x00007fa9a8165800,
   | 0x00007fa9a8167000, 0x00007fa9a8169000, 0x00007fa9f0026000, 0x00007fa9e4002000
   | }
-  | 
+  |
   | "Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.35ms elapsed=256333.77s
   |                     tid=0x00007faa2c1f8000 nid=0x1e waiting on condition [0x00007faa18866000]
   |    java.lang.Thread.State: RUNNABLE   <- := RUNNABLE, TIMED_WAITING (on object monitor),
@@ -3126,16 +3138,16 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   | 	at java.lang.ref.Reference.waitForReferencePendingList(java.base@11.0.14.1/Native Method)
   | 	at java.lang.ref.Reference.processPendingReferences(java.base@11.0.14.1/Unknown Source)
   | 	at java.lang.ref.Reference$ReferenceHandler.run(java.base@11.0.14.1/Unknown Source)
-  | 
+  |
   |    Locked ownable synchronizers:
   | 	- None
-  | 
+  |
   | "Signal Dispatcher" ...
   | "Service Thread"     ...
   | "C2 CompilerThread0" ...
   | "C1 CompilerThread0" ...
   | "Sweeper thread" ...
-  | 
+  |
   | "Common-Cleaner" ...
   | "vert.x-eventloop-thread-0" ...
   | "vert.x-acceptor-thread-0" ...
@@ -3145,16 +3157,16 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   |   Locked ownable synchronizers:
   | 	- None
   | ...
-  | "VM Thread"   os_prio=0 cpu=28658.34ms elapsed=256333.80s tid=0x00007faa2c1ef000 nid=0x1d runnable  
-  | "GC Thread#0" os_prio=0 cpu=6640.67ms  elapsed=256333.90s tid=0x00007faa2c041800 nid=0x18 runnable  
-  | "GC Thread#1" os_prio=0 cpu=6667.69ms  elapsed=256332.51s tid=0x00007fa9f8001000 nid=0x27 runnable  
-  | "GC Thread#2" os_prio=0 cpu=6647.53ms  elapsed=256332.51s tid=0x00007fa9f8002800 nid=0x28 runnable  
-  | "GC Thread#3" os_prio=0 cpu=6655.38ms  elapsed=256332.51s tid=0x00007fa9f8004000 nid=0x29 runnable  
-  | "G1 Main Marker" os_prio=0 cpu=4.05ms  elapsed=256333.90s tid=0x00007faa2c09f000 nid=0x19 runnable  
-  | "G1 Conc#0" os_prio=0 cpu=51.33ms elapsed=256333.90s tid=0x00007faa2c0a1000 nid=0x1a runnable  
-  | "G1 Refine#0" os_prio=0 cpu=4.17ms elapsed=256333.89s tid=0x00007faa2c190000 nid=0x1b runnable  
-  | "G1 Young RemSet Sampling" os_prio=0 cpu=92484.58ms elapsed=256333.89s tid=0x00007faa2c192000 nid=0x1c runnable  
-  | "VM Periodic Task Thread" os_prio=0 cpu=378619.90ms elapsed=256333.58s tid=0x00007faa2c2db800 nid=0x26 waiting on condition  
+  | "VM Thread"   os_prio=0 cpu=28658.34ms elapsed=256333.80s tid=0x00007faa2c1ef000 nid=0x1d runnable
+  | "GC Thread#0" os_prio=0 cpu=6640.67ms  elapsed=256333.90s tid=0x00007faa2c041800 nid=0x18 runnable
+  | "GC Thread#1" os_prio=0 cpu=6667.69ms  elapsed=256332.51s tid=0x00007fa9f8001000 nid=0x27 runnable
+  | "GC Thread#2" os_prio=0 cpu=6647.53ms  elapsed=256332.51s tid=0x00007fa9f8002800 nid=0x28 runnable
+  | "GC Thread#3" os_prio=0 cpu=6655.38ms  elapsed=256332.51s tid=0x00007fa9f8004000 nid=0x29 runnable
+  | "G1 Main Marker" os_prio=0 cpu=4.05ms  elapsed=256333.90s tid=0x00007faa2c09f000 nid=0x19 runnable
+  | "G1 Conc#0" os_prio=0 cpu=51.33ms elapsed=256333.90s tid=0x00007faa2c0a1000 nid=0x1a runnable
+  | "G1 Refine#0" os_prio=0 cpu=4.17ms elapsed=256333.89s tid=0x00007faa2c190000 nid=0x1b runnable
+  | "G1 Young RemSet Sampling" os_prio=0 cpu=92484.58ms elapsed=256333.89s tid=0x00007faa2c192000 nid=0x1c runnable
+  | "VM Periodic Task Thread" os_prio=0 cpu=378619.90ms elapsed=256333.58s tid=0x00007faa2c2db800 nid=0x26 waiting on condition
 
 
   $ jcmd pid|main-class PerfCounter.print  ← Send diagnostic command PerfCounter.print to PID JVM
@@ -3165,7 +3177,7 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   $ jcmd pid|main-class command[ arguments]
 
  Ex:
- $ $ jcmd $PID  
+ $ $ jcmd $PID
   → The following commands are available:
   → Compiler.CodeHeap_Analytics  → GC.class_histogram    → ManagementAgent.start
   → Compiler.codecache           → GC.class_stats        → ManagementAgent.start_local
@@ -3177,15 +3189,15 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   → Compiler.queue
 
   → VM.class_hierarchy    → VM.print_touched_methods    → JFR.check
-  → VM.classloader_stats  → VM.set_flag                 → JFR.configure      
-  → VM.classloaders       → VM.stringtable              → JFR.dump       
+  → VM.classloader_stats  → VM.set_flag                 → JFR.configure
+  → VM.classloaders       → VM.stringtable              → JFR.dump
   → VM.command_line       → VM.symboltable              → JFR.start
   → VM.dynlibs            → VM.system_properties        → JFR.stop
-  → VM.flags              → VM.systemdictionary                                  
+  → VM.flags              → VM.systemdictionary
   → VM.info               → VM.uptime                   → JVMTI.agent_load
   → VM.log                → VM.version                  → JVMTI.data_dump
-  → VM.metaspace          → help                      
-  → VM.native_memory            
+  → VM.metaspace          → help
+  → VM.native_memory
 [[}]]
 
 
@@ -3219,13 +3231,13 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
        - identifying what to improve
        - realize when tunning GC is the wrong solution.
 
-  Java Mission Control (JMC): 
+  Java Mission Control (JMC):
 - @[http://www.oracle.com/technetwork/java/javaseproducts/mission-control/java-mission-control-1998576.html]
-- UI to analyze data collected by Flight Recorder and head dumps  built on top of Eclipse IDE. 
+- UI to analyze data collected by Flight Recorder and head dumps  built on top of Eclipse IDE.
 - overview of all locally running Java processes, statistics,
   heap dumps, flame view ( show the aggregate of stack traces for the selected events ),
 
-  WHAT'S NEW 
+  WHAT'S NEW
 - JMC 8+ RoadMap:
   - New allocation event (introduced in JDK 16).
   - Improve Flame Graph and Graph Views for memory ussage (vs CPU ussage).
@@ -3377,11 +3389,11 @@ Extracted from:
   - Spark Linux Perf/Flame Graph support: Although the two tools
     above are very handy, they do not provide an aggregated view of CPU
     profiling for the job running across hundreds of machines at the same
-    time. On a per-job basis,   we added support for enabling Perf  
-    profiling (via libperfagent for Java symbols) and can customize the  
-    duration/frequency of sampling. The profiling samples are aggregated 
-    and displayed as a Flame Graph across the executors using our        
-    internal metrics collection framework.                               
+    time. On a per-job basis,   we added support for enabling Perf
+    profiling (via libperfagent for Java symbols) and can customize the
+    duration/frequency of sampling. The profiling samples are aggregated
+    and displayed as a Flame Graph across the executors using our
+    internal metrics collection framework.
 [[}]]
 
 ● Uber JVM Profiler: Tracing at scale [[{architecture.distributed,monitoring.distributed,java_lang.profiling,_PM.TODO]]
@@ -3513,12 +3525,12 @@ See also: fast Inter-thread communication:
     (managed by the OS) or spinlocks (managed by the thread)
 - Uniprocessors can just disable interruptions to implement locks, while multiprocessors
   using shared-memory will require complex hardware and/or software support
--   Monitors wrap mutex-locks with condition variables (container of threads waiting 
+-   Monitors wrap mutex-locks with condition variables (container of threads waiting
     for certain condition) . They are implemented as thread-safe classes
 [[}]]
 [[{]]concurrency.101" >
 ● monitors
-- Object providing Mutual exclusion of threads to shared resources 
+- Object providing Mutual exclusion of threads to shared resources
 - simplest form of synchronization:
   alternatives include:
   - reads and writes of volatile variables
@@ -3531,15 +3543,15 @@ See also: fast Inter-thread communication:
     (volatile is actually simpler than monitors, but not universal)
     Important Points on Volatile Variables:
     - Volatile variables are not cached in registers or in caches :
-      All read and writes are done in main memory, never done thread-locally 
+      All read and writes are done in main memory, never done thread-locally
     - Example Ussage: status flags used in spin loops
-    - Volatile keyword guarantees visibility and ordering 
+    - Volatile keyword guarantees visibility and ordering
   - use of classes in the java.util.concurrent package
 - Monitors also have the ability to wait(block a thread) for a certain condition
   to become true, and signal other threads that their condition has been met
-- Monitors provide a mechanism for threads to temporarily give up exclusive access in 
-  order to wait for some condition to be met, before regaining exclusive access and   
-  resuming their task 
+- Monitors provide a mechanism for threads to temporarily give up exclusive access in
+  order to wait for some condition to be met, before regaining exclusive access and
+  resuming their task
 - each java object can be used as a monitor.
 - Methods/blocks of code requiring mutual exclusion must be explicitly marked with the
   synchronized keyword :
@@ -3553,7 +3565,7 @@ See also: fast Inter-thread communication:
     of deadlock conditions.
 - Instead of explicit condition variables, each monitor(/object) is equipped with
   a single wait queue in addition to its entrance queue.
-- All waiting is done on this singleO wait queue  and allO notify/notifyAll 
+- All waiting is done on this singleO wait queue  and allO notify/notifyAll
   operations apply to this queue.
 
  monitor    enter
@@ -3581,14 +3593,14 @@ TODO Concurrent
 [[}]]
 
 [[{]]concurrency.barrier" >
-● CountDownLatch 
+● CountDownLatch
 • (java.util.concurrent) Since JDK 1.5
 @[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
 • Object allowing 1+ threads to wait until a
   1+ operations are completed in other threads.
 
 • example ussages:
-  - on/off latch or gate: 
+  - on/off latch or gate:
     When initialized to "one", parallel processing threads will
     invoke "await" and standby waiting for a "control" thread to
     open the gate with countDown().
@@ -3634,14 +3646,14 @@ TODO Concurrent
 
          CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
                           new CountDownLatch(N); //      have completed.
-                                                 //   Consider also CyclicBarrier 
+                                                 //   Consider also CyclicBarrier
                                                  //   (reset after count),
 
          for (int i = 0; i < thread_number ; ++i) {
            new Thread(                           // ← Setup workers in this (driver) thread.
                 new Worker(
                       startSignal ,
-                      doneSignal 
+                      doneSignal
            )).start();
          }
          ...
@@ -3818,7 +3830,7 @@ TODO Concurrent
   *3 ForkJoinPool (1.7+)
      REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html]
      • ForkJoinPool scheduler is similar to "ExecutorService" but
-       IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES 
+       IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES
      • Fork : Task (=="thread") that "Splits itself" into smaller subtasks, executing concurrently.
      • Join : End children tasks (=="threads") and merge results (if any).
 
@@ -3836,7 +3848,7 @@ TODO Concurrent
                 intensive use of CPU
               - Task01, 02, 03  wait  for subtasks to finish execution.
 
-     • Creating new ForkJoinPool 
+     • Creating new ForkJoinPool
        ForkJoinPool   forkJoinPool  = new ForkJoinPool(4);  Desired level of paralellism
                                                        └─── (Desired number of threads/CPUs)
      • Submiting tasks to ForkJoinPool scheduler  is very similar
@@ -3849,8 +3861,8 @@ TODO Concurrent
      import java.util.List;                            │import java.util.List;
      import java.util.concurrent.RecursiveAction;      │import java.util.concurrent.RecursiveTask;
                                                        │
-     //   Creating new RecursiveAction                 │//   Creating new RecursiveTask 
-     public class   MyRecursiveAction                  │public class   MyRecursiveTask 
+     //   Creating new RecursiveAction                 │//   Creating new RecursiveTask
+     public class   MyRecursiveAction                  │public class   MyRecursiveTask
      extends   RecursiveAction  {                      │extends   RecursiveTask <Long> {
        private long workLoad = 0;                      │  private long workLoad = 0;
        public MyRecursiveAction(long workLoad) {       │
@@ -3860,7 +3872,7 @@ TODO Concurrent
        @Override                                       │
        protected void compute() {                      │  protected Long compute() {
          if(this.workLoad < 16) {                      │    if(this.workLoad < 16) {
-           // 16 is a  Tunnable Threshold parameter    │      // 16 is a  Tunnable Threshold parameter 
+           // 16 is a  Tunnable Threshold parameter    │      // 16 is a  Tunnable Threshold parameter
            // Do workload in current thread            │      // Process work in current thread
            return                                      │      return workLoad * 3;
          }                                             │    }
@@ -3873,8 +3885,8 @@ TODO Concurrent
          for(RecursiveAction subtask : subtasks)       │    for(MyRecursiveTask subtask : subtasks)
            subtaskO .fork() ;                          │        subtaskO .fork ();
            //       ^^^^^^^                            │        //       ^^^^^^^
-           //     work split into subtasks to be       │        //     work split into subtasks to be 
-           //     scheduled for execution              │        //     scheduled for execution 
+           //     work split into subtasks to be       │        //     work split into subtasks to be
+           //     scheduled for execution              │        //     scheduled for execution
        }                                               │
                                                        │    long result = 0;
      }                                                 │    for(MyRecursiveTask subtask : subtasks) {
@@ -3884,14 +3896,14 @@ TODO Concurrent
                                                        │  }
                                                        │}
                                                        │
-       USSAGE:                                         │ USSAGE: 
+       USSAGE:                                         │ USSAGE:
        MyRecursiveAction myRecursiveAction =           │  MyRecursiveTask myRecursiveTask =
           new MyRecursiveAction(24);                   │     new MyRecursiveTask(128);
                                                        │  long mergedResult =
        forkJoinPool   .invoke(myRecursiveAction);      │  forkJoinPool   .invoke(myRecursiveTask) ;
                                                        │  System.out.println("mergedResult = " + mergedResult);
 
-     •  ForkJoinPool Detractors 
+     •  ForkJoinPool Detractors
       @[http://coopsoft.com/ar/CalamityArticle.html]
 [[}]]
 
@@ -4108,14 +4120,14 @@ REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
        reducing scheduling overhead.
 
      Wisp2 engine is similar in some respects to the aims of Project Loom
-     but (unlike Loom)   it works out of the box on existing code by enabling 
-     it with these Java arguments: 
+     but (unlike Loom)   it works out of the box on existing code by enabling
+     it with these Java arguments:
      $ java -XX:+UnlockExperimentalVMOptions -XX:+UseWisp2
 
     I/O intensive applications where tasks are blocked on events and
   then scheduled can benefit from the coroutine support. On the other
-  side,   CPU intensive applications will probably not benefit from  
-  coroutines. 
+  side,   CPU intensive applications will probably not benefit from
+  coroutines.
 
 • See also reddit thread "Loom vs DragoWell JV:":
 @[https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3]
@@ -4124,22 +4136,22 @@ REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
 @[https://developers.redhat.com/blog/2019/06/19/project-loom-lightweight-java-threads/]
 @[https://openjdk.java.net/jeps/353]
 
-- MISSION: 
+- MISSION:
   - make concurrency simple(r) again!
 
 - Threads, provided by Java from its first day, are a convenient concurrency
   construct
   putting aside the separate question of communication among threads
-  which is being supplanted by less convenient abstractions because their 
-  current implementation as OS kernel threads is insufficient for meeting 
-  modern demands, and wasteful in computing resources that are particularly 
-  valuable in the cloud. 
+  which is being supplanted by less convenient abstractions because their
+  current implementation as OS kernel threads is insufficient for meeting
+  modern demands, and wasteful in computing resources that are particularly
+  valuable in the cloud.
 
 - Project Loom will introduce   FIBERS:
   - lightweight, JVM managed, efficient threads ,
   - A fiber is composed of:
     -  1 scheduler    : Already in place for Java through the excellent scheduler
-                       ForkJoinPool 
+                       ForkJoinPool
     -  1 continuation : To be implemented in Loom.
 
   https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-care/
@@ -4222,7 +4234,7 @@ REF:
 @[https://www.javagists.com/spring-boot-cheatsheet]  ← TODO: Testing annotations,
 @[https://groupe-sii.github.io/cheat-sheets/spring/spring-boot/index.html]
 
-  SPRING FRAMEWORK ANNOTATIONS 
+  SPRING FRAMEWORK ANNOTATIONS
 
     ANNOTATION      DESCRIPTION                                  LEVEL
                   |                                            |C|F|C|M|P
@@ -4268,7 +4280,7 @@ REF:
                    ------------------------------------------------------
 
 <hr/>
-  SPRING FRAMEWORK ANNOTATIONS 
+  SPRING FRAMEWORK ANNOTATIONS
 
     ANNOTATION      DESCRIPTION                                  LEVEL
                   |                                            |C|F|C|M|P
@@ -4303,7 +4315,7 @@ REF:
 [[}]]
 
 ● IoC Summary [[{spring.101]]
-  BASE PACKAGES of Spring IoC: 
+  BASE PACKAGES of Spring IoC:
   - org.springframework.beans
     - @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#beans-definition]
     - Objects managed by Spring IoC
@@ -4315,7 +4327,7 @@ REF:
       - References to other dependencies (or "collaborators")
       - Custom settings (setters).
 
-      Best Patterns 
+      Best Patterns
     - Bean metadata need to be registered as early as possible.
       (fail-fast).
       WARN:  registration of new beans at runtime (live access to
@@ -4340,16 +4352,16 @@ REF:
       └ FileSystemApplicationContext
       └ ...
 
-  MyBeanClass myBean = context 
+  MyBeanClass myBean = context
          .getBean ("idBeanDef", beanClass.class);
 
-  Spring History: 
+  Spring History:
   Spring 1.0+ → Spring 2.5+      → Spring 3.0+
   XML           Annotation-based   Java-based config
 
 
-  Bean Metadata 
-  - package-qualified class name 
+  Bean Metadata
+  - package-qualified class name
   - name  : (unique) "id" or (aliased) "name" in xml.
   - scope :
     - singleton  per Spring IoC container (default)
@@ -4371,7 +4383,7 @@ REF:
          <constructor-arg index="4" value="Hello World"/>← by param index
 
        </bean>
-         Note:-   <idref> is prefered to property with value attribute (fails-faster) 
+         Note:-   <idref> is prefered to property with value attribute (fails-faster)
               - bean  depends-on  attribute can force initialization (and destruction) order
 
   - Autowiring :
@@ -4392,7 +4404,7 @@ REF:
   - lazy-init  : false: force resolution and instantiate at startup.(default,recomended)
                  true : use for "big objects" to save memory.
 
-  - destroy-method 
+  - destroy-method
 - While weird and not recomeneded, external (to the container) objects can
   be registered like:
   BeanFactory bFactImpl = context.getBeanFactory()
@@ -4401,9 +4413,9 @@ REF:
   bFactImpl.registerSingleton(..)
   bFactImpl.registerBeanDefinition(..)
 
-  Method injection 
+  Method injection
   - Suppose singleton A needs to use  non-singleton  bean B
-    on each method invocation on   
+    on each method invocation on
 
   - Alternative A: (  Discouraged, tied to Spring internals )
     beans A implements <<ApplicationContextAware>>.
@@ -4491,7 +4503,7 @@ REF:
     }
 }}
 ───────────────────────────────────────────────────────────────
-  JPA Config 
+  JPA Config
 
 TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specifications.html
       https://www.objectdb.com/api/java/jpa/MapsId
@@ -4551,7 +4563,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
                                             //   Used to isolated Domain Layer (Business logic) from data persistence
   @Repository                               // ← internals.
   public interface Entity1Repository
-  extends JpaRepository<Entity1, Long>{     //   ← JpaRespository extends Repository with SQL like DB  *  
+  extends JpaRepository<Entity1, Long>{     //   ← JpaRespository extends Repository with SQL like DB  *
                                             //     For standard CRUD operation CrudRepository could have been used.
                                             //     (JpaRespotory offers a more specialized one with extra?features) ← [TODO]
                      // └────────────┴─·········  Entity1 specifies the type-of-data, Long specifies the type-of-"@Id"
@@ -4580,9 +4592,9 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     void deleteById(Long id);               // ← standard nomenclature. Autogenerated  *  .
                                                  standard CRUD. transactional by default.
 
-                                            //   Spring-framework declarative transaction management: 
+                                            //   Spring-framework declarative transaction management:
                                             //   for the non-CRUD-and-mutating method we must indicate whether
-    @Transactional                          // ← it should be part of a transaction (single-unit-of-work).  *  
+    @Transactional                          // ← it should be part of a transaction (single-unit-of-work).  *
     void deleteByColumn2(LocalDateTime id); // ← standard nomenclature. Autogenerated  *  .
 
 
@@ -4689,10 +4701,10 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
        maximum-pool-size: 20     @[https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing]
        pool-name: app01-pool
     jpa:
-       hibernate.ddl-auto:  create-drop  ← Just for dev.purposes . For production environments 
+       hibernate.ddl-auto:  create-drop  ← Just for dev.purposes . For production environments
                                            database schema is kept versioned ("a la git") with
                                            some tool like Flyway or Liquidbase. The spring boot
-                                           is changed to:  hibernate.ddl-auto:  validate 
+                                           is changed to:  hibernate.ddl-auto:  validate
                                            The start-up Spring-data will get sure that internal
                                            JPA models match the externally defined SQL schema.
 
@@ -4706,7 +4718,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   @Entity
   @Table(name = "entity1")             // ← By default JPA mast to lowercase
   public class Entity1                 //   classname. use @Table to override def.map.
-  @EntityListeners                     // ← Mark class to listen for:  *  
+  @EntityListeners                     // ← Mark class to listen for:  *
     (AuditingEntityListener.class)     //   ← Specify a callback listener to process event
   implements Serializable {            //     data (timestamps, "who did it",
     private static final                            num. of modifications, ...).
@@ -4725,10 +4737,10 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     public Long getId() { return id; }
     ...
 
-    @Column(name = "column2") 
+    @Column(name = "column2")
     private LocalDateTime column2;
 
-    @ManyToOne(fetch = FetchType.LAZY)   //  ---- entity2 ----  
+    @ManyToOne(fetch = FetchType.LAZY)   //  ---- entity2 ----
     @JoinColumn(
       name = "entity2_id",
       referencedColumnName = "id",
@@ -4736,7 +4748,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
       updatable = false)
     private Entity2 entity2;
 
-    @JoinColumn(                         //  ---- entity3 ----  
+    @JoinColumn(                         //  ---- entity3 ----
       name = "entity3_id",
       referencedColumnName = "id"
     )
@@ -4761,12 +4773,12 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
       _entity3.setEntity1(null);
     }
 
-    @OneToMany(                          //  ---- entity4 ----  
+    @OneToMany(                          //  ---- entity4 ----
       fetch = FetchType.LAZY,
       cascade = CascadeType.ALL)         // ← ALL | PERSIST | ...?
     private List<Entity4> entity4List;
 
-    @Formula(value =                     //  ---- entity5 ----  
+    @Formula(value =                     //  ---- entity5 ----
           "(SELECT COUNT(1) "
         + "FROM entity5 en5 "
         +   "JOIN entity1 en1 ON en1.id = en5.entity1_id "
@@ -4798,16 +4810,16 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
           ⅋⅋ ... ;
     }
 
-    @CreatedDate private Long createdDate;// JPA Audit:  *  
-    @Version      private int version;    // JPA Audit:  *  
+    @CreatedDate private Long createdDate;// JPA Audit:  *
+    @Version      private int version;    // JPA Audit:  *
   }
 
    *  : ToB enable JPA Auditing  it must also be indicated in Spring config like:
 
-    package com.myComp.jpa; 
+    package com.myComp.jpa;
     import org.springframework.context.annotation .Configuration ;
     import org.springframework.data.jpa.repository.config .EnableJpaAuditing ;
-    @Configuration 
+    @Configuration
     @EnableJpaAuditing          //  ← Dump create/update/delete JPA events  [debug][jpa]
     public class JpaConfig {}   //    for all persistent entities
 
@@ -4988,7 +5000,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   }
 
   ───────────────────────────────────────────────────────────────────────
-  Authentication, Authorization and Access (AAA) 
+  Authentication, Authorization and Access (AAA)
 - file: com/myComp/security/AAAService.java                               [aaa][oauth]
   public interface AAAService {
     public String getUserByToken(String token);
@@ -5087,7 +5099,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     }
 ───────────────────────────────────────────────────────────────
 - file: com/myComp/App.java                                      [configuration][devops]
-  MAIN (entry point to Spring Boot app) 
+  MAIN (entry point to Spring Boot app)
 
   package com.myComp;
 
@@ -5141,7 +5153,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
     // TODO:(qa) Review.
-    @ControllerAdvice                                              // ← (Spring 3.2+):   handle exceptions across 
+    @ControllerAdvice                                              // ← (Spring 3.2+):   handle exceptions across
     public class CustomControllerAdvice                            //   whole application  (vs individual controller).
     extends ResponseEntityExceptionHandler {                       //   "Sort of" exception-interceptor thrown by
                                                                    //   methods annotated with @RequestMapping.
@@ -5381,9 +5393,9 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   • Gateway Server       : reverse proxy encapsulating all decoupled
                            micro-services in a single port.
 
-  ############################### 
-  # Configuration Server HOW-TO:# 
-  ############################### 
+  ###############################
+  # Configuration Server HOW-TO:#
+  ###############################
    maven/gradle dependencies:
    groupId                    artifactId
    org.springframework.cloud  spring-cloud-config-server
@@ -5476,7 +5488,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     }
   }
 
-  DISCOVERY SERV. : CONFIG. FILES 
+  DISCOVERY SERV. : CONFIG. FILES
   └ bootstrap.properties                               Must match Discovery serv. in
     spring.cloud.config.name=discovery               ← configuration repository.
     spring.cloud.config.uri=http://localhost:8081    ← URL of the confi. server
@@ -5509,7 +5521,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   public class GatewayApplication {}
 
 
-    GATEWAY SERVER: SECURE HOW-TO 
+    GATEWAY SERVER: SECURE HOW-TO
     @EnableWebSecurity
     @Configuration
     public class SecurityConfig
@@ -5540,8 +5552,8 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
         }
     }
 
-    GATEWAY SERVER: SECURE CONFIG. FILES 
-    └ resources/bootstrap.properties: 
+    GATEWAY SERVER: SECURE CONFIG. FILES
+    └ resources/bootstrap.properties:
       spring.cloud.config.name=gateway
       spring.cloud.config.discovery.service-id=config
       spring.cloud.config.discovery.enabled=true
@@ -5602,8 +5614,8 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     public class SessionConfig
     extends AbstractHttpSessionApplicationInitializer {}
 
-  └ For the GATEWAY SERVER add a simple filter to forward the session  
-    so that authentication will propagate to another service after login: 
+  └ For the GATEWAY SERVER add a simple filter to forward the session
+    so that authentication will propagate to another service after login:
 
     @Component
     public class SessionSavingZuulPreFilter
@@ -5675,7 +5687,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
 ● "Cloudify"
 @[http://files.zeroturnaround.com/pdf/zt_spring_annotations_cheat_sheet.pdf]
 
-  ┌────────→ @SpringBootApplication      HTTP Request                         CLOUD 
+  ┌────────→ @SpringBootApplication      HTTP Request                         CLOUD
 provides
 beans to      ┌──like─  ─┐
   │           │  these   │         ┌───────────────────┐ ask config       ┌───────────────┐
@@ -5707,7 +5719,7 @@ beans to      ┌──like─  ─┐
                          Note: Hystrix looks to be discontinued. Replaced by
                          Resilince4j
 
- @HystrixCommand(fallbackMethod = “fallbackMethodName”) 
+ @HystrixCommand(fallbackMethod = “fallbackMethodName”)
   marks methods to fall back to another method if they cannot succeed normally.
 [[}]]
 
@@ -5842,7 +5854,7 @@ beans to      ┌──like─  ─┐
      by writing to the response directly or using
      a view to render.
 
-  Processing Chain 
+  Processing Chain
 - The processing chain can be put together with WebHttpHandlerBuilder which builds an
 HttpHandler that in turn can be run with a server adapter.
 To use the builder either add components individually or point to an ApplicationContext
@@ -5867,7 +5879,7 @@ to have the following detected:
  │                      │                     │     │ AcceptHeaderLocaleContextResolver by default
  └──────────────────────┴─────────────────────┴─────┴───────────────────────────────────────
 
-  Required dependencies 
+  Required dependencies
 Server name     │  Group id              │ Artifact name      │  Code snippet
 ────────────────┼────────────────────────┼────────────────────┼────────────────
 Reactor Netty   │ io.projectreactor.ipc  │ reactor-netty      │ HttpHandler handler = ...
@@ -6021,7 +6033,7 @@ Jetty           │ org.eclipse.jetty      │ etty-server        │ HttpHandle
 ReactiveX provides a set of very-well thought-out cross-language abstraction to
 implement the reactive patterns.
 
- Observable/Operators/Observers 
+ Observable/Operators/Observers
 @[http://reactivex.io/documentation/contract.html]
 @[http://reactivex.io/documentation/observable.html]
                                          ⇑
@@ -6034,7 +6046,7 @@ rLoop-of-Observable-emitted-events:                - unsubscription will cascade
  ·                                                 applying to associated Observable.
  ·  observer   →   observer*1 : handle event    *1 also called "subscriber", "watcher"
  ·                                                 or "reactor" ("reactor pattern")
- end-loop 
+ end-loop
  Observable    → <<handler>>  : onCompleted()
                   (instance)
  observer      →  observer    : handle event
@@ -6042,7 +6054,7 @@ rLoop-of-Observable-emitted-events:                - unsubscription will cascade
    WARN:  There is no canonical naming standard in RXJava
 
 
-  Observable<T>  → operator1 → ... → operatorN  →  Observer 
+  Observable<T>  → operator1 → ... → operatorN  →  Observer
   pushes objects       ^        ^      ^           Subscribes to
  (events) from         ·        ·      ·           the observable
  any source            ·        ·      ·           events
@@ -6053,20 +6065,20 @@ rLoop-of-Observable-emitted-events:                - unsubscription will cascade
                them is the key to master RxJava    ^
 ┌──────────────────────────────────────────────────┘
 ├─onSubscribe(Disposible): Free any resources created by the rxJava pipeline.
-├─onNext()     : passes each item, one at a time,   to the  Observer 
-├─onCompleted(): communicates a completion event    to the  Observer 
-└─onError()    : communicates an error up the chain to the  Observer 
+├─onNext()     : passes each item, one at a time,   to the  Observer
+├─onCompleted(): communicates a completion event    to the  Observer
+└─onError()    : communicates an error up the chain to the  Observer
                  where the Observer typically defines how to handle it.
                  Unless retry() operator is used to intercept the error,
                  the Observable chain typically terminates, and no
                  more emissions will occur.
-                 See also   operators 'Catch' and 'Retry' 
+                 See also   operators 'Catch' and 'Retry'
 
 By default, Observables execute work on the immediate thread,
 which is the thread that declared the Observer and subscribed it.
 Not all Observables will fire on the immediate thread, (Observable.interval(),...)
 
- Creating a source Observable: 
+ Creating a source Observable:
   Observable<String> source01 = Observable .just ("value1",...,"valueN");
   Observable<String> source02 = Observable .fromCallable (() -> 1/0);
                                             ^^^^^^^^^^^^        ^^^
@@ -6104,7 +6116,7 @@ Not all Observables will fire on the immediate thread, (Observable.interval(),..
                                       allows a separate state for each observer
   Observable<String>  source09 = Observable .fromCallable ( () -> Observable.range(start,count));
 
- creating Single/Maybe/Completable "Utility" Observables: 
+ creating Single/Maybe/Completable "Utility" Observables:
  ┌─────────────────────────────┬────────────────────────────────┬─────────────────────────────────┐
  │ Single.just("Hello")        │ Maybe.just("Hello")            │ Completable.fromRunnable(       │
  │ .subscribe(...);            │   .subscribe(...);             │   () -> runProcess() )          │
@@ -6119,15 +6131,15 @@ Not all Observables will fire on the immediate thread, (Observable.interval(),..
  │                             │  .onComplete();                │                                 │
  └─────────────────────────────┴────────────────────────────────┴─────────────────────────────────┘
 
- Create Test-oriented observables 
+ Create Test-oriented observables
    Observable .never ();
    Observable .error ();
 
- Derive Observables from source: 
+ Derive Observables from source:
 Observable<Integer> lengths  =  source .map    (String::length);
 Observable<Integer> filtered = lengths .filter (i -> i  = 5);
 
- creating an Observer: 
+ creating an Observer:
 (Lambdas in the source Observable .subscribe can be used in place)
 Observer<Integer> myObserver = new Observer<Integer>() {
   @Override public void onSubscribe(Disposable d) { //... }
@@ -6136,7 +6148,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
   @Override public void onComplete()              { log.debu("Done!"); }
 };
 
-  Cold/Hot Observables 
+  Cold/Hot Observables
   └ Cold: - Repeat the same content to different observers.
           - Represent sort-of inmmutable data.
           - A "cold" Observable waits until an observer subscribes to it
@@ -6154,7 +6166,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
               until its Connect method is called, whether or not any observers
               have subscribed to it.
 
-  About Null 
+  About Null
  └ In RxJava 2.0, Observables ☞  NO LONGER SUPPORT EMITTING null VALUES ☜ !!!
 
   Decision Tree  (Choosing the right Operator for a task)
@@ -6162,7 +6174,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
   └ Alphabetical List of Observable Operators
   @[http://reactivex.io/documentation/operators.html#alphabetical
 
-  Core API 
+  Core API
   └ rx.Observable "==" [Java 8 Stream + CompletableFuture + "Back-presure" measures ]
     @[http://reactivex.io/documentation/observable.html]    └──────────────┬──────┘
                                                                            │
@@ -6179,7 +6191,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     - operators allow to transform, combine, manipulate, and work
       with the sequences of items emitted by Observables.
     - declarative programming
-      - AVOID THE THE DRAWBACKS OF CALLBACK-NESTING("callback hell") 
+      - AVOID THE THE DRAWBACKS OF CALLBACK-NESTING("callback hell")
       - Most operators operate on an Observable and return an Observable.
         Each operator in the chain modifies the Observable that results
         from the operation of the previous operator. Order matters.
@@ -6193,8 +6205,8 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     - Needed when using multithreading into the
       cascade of Observable operators.
     - By default, the chain of Observables/operators
-      will notify its observers  on the same thread 
-      on which its Subscribe method is called 
+      will notify its observers  on the same thread
+      on which its Subscribe method is called
     Operator|SubscribeOn         |ObserveOn
     --------+--------------------+---------
             |sets an Scheduler on|sets an Scheduler used
@@ -6221,7 +6233,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
  @[https://afterecho.uk/blog/turning-a-callback-into-an-rx-observable.html]
 <hr/>
 ● Ops.classification 1
- Operators creating new Observables 
+ Operators creating new Observables
 @[http://reactivex.io/documentation/operators.html#creating]
     Create     create Observable from scratch programmatically
     Defer      do not create the Observable until the observer subscribes,
@@ -6238,7 +6250,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     Start      create an Observable that emits the return value of a function
     Timer      create an Observable that emits a single item after a given delay
 
- Operators Transforming Items: 
+ Operators Transforming Items:
 @[http://reactivex.io/documentation/operators.html#transforming]
     Buffer     periodically gather items from input into bundles and emit
                these bundles rather than emitting the items one at a time
@@ -6247,7 +6259,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
                then flatten the emissions from those into a single Observable
     GroupBy    divide an Observable into a set of Observables that each emit a
                different group of items from the original Observable,
-               organized by key 
+               organized by key
     Map        transform each input-item by applying a function
     Scan       apply a function to each item emitted by an Observable,
                sequentially, and emit each successive value
@@ -6255,7 +6267,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
                Observable windows and emit these windows rather than emitting
                the items one at a time
 
- Operators selectively filtering emitted events from a source Observable 
+ Operators selectively filtering emitted events from a source Observable
 @[phttp://reactivex.io/documentation/operators.html#filtering]
     Debounce   only emit an item from an Observable if a particular timespan has passed
                without it emitting another item
@@ -6272,11 +6284,11 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     TakeLast   emit only the last n items emitted by an Observable
 
 
- Operators Combining multiple source Observables into a new single Observable 
+ Operators Combining multiple source Observables into a new single Observable
 @[http://reactivex.io/documentation/operators.html#combining]
     And        combine sets of items emitted by two or more Observables by means
     Then       of Pattern and Plan intermediaries
-    When      
+    When
 
     CombineLatest   when an item is emitted by either of two Observables, combine the
                latest item emitted by each Observable via a specified function and
@@ -6294,13 +6306,13 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     Zip        combine multiple Observables emissions together via a function
                function → emit single items for each input tuple
 
- Operators handling Errors and helping to recover from error-notifications 
+ Operators handling Errors and helping to recover from error-notifications
 @[http://reactivex.io/documentation/operators.html#error]
     Catch   recover from an onError notification by continuing the sequence without error
     Retry   if a source Observable sends an onError notification, resubscribe to it
             in the hopes that it will complete without error
 
- Utility Operators "toolbox" 
+ Utility Operators "toolbox"
 @[http://reactivex.io/documentation/operators.html#utility]
     Delay       shift the emissions from an Observable forward in time by a particular amount
     Do          register an action to take upon a variety of Observable lifecycle events
@@ -6319,7 +6331,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     Timestamp   attach a timestamp to each item emitted by an Observable
     Using       create a disposable resource that has the same lifespan as the Observable
 
- Conditional and Boolean Operators evaluating one or more 
+ Conditional and Boolean Operators evaluating one or more
   Observables or items emitted by Observables
 @[http://reactivex.io/documentation/operators.html#conditional]
     All         determine whether all items emitted by an Observable meet some criteria
@@ -6335,16 +6347,16 @@ C   DefaultIfEmpty  emit items from the source Observable, or a default item if 
     SkipUntil   discard items emitted by an Observable until a second Observable emits an item To
 C   SkipWhile   discard items emitted by an Observable until a specified condition becomes false
 
- Connectable Observable Operators 
+ Connectable Observable Operators
 [http://reactivex.io/documentation/operators.html#connectable]
 @   TakeUntil   discard items emitted by an Observable after a second Observable emits an item or terminates
     TakeWhile   discard items emitted by an Observable after a specified condition becomes false
-    Connect    
-    Publish    
-    RefCount   
-    Replay     
+    Connect
+    Publish
+    RefCount
+    Replay
 
- Mathematical and Aggregate Operators 
+ Mathematical and Aggregate Operators
 - Operators that operate on the entire sequence of items emitted by an Observable
     Average     calculates the average of numbers emitted by an Observable and emits this average
     Concat      emit the emissions from two or more Observables without interleaving them
@@ -6354,13 +6366,13 @@ C   SkipWhile   discard items emitted by an Observable until a specified conditi
     Reduce      apply a function to each item emitted by an Observable, sequentially, and emit the final value
     Sum         calculate the sum of numbers emitted by an Observable and emit this sum
 
- Backpressure Operators 
+ Backpressure Operators
 a variety of operators that enforce particular flow-control policies
     @[http://reactivex.io/documentation/operators/backpressure.html]
 - backpressure operators  strategies  for coping with Observables that produce items more
   rapidly than their observers consume them
 
- Connectable Observable Operators 
+ Connectable Observable Operators
 Specialty Observables that have more precisely-controlled subscription dynamics
     Connect   instruct a connectable Observable to begin emitting items to its subscribers
     Publish   convert an ordinary Observable into a connectable Observable
@@ -6368,7 +6380,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
     Replay    ensure that all observers see the same sequence of emitted items, even if they
               subscribe after the Observable has begun emitting items
 
- Operators to Convert Observables 
+ Operators to Convert Observables
     To        convert an Observable into another object or data structure
 <hr/>
 ● Ops.classification 2
@@ -6502,7 +6514,7 @@ REF:
 
 ● verticle
 REF: @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/README.adoc]
-- reusable unit  of   deployment 
+- reusable unit  of   deployment
                       ^^^^^^^^^^
                   - Can be passed some   configuration  like
                     credentials, network address,...
@@ -6520,12 +6532,12 @@ REF: @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/READM
   ════════════════ @[https://vertx.io/docs/apidocs/io/vertx/core/AbstractVerticle.html]
 -  .start()  ← life-cycle sync/async method to be overrided
 -  .stop ()  ← life-cycle sync/async method to be overrided
--  .vertx    ← - Points to the   Vert.x environment where the verticle is deployed 
+-  .vertx    ← - Points to the   Vert.x environment where the verticle is deployed
              · - provides methods to create HTTP/TCP/UDP/... servers/clients. Ex:
              ·   · io.vertx.core.http.HttpServer server  = thisO .vertx .createHttpServer();
              · - provides access to the event bus.
              ·   Ex:
-             ·     SENDING VERTICLE                         │ RECEIVING VERTICLE 
+             ·     SENDING VERTICLE                         │ RECEIVING VERTICLE
              ·   ┌──────────────────────────────────────────┼────────────────────────────────────────
              ·   │ ...                                      │ ...
              ·   │  vertx .eventBus()                       │ public void onMessage(
@@ -6550,7 +6562,7 @@ REF: @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/READM
              ·   │                                          │   }
              ·   │                                          │ }
 
--  .config() ← - accessors to some deployment configuration to allow passing   external configuration 
+-  .config() ← - accessors to some deployment configuration to allow passing   external configuration
                  Ex:
                  │ public static final String CONFIG_WIKIDB_QUEUE = "wikidb.queue";
                  │ ...
@@ -6571,7 +6583,7 @@ public class MainVerticle extends AbstractVerticle {
 }
 <hr/>
 ● Event Bus
-- main tool for communication between verticles using  messages 
+- main tool for communication between verticles using  messages
   and one of:
   - point-to-point messaging
   - request-response messaging
@@ -6917,7 +6929,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
 - Embedded broker instance with reasonable defaults
 
 - Ex:
-  Async async = new Async(            ←  CREATE one or more Queues 
+  Async async = new Async(            ←  CREATE one or more Queues
             "/opt/project1",          ← place to store persistent messages
             false,
             new QueueConfig(
@@ -6932,7 +6944,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
             );
         async .start();
 
-   public class HelloCommand             ←  Create a command 
+   public class HelloCommand             ←  Create a command
        extends Command {
        private String message;
 
@@ -6940,7 +6952,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
          this.message = message;
        }
 
-       public HelloCommand() {}          ←   necessary (forbid finals) 
+       public HelloCommand() {}          ←   necessary (forbid finals)
 
        @Override
        public void execute() {
@@ -6949,7 +6961,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
    }
 
 
-   for(int i = 0; i < 100; i++){         ←  sending commands async 
+   for(int i = 0; i < 100; i++){         ←  sending commands async
       async.send(
         "MESSAGES_QUEUE",
         new HelloCommand("Hello Number "+ i));
@@ -6959,7 +6971,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
    → Hello Number 1
    → ...
 
-   List<Command> topCommands             ←  Peek (vs Consume) 3 "top" 
+   List<Command> topCommands             ←  Peek (vs Consume) 3 "top"
       =  async .getTopCommands(            commands from "ERROR_QUEUE"
            3, "ERROR_QUEUE");
 
@@ -6968,16 +6980,16 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
   from an individual queue one at the time without a listener.
   Ex:   you do not want to process errors automatically . To do so:
 
-  ErrorCommand errorCommand =           ←  Consume message 
+  ErrorCommand errorCommand =           ←  Consume message
        (ErrorCommand)receiveCommand("ERROR_QUEUE");
   ... // Process manually
 
-  Text vs Binary messages 
+  Text vs Binary messages
   - To be compatible with JMS the  communication protocol is limited t
     - javax.jms.TextMessage   ← Default mode.
     - javax.jms.BytesMessage  ← async.setBinaryMode(true);
 
-    In both cases, the   serialization of a command is first done to XML 
+    In both cases, the   serialization of a command is first done to XML
     with the use of XStream.
   - If a given command has transient field that must NOT  be serialized,
     use the field annotation @XStreamOmitField to ignore it.
@@ -6985,7 +6997,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
   -  WARN:  Do not switch from mode to mode while having persistent
             messages stored in your queues.
 
-  Commands with DB access 
+  Commands with DB access
   - If queue processing requires a database connetion, DBCommandListener
     can be used:
     Async async = new Async(filePath, false, new
@@ -6995,7 +7007,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
    );                                        Use your tomcat/Jboss/... container
                                              documentation to set up it properly
 
-  (Artemis) Config API 
+  (Artemis) Config API
   - For complex app configuration, the underlying Artemis API
     can be used:
     org.apache.activemq.artemis.core.config.Condifuration
@@ -7015,10 +7027,10 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
 - H2 MVStore DB used for storage.
 - Queue items are   POJOs serialized into Json using jackson .
 -  faster than JavaLite due to performance shortcut :
-  -  File Queue will transfer queued items directly to consumers 
-     without hitting the database provided there are consumers   
-     available, otherwise, message will be persisted 
--  Doesn't support persistence to JNDI DDBB 
+  -  File Queue will transfer queued items directly to consumers
+     without hitting the database provided there are consumers
+     available, otherwise, message will be persisted
+-  Doesn't support persistence to JNDI DDBB
 - fixed and exponential back-off retry is present.
 
   PRE-SETUP :
@@ -7033,7 +7045,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
   - Call stopQueue() to stop the queue processing
   - Call FileQueue.destroy() to shutdown all static threads (optional)
 
-  Example Implementation: 
+  Example Implementation:
   └ Queue Ussage example:
     FileQueue queue = FileQueue.fileQueue();
     FileQueue.Config config = FileQueue.
@@ -7131,7 +7143,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 @[https://www.youtube.com/watch?v=6E1CSydgzQc]
 @[https://www.baeldung.com/checker-framework]
 
-  COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...) 
+  COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...)
                  ┌─────────────┬────────┬────────┐                 ┌──────────────────┬─────────────────────┐
                  │ Null Pointer│        │        │                 │ Verification     │ Bug─Finding         │
                  │    errors   │ False  │Annotat.│                 │ ( Checker FW ,)  │ (Infer,StopBugs,    │
@@ -7152,7 +7164,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │+@NotNull 2017│3    │ 6     │  1     │ 925+8  │  │Downside      │ user burden      │ missed bugs         │
   └──────────────┴─────┴───────┴────────┴────────┘  └──────────────┴──────────────────┴─────────────────────┘
 
-  PROBLEM:                                           │  SOLUTION: 
+  PROBLEM:                                           │  SOLUTION:
    STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH      │  Java 8+ allows to compile programs
    - Next example compile, but fail at runtime:      │  using   "PLUGGABLE TYPE SYSTEMs" ,
      Ex.1:                                           │  allowing to apply stricter checks
@@ -7167,7 +7179,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
        key1.setSeconds(0); ←  Mutate key             │      │            v         v          │
        myMap.get(key1);    ←  returns null           │      │         Standard    Optional    │ Guaranteed
                                                      │      │         Compiler    Type     ───┘ Behaviour
-                                                     │      │         Errors      Checker  
+                                                     │      │         Errors      Checker
                                                      │      │                      │
                                                      │      │                      v
                                                      │      └────────────────── Warnings :
@@ -7177,14 +7189,14 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
                                                      │         pipeline with further tests (functional
                                                      │         testing, configuration testing, ...)
 
-  ################################# 
-• # Checker Framework Instalation # 
-  ################################# 
+  #################################
+• # Checker Framework Instalation #
+  #################################
 <!-- { -->
 (See new releases/versions at
   @[https://search.maven.org/search?q=g:org.checkerframework])
 
-  STEP 01:                            │  STEP 02: 
+  STEP 01:                            │  STEP 02:
 ──────────────────────────────────────┼────────────────────────────────────────────────────
   Add next pom.xml dependencies like: │  tweak  maven-compiler-plugin  to use
   <dependency>                        │  Checker Framework as a pluggable Type System:
@@ -7211,7 +7223,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
       </groupId>                      │         <annotationProcessor>
       <artifactId>                    │      org.checkerframework.checker.formatter.FormatterChecker
         jdk8                          │         </annotationProcessor>
-      </artifactId>                   │      </annotationProcessors> 
+      </artifactId>                   │      </annotationProcessors>
       <version>2.11.0</version>       │      <compilerArgs>
   </dependency>                       │        <arg>-AprintErrorStack</arg>
                                       │        <arg>-Awarns</arg>
@@ -7223,13 +7235,13 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 <!-- } -->
 
 
-  ########### 
-• # Ussage  # 
-  ########### 
+  ###########
+• # Ussage  #
+  ###########
 <!-- { -->
--   Avoiding Nulls 
+-   Avoiding Nulls
 
-  CHECKS  ON TYPES                               │ CHECKS ON FUNCTION DECLARATION 
+  CHECKS  ON TYPES                               │ CHECKS ON FUNCTION DECLARATION
                                                  │                   ┌────┬────┬───────────────────────────┐
                                                  │                   │FUNC│FUNC│DESCRIPTION                │
   private static int func1                       │                   │PRE─│POST│                           │
@@ -7248,7 +7260,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
         found    : null                          │
         required : @Initialized @NonNull ...     │
 
--   Convert String constants into Safe Enum with Fenum 
+-   Convert String constants into Safe Enum with Fenum
                                                 (Fake enum)
   static final @Fenum("country") String ITALY = "IT";
   static final @Fenum("country") String US = "US";
@@ -7267,7 +7279,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
                                        found   : @Fenum("country") String
                                        required: @Fenum("planet") String
 
--   Regular Expressions 
+-   Regular Expressions
   @Regex(1) private static String FIND_NUMBERS = "\\d*";
   ^^^^^^^^^                                      ^^^^^^
   Force String variable                       [WARNING] ...
@@ -7277,9 +7289,9 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 
 
--   Validating tainted (non-trusted) input 
+-   Validating tainted (non-trusted) input
 
-   @Untainted 
+   @Untainted
    String validate (String sqlInput) {
       // Do any suitable checks, throw on error
       @SuppressWarnings("tainting")      ← "swear" that developer got sure
@@ -7296,12 +7308,12 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
       obj.execSQL(validate(arg[0]));   ← "OK". validate un-tain the input
   }
 
--   Mark as Immutable 
+-   Mark as Immutable
   @Immutable Date date = new Date();
-  date.setSeconds(0);   ←   compile-time error 
+  date.setSeconds(0);   ←   compile-time error
 <!-- } -->
 
-- Avoiding (certain) concurrency errors 
+- Avoiding (certain) concurrency errors
 <!-- { -->
   Lock Checker enforces a locking discipline:
   "which locks must be held when a given operation occurs"
@@ -7325,7 +7337,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
                                               ││                │    │    │.lock()                    │
                                               ││                │    │    │if method return true|false│
                                               │└────────────────┴────┴────┴───────────────────────────┘
-   SIDE EFFECT SPECIFICATIONS 
+   SIDE EFFECT SPECIFICATIONS
   ┌────────────────────┬───────────────────────────────────────────────┐
   │ @LockingFree       │method does NOT acquire│release locks:         │
   │                    │· it is not synchronized,                      │
@@ -7346,7 +7358,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   └────────────────────┴───────────────────────────────────────────────┘
 <!-- } -->
 
--  Format String Checker 
+-  Format String Checker
   - prevents use of incorrect format strings in System.out.printf,....
 
     void printFloatAndInt
@@ -7354,7 +7366,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
     {
       System.out.printf(  format , 3.1415, 42);
     }
-- I18n Format Checker examples 
+- I18n Format Checker examples
   MessageFormat.format("{0} {1}", 3.1415);
                                         ^
                               second argument missing
@@ -7370,11 +7382,11 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
                                     ^^^^^
                               subformat is invalid.
 
-- Property File Checker!!!!    TODO 
-  - It ensures that used keys are found in the corresponding  
-    property file or resource bundle. 
+- Property File Checker!!!!    TODO
+  - It ensures that used keys are found in the corresponding
+    property file or resource bundle.
 
-- GUI Effect Checker 
+- GUI Effect Checker
   - It is difficult for a programmer to remember
     which methods may be called on which thread(s).
     (Main GUI thread or others)
@@ -7407,7 +7419,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 - @Unsigned/@Signed ← guarantees values are not mixed
 
-- type alias or typedef 
+- type alias or typedef
   share same representation as another type
   but is conceptually distinct from it.
   Ex 1: get sure that Strings representing addresses
@@ -7608,23 +7620,23 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   serialization by performing type, data flow, and lock graph analysis.
 
 • Ussage @[http://www.jutils.com/uguide.html]
-$ $ lint4j \                           
+$ $ lint4j \
 $    -sourcepath src/main \             ← analyze source
-$    -classpath lib/bcel.jar:... \     
+$    -classpath lib/bcel.jar:... \
 $    -exclude "packagename"   \         ← package or package-prefix
-$    "com.jutils.lint4j.*"             
-$                                      
+$    "com.jutils.lint4j.*"
+$
 $ $ lint4j -sourcepath .../log4j.jar    ← analyze binary
-$     "org.apache.*"                   
-$                                      
-$ $ lint4j  \                          
+$     "org.apache.*"
+$
+$ $ lint4j  \
 $    -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
-$    org.apache.log4j \                
-$    org.apache.log4j.spi              
-$                                      
-$ $ lint4j \                           
-$   -sourcepath com/.../ClassN.java \  
-$               com/.../CalssJ.java    
+$    org.apache.log4j \
+$    org.apache.log4j.spi
+$
+$ $ lint4j \
+$   -sourcepath com/.../ClassN.java \
+$               com/.../CalssJ.java
 
 [[}]]
 
@@ -7643,10 +7655,10 @@ $               com/.../CalssJ.java
   │
   │• LAUNCH SERVER INSTANCE
   │  ======================
-  │$ $ docker run -d --name sonarqube               \  
-  │$   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \  
-  │$   -v $(pwd)/sonarqube_data:/opt/sonarqube/data \  
-  │$   -p 9000:9000 sonarqube:latest              
+  │$ $ docker run -d --name sonarqube               \
+  │$   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
+  │$   -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
+  │$   -p 9000:9000 sonarqube:latest
   │
   │• Create a new project through the web console
   │  and annotate the 40-random-chars TOKEN.
@@ -7670,18 +7682,18 @@ $               com/.../CalssJ.java
   │
   │• 2) launch client scanner like
   │  2.alt1) using mvn plugin:
-  │    $ $ mvn clean verify sonar:sonar \        
-  │    $     -Dsonar.projectKey=test2 \          
-  │    $     -Dsonar.host.url=http://...:9000 \  
-  │    $     -Dsonar.login=$PROJECT_TOKEN        
+  │    $ $ mvn clean verify sonar:sonar \
+  │    $     -Dsonar.projectKey=test2 \
+  │    $     -Dsonar.host.url=http://...:9000 \
+  │    $     -Dsonar.login=$PROJECT_TOKEN
   │
   │  2.alt2) using docker
-  │    $  $ docker run \                         
-  │    $    --rm \                               
-  │    $    -e SONAR_HOST_URL="http:...:9000" \  
-  │    $    -e SONAR_LOGIN="$PROJECT_TOKEN" \    
-  │    $    -v "${YOUR_REPO}:/usr/src" \         
-  │    $    sonarsource/sonar-scanner-cli        
+  │    $  $ docker run \
+  │    $    --rm \
+  │    $    -e SONAR_HOST_URL="http:...:9000" \
+  │    $    -e SONAR_LOGIN="$PROJECT_TOKEN" \
+  │    $    -v "${YOUR_REPO}:/usr/src" \
+  │    $    sonarsource/sonar-scanner-cli
   └─────────────────────────────────────────────────
 
 • See original source for more info about
@@ -7933,15 +7945,15 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   such as precondition(x, y, ...) holds
   property(x, y, ...) is true
 
-  It checks that a function/program/whatever is under test 
+  It checks that a function/program/whatever is under test
   abides by a property.  Most of the time, properties do not
-  have to go into too much details about the output, they 
+  have to go into too much details about the output, they
   just have to check for useful characteristics that must be
   seen in the output.
 
-• Property based testing has become quite famous in the functional 
-  world. Mainly introduced by QuickCheck framework in Haskell, it 
-  suggests another way to test software. IT TARGETS ALL THE SCOPE 
+• Property based testing has become quite famous in the functional
+  world. Mainly introduced by QuickCheck framework in Haskell, it
+  suggests another way to test software. IT TARGETS ALL THE SCOPE
   COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
 
 • Available automated test technics:
@@ -7950,7 +7962,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
           △ • Random
      full ┆   - Fuzzing
        △  ┆   - Monkey testing
-       ┆  ┆ 
+       ┆  ┆
     Input ┆ • Static Analysis
     scope ┆   - Mem. leaks        • Example based
   covered ┆   - Unitialized mem.    - Unit tests
@@ -7958,10 +7970,10 @@ Tag⅋ Parameter         | Usage                               | Applies to     
        ▽  ┆   - Threading issues    - UI tests
    partial┆   - ...
          ─┼─╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶▷
-            Low  ← Feature compliance →    High 
-                                          
+            Low  ← Feature compliance →    High
 
-• Extracted from @[https://en.wikipedia.org/wiki/QuickCheck]. 
+
+• Extracted from @[https://en.wikipedia.org/wiki/QuickCheck].
   List of Java libs for property testing :
   "FunctionalJava's QuickCheck module". FunctionalJava.  2015-08-14
   "Quickcheck for Java". Quickcheck.dev.java.net.        2011-12-09
@@ -7972,8 +7984,8 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   "jetCheck prop.-based tests    Java 8" (JetBrains)     2018-07-10
 
 
-• e.g. test using 'jqwik': 
-  """ fizzBuzz() must return "Fizz" 
+• e.g. test using 'jqwik':
+  """ fizzBuzz() must return "Fizz"
       for every divisible-by-3 input """
   →  PRECONDITION: Consider inputs in [1 ... 100] divisible by 3
   → POSTCONDITION: fizzBuzz() returns "Fizz"
@@ -7981,9 +7993,9 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   import java.util.*;
   import java.util.stream.*;
   import net.jqwik.api.*;
-  
+
   class FizzBuzzTests {
-  
+
       String fizzBuzz(int i) {               // ← function to test
          boolean div3 = (i % 3 == 0),
                  div5 = (i % 5 == 0);
@@ -7992,22 +8004,22 @@ Tag⅋ Parameter         | Usage                               | Applies to     
          if (div5) return "Buzz"
          return String.valueOf(i);
       }
-  
+
       @Provide
       Arbitrary<Integer> divisibleBy3() {    // ← Precondition
-        return Arbitraries.integers()        //   input to function 
+        return Arbitraries.integers()        //   input to function
           .between(1, 100)                   //   divides by 3.
           .filter(i -> i % 3 == 0);
       }
-  
-      final List<String> IN_OUT = 
+
+      final List<String> IN_OUT =
         IntStream.range(1, 100)
           .mapToObj((int i) -> )
           .collect(Collectors.toList());
-  
+
       @Property                              // ← Test to execute
-      boolean divBy3_starts_with_Fizz( 
-        @ForAll("divisibleBy3") int i) {     // ← "inject" precondition 
+      boolean divBy3_starts_with_Fizz(
+        @ForAll("divisibleBy3") int i) {     // ← "inject" precondition
         return IN_OUT
                .get(i - 1)
                .startsWith("Fizz");          // ← check Postcondition
@@ -8078,7 +8090,7 @@ java.lang.Object
                                                     is also a subclass of Error because most apps
                                                     should not try to catch it.
 
- Dump Exception stack trace to STDERR: 
+ Dump Exception stack trace to STDERR:
 StringWriter writer = new StringWriter();
 PrintWriter printWriter = new PrintWriter( writer );
 e.printStackTrace( printWriter );
@@ -8127,7 +8139,7 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
 [[}]]
 
 [[{]]qa.error_control,qa.billion_dolar_mistake" >
-● JSR Annotations for Defect Detection 
+● JSR Annotations for Defect Detection
 @[https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard]
 [[}]]
 
@@ -8229,7 +8241,7 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
   All mvn commands take the pom.xml project definition as input.
   First time mvn is executed will be slow, since lot of libraries must be downloaded.
 
-$ $ QS=maven-archetype-quickstart \ 
+$ $ QS=maven-archetype-quickstart \
 $ $ mvn archetype:generate           ← create new project skeleton:
 $ $   -DgroupId=my.groupId \           ./pom.xml
 $ $   -DartifactId=myArtifact \        ./src/test/java/my.groupId/AppTest.java
@@ -8289,8 +8301,8 @@ $   -Dbuildplan.tasks=install                                    of goals execut
                                                                  doc, style-checks,...)
 
 $ $ mvn resources:resources \       ← quick local install (bypass tests/style-checks/...)
-$    compiler:compile \            
-$    jar:jar \  install:install    
+$    compiler:compile \
+$    jar:jar \  install:install
 
                                                                            EXTRACT PACKAGE INFO
 $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.artifactId   ← Artifact ID
@@ -8304,7 +8316,7 @@ $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Ext
     <systemPath>/home/project/lib/myjar.jar</systemPath>
   </dependency>
 
-• GENERATE FAT JAR (jar with all dependencies included) 
+• GENERATE FAT JAR (jar with all dependencies included)
 
 
   ...
@@ -8312,14 +8324,14 @@ $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Ext
     <profile>
       <id>fatjar</id>      ←···· STEP   : create 'fatjar' profile with customized maven-assembly-plugin
       <activation>               STEP   : Exec $ $ mvn ... '-P fatjar'   to activate this profile
-        <property> <name>fatjar</name> </property> 
-      </activation> 
+        <property> <name>fatjar</name> </property>
+      </activation>
       <build>
         <plugins>
           <plugin>
           ·   <artifactId>maven-assembly-plugin</artifactId>
           ·   <version>3.0.0</version>
-          ·   <configuration> 
+          ·   <configuration>
           ·      <descriptorRefs>
           ·          <descriptorRef>fatjar</descriptorRef>
           ·      </descriptorRefs>
@@ -8328,15 +8340,15 @@ $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Ext
           ·              <mainClass>com.myComp.myApp</mainClass>
           ·          </manifest>
           ·      </archive>
-          ·   </configuration> 
+          ·   </configuration>
           ·   <executions>
-          ·       <execution>                
+          ·       <execution>
           ·           <id>make-assembly</id> <!-- this is used for inheritance merges -->
           ·           <phase>package</phase> <!-- bind to the packaging phase -->
-          ·           <goals>                
+          ·           <goals>
           ·               <goal>single</goal >
-          ·           </goals>               
-          ·       </execution>               
+          ·           </goals>
+          ·       </execution>
           ·   </executions>
           </plugin>
           ...
@@ -8357,8 +8369,8 @@ A:☞A snapshot version is one that has not been released (  future release ).
    updates to "1.0.0" requires new version "1.0.1".
 
    Snapshot dependencies should only exist during development.
-   Released versions (i.e. no non-snapshot) should NEVER have   
-   dependency on snapshots 
+   Released versions (i.e. no non-snapshot) should NEVER have
+   dependency on snapshots
 
    <repository>
        ...
@@ -8372,20 +8384,20 @@ A:☞A snapshot version is one that has not been released (  future release ).
    </repository>
 
 <hr/>
-● pom utils (Cleaner/Updater/...) 
+● pom utils (Cleaner/Updater/...)
 @[https://github.com/kdgregory/pomutil]
 
 Utilities to clean, organize, and restructure Maven POMs.                   [qa]
 
 • POM Cleaner :
   "Cleans up" single POM, normale plugin and dependency specifications,
-  CONVERT HARDCODED VERSIONS TO PROPERTIES, 
+  CONVERT HARDCODED VERSIONS TO PROPERTIES,
   CONSITENTLY ORDER TOP-LEVEL ELEMENTS  (with pretty-printing output).
 
-• VERSION UPDATER: 
+• VERSION UPDATER:
   Updates the version for a set of POMs to a specified|next-sequential version.
 
-• Dependency Check: 
+• Dependency Check:
   - find dependencies that are specified but unused.
   - find dependencies used but unspecified (TRANSITIVE DEPENDENCIES THAT SHOULD BE DIRECT).
 
@@ -8532,18 +8544,18 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
 
 ● Install non-mavenized jar
 
-$ $ mvn install:install-file -Dfile=path_to_local_file -DgroupId=<groupId> \  
-$   -DartifactId=<artifactId> -Dversion=<version> -Dpackaging=<packaging>     
+$ $ mvn install:install-file -Dfile=path_to_local_file -DgroupId=<groupId> \
+$   -DartifactId=<artifactId> -Dversion=<version> -Dpackaging=<packaging>
 
 
 ● POM BEST PRACTICES:
 REF: @[http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/]
 
 $ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
-$     -Dincludes="org.checkerframework:*"  
+$     -Dincludes="org.checkerframework:*"
 
 $ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
-$     -Dincludes="com.google.guava:*"      
+$     -Dincludes="com.google.guava:*"
 
 • Prefer ${project.artifactId} vs ${artifactId} or ${pom.artifactId}
   following XML document structure.
@@ -8551,7 +8563,7 @@ $     -Dincludes="com.google.guava:*"
 - Use the dependency plugin to check your project for both unnecessary
   dependencies and undeclared-but-used-none-the-less dependencies.
   The goal is called ‘analyze’:
-$ $ mvn dependency:analyze   
+$ $ mvn dependency:analyze
 
 - Make sure the pom files contain all the repository references needed
   to download all dependencies. If you want to use a local repository
@@ -8580,12 +8592,12 @@ $ $ mvn dependency:analyze       ← Inform about:
                                      (compile, provided…).  They can be in the parent pom too.
                                      Noneless, can be needed at runtime.
 
-$ $ mvn dependency:tree -Dscope=compile  
+$ $ mvn dependency:tree -Dscope=compile
                          ^^^^^^^^^^^^^^
                          skip/ignore test/provided/... dependencies
   → ...
   → [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ tamperproof ---
-  → [INFO] com.myCompany:myProject:jar:1.0-SNAPSHOT 
+  → [INFO] com.myCompany:myProject:jar:1.0-SNAPSHOT
   → [INFO] +- org.web3j:core:jar:4.3.0:compile
   → [INFO] |  +- org.web3j:abi:jar:4.3.0:compile
   → [INFO] |  |  \- org.web3j:utils:jar:4.3.0:compile
@@ -8613,9 +8625,9 @@ $ $ mvn dependency:tree -Dscope=compile
 @[https://github.com/clarkware/jdepend]
 @[https://htmlpreview.github.io/?https://github.com/clarkware/jdepend/blob/master/docs/JDepend.html]
 - JDepend traverses Java class and source file directories and
-  generates design-quality-metrics for each Java package 
-  in terms of its extensibility, reusability, and maintainability 
-  to effectively manage and control package dependencies. 
+  generates design-quality-metrics for each Java package
+  in terms of its extensibility, reusability, and maintainability
+  to effectively manage and control package dependencies.
 [[}]]
 
 ● Publishing to Maven Central [[{DevOps.maven,devops]] #[mvn_pub2central]
@@ -8671,7 +8683,7 @@ $ $ mvn dependency:tree -Dscope=compile
         <pluginRepositories> and instead publish any required
         components to the Central Repository """
 
-• required files: 
+• required files:
 $ $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc         *2
 $ $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc         *2
 $ $  cat artifact01-1.4.7-sources.jar *1 | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc *2
@@ -8685,7 +8697,7 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
 • Build tool integration @[http://pgp.mit.edu]  [TODO]
   @[http://central.sonatype.org/pages/working-with-pgp-signatures.html#using-build-tools-for-signing]
 
-• PUBLISH BEST PATTERNS 
+• PUBLISH BEST PATTERNS
   • Use approved repository hosting location:
   @[http://www.apache.org/]           (for all Apache projects)
   @[http://www.fusesource.org/forge/] (focused on FUSE related projects)
@@ -8693,7 +8705,7 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
 
   • User automatic publication in "forges" providing hosting services.
 
-  • OSS Repository Hosting 
+  • OSS Repository Hosting
   @[http://central.sonatype.org/pages/ossrh-guide.html]
     · Approved repository provided by Sonatype for OOSS Projects that want to
       get their artifacts into Central Repository.
@@ -8721,7 +8733,7 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
   │  your first release, thanks                                      │
   └──────────────────────────────────────────────────────────────────┘
 
-• pre-deployment Tests: 
+• pre-deployment Tests:
   ✓ Verify that all pom.xml files have an SCM definition.
   ✓ Diff original 'pom.xml' with 'pom.xml.tag' to check if license,...
     or any other info has been removed. This has been known
@@ -8773,29 +8785,29 @@ Docker+mvn/gradle integration:
 - these layers are layered on top of a distroless base image.
   containing only the developer's application and its runtime deps.
 
--  Docker build flow  
+-  Docker build flow
         │JAR│ ← (build) ← │Project│
           ·                                                              │Container │
           ├·····→ │Build Context│ →(build)→ │ Container Image │ →(push)→ │Image     │
           ·                                 │ (docker cache)  │          │(registry)│
      │Dockerfile│
 
-   Jib Build Flow: 
+   Jib Build Flow:
                                                                          │Container │
      │Project│ ───────────────(Jib)─────────────────────────────────────→│Image     │
                                                                          │(registry)│
 
 - Ex: Creating images from command line:
   Once jib is installed and added to PATH, to create a new image do something like:
-$ $ /opt/jib/bin/jib                          
+$ $ /opt/jib/bin/jib
 $   --insecure \                                ← allow conn. to HTTP (non TLS) dev.registries
 $   build \                                     ← build image
 $   --registry \                                ← Push to registry
 $     gcr.io/distroless/java \                  ← Base image (busybox, nginx, gcr.io/distroless/java,...)
 $     192.168.1.3:5000/jib:latest \             ← Destination registry / image
-$   --entrypoint "java,-cp,/app/lib/*,\       
-$   com.google.cloud.tools.jib.cli.JibCli" \  
-$   build/install/jib/lib,/app/lib            
+$   --entrypoint "java,-cp,/app/lib/*,\
+$   com.google.cloud.tools.jib.cli.JibCli" \
+$   build/install/jib/lib,/app/lib
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     Other options include:
     (See jib build --help for more options)
@@ -8810,7 +8822,7 @@ $   build/install/jib/lib,/app/lib
        "date-time in ISO8601 format"
                   (Default  to 1970-01-01 00:00:01 UTC).
     -a, --arguments=arg         container entrypoint's default arguments
-    -c, --creation-time=time    Set image creation time  (default: 1970-01-01T00:00:00Z) 
+    -c, --creation-time=time    Set image creation time  (default: 1970-01-01T00:00:00Z)
     -l, --label=key=val[,key=va l...]
     -p, --port=port[,port...]   Expose port/type (ex: 25 or 25/tcp)
     -u, --user=user             Set user for execution (uid or existing user id)
@@ -8820,9 +8832,9 @@ $   build/install/jib/lib,/app/lib
 - Ex pom.xml to create tomcat container with war:
   REF: https://stackoverflow.com/questions/63657172/option-to-auto-generate-dockerfile-and-other-deployment-tooling-in-intellij
 
-$ $ mvn clean package jib:dockerBuild      
-$ $ docker run --rm -p 8082:8080 \         
-$   registry.localhost/hello-world:latest  
+$ $ mvn clean package jib:dockerBuild
+$ $ docker run --rm -p 8082:8080 \
+$   registry.localhost/hello-world:latest
 
   <?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -8915,9 +8927,9 @@ See also: jKube notes
 • Supports for many different SQL databases, including        [cloud]
   cloud ones (Amazon RDS, Azure Database, Google Cloud SQL).
 
-  ########## 
-  # HOW-TO # 
-  ########## 
+  ##########
+  # HOW-TO #
+  ##########
 • PRESETUP: The target database to manage and user with update privileges be created first,
             "outside" of flyway.
 
@@ -8943,7 +8955,7 @@ See also: jKube notes
      column4 VARCHAR(255) UNIQUE NOT NULL,
     );
 
-  └ V2__Add_column5.sql 
+  └ V2__Add_column5.sql
     ALTER TABLE table01
       ADD COLUMN column5 VARCHAR(255);
 
@@ -9013,7 +9025,7 @@ See also: jKube notes
   applications using standard Java streams with no need to type SQL or
   use any new API.
 
-  SQL                                    JAVA 8 Stream Equivalent 
+  SQL                                    JAVA 8 Stream Equivalent
  --------------------------------------------------------------------
   FROM                                   stream()
  --------------------------------------------------------------------
@@ -9048,7 +9060,7 @@ See also: jKube notes
    `length`,`replacement_cost`,            )
    `rating`,`special_features`,           .findAny();
    `last_update`
-  FROM                                    Searches optimized in background! 
+  FROM                                    Searches optimized in background!
        `sakila`.`film
   WHERE
       (`length` > 120)
@@ -9132,7 +9144,7 @@ the following enterprise features:
   @[https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/]
 - B stands for Ojbect binding
   - Standard binding layer for converting
-    Java objects to/from JSON messages, defining a default mapping algorithm 
+    Java objects to/from JSON messages, defining a default mapping algorithm
     for converting existing Java classes to JSON, while enabling developers
     to customize it through annotations.
 
@@ -9163,8 +9175,8 @@ the following enterprise features:
                                                  - how to generate JSON documents from the Java objects.
                                                - Project goals include:
                                                  - Adherence to the JSON spec.
-                                                 - No external dependencies 
-                                                 - Fast execution and low memory footprint 
+                                                 - No external dependencies
+                                                 - Fast execution and low memory footprint
                                                - It can also convert to/from:
                                                  JSON, XML, HTTP headers, Cookies, Comma Delimited Text
                                                  (org.json.CDT or CSV).
@@ -9252,7 +9264,7 @@ the following enterprise features:
 [[}]]
 
 ● RESTAssured: REST API testing [[{qa.testing.REST_API,persistence.json]]
- FULL JOURNEY == Simulate full (REST) API in expected order 
+ FULL JOURNEY == Simulate full (REST) API in expected order
 └ Pre-Setup:
   <dependency>
       <groupId>io.rest-assured</groupId>
@@ -9342,7 +9354,7 @@ the following enterprise features:
           NAME="COMMUNITY_1", SYMBOL="SY1";
 
       Response response;
-      @BeforeClass 
+      @BeforeClass
       public static void setup() {
           RestAssured.port     = ServerConfig.serverPort;
           RestAssured.basePath = "/";
@@ -9366,7 +9378,7 @@ the following enterprise features:
           RestAssured.config = RestAssured.config().httpClient(clientConfig);
       }
 
-      @Test 
+      @Test
       public void A010_PutNewCommunityAndNewUserForPendingToMineCommunity() {
           String jsonBody =
               "{ " +
@@ -9487,7 +9499,7 @@ the following enterprise features:
           Hidden Classes
 
 • JDK 16: Elastic metaspace
-          Alpine Linux port 
+          Alpine Linux port
 
 [[}]]
 
@@ -9781,14 +9793,14 @@ Related:
 - JEP 261: MODULE SYSTEM
 - JEP 275: MODULAR JAVA APPLICATION PACKAGING
 - JEP 282: JLINK: THE JAVA LINKER
-- JSR 376: JAVA PLATFORM MODULE SYSTEM 
+- JSR 376: JAVA PLATFORM MODULE SYSTEM
 - JSR 379: JAVA SE 9
 @[https://www.oracle.com/corporate/features/understanding-java-9-modules.html]
 By Paul Deitel
 
 module:
 - higher level of aggregation above packages.
-- uniquely named, reusable group of related packages and resources. 
+- uniquely named, reusable group of related packages and resources.
 
 - module descriptor: (compiled version of module-info.java )
   /module-info.class  ( @ module root's folder)
@@ -9804,15 +9816,15 @@ module:
 - Rules:
   - Each module must explicitly state its dependencies.
   - provides explicit mechanism to declare dependencies between
-    modules in a manner that’s recognized both at   compile time 
+    modules in a manner that’s recognized both at   compile time
     and   execution time .
 
 - The java platform is now modularized into ~ 95 modules
 $ $ java --list-modules  ←  List modules in SE, JDK, Oracle, ...
   ( custom runtimes can be created )
 
-  Module Declarations 
-$ $ cat module-info.java  
+  Module Declarations
+$ $ cat module-info.java
   module java.desktop { ← body can be empty
      requires modulename; ← 'static' flag: required just at compile time.
      requires transitive java.xml; ← if a java.desktop method returns a type
@@ -10052,13 +10064,13 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 
  command line tool to help you forget how to set the JAVA_HOME environment variable:
 
-  Configuration: 
+  Configuration:
  $ jenv add /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
    oracle64-1.6.0.39 added
  $ jenv add /Library/Java/JavaVirtualMachines/jdk17011.jdk/Contents/Home
    oracle64-1.7.0.11 added
 
-  Ussage: 
+  Ussage:
   List managed JDKs
 
   $ jenv versions
@@ -10444,7 +10456,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
 
   - pom.xml:
     <!-- ... -->
-    <packaging>war</packaging> 
+    <packaging>war</packaging>
     <!-- ... -->
     <properties>
       <maven.compiler.source>11</maven.compiler.source>
@@ -10474,7 +10486,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
     <build>
       <plugins>
         <plugin>
-          <groupId>org.eclipse.jkube</groupId> 
+          <groupId>org.eclipse.jkube</groupId>
           <artifactId>kubernetes-maven-plugin</artifactId> ← Alt: openshift-maven-plugin.
           <version>${version.jkube}</version>
         </plugin>
@@ -10529,7 +10541,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
                                     After Java 11 (JEP 330)
   $ $ java HelloUniverse.java arg1    ← compile, start up JVM, load class, execute code
                                         (no ./*.class generated on disk)
-                                        Use $ java HelloUniverse.java --source $version  
+                                        Use $ java HelloUniverse.java --source $version
                                         when .java extension is not available or to
                                         specify the language version of the source code.
                                       - By default compiled code is part of an unnamed module.
@@ -10544,7 +10556,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
   - Run class in source.java ← Java launcher 11+
 
   - Integrate with UNIX scripting using the old beloved Shebang notation:
-  $ $ cat script.java  
+  $ $ cat script.java
     #!/path/to/java --source $version
     public class HelloUniverse{
         public static void main(String[] args){
@@ -10576,32 +10588,32 @@ use enclaves to:
 When OpenJDK‘s Java virtual machine (JVM) runs a Java application,
 it loads a dozen or so classes before it starts the main class.
 
-  STANDARD JVM START "WARM-UP"  vs   NEW APPROACH: WARM UP ONCE 
+  STANDARD JVM START "WARM-UP"  vs   NEW APPROACH: WARM UP ONCE
   ----------------------------       ---------------------------
  - runs method several hundred       - 1st  run : WARM Up once and checkpoint
    times before optimizing it.       - Next runs: restore checkpointed app.
-  cost of long startup times.          Start time seconds → millisecs!!! 
+  cost of long startup times.          Start time seconds → millisecs!!!
 
   Checkpoint inside JVM HOW-TO:  [TODO]
 @[https://www.jfokus.se/jfokus19-preso/Checkpointing-Java.pdf]
 
-  Checkpoint Outside JVM HOW-TO: 
+  Checkpoint Outside JVM HOW-TO:
         - Under the hood it uses Linux Checkpoint/Restore in Userspace (CRIU).
         @[https://www.criu.org/Main_Page]
 
-  $ CONSOLE 1                              CONSOLE   
+  $ CONSOLE 1                              CONSOLE
   $ $ setsid java -XX:-UsePerfData \     $ $ sudo criu dump -t $pid \    ← stops and checkpoint
   $     -XX:+UseSerialGC Scooby          $    --shell-job -o dump.log      app
 
                                          $ $ sudo restore --shell-job \  ← Restore app
-                                         $    -d -vvv -o restore.log    
+                                         $    -d -vvv -o restore.log
 [[}]]
 
 ● JfrUnit [[{qa.testing,scalability.profiling,_PM.TODO]]
 @[https://github.com/moditect/jfrunit]
-- JUnit extension for asserting JDK Flight Recorder events 
-  emitted by an application identifying performance regressions 
-  (e.g. increased latencies, reduced throughput). 
+- JUnit extension for asserting JDK Flight Recorder events
+  emitted by an application identifying performance regressions
+  (e.g. increased latencies, reduced throughput).
 
 - JfrUnit supports assertions not on metrics like latency/throughput
   themselves, but on indirect metrics which may impact those.
@@ -10616,7 +10628,7 @@ it loads a dozen or so classes before it starts the main class.
 [[}]]
 
 ● Jrpip: Low code RMI [[{architecture.distributed,_PM.low_code,_PM.TODO]] #[jrpip]
-  Let developers concentrate on logic vs network plumbing and TCP errors. 
+  Let developers concentrate on logic vs network plumbing and TCP errors.
 - Jrpip mplements remote interface method invocation which allows different
   Java processes to interact with one another.
 - designed to increase developer efficiency by providing useful features, such as
@@ -10678,11 +10690,11 @@ it loads a dozen or so classes before it starts the main class.
                             //   sandbox this address must be  case-sensitive  verified.
 
           CONFIGSET = "ConfigSet", // ← Configuration Set name used for this message.
-                                   //  If commented out remove header below.   *  
+                                   //  If commented out remove header below.   *
           BODY      = String.join( "\n",
               "<h1>header</h1>", "html line2", "html line3", "..." ),
           SMTP_HOST = "email-smtp.us-west-2.amazonaws.com",
-          SMTP_USERNAME = "..." , //  *  
+          SMTP_USERNAME = "..." , //  *
           SMTP_PASSWORD = "...";
           // SMTP_HOST REF: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/regions.html#region-endpoints
 
@@ -10731,8 +10743,8 @@ it loads a dozen or so classes before it starts the main class.
 
 ● jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,_PM.TODO]]
 @[https://github.com/jerolba/jfleet]
-· JFleet is a Java library which persist in database large collections  
-  of Java POJOs as fast as possible, using the best available technique 
+· JFleet is a Java library which persist in database large collections
+  of Java POJOs as fast as possible, using the best available technique
   in each database provider, achieving it with alternate persistence
   methods from each JDBC driver implementation.
 
@@ -10740,7 +10752,7 @@ it loads a dozen or so classes before it starts the main class.
   using available batch persistence techniques.
 
 · despite being able to use JPA annotations to map Java objects to
-  tables and columns, JFleet is not an ORM. 
+  tables and columns, JFleet is not an ORM.
 [[}]]
 
 ● JVM Anatomy [[{jvm.101,_PM.TODO]]
@@ -10771,9 +10783,9 @@ https://en.wikipedia.org/wiki/Java_Class_Library
   for the application. The runtime uses the bootstrap class loader to
   find the JCL.
 
-  The Java Module System (part of the Java 9 release) broke the  
-  monolithic "rt.jar" JAR file and modularized the JCL itself in 
-  several modules with specified dependencies. 
+  The Java Module System (part of the Java 9 release) broke the
+  monolithic "rt.jar" JAR file and modularized the JCL itself in
+  several modules with specified dependencies.
 [[}]]
 
 ● Java Threading resources [[{concurrency,_PM.TODO]]
@@ -10848,8 +10860,8 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
   ====================
   · target/classes/META-INF/dekorate/kubernetes.yml
     Use like:
-  $ $ kubectl create ns demo                   
-  $ $ kubectl apply -f kubernetes.yml -n demo  
+  $ $ kubectl create ns demo
+  $ $ kubectl apply -f kubernetes.yml -n demo
   · target/classes/META-INF/dekorate/kubernetes.json
 
 • Integration with Jib to generate OCI images is also available.
@@ -10889,7 +10901,7 @@ embedded servers usually comprise two logical components:
   The Profiler chooses the best way to show you a content of a HashMap, String, ... ).
   For each object you can see how much memory it retains, and what happens when
   particular reference in object graph does not exist.
-  This saves time, and lets you estimate the expected memory leak fix without changing the code. 
+  This saves time, and lets you estimate the expected memory leak fix without changing the code.
 
 • Memory profiling:
 
@@ -10906,9 +10918,9 @@ embedded servers usually comprise two logical components:
 • Exception profiling: Massive exception throwing is a common but often hidden
   performance problem.
 
-• Deobfuscate the code on the fly restoring original class, method and field names of  
-  applications obfuscated with ProGuard, yGuard, Zelix KlassMaster, Allatori, and other  
-  popular Java obfuscators. 
+• Deobfuscate the code on the fly restoring original class, method and field names of
+  applications obfuscated with ProGuard, yGuard, Zelix KlassMaster, Allatori, and other
+  popular Java obfuscators.
 
 • control profiling overhead up to production profiling.
 
@@ -10920,9 +10932,9 @@ embedded servers usually comprise two logical components:
   Special offers for educational and scientific organizations.
 [[}]]
 ● Gradle Summary [[{devops.gradle,_PM.backlog]]
-  ################### 
-• # Graddle Wrapper # 
-  ################### 
+  ###################
+• # Graddle Wrapper #
+  ###################
 REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   - recommended way to execute any Gradle build
   - invokes gradle with a declared version (vs randomnly installed one in OS).
@@ -10950,11 +10962,11 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
     ├── build.gradle
     ├── settings.gradle
     ├── gradle                            ←  generated dir. to be added to git
-    │   └── wrapper                       
+    │   └── wrapper
     │       ├── gradle-wrapper.jar         ← code for downloading the distro
-    │       └── gradle-wrapper.properties 
+    │       └── gradle-wrapper.properties
     ├── gradlew        ← once generated, use it like $ ./gradlew build
-    └── gradlew.bat 
+    └── gradlew.bat
     gradle/wrapper/gradle-wrapper.properties  is generated
     with the information about the Gradle distribution:
      - server hosting the Gradle dist. Ex:
@@ -10970,7 +10982,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
     ...
   - upgrade the Wrapper to new Gradle version when desired.
 
-  -  Customizing the wrapper 
+  -  Customizing the wrapper
     - built-in wrapper task exposes numerous options
     to bend the runtime behavior to your needs.
     build.gradle.kts:
@@ -10985,7 +10997,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
     alt 2: gradle/wrapper/gradle-wrapper.properties
     distributionUrl=https://username:password@somehost/path/to/gradle-distribution.zip
 
-  -  Verifying download 
+  -  Verifying download
     @gradle/wrapper/gradle-wrapper.properties:
     distributionSha256Sum=371cb9fbebbe9880d147f59bab36d61eee122854ef8c9ee1ecf12b82368bcf10
 
@@ -11176,10 +11188,10 @@ https://www.infoq.com/news/2021/08/java-news-roundup-aug02-2021/
 Is Java 17 a Glass Half Full?
 https://www.infoq.com/news/2021/07/java-17-glass/
 
-Overall, the features present in Java 17 are broadly following the 
-expected pattern, as InfoQ previously reported on. The unfortunate 
-truth is that of the major projects that have been the major areas of 
-JDK development in the last three years (Loom, Valhalla, Amber and 
+Overall, the features present in Java 17 are broadly following the
+expected pattern, as InfoQ previously reported on. The unfortunate
+truth is that of the major projects that have been the major areas of
+JDK development in the last three years (Loom, Valhalla, Amber and
 Panama) - none are complete as of the release of Java 17.
 
 This means that the feature set of Java 17 will be more modest than many developers hoped.
@@ -11278,8 +11290,8 @@ https://dzone.com/articles/we-should-write-java-code-differently?edition=598293#
 maven:
 • aborted compilation of a multi-module (like AbsisParentPom)
   can be restarted (from the last failed module) with '--resume-from' option like:
-$ $ mvn --resume-from=com.myCompany.myModule:MyArtifact \  
-$   $ clean install -P myProfile -DskipTests=true          
+$ $ mvn --resume-from=com.myCompany.myModule:MyArtifact \
+$   $ clean install -P myProfile -DskipTests=true
 [[{]]jvm,_PM.TODO">
 ● Java Erasure
 - Type Erasure is a technique employed the Java compiler to support the use of Generics.
@@ -11361,11 +11373,11 @@ https://www.uml-diagrams.org/java-thread-uml-state-machine-diagram-example.html
 https://www.uml-diagrams.org/tomcat-server-uml-composite-structure-diagram-example.html
 https://www.uml-diagrams.org/web-application-clusters-uml-deployment-diagram-example.html
 ###########################
-https://github.com/google/re2j  
-linear time regular expression matching in Java  
-If you use regular expression patterns with a high degree of 
-alternation, your code may run faster with RE2/J. In the worst case, 
-the java.util.regex matcher may run forever, or exceed the available 
+https://github.com/google/re2j
+linear time regular expression matching in Java
+If you use regular expression patterns with a high degree of
+alternation, your code may run faster with RE2/J. In the worst case,
+the java.util.regex matcher may run forever, or exceed the available
 stack space and fail; this will never happen with RE2/J.
 ##########################
 weekly Inside Java Newscast:
@@ -11381,7 +11393,7 @@ focus on the four main Java projects:
 · https://openjdk.java.net/projects/loom
 · https://openjdk.java.net/projects/panama/
 · https://openjdk.java.net/projects/valhalla
-  The goal of Project Valhalla is to explore and incubate advanced 
+  The goal of Project Valhalla is to explore and incubate advanced
   Java VM and Language feature candidates such as:
   · Value types
   · Generic specialization
@@ -11392,11 +11404,11 @@ focus on the four main Java projects:
 
 ##################################
 • Testing add notes:    @ma
-  • mockito, 
+  • mockito,
     https://github.com/mockito/mockito/wiki/Features-And-Motivations
-    "...Mockito has very slim API, almost no time is needed to start mocking. 
-      There is only one kind of mock, there is only one way of creating 
-      mocks. Just remember that stubbing goes before execution, 
+    "...Mockito has very slim API, almost no time is needed to start mocking.
+      There is only one kind of mock, there is only one way of creating
+      mocks. Just remember that stubbing goes before execution,
       verifications of interactions go afterwards... "
 
 
@@ -11411,25 +11423,25 @@ focus on the four main Java projects:
 https://www.infoq.com/news/2022/01/apple-gcgc-java/
 https://github.com/apple/GCGC
 
-• Apple has open-sourced GCGC, a tool for Java Garbage Collector (GC) 
+• Apple has open-sourced GCGC, a tool for Java Garbage Collector (GC)
   logs visualization based on Python 3 and pandas.
-• GCGC uses a Jupyter notebook to analyze and visualize GC log files. A 
-  notebook is provided for the analysis and it generates plots and 
+• GCGC uses a Jupyter notebook to analyze and visualize GC log files. A
+  notebook is provided for the analysis and it generates plots and
   tables from collected GC information.
 #################################
 https://theboreddev.com/understanding-java-streams
 
 #############################
 Data Oriented Programming in Javahttps://www.infoq.com/articles/data-oriented-programming-java/ ._________________________
-Java: cache2k - Java Caching –https://cache2k.org/ 
+Java: cache2k - Java Caching –https://cache2k.org/
 _______________________
-Java: Spring Boot 2.7.0 Released With Support for GraphQL, Podman and Cache2khttps://www.infoq.com/news/2022/06/spring-boot-2-7/ 
-_________________________Java 18 is Now Availablehttps://www.infoq.com/news/2022/03/java18-released/ ___________________________JAVA: Failsafe 3.2 Released with New Resilience Policieshttps://www.infoq.com/news/2022/02/failsafe-resilience-3/ 
-___________________________Java Weekly, Issue 418 | Baeldunghttps://www.baeldung.com/java-weekly-418_________________________Java 101: Six Features From Java 12 to 17 to Get Excited About!https://www.infoq.com/articles/six-features-jdk12-to-jdk17/ 
-________________________Java: Spring Boot 2.6 Improves Docker Images and Metrics, Version 2.4 Is EOLhttps://www.infoq.com/news/2021/12/spring-boot-2-6/________________________Java News Roundup: IntelliJ IDEA, JEP 421, Groovy, Open Liberty, Hibernate ORM, Eclipse Collectionshttps://www.infoq.com/news/2021/12/java-news-roundup-nov29-2021/______________________________Java, log4j, Log4Shell: A new fix, details of active attacks, and risk mitigation recommendations - Help Net Securityhttps://www.helpnetsecurity.com/2021/12/15/log4shell-mitigation/ 
+Java: Spring Boot 2.7.0 Released With Support for GraphQL, Podman and Cache2khttps://www.infoq.com/news/2022/06/spring-boot-2-7/
+_________________________Java 18 is Now Availablehttps://www.infoq.com/news/2022/03/java18-released/ ___________________________JAVA: Failsafe 3.2 Released with New Resilience Policieshttps://www.infoq.com/news/2022/02/failsafe-resilience-3/
+___________________________Java Weekly, Issue 418 | Baeldunghttps://www.baeldung.com/java-weekly-418_________________________Java 101: Six Features From Java 12 to 17 to Get Excited About!https://www.infoq.com/articles/six-features-jdk12-to-jdk17/
+________________________Java: Spring Boot 2.6 Improves Docker Images and Metrics, Version 2.4 Is EOLhttps://www.infoq.com/news/2021/12/spring-boot-2-6/________________________Java News Roundup: IntelliJ IDEA, JEP 421, Groovy, Open Liberty, Hibernate ORM, Eclipse Collectionshttps://www.infoq.com/news/2021/12/java-news-roundup-nov29-2021/______________________________Java, log4j, Log4Shell: A new fix, details of active attacks, and risk mitigation recommendations - Help Net Securityhttps://www.helpnetsecurity.com/2021/12/15/log4shell-mitigation/
 _____________________________Java: E-book Collection Page | Red Hat DeveloperLot of books about quarkus!!!
-https://developers.redhat.com/e-books?sc_cid=7013a000002ptmEAAQ 
-___________________________________JAVA: Introducing the KivaKit Frameworkhttps://www.infoq.com/articles/introducing-kivakit/ 
+https://developers.redhat.com/e-books?sc_cid=7013a000002ptmEAAQ
+___________________________________JAVA: Introducing the KivaKit Frameworkhttps://www.infoq.com/articles/introducing-kivakit/
 ____________________________________Java Extending Swagger and Spring Doc Open API - DZone Javahttps://dzone.com/articles/extending-swagger-and-spring-doc-open-api?edition=699391 ___________________________________
 Java, concurrency , 101? [JavaSpecialists 297] - Measuring ForkJoinPool Parallelismhttps://www.javaspecialists.eu/archive/Issue297-Measuring-ForkJoinPool-Parallelism.html___________________________Why SOLID principles are still the foundation for modern software architecture - Stack Overflow Bloghttps://stackoverflow.blog/2021/11/01/why-solid-principles-are-still-the-foundation-for-modern-software-architecture/ 
 Single responsibility principleOriginal definition: “There should never be more than one reason for a class to change.”If you write a class with many concerns, or “reasons to change”, then you need to change the same code whenever any of those concerns has to change. This increases the likelihood that a change to one feature will accidentally break a different feature.
@@ -11437,8 +11449,8 @@ Open-closed principleOriginal definition: “Software entities should be open fo
 
 Liskov substitution principleOriginal definition: “If S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program.”
 Interface segregation principleOriginal Definition: “Many client-specific interfaces are better than one general-purpose interface.”In OO, you can think of this as providing a “view” into your class. Rather than giving your full implementation to all your clients, you create interfaces on top of them with just the methods relevant to that client, and ask your clients to use those interfaces. 
-Dependency inversion principleOriginal definition: “Depend upon abstractions, not concretions.”In OO, this means that clients should depend on interfaces rather than concrete classes as much as possible. This ensures that code is relying on the smallest possible surface area—in fact, it doesn’t depend on code at all, just a contract defining how that code should behave. As with other principles, this reduces the risk of a breakage in one place causing breakages elsewhere accidentally. 
-________________________________Java, persistence: No More MultipleBagFetchException Thanks to Multiset Nested Collections – Java, SQL and jOOQ.https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/ 
+Dependency inversion principleOriginal definition: “Depend upon abstractions, not concretions.”In OO, this means that clients should depend on interfaces rather than concrete classes as much as possible. This ensures that code is relying on the smallest possible surface area—in fact, it doesn’t depend on code at all, just a contract defining how that code should behave. As with other principles, this reduces the risk of a breakage in one place causing breakages elsewhere accidentally.
+________________________________Java, persistence: No More MultipleBagFetchException Thanks to Multiset Nested Collections – Java, SQL and jOOQ.https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/
 ______________________________Troubleshooting Java Applications with Eclipse Jifahttps://www.infoq.com/news/2022/02/eclipse-jifa/ 
 The analytic engine currently has two parts: the Heap Dump Analysis service based on Eclipse Memory Analyzer (MAT) and the GC Log Analysis service which supports the G1, Parallel GC, Serial GC, CMS and ZGC garbage collection algorithms. The GC Log Analysis Service can process logs from Java 8 and 11, while support for Java 17 is under development
 
@@ -11446,17 +11458,17 @@ Eclipse Jifa’s heap dump analysis, based on Eclipse MAT, provides detailed doc
 
 Vue 2.0 and Vert.x are used for the frontend and backend, respectively.
 
-There are several ways to deploy Eclipse Jifa: only one worker, one master and several workers or the Kubernetes model._________________________________________Java: Compressed GraalVM Native Images: the best startup for Java apps comes in tiny packages | by Loïc Lefèvre | graalvm | Mediumhttps://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214 
+There are several ways to deploy Eclipse Jifa: only one worker, one master and several workers or the Kubernetes model._________________________________________Java: Compressed GraalVM Native Images: the best startup for Java apps comes in tiny packages | by Loïc Lefèvre | graalvm | Mediumhttps://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214
 _____________________________________Azul Launches Java Cloud Compilerhttps://www.infoq.com/news/2022/02/azul-cloud-compiler/ 
 Azul Intelligence Cloud introduces a third option that bridges the benefits of JIT (peak performance) with the benefits of AOT (fast startup time). As teams often run the same code across many systems, the JRE communicates with an organization’s shared JIT server so that each JRE does not need to do the same observation and optimization cycle. The cloud compiler can then also perform deeper analysis, using CPU resources that are isolated from the running application. Resulting applications can reach peak performance in the network time needed to transfer this information and run with the improved code. In tests described at QCon, the time to peak performance was faster and throughput was between 25 to 100% faster.________________________________Java Weekly, Issue 425 | Baeldunghttps://www.baeldung.com/java-weekly-425
 ___________________________Java, Soft Arch: Spring for GraphQL Version 1.0 Released
 https://www.infoq.com/news/2022/06/spring-graphql/ 
-Still in its infancy, Spring for GraphQL will most likely evolve with new features and bug fixes, and could become an alternative to the popular DGS framework, developed at Netflix in the last three years.____________________________Java, 101:  Optional Evolution - DZone Javahttps://dzone.com/articles/java-optional-api-evolution?edition=699391 
-____________________________Java, Introduction To Pragmatic Functional Java - DZone Javahttps://dzone.com/articles/introduction-to-pragmatic-functional-java?edition=699391 
-_____________________________Java, quarkus + neo4j,...:Java News Roundup: WildFly 25, JEP 408, Quarkus 2.3.0, MicroProfile 5.0-RC1, Mockito 4.0, Jelastichttps://www.infoq.com/news/2021/10/java-news-roundup-oct04-2021/ 
+Still in its infancy, Spring for GraphQL will most likely evolve with new features and bug fixes, and could become an alternative to the popular DGS framework, developed at Netflix in the last three years.____________________________Java, 101:  Optional Evolution - DZone Javahttps://dzone.com/articles/java-optional-api-evolution?edition=699391
+____________________________Java, Introduction To Pragmatic Functional Java - DZone Javahttps://dzone.com/articles/introduction-to-pragmatic-functional-java?edition=699391
+_____________________________Java, quarkus + neo4j,...:Java News Roundup: WildFly 25, JEP 408, Quarkus 2.3.0, MicroProfile 5.0-RC1, Mockito 4.0, Jelastichttps://www.infoq.com/news/2021/10/java-news-roundup-oct04-2021/
 ______________________________
 Security: Detect and block Log4j exploitation attempts with CrowdSec - The open-source & collaborative IPS
-https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/ 
+https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 ______________________________
 https://github.com/JakeWharton/RxRelay
 Subjects and Relays allow to bridge non-Rx APIs into Rx easily, and without
