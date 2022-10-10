@@ -1,0 +1,141 @@
+● Gradle Summary [[{devops.gradle,_PM.backlog]]
+
+
+REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
+
+• Graddle Summary:  [[{]]
+  $ gradle init \                       <···· STEP 1) SET UP A NEW GRADLE PROJECT
+    --type java-application                   ===================================
+  ^                       ^
+  └┬──────────────────────┘
+  Next layout will added to FS:         [[{02_doc_has.diagram]]
+  │                                            NOTE/WARN: gradle.propeties NOT created by init
+  ├ build.gradle
+  │
+  │
+  ├ settings.gradle
+  │
+  │
+  │
+  │
+  │
+  │
+  │
+  ├ gradle                              <····  generated dir. TO BE ADDED TO GIT
+  │ └ wrapper
+  │   ├── gradle-wrapper.jar            <···· code for downloading a given gradle version
+  │   └── gradle-wrapper.properties
+  ├ gradlew      <┬·························· [[{KEY-POINT]]  once in place, replace  OS
+  ├ gradlew.bat  <┘                           system-wide gradle (with random version) with
+  ├                                           $ ./gradlew build  (gradlew.bat in Windows)
+  └ src                                       - This ensures reproducible builds using a
+    ├ main/java/project01/App.java              well defined version of gradle. [[}]]
+    │ └ resources
+    └ test/java/project01/AppTest.java
+      └ resources
+                                        [[02_doc_has.diagram}]]
+
+  $ gradle wrapper             \        <···· STEP 2) SETUP GRADLE VERSION (Repeat to update Version)
+      --gradle-version 5.1     \              <· optional (def.: local installed one)
+      --distribution-type bin  \              <· optional (def.: 'bin' -no sample code,docs,...-)
+      --gradle-distribution-url ...           <· optional. Ej https://services.gradle.org/distributions/gradle-5.5.1-bin.zip
+      --gradle-distribution-sha256-sum        <· optional. Check SHA-256 sum
+    └──────────────┬─────────────────┘
+    ./gradle/wrapper/gradle-wrapper.properties  is updated with the information
+    about the Gradle distribution:
+
+  $ git add \                           <···· STEP 3) Commit gradle artifacts to git.
+    build.gradle gradle* settings.gradle &&
+    git commit -m "Adding graddle support"
+
+
+• Multi-module Deployer: [[{gradle.multimodule]]
+@[https://github.com/FlamingTuri/multi-module-deployer]
+  (Java Example project available in github)
+  - library built to speed up deployment of microservice based applications.
+  - build and run each application module.
+  - configure deployment dependencies between modules
+    by just creating and running a simple application.
+
+  └ Installation
+    1) Add to your build.gradle the following function:
+     def downloadLibFromUrl(String libSaveDir, String libName, String libUrl) {
+         def folder = new File(libSaveDir)
+         if (!folder.exists()) {
+             folder.mkdirs()
+         }
+         def file = new File("$libSaveDir/$libName")
+         if (!file.exists()) {
+             ant.get(src: libUrl, dest: file)
+         }
+         getDependencies().add('compile', fileTree(dir: libSaveDir, include: libName))
+     }
+
+    2) the following code to your dependencies declaration:
+     dependencies {
+         /* ... */
+         def libSaveDir = "${System.properties['user.home']}/.gradle/caches/modules-2/files-2.1"
+         def version = '1.1.1'
+         def libName = "multi-module-deployer-${version}.jar"
+         def url = "https://github.com/FlamingTuri/multi-module-deployer/releases/download/v$version/$libName"
+         downloadLibFromUrl(libSaveDir, libName, url)
+     }
+
+  └ Usage example
+
+    import multi.module.deployer.MultiModuleDeployer;
+    import multi.module.deployer.moduleconfig.ModuleConfig;
+    import multi.module.deployer.moduleconfig.ModuleConfigFactory;
+
+    public class App {
+      public static void main(String[] args) {
+          MultiModuleDeployer multiModuleDeployer = new MultiModuleDeployer();
+          // commands to run the first module
+          String   linuxCmd = "linux commands to deploy first module";
+          String windowsCmd = "windows commands to deploy first module";
+          ModuleConfig firstModuleConfig =
+            ModuleConfigFactory.httpModuleConfig(linuxCmd, windowsCmd, 8080, "localhost", "/api/...");
+          // adds the first configuration to the deployment list
+          multiModuleDeployer.add(firstModuleConfig);
+
+          // commands to run the second module
+          linuxCmd = "linux commands to deploy second module";
+          windowsCmd = "windows commands to deploy second module";
+          ModuleConfig secondModuleConfig = ModuleConfigFactory.httpModuleConfig(linuxCmd, windowsCmd, 3000, "localhost", "/api/...");
+
+          // adds the second configuration to the deployment list
+          // it will be started only after the first one is "ended"
+          multiModuleDeployer.add(secondModuleConfig);
+
+          // deploys the modules
+          multiModuleDeployer.deploy();
+      }
+    }
+[[gradle.multimodule}]]
+
+• What's New [[{01_PM.WHATS_NEW]]
+- Gradle v6:
+@[https://www.infoq.com/news/2020/01/gradle-releases-version-6/]
+[[}]]
+
+● TODO/Non-classified [[{01_PM.TODO]]
+• CUSTOMIZING THE WRAPPER
+  The built-in wrapper task exposes numerous options to customize the runtime behavior.
+  -   build.gradle.kts:
+      build.tasks.wrapper {
+        distributionType = Wrapper.DistributionType.ALL
+      }
+
+  - HTTP Basic Authentication (  WARN : use only with TLS connections)
+    alt 1: ENV.VARS:
+    systemProp.gradle.wrapperUser=username
+    systemProp.gradle.wrapperPassword=password
+    alt 2: gradle/wrapper/gradle-wrapper.properties
+    distributionUrl=https://username:password@somehost/path/to/gradle-distribution.zip
+
+  -  Verifying download
+    @gradle/wrapper/gradle-wrapper.properties:
+    distributionSha256Sum=371cb9fbebbe9880d147f59bab36d61eee122854ef8c9ee1ecf12b82368bcf10
+[[}]]
+
+[[}]]
