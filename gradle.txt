@@ -1,31 +1,92 @@
-● Gradle Summary [[{devops.gradle,_PM.backlog]]
+●  Apropos:
+- Visit next Web site for a great experience:
+  https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/notes.txt
 
+- If you want to contribute to great gistory of this
+  document you can take the next flight to:
+@[https://www.github.com/earizon/JAVA]
+  Your commits and pull-request will be immortalized
+  in the Pantheon of the Unicode Gods.
+────────────────────────────────────────────────────────────────────────────────
 
+[[{devops.gradle]]
+
+● Gradle Summary [[{devops.gradle.101]]
 REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
 
-• Graddle Summary:  [[{]]
   $ gradle init \                       <···· STEP 1) SET UP A NEW GRADLE PROJECT
-    --type java-application                   ===================================
+    --type java-application                <· Java|Scala|Kotlin|C++|Android|Swift apps|libs
+
   ^                       ^
   └┬──────────────────────┘
   Next layout will added to FS:         [[{02_doc_has.diagram]]
   │                                            NOTE/WARN: gradle.propeties NOT created by init
-  ├ build.gradle
+  ├ build.gradle ·····························································┐
+  │ · plugins {                                                               ·
+  │ ·     id 'java'        // <- Apply java plugin: build Java    support     ·
+  │ ·     id 'application' // <- Apply app. plugin: build cli app support     ·
+  │ · }                                                                       ·
+  │ ·                                                                         ·
+  │ · repositories {                                                          ·
+  │ ·     jcenter()        // Use jcenter (Maven/Ivy/file repos               ·
+  │ · }                                    can be declared)                   ·
+  │ ·                                                                         ·
+  │ · dependencies {                                                          ·
+  │ ·     implementation 'com.google.guava:guava:28.0-jre' // <- runtime dep. · 'group   :module     :version'(gradle terminology)
+  │ ·     testImplementation 'junit:junit:4.12'            // <- test    dep. · 'groupId :artifactId :version'(maven  terminology)
+  │ ·     └─···············┴······························ configuration :-
+  │ · }                                                    compileOnly    : dep. used only at compile (eg. transpiler), (-vs runtime).
+  │ ·                                                      implementation : (supersedes compile), dep. used for compilation and runtime
+  │ ·                                                                       (most dependencies fall in this category).
+  │ · application {                                        runtimeOnly    : (supersedes runtime), used only at runtime (vs compilation)
+  │ ·                                                                       (e.g.: JDBC drivers needed only at runtime)
+  │ ·     mainClassName = 'tmp.App'                        api and compileOnlyApi : dependencies required for compiling both
+  │ · }                                                                     the module and transitive module dependencies
+  │ ·                                                      (plus testCompileOnly, testImplementation, testRuntimeOnly)
+  │ ·                                                                         ·  historically the (now deprecated) 'compile'
+  │ └·········································································┘  configuration was required to both
+  │                                                                              compile and run a project’s
+  ├ settings.gradle  1 <···> 1+ Project  1 <···> 1 ProjectDescriptor             production code.  It doesn’t
+  │   rootProject.name = 'demo' └─┬─── ┘           └───────┬───────┘             distinguish between dependencies that
+  │   include('app')              ·      ┌·················┘                     impact the public API of a Java library
+  │                               ·      ├─ readonly props injected from ────────project and those that don’t.   ────
+  │                               ·      │+ '${PRJCT}/gradle.properties'
+  │                               ·      │+ ~/.gradle/gradle.properties'
+  │                               ·      ├─ read/write props  ────────────────────────
+  │ ┌·····························┘      │+ buildCache: BuildCacheConfiguration
+  │ + root project always present        │+ extensions: ExtensionContainer
+  │ + Projects form a (tree) hierachy    │+ gradle         (grandle instance, read only)
+  │ + declare projects in build through: │+ pluginManager: PluginManager (read-only)
+  │   Settings.include(String[])         │+ plugins      : PluginContainer (container of plugins applied to this object)
+  │                                      │  not deprecated but equivalent methods
+  │                                      │  in ProjectDescriptor or PluginAware.getPluginManager() preferred
+  │                                      │+ rootDir      : File  (of project)
+  │                                      │+ rootProject  : ProjectDescriptor (of build)
+  │                                      │+ settings     : Settings (read-only)
+  │                                      │+ settingsDir  : File  (of build)
+  │                                      │+ startParameter: StartParameter (param.setused to invoke this gradle instance)
+  │                                      ├─ Methods: ────────────────────────
+  │                                      │  Method	              Description
+  │                                      │  apply(closure)        Applies 0+ plugins|scripts
+  │                                      │  apply(options)        Applies plugin|script using options (injected as map)
+  │                                      │  apply(action)         Applies 0+ plugins|scripts
+  │                                      │  buildCache(action)    Configures build cache.
+  │                                      │  findProject(prjDir)   Returns project with given prjDir.
+  │                                      │  findProject(path)     Returns project with given path.
+  │                                      │  include(projectPaths) Adds projects to build.
+  │                                      │  includeBuild(rootPrj) Includes build at path.
+  │                                      │  includeBuild(rootPrj, configuration)
+  │                                      │  includeFlat(prjNames) Adds project list to build.
+  │                                      │  project(projectDir)   Returns project with given prj.dir.
+  │                                      │  project(path)         Returns the project with given path.
+  │                                      └────────────────────────────────────────────────────────────
+  │                            REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html
   │
-  │
-  ├ settings.gradle
-  │
-  │
-  │
-  │
-  │
-  │
-  │
-  ├ gradle                              <····  generated dir. TO BE ADDED TO GIT
-  │ └ wrapper
-  │   ├── gradle-wrapper.jar            <···· code for downloading a given gradle version
-  │   └── gradle-wrapper.properties
-  ├ gradlew      <┬·························· [[{KEY-POINT]]  once in place, replace  OS
+  ├─ gradle                             <····  generated dir. TO BE ADDED TO GIT
+  │  └ wrapper
+  │    ├── gradle-wrapper.jar           <···· code for downloading a given gradle version
+  │    └── gradle-wrapper.properties
+  ├ gradlew      <┬·························· [[{KEYPOINT]]  once in place, replace  OS
   ├ gradlew.bat  <┘                           system-wide gradle (with random version) with
   ├                                           $ ./gradlew build  (gradlew.bat in Windows)
   └ src                                       - This ensures reproducible builds using a
@@ -47,76 +108,299 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   $ git add \                           <···· STEP 3) Commit gradle artifacts to git.
     build.gradle gradle* settings.gradle &&
     git commit -m "Adding graddle support"
+                                              STEP 4) Test setup:
+  $ ./gradlew run                       <···· Test running App::main @App.java
+  $ ./gradlew build                     <···· Test build (bundling jar)
+  $ ./gradlew build --scan              <···· Publish a build-scan
+  ...
+  Publishing build scan...
+  https://gradle.com/s/5u4w3gxeurtd2    <···· Browse link to explore tasks executed, dependencies
+                                              downloaded,...
+
+Click the link and explore which tasks where executed, which dependencies where downloaded and many more details!
+
+Further reading                                                                     [[{01_PM.TODO]]
+https://docs.gradle.org/current/userguide/building_java_projects.html
+https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
+https://docs.gradle.org/current/userguide/dynamic_versions.html#sub:declaring_dependency_with_changing_version
+https://docs.gradle.org/current/userguide/dynamic_versions.html#sub:declaring_dependency_with_dynamic_version
+https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:project_dependencies
+https://docs.gradle.org/current/userguide/dependency_constraints.html#dependency-constraints
+https://docs.gradle.org/current/userguide/composite_builds.html#composite_builds
+https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:maven_local [[}]]
 
 
-• Multi-module Deployer: [[{gradle.multimodule]]
+● GRADLE CORE MODEL [[{]]
+
+  Task  N <·····························> 1 Build
+ └─┬──┘                                    └──┬──┘
+ Unit of work                        a build configures and wires tasks
+ -----------------------------       and, based on their dependencies, builds
+  Inputs : (values,files/dirs)       a Directed Acyclic Graphs (DAGs).
+ Actions : (compile, cp, ... )       - Gradle determines from the DAG, which
+ Outputs : files/dirs.                 tasks need to be run in order.
+ └──┬──┘                               The task graph can be defined:
+    ·                                - plugins
+    ·                                - custom build scripts,
+    ·
+ (In/Out)puts and Actions are optional. For example the standard lifecycle task
+ don't even have any actions. They simply aggregate multiple tasks together as
+ a convenience.
+ • Gradle plugins are the way to package/distribute standard/community/custom tasks.
+
+• GRADLE FIXED BUILD PHASES:
+  - Initialization: Sets up the environment for build
+                    determine which projects will take part in it.
+  - Configuration : Constructs and configures the task graph
+                    and the task run order.
+                    "EVERYTHING INVOLVED" is evaluated EVERY TIME
+                    the build runs.
+  - Execution     : Runs tasks
+
+  WARN: Gradle’s build phases != Maven’s phases
+
+● Customization:
+  - Task action customization:
+    Task.doLast  {}
+    Task.doFirst {}
+
+  - Customizing projects/task:
+    Custom properties can be added to projects and tasks
+
+  - Custom model.
+    Custom concepts (other than tasks, files and dependencies) can be created
+    adding the concept of "source-sets" to a build.
+    [[{KEYPOINT]]: Appropriate modeling of a build process can greatly improve
+    a build’s ease of use and its efficiency. [[}]]
+
+    [[{qa.BEST_PATTERN]] Logic must be delegated to plugins and custom models
+                         (vs scripts)  [[}]]
+
+[[}]]
+
+
+[[devops.gradle.101}]]
+
+● Example Multi-module Deployer: [[{gradle.multimodule,02_doc_has.code_snippet]]
 @[https://github.com/FlamingTuri/multi-module-deployer]
-  (Java Example project available in github)
   - library built to speed up deployment of microservice based applications.
   - build and run each application module.
   - configure deployment dependencies between modules
     by just creating and running a simple application.
 
-  └ Installation
+  INSTALLATION)
     1) Add to your build.gradle the following function:
-     def downloadLibFromUrl(String libSaveDir, String libName, String libUrl) {
-         def folder = new File(libSaveDir)
-         if (!folder.exists()) {
-             folder.mkdirs()
-         }
-         def file = new File("$libSaveDir/$libName")
-         if (!file.exists()) {
-             ant.get(src: libUrl, dest: file)
-         }
-         getDependencies().add('compile', fileTree(dir: libSaveDir, include: libName))
-     }
+       def downloadLibFromUrl(String libSaveDir, String libName, String libUrl) {
+           def folder = new File(libSaveDir)
+           if (!folder.exists()) { folder.mkdirs() }
+           def file = new File("$libSaveDir/$libName")
+           if (!file.exists()) { ant.get(src: libUrl, dest: file) }
+           getDependencies().add('compile', fileTree(dir: libSaveDir, include: libName))
+       }
 
-    2) the following code to your dependencies declaration:
-     dependencies {
-         /* ... */
-         def libSaveDir = "${System.properties['user.home']}/.gradle/caches/modules-2/files-2.1"
-         def version = '1.1.1'
-         def libName = "multi-module-deployer-${version}.jar"
-         def url = "https://github.com/FlamingTuri/multi-module-deployer/releases/download/v$version/$libName"
-         downloadLibFromUrl(libSaveDir, libName, url)
-     }
+    2) Add the following code to your dependencies declaration:
+       dependencies {
+           /* ... */
+           def libSaveDir = "${System.properties['user.home']}/.gradle/caches/modules-2/files-2.1"
+           def version = '1.1.1'
+           def libName = "multi-module-deployer-${version}.jar"
+           def url = "https://github.com/FlamingTuri/multi-module-deployer/releases/download/v$version/$libName"
+           downloadLibFromUrl(libSaveDir, libName, url)
+       }
 
-  └ Usage example
+  USAGE EXAMPLE)
 
-    import multi.module.deployer.MultiModuleDeployer;
-    import multi.module.deployer.moduleconfig.ModuleConfig;
-    import multi.module.deployer.moduleconfig.ModuleConfigFactory;
+  import multi.module.deployer.MultiModuleDeployer;
+  import multi.module.deployer.moduleconfig.ModuleConfig;
+  import multi.module.deployer.moduleconfig.ModuleConfigFactory;
 
-    public class App {
-      public static void main(String[] args) {
-          MultiModuleDeployer multiModuleDeployer = new MultiModuleDeployer();
-          // commands to run the first module
-          String   linuxCmd = "linux commands to deploy first module";
-          String windowsCmd = "windows commands to deploy first module";
-          ModuleConfig firstModuleConfig =
-            ModuleConfigFactory.httpModuleConfig(linuxCmd, windowsCmd, 8080, "localhost", "/api/...");
-          // adds the first configuration to the deployment list
-          multiModuleDeployer.add(firstModuleConfig);
+  public class App {
+    public static void main(String[] args) {
+        final MultiModuleDeployer multiModuleDeployer = new MultiModuleDeployer();
+        String linCmd, winCmd;
+        // ─ Add 1st config to deployment list ──────────
+        linCmd = "linux   commands to deploy first module";
+        winCmd = "windows commands to deploy first module";
+        final ModuleConfig firstModuleConfig =
+           ModuleConfigFactory.httpModuleConfig(
+              linCmd, winCmd, 8080, "localhost", "/api/...");
+        multiModuleDeployer.add(firstModuleConfig);
 
-          // commands to run the second module
-          linuxCmd = "linux commands to deploy second module";
-          windowsCmd = "windows commands to deploy second module";
-          ModuleConfig secondModuleConfig = ModuleConfigFactory.httpModuleConfig(linuxCmd, windowsCmd, 3000, "localhost", "/api/...");
+        // ─ Add 2nd config to deployment list ──────────
+        // (started ONLY AFTER first one "finishes")
+        linCmd = "linux   commands to deploy second module";
+        winCmd = "windows commands to deploy second module";
+        final ModuleConfig secondModuleConfig =
+           ModuleConfigFactory.httpModuleConfig(
+              linCmd, winCmd, 3000, "localhost", "/api/...");
 
-          // adds the second configuration to the deployment list
-          // it will be started only after the first one is "ended"
-          multiModuleDeployer.add(secondModuleConfig);
+        multiModuleDeployer.add(secondModuleConfig);
 
-          // deploys the modules
-          multiModuleDeployer.deploy();
-      }
+        // ──────────────────────────────────────────────
+        multiModuleDeployer.deploy(); // deploys the modules
     }
+  }
 [[gradle.multimodule}]]
 
 • What's New [[{01_PM.WHATS_NEW]]
 - Gradle v6:
 @[https://www.infoq.com/news/2020/01/gradle-releases-version-6/]
 [[}]]
+
+● Building Java & JVM projects [[{gradle.java_projects]]
+
+  JAVA LIBRARY PLUGIN:
+
+  build.gradle      (simplest build applying Java Lib Plugin)
+
+  plugins {
+      id 'java-library'
+  }
+
+  java {
+    withJavadocJar()
+    withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+  }
+
+  tasks.register('uberJar', Jar) {      <···· Create FAT / Uber jar.
+    archiveClassifier = 'uber'
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+      configurations.runtimeClasspath.findAll {
+        it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+  }
+
+  jar {                      <····· customize MANIFEST.MF in jar/war/ear
+    manifest {
+       attributes(
+         "Implementation-Title": "Gradle",
+         "Implementation-Version": archiveVersion)
+    }
+  }
+
+  version = '1.2.1'
+
+  TASK PROVIDED:
+  TASK           | INPUT                 | ACTION                      | OUTPUT
+  ---------------+-----------------------+-----------------------------+-----------
+  compileJava    | src/main/java         |                             | build/???
+  *1             | compilation Classpath |                             |
+                 | ^^^^^^^^^^^^^^^^^^^^^ |                             |
+                 | + sourceSetCompileOnly   (configuration)            |
+                 | + sourceSetImplementation(configuration)            |
+  ---------------+-----------------------+-----------------------------+-----------
+  compileTestJava| src/test/java         |                             | build/???
+  JUnit 3/4/5    | source set actually   |                             |
+  ---------------+-----------------------+-----------------------------+-----------
+  test           |                       | runs test in src/test/java  |
+  ---------------+-----------------------+-----------------------------+-----------
+  jar            | compiled classes      | package into                |
+                 | src/main/resources    | <project>-<version>.jar     |
+                 | source set actually   |                             |
+  ---------------+-----------------------+-----------------------------+-----------
+  javadoc        | src/main/java         |                             | Javadoc
+  ---------------+-----------------------+-----------------------------+-----------
+
+  The Java Library Plugin also integrates the above tasks into the
+  standard Base Plugin lifecycle tasks:
+  - jar is attached to assemble [1]
+  - test is attached to check
+
+  SOURCE SETS tie toghether:
+  - source file type/roles (app code, unit test, ...) with location in FS.
+  - compilation classpath, including any required dependencies
+    (via Gradle configurations)
+  - where the compiled class files are placed
+
+  *1: Java Library Plugin creates a compilation task for every source set defined.
+
+   - Most language plugins, Java included, automatically create a source
+     set called main, which is used for the project's production code.
+
+
+• Customizing default source-sets (Not recomended except for compatibility
+  with old projects). At build.gradle added something like:
+  sourceSets {
+      main { java { srcDirs = ['src'] } } <··· Alt 1: Complete override defaults
+      main { java { srcDir 'src'      } } <··· Alt 2: Add to defaults.
+      test { java { srcDirs = ['test'] } }     common convention in Gradle:
+  }                                            - setting a property   replaces values.
+                                               - corresponding method appends values.
+
+• Changing compiler options
+compileJava {
+    options.incremental = true   <··· incremental compilation
+    options.fork = true          <··· use new JVM process for compiler
+    options.release = 7          <··· Defaults to that of that of JVM of Gradle.
+    ...                          <··· compiler verbosity, enable/disable debug output in byte code,
+}                                     location for annotation processors used by compiler ...
+                                      compiler can find .
+
+• when should you define a custom source set?
+  - source need to be compiled with a unique classpath
+  - Generate classes handled differently from the main/test ones
+  - Form a natural part of the project
+
+• Java properties files and reproducible builds
+  WriteProperties TASK:
+  - fixes well-known problem:
+    - Properties.store() -standard Java API-
+      produces a unique file every time breaking usefulness
+      of incremental builds.
+  - WriteProperties fix the problem.
+
+• Reusing shared Manifests:
+  (merging manifests into a single new one is also possible)
+  ext.sharedManifest = manifest {              <···· Create standalone (shared) Manifest
+      attributes("Implementation-Title": "Gradle",
+                 "Implementation-Version": version)
+  }
+  tasks.register('fooJar', Jar) {
+      manifest = project.manifest {
+          from sharedManifest                 <······ Reuse in jar build
+      }
+  }
+
+
+• ex: use Asciidoc  in Javadoc comments.   [[{qa.documentation.asciidoc]]
+  NOTE: This configuration is optional (but elegant)
+  · configurations { asciidoclet }
+  · dependencies {
+  ·     asciidoclet 'org.asciidoctor:asciidoclet:1.+'
+  · }
+  ·
+  · tasks.register('configureJavadoc') {
+  ·   doLast {                          <········· Customize Task.Action with doLast
+  ·     javadoc {
+  ·       options.doclet = 'org.asciidoctor.Asciidoclet'
+  ·       options.docletpath = configurations.asciidoclet.files.toList()
+  ·     }
+  ·   }
+  · }
+  ·
+  · javadoc {
+  ·   dependsOn configureJavadoc
+  · }
+
+  [[}]]
+
+• The Java Library Plugin (on top of Java Plugin) allows gradle to
+distinguish between two different types of dependencies: those
+requiring the library at compile and those that are also required to
+compile the consumer and have task to create the POM file.
+
+
+• War Plugin (on top of Java Plugin) adds an extra packaging step to:
+  - Copies static resources from src/main/webapp into root of WAR
+  - Copies the compiled production classes into a WEB-INF/classes
+  - Copies lib.dependencies into WEB-INF/lib subdirectory
+
+[[gradle.java_projects}]]
 
 ● TODO/Non-classified [[{01_PM.TODO]]
 • CUSTOMIZING THE WRAPPER
@@ -136,6 +420,23 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   -  Verifying download
     @gradle/wrapper/gradle-wrapper.properties:
     distributionSha256Sum=371cb9fbebbe9880d147f59bab36d61eee122854ef8c9ee1ecf12b82368bcf10
-[[}]]
 
-[[}]]
+• https://scans.gradle.com/ [[{troubleshooting]]
+   Build Scan™: shareable record of a build providing insights into
+   what happened and why. You can create a Build Scan at
+   scans.gradle.com for the Gradle and Maven build tools for free.
+    Publishing a Build Scan to scans.gradle.com transmits information
+   about your Gradle and Maven builds and their environment to Gradle's
+   servers. The information is only accessible via a randomly generated
+   link, printed at the end of the build. You can delete the
+   Build Scan when you are finished. [[}]]
+
+• Groovy DSL:
+• Kotlin DSL:
+
+• https://docs.gradle.org/current/userguide/core_dependency_management.html#dependency_management_in_gradle
+[[01_PM.TODO}]]
+
+• https://docs.gradle.org/current/userguide/java_testing.html#java_testing
+
+[[devops.gradle}]]
