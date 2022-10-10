@@ -1,0 +1,695 @@
+●  Apropos:
+- Visit next Web site for a great experience:
+  https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/maven.txt
+
+- If you want to contribute to great gistory of this
+  document you can take the next flight to:
+@[https://www.github.com/earizon/JAVA]
+  Your commits and pull-request will be immortalized
+  in the Pantheon of the Unicode Gods.
+────────────────────────────────────────────────────────────────────────────────
+
+[[{DEVOPS.MAVEN]]
+
+● Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,_PM.troubleshooting,_PM.WiP]] #[mvn_summary]
+• External Links
+  - PUBLIC REPOSITORY:      @[https://mvnrepository.com/]
+  - Artifact Search Engine: @[http://search.maven.org/]
+  - Online doc from Maven : @[https://www.mvndoc.com]
+    Ex: Show Bouncy Castle doc by:
+    - full index   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index-all.html]
+    - by package   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index.html]
+
+• maven lifecycle : execute a set of goals IN ORDER:
+    mvn   package   ┌ resources:resources     ←··· goal: unit of work. plugins implementing differet goals
+          └──┬──┘   │ compiler:compile             accept parametrization customizing its run-time behavior:
+             └──────┤ resources:testResources
+                    │ compiler:testCompile
+                    └ surefire:test jar:jar
+
+• mvn Usssage :
+  All mvn commands take the pom.xml project definition as input.
+  First time mvn is executed will be slow, since lot of libraries must be downloaded.
+
+$ $ QS=maven-archetype-quickstart \
+$ $ mvn archetype:generate           ← create new project skeleton:
+$ $   -DgroupId=my.groupId \           ./pom.xml
+$ $   -DartifactId=myArtifact \        ./src/test/java/my.groupId/AppTest.java
+$ $   -DarchetypeVersion=1.4           ./src/main/java/my.groupId/App.java
+$ $   -DinteractiveMode=false          ./src/main/resouces/ (./META-INF/MANIFEST.MF, ./images/, ... )
+$ $   -DarchetypeArtifactId=$QS        ./src/test/resources/test.properties ← ex: InputStream is = getClass()
+                                       └──────┬───────┘                           .getResourceAsStream("/test.properties";
+                                     To add another non-standard (old code/tool-generated/...)
+                                     directories add next lines to pom.xml:
+                                     <build>
+                                       ...
+                                    +  <sourceDirectory>src/main/generated_java</sourceDirectory>
+                                    +  <testDirectory>src/functionalTest/java</testDirectory>
+                                     </build>
+
+                                       EXECUTING LIFECYCLES (ordered lists of goals)
+$ $ mvn clean                        ← Remove ./target folder
+$ $ mvn compile                      ← ... → compile app and tests code
+$ $ mvn test-compile                 ← ... → compile tests only.
+$ $ mvn test                         ← ... → test (the surefire plugin executing test will search for
+                                             **/(*Test|Test*|*TestCase).java inside ./src/main/test/*
+
+$ $ mvn  -Dexec.args="arg0 ..."  \   ← Execute Java program with the help of maven.
+$    exec:java \                       mvn will take care of setting complex class path properly
+$   -Dexec.mainClass=com.foo.Main      (discouraged in production).
+
+$ $ mvn clean package                ← clean→resources→compile→test→package ( generates JAR/WAR/... package)
+                                       In detail:
+                                       1) resources:resources       4) compiler:testCompile
+                                       2) compiler:compile          5) surefire:test jar:jar
+                                       3) resources:testResources
+
+$ $ mvn clean install                ← clean→compile→test→package→install_local
+                                       (Use -Dmaven.test.skip=true to skip (slow) testing )
+
+$ $ mvn clean deploy                 ← clean→compile→test→package→install_local→install_pub
+                                                                                ("corporate") server
+$ $ mvn                              ← Default to next goals: (  WARN: no clean)
+  └────────┬────────────┘              1) process-resources  4) process-test-resources 7) prepare-package
+           ·                           2) compile            5) test-compile           8) package
+           ·                           3) process-classes    6) test                   9) install
+           ·
+   mvn common Common options include :
+  -U                   Force library (download) update. Fix problems with           [troubleshooting]
+                       unstable networks, unstable package releases.
+  -P myProfileX        Execute profile myProfileX defined in pom.xml
+  -o                   offline mode. Search deps in local repo.
+  -Dgenerate.pom=true  Generates the pom locally for an artefact when installing
+                       and compiling. Very useful to make offilne mode work properly.
+  help:active-profiles   : List project|user|global-scoped active profile for the build
+  help:effective-pom     : Displays effective POM for current build                      [debugging]
+  help:effective-settings: Prints calculated settings                                    [debugging]
+
+$ $ mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:list \   ← show ordered-by-phase list
+$   -Dbuildplan.tasks=install                                    of goals executed (Very useful to
+                                                                 skip slow/non-important goals like
+                                                                 doc, style-checks,...)
+
+$ $ mvn resources:resources \       ← quick local install (bypass tests/style-checks/...)
+$    compiler:compile \
+$    jar:jar \  install:install
+
+                                                                           EXTRACT PACKAGE INFO
+$ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.artifactId   ← Artifact ID
+$ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.groupId      ← Extract Group ID
+$ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Extract Version
+
+• Adding local jar dependency  (vs. maven central repository)
+    WARN : discouraged, but sometimes needed
+  <dependency>
+    <groupId>   ...  <artifactId>...  <version>...<scope>...
+    <systemPath>/home/project/lib/myjar.jar</systemPath>
+  </dependency>
+
+• GENERATE FAT JAR (jar with all dependencies included)
+
+
+  ...
+  <profiles>
+    <profile>
+      <id>fatjar</id>      ←···· STEP   : create 'fatjar' profile with customized maven-assembly-plugin
+      <activation>               STEP   : Exec $ $ mvn ... '-P fatjar'   to activate this profile
+        <property> <name>fatjar</name> </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+          ·   <artifactId>maven-assembly-plugin</artifactId>
+          ·   <version>3.0.0</version>
+          ·   <configuration>
+          ·      <descriptorRefs>
+          ·          <descriptorRef>fatjar</descriptorRef>
+          ·      </descriptorRefs>
+          ·      <archive>
+          ·          <manifest>
+          ·              <mainClass>com.myComp.myApp</mainClass>
+          ·          </manifest>
+          ·      </archive>
+          ·   </configuration>
+          ·   <executions>
+          ·       <execution>
+          ·           <id>make-assembly</id> <!-- this is used for inheritance merges -->
+          ·           <phase>package</phase> <!-- bind to the packaging phase -->
+          ·           <goals>
+          ·               <goal>single</goal >
+          ·           </goals>
+          ·       </execution>
+          ·   </executions>
+          </plugin>
+          ...
+  </profiles>
+
+• SNAPSHOT VERSIONING  (Future version)
+A:☞A snapshot version is one that has not been released (  future release ).
+   The idea is that  before  a "1.0" release is done, there exists
+   a 1.0O -SNAPSHOT . That version is what might become 1.0. It's
+   basically   "1.0 under development" . This might be close to a real
+   1.0 release, or pretty far (right after the 0.9 release, for ex.)
+
+   The difference between a "real" version and a snapshot version is
+   that  snapshots might get updates .  That means that downloading
+   1.0-SNAPSHOT today might give a different file than downloading it
+   yesterday or tomorrow.
+   In contrast   Released versions are inmutables :
+   updates to "1.0.0" requires new version "1.0.1".
+
+   Snapshot dependencies should only exist during development.
+   Released versions (i.e. no non-snapshot) should NEVER have
+   dependency on snapshots
+
+   <repository>
+       ...
+       <snapshots>
+           <enabled>true</enabled>
+           <updatePolicy>
+             always|daily(default)|
+             "X"minutes|never
+           </updatePolicy>
+       </snapshots>
+   </repository>
+
+<hr/>
+● pom utils (Cleaner/Updater/...)
+@[https://github.com/kdgregory/pomutil]
+
+Utilities to clean, organize, and restructure Maven POMs.                   [qa]
+
+• POM Cleaner :
+  "Cleans up" single POM, normale plugin and dependency specifications,
+  CONVERT HARDCODED VERSIONS TO PROPERTIES,
+  CONSITENTLY ORDER TOP-LEVEL ELEMENTS  (with pretty-printing output).
+
+• VERSION UPDATER:
+  Updates the version for a set of POMs to a specified|next-sequential version.
+
+• Dependency Check:
+  - find dependencies that are specified but unused.
+  - find dependencies used but unspecified (TRANSITIVE DEPENDENCIES THAT SHOULD BE DIRECT).
+
+• MVND(aemon)                                                [performance][TODO]
+@[https://www.infoq.com/news/2020/12/mvnd-mavens-speed-daemon/]
+- Study driven by Gradle shows Maven as being
+  up to 100 times slower than gradle builds .
+- JIT compiled classes are cached.
+- multi process if needed.
+
+- pretty small: ~4060 lines of Java code.
+
+- mvnd speed gains:
+  - 1/2 modules: ~ x7/x10 faster
+  - big projects: ~ x6 faster
+    (ex:Camel Quarkus 1242 modules)
+
+- Who-is-Who:
+  - Guillaume Nodet (project creator)
+  - Peter Palaga:main contributor
+
+<hr/>
+● pom.xml Summary
+@[https://maven.apache.org/pom.html]
+
+  <project
+     xmlns="http://maven.apache.org/POM/4.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <name>MyPackageDescriptiveName</name>
+    <url>http://maven.apache.org</url>
+
+    <groupId>com.mycomp.groupid</groupId>  ┐    PROJECT COORDINATES:  Reusable in pom as
+    <artifactId>myArtifactId</artifactId>  ├ ←  ${project.groupId}, ${project.artifactId}, ${project.version}
+    <version>1.0─SNAPSHOT</version>        ┘    version follows: MAJOR.MINOR.PATCH REF: @[https://semver.org/]
+
+    <packaging>jar</packaging>              ← := jar│war│ear│pom│maven─plugin│ejb│rar│par│aar│apklib│...
+  ┌ <properties> ←··························· Reusable propeties:
+  │   ...                                     @[https://maven.apache.org/pom.html#Properties]
+  │   <junit.ver>3.8.1</junit.ver>              ← Best pattern. Group all dependency versions in properties
+  │   <guava.ver>21.0</guava.ver>                 (in parent pom if parent─children apply)
+  │   <......ver>19.2</guava.ver>
+  │   ···
+  │   <maven.compiler.source>1.8</maven.compiler.source> ← Best pattern. Group plugin params in properties.
+  │   <maven.compiler.target>1.8</maven.compiler.target>
+  │   ...
+  │ </properties>
+  └ <dependencies>
+
+    <dependency>                           ┐
+        <groupId>com.google.guava</groupId>│
+        <artifactId>guava</artifactId>     ├ ← Example dependency declaration.
+        <version>${guava.ver}</version>    │
+    </dependency>                          ┘
+
+
+    <dependency>
+        <groupId>ch.qos.logback</groupId>        ← Typical dependencies for logging
+        <artifactId>logback-classic</artifactId>
+      ┌ <exclusions>  ←······················ Excluding transitive dependencies causing conflicts. (Multiple
+      │   <exclusion>                         competing implementations of a same interface, ...)
+      │     <groupId>org.slf4j</groupId>    ← Ex: fix runtime error: ".. path contains multiple SLF4J bindings"
+      │     <artifactId>                    │   ...XXX.jar!/org/slf4j/impl/StaticLoggerBinder.class
+      │        slf4j-jdk14                  │   ...XXX.jar!/org/slf4j/impl/StaticLoggerBinder.class
+      │     </artifactId>                   ┘
+      │   </exclusion>
+      └ </exclusions>
+        <version>1.1.7</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.ver}</version>
+      <scope>test</scope>                 ←  test dependency. Not included in final packaged app
+    </dependency>
+
+    <build>                               ← Build customizations:
+      <plugins>
+    ┌ <plugin> ←········································· Ex. Plugin customization
+    │   <groupId>org.apache.maven.plugins</groupId>
+    │   <artifactId>maven─compiler─plugin</artifactId>  ← plugin implementing compile 'goal'
+    │   <version>3.3</version>
+    │   <configuration>       ┐
+    │     <source>9</source>  │ ←·······················  plugin tunable parameters.
+    │     <target>9</target>  │
+    │   </configuration>      ┘
+    └ </plugin>
+      </plugins>
+    </build>
+    </dependencies>
+  </project>
+<hr/>
+● Parent+Children Multiproject
+- Allows to inherit project dependency in children projects
+
+  .../parent/pom.xml              │ .../parent/child1/pom.xml
+  ─────────────────────────────── │ ──────────────────────────────────
+  <modelVersion>4.0.0             │ <parent>
+  </modelVersion>                 │   <groupId>...</groupId>
+  <groupId>....</groupId>         │   <artifactId>parent</artifactId>
+  <artifactId>parent</artifactId> │   <version>1</version>
+  <version>0.1.0</version>        │   <relativePath>
+  <packaging>pom</packaging>      │      ../pom.xml</relativePath>
+                                  │ </parent>
+                                  │ <dependecies>
+  <modules>                       │   <dependency>
+  <module>./child1</module>       │     <groupId>...</groupId>
+  <module>./child2</module>       │     <artifactId>...</artifactId>
+  </modules>                      │   </dependency>...
+                                  │ </dependecies>
+
+
+  <dependencyManagement>            ←  *1
+    <dependencies>
+      <dependency>
+        <groupId>...</groupId>
+        <artifactId>...</artifactId>
+        <version>${dep1_ver}</version>    ← NOTE: no need to repeat version in children
+        <scope>compile</scope>      ← use compile by default. Let children override it.
+      </dependency>...
+    <dependencies>
+  </dependencyManagement>
+
+
+• best practice: Try to avoid using parent inherited properties in children.
+                 Modifyint the parent can break children.
+
+*1: best-practice: use this section to define all dependency versions,
+    but do not set a scope here so that all dependencies have scope
+    compile by default (or set to compile).
+
+
+  - Use the pluginmanagement section of parent pom to define versions for
+     all  plugins that your build uses, even standard maven plugins like
+    maven-compile-plugin and maven-source-plugin. This way your build will
+    not suddenly behave differently when a new version of a plugin is released.
+
+  - When using a parent POM not located in the directory directly above
+    the current POM define an empty relativePath element in your parent section.
+
+
+
+● Install non-mavenized jar
+
+$ $ mvn install:install-file -Dfile=path_to_local_file -DgroupId=<groupId> \
+$   -DartifactId=<artifactId> -Dversion=<version> -Dpackaging=<packaging>
+
+
+● POM BEST PRACTICES:
+REF: @[http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/]
+
+$ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
+$     -Dincludes="org.checkerframework:*"
+
+$ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
+$     -Dincludes="com.google.guava:*"
+
+• Prefer ${project.artifactId} vs ${artifactId} or ${pom.artifactId}
+  following XML document structure.
+
+- Use the dependency plugin to check your project for both unnecessary
+  dependencies and undeclared-but-used-none-the-less dependencies.
+  The goal is called ‘analyze’:
+$ $ mvn dependency:analyze
+
+- Make sure the pom files contain all the repository references needed
+  to download all dependencies. If you want to use a local repository
+  instead of downloadin strait from the internet then use the maven
+  settings file to define mirrors for the individual repositories that
+  are defined in the poms.
+
+- If you use Nexus, then do not create repository groups containing both
+  hosted and proxied repositories. This will dramaticly reduce the
+  responsiveness because Nexus will check the remote locations of the
+  proxied repositories even if a hosted repository contains the requested
+  artifact.
+
+- TODO:
+@[http://www.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/]
+[[}]]
+
+<pre zoom  labels="DevOps.maven,qa.101,java_lang.*,qa.*,_PM.WiP" id="dependency_management_summary" >
+● Package Dependency Management
+$ $ mvn dependency:analyze       ← Inform about:
+                                   - Dependencies used but not declared.
+                                     If found in the parent pom, there is no problem when compiling,
+                                     but must be included at runtime on the server.
+
+                                   - Dependencies declared but not used for the scope provided
+                                     (compile, provided…).  They can be in the parent pom too.
+                                     Noneless, can be needed at runtime.
+
+$ $ mvn dependency:tree -Dscope=compile
+                         ^^^^^^^^^^^^^^
+                         skip/ignore test/provided/... dependencies
+  → ...
+  → [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ tamperproof ---
+  → [INFO] com.myCompany:myProject:jar:1.0-SNAPSHOT
+  → [INFO] +- org.web3j:core:jar:4.3.0:compile
+  → [INFO] |  +- org.web3j:abi:jar:4.3.0:compile
+  → [INFO] |  |  \- org.web3j:utils:jar:4.3.0:compile
+  → [INFO] |  |     \- org.bouncycastle:bcprov-jdk15on:jar:1.60:compile
+  → [INFO] |  +- org.web3j:crypto:jar:4.3.0:compile
+  → [INFO] |  |  \- org.web3j:rlp:jar:4.3.0:compile
+  → [INFO] |  +- org.web3j:tuples:jar:4.3.0:compile
+  → [INFO] |  +- com.github.jnr:jnr-unixsocket:jar:0.21:compile
+  → [INFO] |  |  +- com.github.jnr:jnr-ffi:jar:2.1.9:compile
+  → [INFO] |  |  |  +- com.github.jnr:jffi:jar:1.2.17:compile
+  → [INFO] |  |  |  +- org.ow2.asm:asm:jar:5.0.3:compile
+  → [INFO] |  |  |  +- org.ow2.asm:asm-commons:jar:5.0.3:compile
+  → [INFO] |  |  |  +- org.ow2.asm:asm-analysis:jar:5.0.3:compile
+  → [INFO] |  |  |  +- org.ow2.asm:asm-tree:jar:5.0.3:compile
+  → [INFO] |  |  |  +- org.ow2.asm:asm-util:jar:5.0.3:compile
+  → [INFO] |  |  |  +- com.github.jnr:jnr-a64asm:jar:1.0.0:compile
+  → [INFO] |  |  |  \- com.github.jnr:jnr-x86asm:jar:1.0.2:compile
+  → [INFO] |  |  +- com.github.jnr:jnr-constants:jar:0.9.11:compile
+  → [INFO] |  |  +- com.github.jnr:jnr-enxio:jar:0.19:compile
+  → [INFO] |  |  \- com.github.jnr:jnr-posix:jar:3.0.47:compile
+  → ...
+
+● Publishing to Maven Central [[{DevOps.maven,devops]] #[mvn_pub2central]
+• External references:
+  · @[https://www.apache.org/dev/publishing-maven-artifacts.html]
+  · @[http://maven.apache.org/repository/guide-central-repository-upload.html]
+  · @[/General/cryptography_map.html?id=pgp_summary]
+
+• Requirements @[http://central.sonatype.org/pages/requirements.html]
+  Prepare pom.xml properly:
+  <?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="... http://.../maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.u1.training</groupId>     ← Prepare valid coordinates
+    <artifactId>artifact01</artifactId>
+    <version>1.0</version>                 ←  snapshots NOT allowed  (Recheck)
+    <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>....</description>
+    <url>http://github.com/user01/artifact01</url>
+
+    <licenses>
+      <license>
+        <name>Apache Software License, Version 2.0</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      </license>
+    </licenses>
+
+    <developers>
+      <developer>
+        <name>First_Name Second_Name</name>
+        <email>asdf.qwer@mock.com</email>
+        <organization>Mock Corp</organization>
+        <organizationUrl>http://...</organizationUrl>
+      </developer>
+    </developers>
+
+    <scm>
+      <connection>scm:git:git://github.com/user01/artifact01.git</connection>
+      <developerConnection>
+        scm:git:ssh://github.com:user01/artifact01.git
+      </developerConnection>
+      <url>http://github.com/user01/artifact01/tree/master</url>
+    </scm>
+    ...
+  </project>
+  └──────────────────────────────────┬──────────────────────────────────────┘
+    WARN : """ we discourage the usage of <repositories> and                      ← [QA]
+        <pluginRepositories> and instead publish any required
+        components to the Central Repository """
+
+• required files:
+$ $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc         *2
+$ $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc         *2
+$ $  cat artifact01-1.4.7-sources.jar *1 | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc *2
+$ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.jar.asc *2
+         └──┬─────┘ └─┬─┘              ^               └──────────────┬───────────────┘  ^
+         artifactId version            │                      GPG signatures *.asc       │
+                                       │                                                 │
+                                      *1: required except for pom (vs jar) packages      │
+                                      *2: Verify sign. like $ $ gpg2 --verify ...asc ────┘
+
+• Build tool integration @[http://pgp.mit.edu]  [TODO]
+  @[http://central.sonatype.org/pages/working-with-pgp-signatures.html#using-build-tools-for-signing]
+
+• PUBLISH BEST PATTERNS
+  • Use approved repository hosting location:
+  @[http://www.apache.org/]           (for all Apache projects)
+  @[http://www.fusesource.org/forge/] (focused on FUSE related projects)
+  @[http://www.nuiton.org]
+
+  • User automatic publication in "forges" providing hosting services.
+
+  • OSS Repository Hosting
+  @[http://central.sonatype.org/pages/ossrh-guide.html]
+    · Approved repository provided by Sonatype for OOSS Projects that want to
+      get their artifacts into Central Repository.
+    · Open an account as explained at
+    @[http://central.sonatype.org/pages/ossrh-guide.html]
+
+• POST-NAMESPACE REGISTRATION:
+  e-mail received after Namespace correct registration
+  ┌──────────────────────────────────────────────────────────────────┐
+  │ https://issues.sonatype.org/browse/OSSRH-39644?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
+  │ Thad Watson resolved OSSRH-39644: Resolution: Fixed              │
+  │                                                                  │
+  │ Configuration has been prepared, now you can:                    │
+  │ → Deploy snapshot artifacts into repository                      │
+  │   @[https://oss.sonatype.org/content/repositories/snapshots]     │
+  │ → Deploy release artifacts into the staging repository           │
+  │   @[https://oss.sonatype.org/service/local/staging/deploy/maven2]│
+  │ → Promote staged artifacts into repository 'Releases'            │
+  │ → Download snapshot and release artifacts from group             │
+  │   @[https://oss.sonatype.org/content/groups/public]              │
+  │ → Download snapshot, release and staged artifacts from           │
+  │   staging group                                                  │
+  │   @[https://oss.sonatype.org/content/groups/staging]             │
+  │  please comment on this ticket when you promoted                 │
+  │  your first release, thanks                                      │
+  └──────────────────────────────────────────────────────────────────┘
+
+• pre-deployment Tests:
+  ✓ Verify that all pom.xml files have an SCM definition.
+  ✓ Diff original 'pom.xml' with 'pom.xml.tag' to check if license,...
+    or any other info has been removed. This has been known
+    to happen if the starting <project> tag is  NOT  on a single
+    line.
+    The only things that should be different are:
+    <version> and <scm> elements. Anyother must be manually updated
+    from original pom.xml.
+
+$ $ mvn deploy           ← Deploy snapshot (to be staged)
+
+$ mvn release:clean      ← Prepare for  release
+$ $ mvn release:prepare\ ← Dry run. Check output is OK.
+$   -DdryRun=true          -DautoVersionSubmodules=true can save time
+                           in multi-module projects
+$ mvn release:prepare    ← Exec. release.  new tag will automatically
+                           be created and checked in git (or svn,...)
+$ mvn release:perform    ← Stage release for a vote. release will
+                           automatically be added to temp staging dir.
+[[}]]
+
+● Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,doc_has.diagram,_PM.TODO]]
+FROM maven:3.6-jdk-12-alpine as build
+WORKDIR /builder
+ADD pom.xml /builder/pom.xml
+ADD src /builder/src
+
+RUN mvn install -DskipTests=true
+
+FROM openjdk:11-jre
+ARG APP_NAME_ARG=middleware-0.0.1-SNAPSHOT.jar
+ENV APP_PROFILE docker
+ENV APP_NAME $APP_NAME_ARG
+WORKDIR /app
+COPY --from=build /builder/target/$APP_NAME /app
+COPY --from=build /builder/src/main/resources /app/src/main/resources
+EXPOSE 8080
+CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME
+<hr/>
+● Jib: Image Builder
+Docker+mvn/gradle integration:
+@[https://www.infoq.com/news/2018/08/jib]
+@[https://github.com/GoogleContainerTools/jib]
+
+- Build Java Container without Docker/Dockerfile
+- Jib's build approach separates the Java application
+  into multiple layers, so when there are any code changes,
+  only those changes are rebuilt, rather than the entire application.
+- these layers are layered on top of a distroless base image.
+  containing only the developer's application and its runtime deps.
+
+-  Docker build flow
+        │JAR│ ← (build) ← │Project│
+          ·                                                              │Container │
+          ├·····→ │Build Context│ →(build)→ │ Container Image │ →(push)→ │Image     │
+          ·                                 │ (docker cache)  │          │(registry)│
+     │Dockerfile│
+
+   Jib Build Flow:
+                                                                         │Container │
+     │Project│ ───────────────(Jib)─────────────────────────────────────→│Image     │
+                                                                         │(registry)│
+
+- Ex: Creating images from command line:
+  Once jib is installed and added to PATH, to create a new image do something like:
+$ $ /opt/jib/bin/jib
+$   --insecure \                                ← allow conn. to HTTP (non TLS) dev.registries
+$   build \                                     ← build image
+$   --registry \                                ← Push to registry
+$     gcr.io/distroless/java \                  ← Base image (busybox, nginx, gcr.io/distroless/java,...)
+$     192.168.1.3:5000/jib:latest \             ← Destination registry / image
+$   --entrypoint "java,-cp,/app/lib/*,\
+$   com.google.cloud.tools.jib.cli.JibCli" \
+$   build/install/jib/lib,/app/lib
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    Other options include:
+    (See jib build --help for more options)
+
+    p=perms       set file and directory permissions:
+      actual      use actual values in file-system
+      fff:ddd     octal file and directory
+                  (Default to 644 for files and 755 for dir.)
+    ts=timestamp  set last-modified timestamps:
+       actual     use actual values in file-system
+       "seconds since Unix epoch"
+       "date-time in ISO8601 format"
+                  (Default  to 1970-01-01 00:00:01 UTC).
+    -a, --arguments=arg         container entrypoint's default arguments
+    -c, --creation-time=time    Set image creation time  (default: 1970-01-01T00:00:00Z)
+    -l, --label=key=val[,key=va l...]
+    -p, --port=port[,port...]   Expose port/type (ex: 25 or 25/tcp)
+    -u, --user=user             Set user for execution (uid or existing user id)
+    -V, --volume=path1,path2... Configure specified paths as volumes
+
+
+- Ex pom.xml to create tomcat container with war:
+  REF: https://stackoverflow.com/questions/63657172/option-to-auto-generate-dockerfile-and-other-deployment-tooling-in-intellij
+
+$ $ mvn clean package jib:dockerBuild
+$ $ docker run --rm -p 8082:8080 \
+$   registry.localhost/hello-world:latest
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+  "http://maven.apache.org/POM/4.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>mvn-jib-example</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+
+    <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <failOnMissingWebXml>false</failOnMissingWebXml>
+    </properties>
+
+    <dependencies>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>4.0.1</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+
+    <build>
+      <finalName>servlet-hello-world</finalName>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>jib-maven-plugin</artifactId>
+          <version>2.5.0</version>
+          <configuration>
+            <allowInsecureRegistries>true</allowInsecureRegistries>
+            <from> <image>tomcat:9.0.36-jdk8-openjdk</image> </from>
+            <to>
+              <image>registry.localhost/hello-world</image>
+              <auth> <username>...</username> <password>...</password> </auth>
+              <tags>
+                <tag>latest</tag>
+              </tags>
+            </to>
+            <container>
+              <appRoot>/usr/local/tomcat/webapps/ROOT</appRoot>
+            </container>
+            <extraDirectories>
+              <paths>
+                <path>
+                  <from>./src/main/resources/extra-stuff</from>
+                  <into>/path/in/docker/image/extra-stuff</into>
+                </path>
+                <path>
+                  <from>/absolute/path/to/other/stuff</from>
+                  <into>/path/in/docker/image/other-stuff</into>
+                </path>
+              </paths>
+            </extraDirectories>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  </project>
+
+
+See also: jKube notes
+[[devops.containarization}]]
+[[DEVOPS.MAVEN}]]
