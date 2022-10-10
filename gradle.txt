@@ -1,6 +1,6 @@
 ●  Apropos:
 - Visit next Web site for a great experience:
-  https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/notes.txt
+  https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/gradle.txt
 
 - If you want to contribute to great gistory of this
   document you can take the next flight to:
