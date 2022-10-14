@@ -93,30 +93,29 @@
  │  apply(closure)        Applies 0+ plugins|scripts
  │  apply(options)        Applies plugin|script using options (injected as map)
  │  apply(action)         Applies 0+ plugins|scripts
- │  buildCache(action)    Configures build cache.│
- │  findProject(prjDir)   Returns project with given prjDir.
- │  findProject(path)     Returns project with given path.
+ │  buildCache(action)    Configures build cache │
+ │  findProject(prjDir)   Returns project with given 'prjDir'
+ │  findProject(path)     Returns project with given 'path'
  │  include(projectPaths) Adds projects to build (Build Project Dependency Tree)
- │  includeBuild(rootPrj) Includes build at path.│
+ │  includeBuild(rootPrj) Includes build at path │
  │  includeBuild(rootPrj, configuration)         │
- │  includeFlat(prjNames) Adds project list to build.
+ │  includeFlat(prjNames) Adds project list to build
  │  project(projectDir)   Returns project with given prj.dir.
  │  project(path)         Returns the project with given path.
+ │                                               │
+ │ (REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html)
  └───────────────────────────────────────────────┘              [[02_doc_has.diagram.UML.ER}]]
 
+● GRADLE CORE MODEL CUSTOMIZATION:
+  - Custom properties can be added to projects and tasks.
 
-  - Customizing projects/task:
-    Custom properties can be added to projects and tasks
-
-  - Custom model.
-    Custom concepts (other than tasks, files and dependencies) can be created
-    adding the concept of "source-sets" to a build.
+  - Custom models to represent  concepts (other than tasks, files and dependencies)
+    can be created adding the concept of "source-sets" to a build.
     [[{KEYPOINT]]: Appropriate modeling of a build process can greatly improve
-    a build’s ease of use and its efficiency. [[}]]
+    a build's ease of use and its efficiency. [[}]]
 
-    [[{qa.BEST_PATTERN]] Logic must be delegated to plugins and custom models
-                         (vs scripts)  [[}]]
-    REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html
+    Logic must be delegated to plugins and custom models  [[{qa.BEST_PATTERN]]
+    (vs build scripts)                                    [[}]]
 
 • Project Coordinates: Help to univocally identify a project and its versions.
   'group   :module     :version' <- gradle terminology [[{02_doc_has.comparative]]
