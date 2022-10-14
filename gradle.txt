@@ -12,6 +12,119 @@
 [[{devops.gradle]]
 
 ● Gradle Summary [[{devops.gradle.101]]
+
+  • TLDR
+
+                           ● SETUP TASKS
+    $ gradle init            <- Initializes a new Gradle build.
+    $ gradle wrapper         <- Generates Gradle wrapper files.
+
+                           ● BUILD TASKS
+    $ gradle build           <- Compile package
+                                -x {{test}} : Exclude test task:
+                                --offline   : offline mode (prevent network access/updates)
+    $ gradle clean           <- Clear build directory
+
+    $ gradle assembleRelease <- Build Android Package (APK) in release mode
+
+                           ● HELP TASKS
+    $ gradle tasks           <- List main tasks
+                                $ gradle tasks --all  <- List all tasks
+    $ buildEnvironment       <- show all buildscript dependencies declared in root project 'JAVA'.
+    $ components             <- show components produced by root project 'JAVA'.
+    $ dependencies           <- show all deps. declared in root project 'JAVA'. [{troubleshooting}]]
+    $ dependencyInsight      <- show insight into a specific dep. in root project 'JAVA'.
+    $ dependentComponents    <- show dependent components of components in root project 'JAVA'. [incubating]
+    $ help                   <- show a help message.
+                                $ gradle help --task $task for detailed info
+    $ model                  <- show configuration model of root project 'JAVA'. [incubating]
+    $ projects               <- show sub-projects of root project     'JAVA'.
+    $ properties             <- show properties of root project       'JAVA'.
+    $ tasks                  <- show tasks runnable from root project 'JAVA'.
+
+
+● GRADLE CORE MODEL  [[{gradle.101.core_model]]                    [[{02_doc_has.diagram.UML.ER]]
+                                                      ┌>1┃Plugin┃ packaging way to distribute
+                                                      v           standard,community&custom tasks.
+                                                      1
+   ┃settings.gradle┃    ┌>1 ┃ProjectDescriptor┃  ┌>0+┃Task┃(Task==Unit of work!)
+                1       v    └───┬──────1────┘   v ┌───┴────────────────────────┐
+                ^       1        ·      ^        1  Inputs  : Optional (values,files/dirs)
+                └>1+┃Project┃    ·      └>0+┃Build┃ Actions : Optional (compile, cp, ... )
+  ┌──────────────────────┴─────┐ ·             ^    Outputs : Optional (files/dirs)
+  + root-project always present  ·             ·    *action customization:
+  + Projects form a (tree)       ·             ·     Task.doLast  {}
+    hierarchy of build deps.     ·             ·     Task.doFirst {}
+                                 ·             ·     eg: standard-lifecycle-task don't even have any actions.
+                                 ·             ·         It simply aggregate multiple tasks together.
+                                 · ┌───────────┴───────────────────────┐
+                                 ·  build configures+wires tasks and,
+                                 ·  based on their dependencies, builds
+                                 ·  directed acyclic graphs (DAGs).
+                                 ·  - DAGs are use to determine tasks to
+                                 ·    run and run-order.
+                                 ·  - the task graph can be defined:
+                                 ·    · plugins
+                                 ·    · custom build scripts
+ ┌|ProjectDescriptor|────────────┴───────────────┐
+ │                                               │ ┌ GRADLE FIXED BUILD PHASES ────────────────────────┐
+ ├─ READONLY PROPS                               │ │ · INITIALIZATION: setup projects included in build│
+ │ · grandle       instance reference            │ │ · CONFIGURATION : Configures DAG (on every build) │
+ │ · PluginManager instance reference            │ │ · EXECUTION     : Runs tasks                      │
+ │ · Settings      instance injected from:       │ └───────────────────────────────────────────────────┘
+ │                 1) ${PROJCT}/gradle.properties│  WARN: [[{02_doc_has.comparative]]
+ │                 2) ~/.gradle/gradle.properties│  Gradle’s build phases != Maven’s phases [[}]]
+ │                                               │
+ ├─ READ/WRITE PROPS  ────────────────────────   │
+ │ · startParameter: StartParameter (param.set used to invoke this gradle instance)
+ │ · buildCache    : BuildCacheConfiguration     │
+ │ · extensions    : ExtensionContainer          │
+ │ · plugins       : PluginContainer (applied to this object)
+ │                    not deprecated but prefer equivalent methods
+ │                    in ProjectDescriptor | PluginAware.getPluginManager()
+ │ · rootProject   : ProjectDescriptor (of build)│
+ │ · rootDir       : File (of project)           │
+ │ · settingsDir   : File (of build)             │
+ │                                               │
+ ├─ Methods: ────────────────────────            │
+ │                                               │
+ │  Method	               Description           │
+ │  ------------------    -----------            │
+ │  apply(closure)        Applies 0+ plugins|scripts
+ │  apply(options)        Applies plugin|script using options (injected as map)
+ │  apply(action)         Applies 0+ plugins|scripts
+ │  buildCache(action)    Configures build cache.│
+ │  findProject(prjDir)   Returns project with given prjDir.
+ │  findProject(path)     Returns project with given path.
+ │  include(projectPaths) Adds projects to build (Build Project Dependency Tree)
+ │  includeBuild(rootPrj) Includes build at path.│
+ │  includeBuild(rootPrj, configuration)         │
+ │  includeFlat(prjNames) Adds project list to build.
+ │  project(projectDir)   Returns project with given prj.dir.
+ │  project(path)         Returns the project with given path.
+ └───────────────────────────────────────────────┘              [[02_doc_has.diagram.UML.ER}]]
+
+
+  - Customizing projects/task:
+    Custom properties can be added to projects and tasks
+
+  - Custom model.
+    Custom concepts (other than tasks, files and dependencies) can be created
+    adding the concept of "source-sets" to a build.
+    [[{KEYPOINT]]: Appropriate modeling of a build process can greatly improve
+    a build’s ease of use and its efficiency. [[}]]
+
+    [[{qa.BEST_PATTERN]] Logic must be delegated to plugins and custom models
+                         (vs scripts)  [[}]]
+    REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html
+
+• Project Coordinates: Help to univocally identify a project and its versions.
+  'group   :module     :version' <- gradle terminology [[{02_doc_has.comparative]]
+  'groupId :artifactId :version' <- maven  terminology [[}]]
+
+  [[gradle.101.core_model}]]
+
+
 REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
 
   $ gradle init \                       <···· STEP 1) SET UP A NEW GRADLE PROJECT
@@ -21,65 +134,49 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   └┬──────────────────────┘
   Next layout will added to FS:         [[{02_doc_has.diagram]]
   │                                            NOTE/WARN: gradle.propeties NOT created by init
-  ├ build.gradle ·····························································┐
-  │ · plugins {                                                               ·
-  │ ·     id 'java'        // <- Apply java plugin: build Java    support     ·
-  │ ·     id 'application' // <- Apply app. plugin: build cli app support     ·
-  │ · }                                                                       ·
-  │ ·                                                                         ·
-  │ · repositories {                                                          ·
-  │ ·     jcenter()        // Use jcenter (Maven/Ivy/file repos               ·
-  │ · }                                    can be declared)                   ·
-  │ ·                                                                         ·
-  │ · dependencies {                                                          ·
-  │ ·     implementation 'com.google.guava:guava:28.0-jre' // <- runtime dep. · 'group   :module     :version'(gradle terminology)
-  │ ·     testImplementation 'junit:junit:4.12'            // <- test    dep. · 'groupId :artifactId :version'(maven  terminology)
-  │ ·     └─···············┴······························ configuration :-
-  │ · }                                                    compileOnly    : dep. used only at compile (eg. transpiler), (-vs runtime).
-  │ ·                                                      implementation : (supersedes compile), dep. used for compilation and runtime
-  │ ·                                                                       (most dependencies fall in this category).
-  │ · application {                                        runtimeOnly    : (supersedes runtime), used only at runtime (vs compilation)
-  │ ·                                                                       (e.g.: JDBC drivers needed only at runtime)
-  │ ·     mainClassName = 'tmp.App'                        api and compileOnlyApi : dependencies required for compiling both
-  │ · }                                                                     the module and transitive module dependencies
-  │ ·                                                      (plus testCompileOnly, testImplementation, testRuntimeOnly)
-  │ ·                                                                         ·  historically the (now deprecated) 'compile'
-  │ └·········································································┘  configuration was required to both
-  │                                                                              compile and run a project’s
-  ├ settings.gradle  1 <···> 1+ Project  1 <···> 1 ProjectDescriptor             production code.  It doesn’t
-  │   rootProject.name = 'demo' └─┬─── ┘           └───────┬───────┘             distinguish between dependencies that
-  │   include('app')              ·      ┌·················┘                     impact the public API of a Java library
-  │                               ·      ├─ readonly props injected from ────────project and those that don’t.   ────
-  │                               ·      │+ '${PRJCT}/gradle.properties'
-  │                               ·      │+ ~/.gradle/gradle.properties'
-  │                               ·      ├─ read/write props  ────────────────────────
-  │ ┌·····························┘      │+ buildCache: BuildCacheConfiguration
-  │ + root project always present        │+ extensions: ExtensionContainer
-  │ + Projects form a (tree) hierachy    │+ gradle         (grandle instance, read only)
-  │ + declare projects in build through: │+ pluginManager: PluginManager (read-only)
-  │   Settings.include(String[])         │+ plugins      : PluginContainer (container of plugins applied to this object)
-  │                                      │  not deprecated but equivalent methods
-  │                                      │  in ProjectDescriptor or PluginAware.getPluginManager() preferred
-  │                                      │+ rootDir      : File  (of project)
-  │                                      │+ rootProject  : ProjectDescriptor (of build)
-  │                                      │+ settings     : Settings (read-only)
-  │                                      │+ settingsDir  : File  (of build)
-  │                                      │+ startParameter: StartParameter (param.setused to invoke this gradle instance)
-  │                                      ├─ Methods: ────────────────────────
-  │                                      │  Method	              Description
-  │                                      │  apply(closure)        Applies 0+ plugins|scripts
-  │                                      │  apply(options)        Applies plugin|script using options (injected as map)
-  │                                      │  apply(action)         Applies 0+ plugins|scripts
-  │                                      │  buildCache(action)    Configures build cache.
-  │                                      │  findProject(prjDir)   Returns project with given prjDir.
-  │                                      │  findProject(path)     Returns project with given path.
-  │                                      │  include(projectPaths) Adds projects to build.
-  │                                      │  includeBuild(rootPrj) Includes build at path.
-  │                                      │  includeBuild(rootPrj, configuration)
-  │                                      │  includeFlat(prjNames) Adds project list to build.
-  │                                      │  project(projectDir)   Returns project with given prj.dir.
-  │                                      │  project(path)         Returns the project with given path.
-  │                                      └────────────────────────────────────────────────────────────
+  ├ build.gradle ·························································
+  │ · plugins {
+  │ ·     id 'java'        // <- Apply java plugin: build Java    support
+  │ ·     id 'application' // <- Apply app. plugin: build cli app support
+  │ · }
+  │ ·
+  │ · repositories {
+  │ ·     jcenter()        // Use jcenter (Maven/Ivy/file repos
+  │ · }                                    can be declared)
+  │ ·
+  │ · application {                                         (most dependencies fall in this category).
+  │ ·     mainClassName = 'tmp.App'        runtimeOnly    : (supersedes runtime), used only at runtime (vs compilation)
+  │ · }                                                     (e.g.: JDBC drivers needed only at runtime)
+  │ ·
+  │ · dependencies {
+  │ ·     implementation     'com.google.guava:guava:28.0-jre'
+  │ ·     testImplementation 'junit:junit:4.12'
+  │ ·     └─···············┘
+  │ · }
+  │ ·
+  │ └·····································································
+  │
+  │       configuration :-
+  │       compileOnly    : dep. used only at compile (eg. transpiler), (-vs runtime).
+  │       implementation : (supersedes compile), dep. used for compilation and runtime
+  │                        (most dependencies fall in this category).
+  │       runtimeOnly    : (supersedes runtime), used only at runtime (vs compilation)
+  │                        (e.g.: JDBC drivers needed only at runtime)
+  │       api and compileOnlyApi : dependencies required for compiling both
+  │                        the module and transitive module dependencies
+  │       (plus testCompileOnly, testImplementation, testRuntimeOnly)
+  │                          ·  historically the (now deprecated) 'compile'
+  │                             configuration was required to both
+  │                             compile and run a project’s
+  │                             production code.  It doesn’t
+  │                             distinguish between dependencies that
+  │                             impact the public API of a Java library
+  │
+  ├  settings.gradle|1 <···> 1+|Project|1 <··> 1|ProjectDescriptor
+  │    rootProject.name = 'demo'
+  │    include('app')
+  │
+  │
   │                            REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html
   │
   ├─ gradle                             <····  generated dir. TO BE ADDED TO GIT
@@ -128,56 +225,6 @@ https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:projec
 https://docs.gradle.org/current/userguide/dependency_constraints.html#dependency-constraints
 https://docs.gradle.org/current/userguide/composite_builds.html#composite_builds
 https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:maven_local [[}]]
-
-
-● GRADLE CORE MODEL [[{]]
-
-  Task  N <·····························> 1 Build
- └─┬──┘                                    └──┬──┘
- Unit of work                        a build configures and wires tasks
- -----------------------------       and, based on their dependencies, builds
-  Inputs : (values,files/dirs)       a Directed Acyclic Graphs (DAGs).
- Actions : (compile, cp, ... )       - Gradle determines from the DAG, which
- Outputs : files/dirs.                 tasks need to be run in order.
- └──┬──┘                               The task graph can be defined:
-    ·                                - plugins
-    ·                                - custom build scripts,
-    ·
- (In/Out)puts and Actions are optional. For example the standard lifecycle task
- don't even have any actions. They simply aggregate multiple tasks together as
- a convenience.
- • Gradle plugins are the way to package/distribute standard/community/custom tasks.
-
-• GRADLE FIXED BUILD PHASES:
-  - Initialization: Sets up the environment for build
-                    determine which projects will take part in it.
-  - Configuration : Constructs and configures the task graph
-                    and the task run order.
-                    "EVERYTHING INVOLVED" is evaluated EVERY TIME
-                    the build runs.
-  - Execution     : Runs tasks
-
-  WARN: Gradle’s build phases != Maven’s phases
-
-● Customization:
-  - Task action customization:
-    Task.doLast  {}
-    Task.doFirst {}
-
-  - Customizing projects/task:
-    Custom properties can be added to projects and tasks
-
-  - Custom model.
-    Custom concepts (other than tasks, files and dependencies) can be created
-    adding the concept of "source-sets" to a build.
-    [[{KEYPOINT]]: Appropriate modeling of a build process can greatly improve
-    a build’s ease of use and its efficiency. [[}]]
-
-    [[{qa.BEST_PATTERN]] Logic must be delegated to plugins and custom models
-                         (vs scripts)  [[}]]
-
-[[}]]
-
 
 [[devops.gradle.101}]]
 
