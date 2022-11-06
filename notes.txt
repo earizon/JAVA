@@ -6774,6 +6774,136 @@ the following enterprise features:
   STEP 4) Run Stories
 [[}]]
 
+● JAVA FlameGraph Profiling [[{JVM,java_lang.profiling.101,java_lang.profiling.flamegraph,architecture.real-time]]
+
+UPDATE (Aug 2015): See the Java in Flames Netflix Tech Blog post for the latest
+and best method for Java flame graphs, which uses Linux perf_events to show Java
+and system code paths together.
+https://netflixtechblog.com/java-in-flames-e763b3d32166
+
+(I also describe the steps in Java CPU Flame Graphs.
+ https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html#Java)
+
+
+Java in Flames
+
+Java mixed-mode flame graphs (complete visualization of CPU usage)
+ have just been made possible by new JDK option: -XX:+PreserveFramePointer. (max +3%CPU increase)
+
+It allows to identify all profiling issues, including
+THOSE THAT ARE HIDDEN FROM OTHER PROFILERS by showing CPU consumption
+by a Java process both in user and kernel-level.
+
+eg.:
+- kernel code peaks performing TCP sends, (which often leads to a TCP receive
+  while handling the send) with Java code responsible.
+- Java code compilation vs code cache vs other system libraries,
+  differences in kernel code execution for different frameworks, ...
+
+ All of these CPU consumers were invisible to other Java profilers, which only
+ focus on the execution of Java methods.
+
+
+Flame Graph Interpretation:
+
+- y axis is stack depth
+- x axis spans the sample population.
+- Each rectangle is a stack frame (a function), where the width shows how often
+  it was present in the profile.
+  ordering from left to right is unimportant (stacks are sorted alphabetically).
+
+- You can read the flame graph from the bottom up, which follows the flow of
+  code from parent to child functions.
+- Another way is top down, as the top edge shows the function running on CPU,
+  and beneath it is its ancestry.
+
+- KEY-POINT: Focus on the widest functions, which were present in the profile the most.
+
+- There have historically been two types of profilers used on Java:  [[02_doc_has.comparative]]
+  - System profilers: eg: Linux perf_events, profiling system code paths, including libjvm
+                         internals, GC, and the kernel, but not Java methods.
+  - JVM profilers: such as hprof, Lightweight Java Profiler (LJP), and commercial profilers.
+    showing Java methods, but not system code paths.
+
+- KEY-POINT: In 2009, Linux perf_events added JIT symbol support, so that symbols from
+  language virtual machines like the JVM could be inspected.
+  To use it:
+  - application creates a /tmp/perf-PID.map text file, which lists symbol addresses
+    (in hex), sizes, and symbol names.
+    Java can create this file using perf-map-agent, an open source JVMTI agent written by
+    Johannes Rudolph. The first version needed to be attached on Java startup, but
+    Johannes enhanced it to attach later on demand and take a symbol dump.
+    That way, we only load it if we need it for a profile.
+  - perf_events looks for this file by default and, if found, uses it for symbol translations.
+
+  NOTE: symbols can change slightly during the profile session (around 30-60 secs) a symbol
+      dump may include stale symbols.
+
+Fixing Frame Pointers
+- For many years the gcc compiler has reused the frame pointer as a compiler optimization,
+  breaking stack traces. Some applications compile with the gcc option -fno-omit-frame-pointer,
+  to preserve this type of stack walking, however, the JVM had no equivalent option.
+
+PRESETUP:
+ - linux perf
+ - JDK
+ - perf-map-agent: JVMTI agent providing Java symbol translation for perf_events
+   $ apt-get install cmake
+   $ export JAVA_HOME=/path-to-your-new-jdk8
+   $ git clone --depth=1 https://github.com/jrudolph/perf-map-agent
+   $ cd perf-map-agent
+   $ cmake .
+   $ make
+
+ - perl software generating flamegraphs:
+   $ git clone --depth=1 https://github.com/brendangregg/FlameGraph
+
+USSAGE:
+- taking a 30-second profile at 99 Hertz (samples per second) of all processes
+  then caching symbols for Java PID 1690, then generating a flame graph:
+
+  $ sudo perf record -F 99 -a -g -- sleep 30
+  $ java -cp \
+    attach-main.jar:$JAVA_HOME/lib/tools.jar \             <- attach-main.jar from perf-map-agent
+    net.virtualvoid.perf.AttachOnce 1690                   <- run as same user as java
+  $ sudo chown root /tmp/perf-*.map
+  $ sudo perf script | stackcollapse-perf.pl | \
+  $     flamegraph.pl --color=java --hash > flamegraph.svg
+
+
+- With jmaps: automating symbol files.
+
+  $ sudo perf record -F 99 -a -g -- sleep 30; sudo jmaps
+  $ sudo perf script | stackcollapse-perf.pl | \
+  $     flamegraph.pl --color=java --hash > flamegraph.svg
+
+   jmaps creates symbol files for all Java processes, with root ownership.
+
+  REMEMBER: lean up the /tmp symbol files when you no longer need them!
+
+- EG: Generate By-Process Flame Graphs:
+
+  $ sudo perf record -F 99 -a -g -- sleep 30; sudo jmaps
+  $ sudo perf script -f comm,pid,tid,cpu,time,event,ip,sym,dso,trace | \
+        stackcollapse-perf.pl --pid | \
+        flamegraph.pl --color=java --hash > flamegraph.svg
+
+  stackcollapse-perf.pl output formats each stack as a single line, and is great
+  food for grep/sed/awk.
+
+- Missing Frames:
+  you’ll notice that many Java frames (methods) are missing compared to jstack(1)
+  command line tool. This is because of inlining, combined with this type of profiling
+  (frame pointer based) which only captures the final executed code.
+  This hasn’t been much of a problem so far: even when many frames are missing, enough
+  remain that we can figure out what’s going on.
+   We’ve also experimented with reducing the amount of inlining, eg, using
+   -XX:InlineSmallCode=500, to increase the number of frames in the profile. In some     [[performance]]
+  cases this even improves performance slightly, as the final compiled instruction size
+  is reduced, fitting better into the processor caches (we confirmed this using
+  perf_events separately).
+
+
 [[$div}]]
 [[$div}]]
 
