@@ -24,7 +24,7 @@
   Many others :@[https://github.com/eclipse-vertx/vert.x/graphs/contributors]
 [[}]]
 
-● Vert.X Summary [[{vertx.101,async/reactive.*,doc_has.diagram]]
+● Vert.X Summary [[{vertx.101,async/reactive.*,02_doc_has.diagram]]
 REF:
 - Vert.X guide for java devs @[https://github.com/vert-x3/vertx-guide-for-java-devs]
 - VertX maven starter        @[https://github.com/vert-x3/vertx-maven-starter]
@@ -265,5 +265,182 @@ lots of concurrent networked requests.
     }
   }
 [[vertx.testing}]]
+
+● Reusable Verticles [[{vertx.101]]
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc]
+
+- resulting verticles will not have direct references to each other
+  as they will only agree on destination names in the event bus as well
+  as message formats.
+- messages sent on the event bus will be encoded in JSON.
+
+- Ex:
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-2/src/main/java/io/vertx/guides/wiki]
+ HttpServerVerticle.java
+ WikiDatabaseVerticle.java
+ MainVerticle.java      ← its sole purpose is to bootstrap the app
+                          and deploy other verticles.
+ @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
+  package io.vertx.guides.wiki;
+
+  public class MainVerticle extends AbstractVerticle {
+    @Override
+    public void start(Promise<Void> promise) {
+      Promise<String> promise01 = Promise.promise();
+      vertx.deployVerticle(new WikiDatabaseVerticle(), promise01);
+      promise01.future().compose(id -> {
+        Promise<String> promise02 = Promise.promise();
+        vertx.deployVerticle(
+          "io.vertx.guides.wiki.HttpServerVerticle",  // <4>
+          new DeploymentOptions().setInstances(2),    // <5>
+          promise02);
+        return promise02.future();
+      }).setHandler(ar -> {
+        if (ar.succeeded()) {
+          promise.complete();
+        } else {
+          promise.fail(ar.cause());
+        }
+      });
+    }
+  }
+[[}]]
+
+● Create HttpServer [[{vertx.101]]
+REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
+
+   import io.vertx.ext.web.handler.BodyHandler;
+   public class MainVerticle  extends io.vertx.core.AbstractVerticle  {
+      ...
+      private io.vertx.core.http.HttpServer server = vertx.createHttpServer(); // vertx defined in Parent Class
+
+      @Override
+      public void start(Future<Void> startFuture) {
+          Json.mapper.registerModule(new JavaTimeModule());
+          FileSystem vertxFileSystem = vertx.fileSystem();
+          vertxFileSystem.readFile("swagger.json", readFile -> {
+              if (readFile.succeeded()) {
+                  // Swagger swagger = new SwaggerParser().parse(readFile.result().toString(Charset.forName("utf-8")));
+                  // SwaggerManager.getInstance().setSwagger(swagger);
+                  Router router = Router.router(vertx);
+                  router.get  (ROUTE_ENTITY01+"/:id")                              .handler(this:: GetEntity01Handler);
+                  router.post (ROUTE_ENTITY01       ).handler(BodyHandler.create()).handler(this::PostEntity01Handler);
+                                                              └───────┬───────────┘         └───────────┬───────────┘
+                                                decode POST req.body (forms,...) to         function signature:
+                                                Vert.x buffer objects                       void functionName( RoutingContext context )
+                  router.delete(ROUTE_ENTITY01+"/:id")                              .handler(this::DeleEntity01Handler);
+                  log.info("Starting Server... Listening on "+RC.host+":"+RC.port);
+                  vertx.createHttpServer(_getHTTPServerOptions()).
+                          requestHandler(router::accept).listen(
+                           8080,                                  ← Different deployments can share the port. Vertx will round-robin
+                           /* AsyncResult */ar -> { //
+                            if (ar.succeeded()) {
+                              LOGGER.info("HTTP server running on port 8080");
+                              startFuture.complete();
+                            } else {
+                              LOGGER.error("Could not start a HTTP server", ar.cause());
+                              startFuture.fail(ar.cause());
+                            }
+                          });
+              } else {
+                  startFuture.fail(readFile.cause());
+              }
+          });
+      }
+    }
+[[}]]
+
+
+● Maven Bootstrap  [[{vertx.101,devops]]
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc]
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1]
+
+Ex: minimally viable wiki written with Vert.x
+
+   └ Features:
+     - server-side rendering
+     - data persistence through a JDBC connection
+       and async ddbb access
+
+   └ Dependencies:
+     - Vert.x web: "elegant" APIs to deal with routing, request payloads, etc.
+     - Vert.x JDBC client: asynchronous API over JDBC.
+     - other libreries for HTML/md rendering
+
+                                          ┌ o configured pom.xml:
+ $ $ URL="https://github.com/vert-x3"     │   - Maven Shade Plugin configured to create a single
+ $ $ URL="${URL}/vertx─maven─starter"   ←─┤     "fat" Jar archive with all required dependencies
+ $ $ git clone ${URL} project01           │   - Exec Maven Plugin to provide the exec:java goal
+ $ $ cd project01                         │     that in turns starts the application through the
+                                          │     Vert.x io.vertx.core.Launcher class.
+                                          │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                          │     (equivalent to running using the vertx cli tool)
+                                          │
+                                          │ o sample verticle
+                                          │
+                                          │ o unit tests
+                                          │
+                                          └ o redeploy.sh: auto compile+redeploy on code changes.
+                                              (adjust $VERTICLE in script to match main verticle)
+ $ $ mvn package exec:java             ← check that maven install is correct
+
+
+Tip: The SQL database modules supported by the Vert.x project do not currently
+   offer anything beyond passing SQL queries (e.g., an object-relational mapper)
+   as they focus on providing asynchronous access to databases.
+   However, nothing forbids using more advanced modules from the community,
+   and we especially recommend checking out projects like this jOOq generator
+   for VertX
+   @[https://github.com/jklingsporn/vertx-jooq]
+
+$ mvn clean package
+$ java -jar target/project01-SNAPSHOT-fat.jar
+[[}]]
+
+● VertX Continuation [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend,01_PM.TODO]]
+• VertX (TODO)
+• RxJava Integration:
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
+  <!-- Refactoring some code to use reactive programming with the
+        popular RxJava library and its Vert.x integration -->
+
+• Vertx+k8s:
+@[http://escoffier.me/vertx-kubernetes/]
+• SockJS:
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc]
+  - Event-bus bridge allowing web apps to seamlessly communicate over
+  - event bus from JavaScript running in the browser by receiving and publishing
+  - messsages just like any verticle would do
+• Angular Client:
+@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-9/README.adoc]
+
+ TODO:
+ Cookbook recipe:
+    Vertx vertx = Vertx.vertx();
+    HttpServer server = vertx.createHttpServer();
+    server.requestHandler(req -> {
+      req.response().end("Hello world");
+    });
+    server.listen(8080);
+ ------------------------------------
+  """
+  There are many features and modules that we haven’t covered in this guide, such as:
+    - Clustering using Hazelcast, Infinispan, Apache Ignite or Zookeeper,
+    - Exposing⅋consuming over HTTP/2, possibly (but not necessarily) with gRPC
+    - Using NoSQL databases such as MongoDB or Redis.
+    - Sending emails over SMTP.
+    - Messaging with AMQP, Stomp, Kafka, MQTT or RabbitMQ.
+    - Using OAuth2 authentication from custom and popular providers.
+    - Vert.x sync for writing blocking-style code that is later
+      turned into fibers non-blocking code at runtime.
+    - Publishing and discovering micro-services from registries, for
+      instance when deploying on cloud environments like OpenShift,
+    - Exposing metrics and health checks.
+  """
+
+• What's new Vert.X 4.0: (2020-12-09):
+@[https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes]
+[[}]]
+
 
 [[vertx}]]

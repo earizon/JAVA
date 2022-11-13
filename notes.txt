@@ -15,28 +15,25 @@ This "cheat-sheet with steroids" presents an always-growing set of
 DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 ... as well as author's own experience in different projects.
 
-[[{$div]]
-[[{<02_doc_has.ext_resource]]
 ● External Links
--<a href="https://docs.oracle.com/javase/specs/">Lang&amp;VM specs</a>
--<a href="https://docs.oracle.com/javase/8/docs/api/index.html">API</a>
--<a href="https://adoptopenjdk.net/">Adpot OpenJDK prebuilt binaries</a>
-https://hg.openjdk.java.net/jdk/jdk
--<a href="https://hg.openjdk.java.net/jdk/">OpenJDK@Mercurial</a>
-- @[https://wiki.openjdk.java.net/]
-- @[https://openjdk.java.net/]
+  @[https://openjdk.java.net/jeps/0] JAVA Enhancements proposals
+  @[https://docs.oracle.com/javase/specs/] Lang & VM specs
+  @[https://docs.oracle.com/javase/17/docs/api/]
+  @[https://docs.oracle.com/javase/11/docs/api/]
+  @[https://docs.oracle.com/javase/8/docs/api/]
+  @[https://adoptopenjdk.net/]
+  @[https://hg.openjdk.java.net/jdk/jdk] OpenJDK@Mercurial
+  @[https://wiki.openjdk.java.net/]
+  @[https://openjdk.java.net/]
 
--<a href="https://zeroturnaround.com/wp-content/uploads/2014/06/jtnt-mindmap.png">JAVA MIND-MAP</a>
--<a href="https://en.wikipedia.org/wiki/List_of_Java_virtual_machines">(Active) Java JVM List</a>
--<a href="https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-improve_code_quality.htm&cp=1_3_9">Eclipe Tools for [QA]</a>
--<a href="https://picodotdev.github.io/blog-bitix/tags/java/">Excellent Java Blog (spanish)</a>
--<a href="https://openjdk.java.net/jeps/0">JAVA Enhancements proposals</a>
--<a href="https://github.com/douglascraigschmidt/LiveLessons">Douglas Craigs Schmidt Java Lessons:</a>
--<a href="https://github.com/akullpp/awesome-java">Awesome Java</a>
+  @[https://en.wikipedia.org/wiki/List_of_Java_virtual_machines]
+  - Eclipe Tools for [QA]
+  @[https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-improve_code_quality.htm&cp=1_3_9]
+  @[https://github.com/douglascraigschmidt/LiveLessons] Douglas Craigs Schmidt Java Lessons
 
--@[https://java-source.net/] Collections of Production-ready software developed with Java,
+-@[https://java-source.net/] Production-ready software developed with Java,
    from DDBBs, caches, servers, ...
-──────────────────────────────────────────
+
 ● Bibliography
 - Effective Java 3rd Edition, Joshua Bloch
   ISBN-10: 0134685997
@@ -45,11 +42,9 @@ https://hg.openjdk.java.net/jdk/jdk
 -  Java Performance: The Definitive Guide, by Scott Oaks
    ISBN-10: 1449358454
    ISBN-13: 978-1449358457
-[[}]]
 
-[[{java_lang.101,<02_doc_has.ext_resource,scalability.101,qa.101,01_PM.WiP]]
-#[java_donts]
-● JAVA DONT's
+
+● JAVA DONT's #[java_donts] [[{java_lang.101.donts,scalability.101,qa.101,01_PM.WiP]]
 • Avoid Nulls, prefer final:
   WRONG:
   ========================
@@ -115,63 +110,9 @@ https://hg.openjdk.java.net/jdk/jdk
   Each time a checked exception is found convert to a runtime (subclass) exception.
   More info at: @[https://phauer.com/2015/checked-exceptions-are-evil/]
 
-[[}]]
+[[java_lang.101.donts}]]
 
-● Who-is-Who [[{]]
-(Forcibly incomplete but still quite pertinent list of core developers and companies)
-- James Arthur Gosling:  Founder and lead-designer of the Java Programming Language
-  @[https://en.wikipedia.org/wiki/James_Gosling]
-
-- Joshua J. Bloch:
-  @[https://en.wikipedia.org/wiki/Joshua_Bloch]
-  - Author of the book "Effective Java" (a must read)
-    and co-author of two other books:
-    - Java Puzzlers (2005)
-    - Java Concurrency in Practice (2006)
-  - Led the design and implementation of numerous
-    Java platform features, including the
-    Java Collections Framework, the java.math package,
-    and the assert mechanism.
-
-- Julien Viet:
- @[http://www.julienviet.com/]
-  Core developer of VertX, crash (http://www.crashub.org/),
-  and many other interesting Java software.
-  @[https://github.com/vietj?utf8=%E2%9C%93&tab=repositories&q=&type=source]
-
-- Ben Evans:
-  - jClarity Co-founder.
-  - Java Champion, author, speaker, consultant
-  - voting member on Java’s governing
-  - Author of 5 books
-    - “The Well-Grounded Java Developer”,
-    - new editions of “Java in a Nutshell”,
-    - “Java: The Legend” and “Optimizing Java”.
-    - Track lead for Java / JVM at InfoQ.
-  @[https://www.jbcnconf.com/2019/infoTalk.html?id=5c64983638da16483151bb37]
-  IMPLEMENTING A SIMPLE JVM IN JAVA AND RUST
-  ... I will explain how we might start to implement a JVM from scratch.. then
-   we will show how the Rust programming language provides a good alternative
-   implementation language for our simple JVM. We will showcase some basic Rust
-   language features and show how they can be used to provide a version of our
-   JVM that is much cleaner and easier to understand, even if you've never
-   seen Rust code before!"""
-
-- Emmanuel Bernard: Distinguished Engineer and Chief Architect Data at
-  Red Hat (middleware). His work is Open Source. He is most well known for his
-  contributions and lead of the Hibernate projects as well as his contribution
-  to Java standards. His most recent endeavour is Quarkus (A Kubernetes Native
-  Java stack tailored for GraalVM and OpenJDK HotSpot, crafted from the best of
-  breed Java libraries and standards).
-
-
-- Chad Arimura, vice president of Java Developer Relations at Oracle.
-
-- https://community.oracle.com/community/groundbreakers/java/java-champions
-- https://blogs.oracle.com/java/new-java-champions-in-2017
-[[}]]
-
-● What's new [[{<02_doc_has.ext_resource,async/reactive,java_lang.debugging,01_PM.troubleshooting]]
+● What's new [[{01_PM.WHATS_NEW,02_doc_has.ext_resource,async/reactive,java_lang.debugging]]
 ● v.17 2021-09-14
 - 1st long-term support (LTS) release after JDK 11 (2018).
 - 14 JEPs includes:
@@ -229,11 +170,11 @@ https://hg.openjdk.java.net/jdk/jdk
   - 382: New macOS Rendering Pipeline
   - 391: macOS/AArch64 Port
   - 398: Deprecate the Applet API for Removal
-<hr/>
+
 ● v.15 2020-09-15
 @[https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features]
 
--   RECORDS!!!: non-verbose inmutable classes.
+-   RECORDS!!!: non-verbose inmutable classes.  [[{java_lang.records]]
     Ex.:
     Alt 1: short writing
     record Person (String name, int age) { }
@@ -250,7 +191,7 @@ https://hg.openjdk.java.net/jdk/jdk
     Records:
     - can NOT have any additional (internally computed) private or public instance fields.
     - can NOT extend classes.
-    - are ALWAYS FINAL (cannot be extended),
+    - are ALWAYS FINAL (cannot be extended),     [[}]]
 
 - production ready ZGC low-latency garbage collector.
   "...Oracle expects ZGC to be quite impactful for a multitude of workloads,
@@ -267,7 +208,7 @@ https://hg.openjdk.java.net/jdk/jdk
   - access "foreign"(outside Java HEAP) memory.
     Part of Project Panama, trying a better connection with native
     (C/Assembler) code.
-<hr/>
+
 ● v.14 2020-03-??
 https://www.infoq.com/news/2019/12/java14-feature-freeze/
  └ More container awareness...
@@ -294,7 +235,6 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    class unloading, both of which aim to reduce GC pause time by moving
    GC work from the pause to a concurrent phase.
 
-<hr/>
 ● v 12,13
 @[https://www.infoq.com/news/2019/06/java13-feature-freeze/]
 @[https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/]
@@ -306,8 +246,8 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    - Improve container support when Join Contollers option is used (JDK-8217766)
    - Impove systemd slice memory limit suppot (JDK-8217338)
    - JFR jdk.CPUInformation event epots incorrect info. when running in  [[{devops.containarization]]
-     Docker container (JDK-8219999)
-<hr/>
+     Docker container (JDK-8219999)                                      [[}]]
+
 ● v.11(LTS) 2018/09
 @[https://www.journaldev.com/24601/java-11-features]
 @[https://www.infoq.com/news/2018/09/java11-released]
@@ -316,7 +256,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
   - jcmd -l and jps commands do not list JVMs in Docker containers (JDK-8193710)
   - Container Metrics (-XshowSettings:system) (JDK-8204107)
   - Update CPU count algorithm when both cpu shares and quotas are used (JDK-8197867)
-    --XX:+PrefectContainerQuotaForCPUCount
+    --XX:+PrefectContainerQuotaForCPUCount                              [[}]]
 
 New major features:
 - Autocompilation(JEP 330). Next code will execute:
@@ -367,11 +307,6 @@ New major features:
         - Check carefully whether build scripts need to
           be modified.
 
-- Flight Recorder(JEP 328)
-  - profiling tool gathering diagnostics and profiling data
-  - negligible performance overhead (<1%):
-    - Can be used in production
-
 - HTTP Client (JEP 321)
   - HTTP/1.1, HTTP/2 and WebSockets
   - Designed to improve overall performance of
@@ -391,7 +326,7 @@ New major features:
   System.out.println(s); //This was posted on JD
 
 - ChaCha20,Poly1305 Crypto (JEP 329)            [[{security.cryptography]]
-  - implemented in the SunJCE provider.
+  - implemented in the SunJCE provider.         [[}]]
 
 - Improve (string and array)Aarch64 processor Intrinsics(JEP 315)
   - implement also new intrinsics for
@@ -403,7 +338,7 @@ New major features:
   - low latency GC.
   - sub-10ms pause times, less than 15% perf.penalty.
 - Deprecate Nashorn JS Engine(JEP 335)
-<hr/>
+
 ● v.10 (2018/03)
 - More container awareness...                                 [[{devops.containarization]]
   - Improve heap memory allocations (JDK-8196595):
@@ -413,47 +348,30 @@ New major features:
     --cpus, --cpu-shares, --cpu-quota (JDK-8146115)
     o Use --XX:-UseContainerSupport to return to the old behaviour
     o # processors that the HVM will use internally -XX:ActiveProcessorCount
-  - Attach in linux became elative to /proc/pid/root and namespace aware (jcmd, jstack,...)
-
+  - Attach in linux became elative to /proc/pid/root and namespace aware (jcmd, jstack,...) [[}]]
   - Read also: https://aboullaite.me/docker-java-10/
     JVMs before 10 had been implemented before cgroups, hence not
     optimized for executing inside a container.
-
-- Application Data-Class Sharing (JEP ???)
-  -  extends existing Class-Data Sharing ("CDS")
-     for allowing application classes to be placed in
-     the shared archive in order to improve startup
-     and footprint.
-- Parallel Full GC for G1
-  - improves G1 worst-case latencies
-- Garbage Collector Interface
-  - improves source code isolation of different GCs.
-- Consolidate JDK Forest into a Single Repository
-- Local-Variable Type Inference
-  - declarations of local variables with initializers
-  - introduces var
-- Remove Native-Header Generator Tool (javah)
-  superseded by superior functionality in javac.
-- Thread-Local Handshakes:
-  - Allows to execute a callback on threads without
-    performing a global VM safepoint. Makes it both
-    possible and cheap to stop individual threads and
-    not just all threads or none.
-- Time-Based Release Versioning
-- Root Certificates, providing a default set of root
-  CAs in the JDK.
+- Application Data-Class Sharing (JEP ???) extending        [[{devops,performance]]
+  Class-Data Sharing ("CDS") allowing application classes
+  to be placed in the shared archive in order to improve
+  startup and footprint. [[}]]
+- Parallel Full GC for G1: improves G1 worst-case latencies  [[{JVM.GC}]]
+- Consolidate JDK Forest into a Single Repository  !!!!
+- Local-Variable Type Inference: var a = ....;
+- javah superseded by functionality in javac.
+- Thread-Local Handshakes allows to execute a callback on   [[{JVM,performance]]
+  threads without performing a global VM safepoint.
+   Makes it both possible and cheap to stop individual
+  threads and not just all threads or none. [[}]]
+- default set of Root Certificates CA in the JDK.
 - Heap Allocation on Alternative Memory Devices:
   - enables the HotSpot VM to allocate the Java object
     heap on an alternative memory device, such as an
     NV-DIMM, specified by the user.
-- Experimental Java-Based JIT Compiler Graal:
-  - Linux/x64 platform only
-
-- Additional Unicode Language-Tag Extensions
-
 - Removed Features and Options:
-<hr/>
-● v.9(2017/09)                                                  [[{devops.containarization]]
+
+● v.9(2017/09)                                     [[{devops.containarization]]
   └ --XX:ParallerGCThreads and --XX:CICompilerCount are set based on
     Containers CPU limits (can be overriden)
     - Calculated from --cpuset-cpus
@@ -461,7 +379,7 @@ New major features:
   └ Memory Configuration for containers
     -XX:+UnlockExperimentalVMOptions
     -XX:+UseGroupMemoryLimitFoHeap
-    - set -XX:MaxRAMFraction to 2 (default is 4)
+    - set -XX:MaxRAMFraction to 2 (default is 4)   [[}]]
 
 
 - Java Platform Module System:
@@ -524,8 +442,8 @@ New major features:
   - JVM TI (Tool Interface) hprof (Heap Profiling) agent,
     superseded in the JVM.
   - jhat tool, obsoleted by superior heap visualizers and analyzers.
-<hr/>
-● JAVA 8                                              [[{devops.containarization]]
+
+● JAVA 8
   └ 8u131  First version to support Containers
       WARN : Do not use any version below that.
   TODO:
@@ -534,35 +452,10 @@ New major features:
 
   - TLS enh. Backported to 1.8 (HTTP2)
   @[https://www.infoq.com/news/2020/04/tls-alpn-java8/]
-[[}]]
+[[01_PM.WHATS_NEW}]]
 
-
-[[$div}]]
-<div groupv >
 ● JVM internals
-[[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.troubleshooting,01_PM.TODO]]
-● JVM Troubleshooting and Monitoring
-- Flight Recoder:
 
-- Built-in tools in JDK:           - Docker commands:
-  - jstat                            - stats
-  - jcmd                             - inspect
-  - jmap (Not recomended)            - top
-  @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jmap.md]
-  - jhat ...
-  - jstack
-  @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jstack.md]
-
-                                   - Container aware tools
-- Expose JMX port                    - ctop
-  - VisualVM                         - dstat
-  - jConsole
-                                   - CAdvisor
-- Micrometer@[#micrometer_summary] - Prometheus
-- Others: New Relic, Stackiy,      - Docker EE, Datadog, Sysdig,...
-  AppDynamics, Dynatrace, ...
-
-[[}]]
 
 [[{JVM,java_lang.profiling,architecture.real-time]] #[JVM_safepoints]
 ● JVM Safepoints
@@ -640,7 +533,7 @@ New major features:
 [[}]]
 
 
-[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,01_PM.troubleshooting,01_PM.low_code,01_PM.WiP]] #[micrometer_summary]
+[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,01_PM.low_code,01_PM.WiP]] #[micrometer_summary]
 ● Micrometer <!-- @ma -->
 - simple facade to instrumentation clients for
 - instrument JVM-based apps without vendor lock-in.
@@ -918,9 +811,8 @@ See also:
 @[https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/sizing.html]
 [[}]]
 
-[[{jvm.101,java_lang.101,01_PM.troubleshooting]]
-● Optimization Tips
-- To minimize the memory footprint, limit the scope of the variables as much as possible.
+● Optimization Tips [[{scalability.101,jvm.101,java_lang.101.best_patterns]]
+- To minimize the memory footprint, limit scope-of-variables as much as possible.
 
 - Explicitly refer to null obsolete references making them eligible for GC.
 
@@ -975,7 +867,7 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
 - Eclipse Memory Analyzer Manual:
 @[https://help.eclipse.org/2019-06/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fwelcome.html&cp=62]
 
-<hr/>
+
   Commom Memory Leaks pitfalls :
 @[http://java.jiderhamn.se/2012/02/26/classloader-leaks-v-common-mistakes-and-known-offenders/]
 - Logging frameworks (Apache Commons Logging/log4j/java.util.logging/...)
@@ -989,11 +881,10 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
         this.getClass().getClassLoader()  );
 [[}]]
 
-[[{jvm.101,qa.101,01_PM.troubleshooting]]
-● <<AutoClosable>> (1.7+)
-- The java garbage collector can not automatically clean any
-  other resource appart from memory. All resources related to
-  I/O (virtual/physical devices) must be closed programatically,
+● <<AutoClosable>> (1.7+) [[{jvm.101.autoclosable,IO.101,JVM.GC,qa.101]]
+- The java garbage collector can not automatically clean any other resource
+  appart from memory. All resources related to I/O (virtual/physical devices)
+  must be closed programatically,
   for example sockets, http connections, database connections, ...
   since neither the compiler, not the runtime can not take control of
   external (non-controlled) devices/resources.
@@ -1039,7 +930,9 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
           // If a runtime exception exits the function the
           // resource is also closed.
         }
+      }
     }
+  [[jvm.101.autoclosable}]]
 [[$div}]]
 
 [[$div}]]
@@ -1200,8 +1093,8 @@ $ $ sudo update-alternatives --config java
        Resources.getResource("test.txt");     // ← Read Resource in classpath
   final String resource =
        Resources.toString(url, Charsets.UTF_8);
-<hr/>
-● Reading big files
+
+● Reading big files:
      try (
   final FileInputStream inputStream = new FileInputStream(path);
   final Scanner sc =                        ← Use Scanner to read line-by-line
@@ -1228,7 +1121,7 @@ while (it.hasNext()) {
    } finally {
 LineIterator.closeQuietly(it);                ← Close resources
    }
-<hr/>
+
 ● Unix4j
 @[https://github.com/tools4j/unix4j]
 """...Working in the finance industry in Melbourne, the authors of
@@ -1446,8 +1339,8 @@ Enums: DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
 [[}]]
 
 
-<pre zoom  labels="java_lang.101,qa" >
-<a xsmall href="http://docs.oracle.com/javase/tutorial/java/annotations/">ANNOTATIONS</a>
+● JAVA ANNOTATIONS [[{java_lang.101.annotations,qa]]
+@[http://docs.oracle.com/javase/tutorial/java/annotations/]
  predefined annotation types in java.lang:
 - @Deprecated
 - @Override
@@ -1525,8 +1418,7 @@ RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
   - ElementType.TYPE (1.8+)
 [[}]]
 
-[[{monitoring.logging,01_PM.troubleshooting]] #[slf4j_summary]
-● SLF4j Logging: https://www.slf4j.org/
+● SLF4j Logging: https://www.slf4j.org/ #[slf4j_summary] [[{monitoring.logging]]
 Simple Log Facade or abstraction for various logging frameworks
 (e.g. java.util.logging, logback, log4j) allowing the end user
 to plug in the desired logging framework at deployment time.
@@ -1619,13 +1511,10 @@ to plug in the desired logging framework at deployment time.
       ...                                                   be "huge" if log.debug is inside a loop.
 [[}]]
 
-[[{monitoring.logging,qa,devops,01_PM.troubleshooting]] #[mdc_summary]
-● MDC: "Better Way of Logging"
+● MDC: "Better Way of Logging" [[{monitoring.101,monitoring.logging,qa.best_patterns,devops,]] #[mdc_summary]
 @[https://dzone.com/articles/mdc-better-way-of-logging-1]
-  PROBLEM : How do we related logs together originating
-            from a (single user, single data-flow)
-            that are processed by different threads, HTTP
-            requests (think of Single Page Apps),
+  PROBLEM : How do we related logs together originating from a (single user, single data-flow)
+            that are processed by different threads, HTTP requests (think of Single Page Apps),
             or component?
   SOLUTION : Use mapped diagnostic context (MDC).
 
@@ -1955,9 +1844,9 @@ Obj(Double|Int|Long)Consumer‹T›             │opt. accepting an object-valu
 [[$div}]]
 
 [[{$div]]
-● Collections
-[[{]]java_lang.101,data_structures.101,data_structures.graphs,scalability.101,<02_doc_has.diagram,qa.data,java_lang.guava," >
-<span xsmall bgorange>Collection Decission Tree
+● Collections 101 [[{java_lang.101,data_structures.101,scalability.101]]
+                  [[02_doc_has.decission_tree,02_doc_has.diagram,qa.data]]
+  COLLECTION DECISSION TREE
                                   ┌──────────┐
                                   │  Allows  │
                     ┌─── YES ─────┤Duplicates├──  NO  ───────┐
@@ -1979,7 +1868,7 @@ Obj(Double|Int|Long)Consumer‹T›             │opt. accepting an object-valu
                                                                v                     v
                                                             HashSet              TreeSet
 
-   ● Comparative
+  • Collection Comparative:
 Standard   non-concurrent  SDK:
        ┌──────────────────────────────────────────────────────────────────────────────────────────
        │                                IMPLEMENTATIONS
@@ -2011,57 +1900,55 @@ Standard   non-concurrent  SDK:
 @[http://download.oracle.com/javase/6/docs/api/java/util/TreeMap.html]
 @[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashMap.html]
 
+  REF: @[http://files.zeroturnaround.com/pdf/zt_java_collections_cheat_sheet.pdf]
+  ┌─────────────────┬─────────────────────────────────────────────────────────────┐
+  │Collection       │ Thread-safe                ┃ DATA      ┃ OPERATIONS ALLOWED │
+  │                 │ alternative                ┃  PROPER-  ┃────────────────────┤
+  │class            │                            ┃   TIES    ┃Iterat. ┃  ┃Random  │
+  │                 │                            ┃           ┃ Order  ┃  ┃ Access │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┬──┬──┃──┃──┬──┬──┤
+  │HashMap          │ ConcurrentHashMap          ┃  │OK│  │  ┃  │  │  ┃OK┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │SortedMap        │ ?                          ┃  │OK│  │  ┃  │  │  ┃? ┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │NavigableMap @1  │ ?                          ┃  │OK│  │  ┃  │  │  ┃? ┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │HashBiMap(Guava) │ Maps.syncrhonizedBiMap     ┃  │OK│  │  ┃  │  │  ┃OK┃OK│OK│  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │ArrayListMultimap│ Maps.synchronizedMultiMap  ┃  │OK│OK│  ┃  │  │  ┃OK┃OK│  │  │
+  │(Guava)          │ (new ArrayListMultimap())  ┃  │  │  │  ┃  │  │  ┃  ┃  │  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │LinkedHashMap    │ Collections.syncrhonizedMap┃  │OK│  │  ┃OK│  │  ┃OK┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │TreeMap          │ ConcurrentSkipListMap      ┃  │OK│  │  ┃  │OK│  ┃OK┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │Int2IntMap (Fastutils)                        ┃  │OK│  │OK┃  │  │  ┃OK┃OK│  │OK│
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │ArrayList        │ CopyOnWriteArrayList       ┃OK│  │OK│  ┃OK│  │OK┃  ┃  │  │OK│
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │HashSet          │ Collections.newSetFromMap  ┃OK│  │  │  ┃  │  │  ┃OK┃  │OK│  │
+  │                 │ (new ConcurrentHashMap())  ┃  │  │  │  ┃  │  │  ┃  ┃  │  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │IntArrayList(FastUtils)                       ┃OK│  │OK│OK┃OK│  │OK┃  ┃  │  │OK│
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │PriorityQueue    │ PriorityBlockingQueue      ┃OK│  │OK│  ┃  │OK│  ┃  ┃  │  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │ArrayDeque       │ ArrayBlockingQueue         ┃OK│  │OK│  ┃OK│  │OK┃  ┃  │  │  │
+  └─────────────────┴────────────────────────────┃──┴──┴──┴──┃──┴──┴──┃──┃──┴──┴──┘
+                          Individual elements ·····┘  │  │  │  │  │  │  ^  │  │  └ By Index
+                          Key─value pairs  ···········┘  │  │  │  │  │  │  │  └··· By Value
+                          Duplicate element support ·····┘  │  │  │  │  │  └······ By Key
+                          Primite support ··················┘  │  │  │  │
+                                                       FIFO  ··┘  │  │ Fast
+                                                     Sorted  ·····┘  │'has(el)'
+                                                       LIFO  ········┘
 
-<a href="http://files.zeroturnaround.com/pdf/zt_java_collections_cheat_sheet.pdf">ref</a>
-┌─────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│Collection       │ Thread-safe                ┃          YOUR DATA              ┃           OPERATIONS    ALLOWED       │
-│                 │ alternative                ┃─────────────────────────────────┃───────────────────────────────────────┤
-│class            │                            ┃Individu│Key-val.│Duplica│Primite┃ Iteration Order │Fast │ Random Access │
-│                 │                            ┃elements│  pairs │element│support┃FIFO │Sorted│LIFO│'has'│By  │By   │By  │
-│                 │                            ┃        │        │support│       ┃     │      │    │check│Key │Val  │Idx │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│HashMap          │ ConcurrentHashMap          ┃        │YES     │       │       ┃     │      │    │YES  │ YES│     │    │
-│                 │                            ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│SortedMap        │ ?                          ┃        │YES     │       │       ┃     │      │    │?    │ YES│     │    │
-│                 │                            ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│NavigableMap @1  │ ?                          ┃        │YES     │       │       ┃     │      │    │?    │ YES│     │    │
-│                 │                            ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│HashBiMap(Guava) │ Maps.syncrhonizedBiMap     ┃        │YES     │       │       ┃     │      │    │YES  │ YES│YES  │    │
-│                 │ (new HashBiMap())          ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│ArrayListMultimap│ Maps.synchronizedMultiMap  ┃        │YES     │YES    │       ┃     │      │    │YES  │ YES│     │    │
-│   (Guava)       │ (new ArrayListMultimap())  ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│LinkedHashMap    │ Collections.syncrhonizedMap┃        │YES     │       │       ┃YES  │      │    │YES  │ YES│     │    │
-│                 │ (new LinkedHashMap())      ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│TreeMap          │ ConcurrentSkipListMap      ┃        │YES     │       │       ┃     │YES   │    │YES  │ YES│     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│Int2IntMap       │                            ┃        │YES     │       │YES    ┃     │      │    │YES  │ YES│     │YES │
-│(Fastutil)       │                            ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│ArrayList        │ CopyOnWriteArrayList       ┃YES     │        │YES    │       ┃YES  │      │YES │     │    │     │YES │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│HashSet          │ Collections.newSetFromMap  ┃YES     │        │       │       ┃     │      │    │YES  │    │YES  │    │
-│                 │ (new ConcurrentHashMap())  ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│IntArrayList     │                            ┃YES     │        │YES    │YES    ┃YES  │      │YES │     │    │     │YES │
-│(Fastutil)       │                            ┃        │        │       │       ┃     │      │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│PriorityQueue    │ PriorityBlockingQueue      ┃YES     │        │YES    │       ┃     │YES   │    │     │    │     │    │
-┼─────────────────┼────────────────────────────┃────────┼────────┼───────┼───────┃─────┼──────┼────┼─────┼────┼─────┼────┤
-│ArrayDeque       │ ArrayBlockingQueue         ┃YES     │        │YES    │       ┃YES  │      │YES │     │    │     │    │
-└─────────────────┴────────────────────────────┃────────┴────────┴───────┴───────┃─────┴──────┴────┴─────┴────┴─────┴────┘
-
- Collection class │  Random access by idx/key │ Search/Contains │ Instert
- ─────────────────┼───────────────────────────┼─────────────────┼───────────
- ArrayList        │  O(1)                     │ O(n)            │ O(n)
- HashSet          │  O(1)                     │ O(1)            │ O(1)
- HashMap          │  O(1)                     │ O(1)            │ O(1)
- TreeMap          │  O(log(n))                │ O(log(n))       │ O(log(n))
+   Collection class │  Random access by idx/key │ Search/Contains │ Instert
+   ─────────────────┼───────────────────────────┼─────────────────┼───────────
+   ArrayList        │  O(1)                     │ O(n)            │ O(n)
+   HashSet          │  O(1)                     │ O(1)            │ O(1)
+   HashMap          │  O(1)                     │ O(1)            │ O(1)
+   TreeMap          │  O(log(n))                │ O(log(n))       │ O(log(n))
 
 @1 NavigableMap: SortedMap with additional methods for finding entries
                  by their ordered position in the key set.
@@ -2069,10 +1956,10 @@ Standard   non-concurrent  SDK:
                  in the first place - you might be able to find the
                  specific entry you are after using the higherEntry,
                  lowerEntry, ceilingEntry, or floorEntry methods. The
-                 descendingMap method even gives you an explicit method
+                 descendingMap method even provides an explicit method
                  of reversing the traversal order.
 
-● Graph Structures
+● GRAPH STRUCTURES  [[{data_structures.graphs]]
 https://guava.dev/releases/20.0/api/docs/com/google/common/graph/package-summary.html
 
 Interface               Description
@@ -2084,13 +1971,13 @@ MutableValueGraph<N,V>  A subinterface of ValueGraph which adds mutation methods
 Network<N,E>            An interface for graph-structured data, whose edges are unique objects.
 ValueGraph<N,V>         An interface for graph- structured data, whose edges have associated
                         non-unique values.
-[[}]]
+  [[}]]
+[[java_lang.101}]]
 
 
 [[}]]
 
-[[{data_structures.101,qa]] #[data_structures_101_summary]
-● Lists
+● Lists [[{data_structures.101,qa]] #[data_structures_101_summary]
  INITIALIZING A LIST
 final List<String> myList =                  ← final forbid re-asigning the list,
       Arrays.asList("one", "two", "three");     but its content is still mutable
@@ -2126,8 +2013,6 @@ final ArrayList<String> mutableList   ← Mutable list.
  collection .forEach ((element) -> {                      ← Alt 4: STREAMS (Java 8+): UNIX pipe like iteration.
    System.out::println(element)                             Functional approach. In this case we can "shortcut" to:
  });                                                        collection.forEach(System.out::println);
-
-<hr/>
 
 ● Maps ("Dictionaries")
   ######################
@@ -2182,16 +2067,16 @@ final Map<String,String> myMap =                          ← Mutable map (WARN:
 
  map.forEach((k, v) -> {                                  ← forEach (java 8+)
   ... pair.getKey() ... pair.getValue() ...
+ }
 
+ map.entrySet().stream().forEach( (pair) -> {            ← Stream API (1.8+)
+ ... pair.getKey() ... pair.getValue() ...                 "Functional" Unix Pipe like style
+ });
 
-  map.entrySet().stream().forEach( (pair) -> {            ← Stream API (1.8+)
-  ... pair.getKey() ... pair.getValue() ...                 "Functional" Unix Pipe like style
-  } );
-
-  map.entrySet().stream().                                ← Stream API parallel (1.8+)
-  .parallel().forEach( pair -> {                            "Functional" Unix Pipe like style
-  ... pair.getKey() ... pair.getValue() ...
-  ) );
+ map.entrySet().stream().                                ← Stream API parallel (1.8+)
+ .parallel().forEach( pair -> {                            "Functional" Unix Pipe like style
+ ... pair.getKey() ... pair.getValue() ...
+ } ) );
 
   ##############
   # UPDATE MAP #
@@ -2227,9 +2112,7 @@ Map<String, Double> map01 = new HashMap<>();
     (key, currentValue)                           or add defValue to key otherwise.
         -> sumFun.apply(v, 2));
 
-
-<hr/>
-● java.util.Collections
+● java.util.Collections:
 (@[https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html] )
 - Utility class with static methods that operate on or return collections
 
@@ -2291,14 +2174,15 @@ Map<String, Double> map01 = new HashMap<>();
   SortedSet    Collections.unmodifiableSortedSet(SortedSet s)            Returns inmutable view               [qa]
 
 
-[[{data_structures,01_PM.backlog]]
-<a xsmall href="http://fastutil.di.unimi.it/">Fastutil</a>
+
+• Fastutil @[http://fastutil.di.unimi.it/] [[{data_structures,01_PM.backlog]]
 - Fast and compact type-specific collections for Java
   Great default choice for collections of primitive types,
   like int or long. Also handles big collections with more than 2
   31 elements well.
 
-<a xsmall href="https://www.eclipse.org/collections/">Eclipse Collections</a>
+• Eclipse Collections
+@[https://www.eclipse.org/collections/]
 (Originated from Goldman Sachs gs-collection:
  @[https://github.com/goldmansachs/gs-collections])
 - Features you want with the collections you need
@@ -2308,10 +2192,8 @@ Map<String, Double> map01 = new HashMap<>();
   bidirectional maps and so on.
 [[}]]
 
-[[{data_structures.101]]
-● <<Enumeration>>(1.0) vs <<Iterator>>(1.7)
+● <<Enumeration>>(1.0) vs <<Iterator>>(1.7) [[{data_structures.101,02_doc_has.comparative]]
 @[https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator]
-
 - both interfaces will give successive elements
 
 - Iterators allow the caller to remove elements from
@@ -2344,10 +2226,10 @@ Map<String, Double> map01 = new HashMap<>();
                   │ remove() ← optional: not implemented in many classes
 [[}]]
 [[$div}]]
-[[{$div]]
-[[{$div]]
-● NIO [[{async/reactive.io]]
-<a xsmall href="http://tutorials.jenkov.com/java-nio/buffers.html">NIO (1.4+)</a>
+
+
+● NIO (JDK 1.4+) [[{async/reactive.io]]
+@[http://tutorials.jenkov.com/java-nio/buffers.html]
 - Replaced OLD blocking IO based on [ byte/char, read-or-write streams ]
 ┌──────────┐     ┌──────────────┐
 │ CORE NIO │     │ NON─BLOCKING │
@@ -2471,7 +2353,7 @@ Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
    └─────────────────────────────────────────────┴─────────────────────────────────────────────┘
 [[}]]
 
-● API tree [[{async/reactive.io.network,persistence.fs]]
+● Async/Reactive Standlib API tree [[{async/reactive.io.network,persistence.fs]]
 JDK 8
 ./java/nio/
            Bits ByteOrder CharBufferSpliterator
@@ -2525,8 +2407,7 @@ JDK 8
                     FileTypeDetector
 [[}]]
 
-[[{]]async/reactive.io.network" >
-● SELECTORS
+● SELECTORS [[{async/reactive.io.network]]
 @[https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html]
 
 - A Selector allows a single thread to manage multiple channels
@@ -2592,8 +2473,7 @@ JDK 8
        will "wake up" immediately.
 [[}]]
 
-[[{]]async/reactive.io,persistence.FS," >
-● FileChannel
+● FileChannel [[{async/reactive.io,persistence.FS]]
 - Java NIO FileChannel: channel connected to a file allowing to
       read data from  and write data to a file.
 - A FileChannel canNOT be set into non-blocking mode:
@@ -2625,6 +2505,7 @@ JDK 8
   |      buf .clear(); //make buffer ready for writing
   |     bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
   |  }
+  |}
 
 - Writing to a FileChannel (reading from buffer)
   | String newData = "......" + System.currentTimeMillis();
@@ -2662,8 +2543,7 @@ JDK 8
   | channel.force(true /* flush also file meta-data like permissions....*/);
 [[}]]
 
-[[{async/reactive.io,java_lang.functional]]
-● Pipe
+● Pipe [[{async/reactive.io,java_lang.functional]]
 - Pipe: one-way data connection between two threads
   └"=="  source channel   ← One threads writes to sink
         +  sink channel   ← One threads reads from source
@@ -2706,10 +2586,9 @@ JDK 8
 
   socketChannel.close();
 [[}]]
-[[$div}]]
-[[{$div]]
-[[{async/reactive.io.network]]
-● Non-blocking Mode
+
+
+● Non-blocking Mode [[{async/reactive.io.network]]
 - socketChannel .configureBlocking(false) ;
 - Calls to connect(), read() and write() will not block
 - In non-blocking mode connect() calls may return before
@@ -2961,7 +2840,7 @@ AsynchronousFileChannel fileChannel =
   });
 [[}]]
 
-● java.net.http.HTTPClient [[{io.net.http,async/reactive.io.network,01_PM.low_code,<02_doc_has.comparative,qa]]
+● java.net.http.HTTPClient [[{io.net.http,async/reactive.io.network,01_PM.low_code,02_doc_has.comparative,qa]]
 API REF: @[https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html]
 JEP: @[https://openjdk.java.net/jeps/321]
 
@@ -3084,1125 +2963,9 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
 - It started as a component of OkHttp, the capable HTTP client
   included in Android. It's well-exercised and ready to solve new problems.
 [[}]]
-[[$div}]]
-[[$div}]]
 
-[[{$div]]
-● Debug&amp;Profile [[{java_lang.debugging,devops.containarization,jvm.monitoring,monitoring.jvm]]
-● Debug remote (container) JVM
-• STEP 1: inject next ENV.VAR into app JVM:
-  JAVA_TOOL_OPTIONS=""
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS}-agentlib:jdwp=transport=dt_socket"
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},server=y"
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},suspend=n"
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},address=*:8001"
-                                      ┌──┬──────────┴──┘
-• STEP 2: Export debuggin port (e.g.: 8001)
 
-• STEP 3: In JAVA IDE configure debugger to attach to remote machine
-  (e.g., in IntelliJ , add remote debugger in Run/Debug Configurations)
-[[}]]
-
-
-● 'man 1 jcmd' Summary: [[{101,JVM.monitoring.101,java_lang.debugging]]
-                        [[java_lang.profiling,01_PM.troubleshooting,monitoring.flight_recorder]]
-- 'jcmd' must run on same machine+user+group on which the JVM is running.
-
-  $ jcmd [-l]                              <- Print list of running Java PIDs.
-
-  $ jcmd $pid Thread.print -l              <- Prints all threads with stacktraces. [[01_PM.troubleshooting]]
-                                              -l: dump java.util.concurrent locks  [[concurrency.lock]]
-  Ex. Output:
-  | 2022-09-29 06:38:08
-  | Full thread dump OpenJDK 64-Bit Server VM (11.0.14.1+1 mixed mode):
-  |
-  | Threads class SMR info:
-  | _java_thread_list=0x00007fa9e4002e70, length=44, elements={
-  | 0x00007faa2c1f8000, 0x00007faa2c1fa800, 0x00007faa2c218000, 0x00007faa2c21a000,
-  | 0x00007faa2c21c000, 0x00007faa2c21e000, 0x00007faa2c220000, 0x00007faa2c2d7800,
-  | 0x00007faa2d2ab000, 0x00007faa2d44a800, 0x00007faa2d4b1800, 0x00007faa2d556000,
-  | 0x00007fa9b0004000, 0x00007faa2c02a000, 0x00007fa9a80e7000, 0x00007fa9a80ee000,
-  | 0x00007fa9a8111800, 0x00007fa9a8113800, 0x00007fa9a8118000, 0x00007fa9a80f0000,
-  | 0x00007fa9a8115000, 0x00007fa99005d000, 0x00007fa9a409a000, 0x00007fa9a0011800,
-  | 0x00007fa99c03d000, 0x00007fa998095800, 0x0000556d44845800, 0x00007fa99405d800,
-  | 0x00007fa990083000, 0x00007fa9a8143000, 0x00007fa9a8121800, 0x00007fa9a8123000,
-  | 0x00007fa9a814b800, 0x00007fa9a814d000, 0x00007fa9a814f000, 0x00007fa9a815d000,
-  | 0x00007fa9a8160800, 0x00007fa9a8148000, 0x00007fa9a8149800, 0x00007fa9a8165800,
-  | 0x00007fa9a8167000, 0x00007fa9a8169000, 0x00007fa9f0026000, 0x00007fa9e4002000
-  | }
-  |
-  | "Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.35ms elapsed=256333.77s
-  |                     tid=0x00007faa2c1f8000 nid=0x1e waiting on condition [0x00007faa18866000]
-  |    java.lang.Thread.State: RUNNABLE   <- := RUNNABLE, TIMED_WAITING (on object monitor),
-  |                                             WAITING (on object monitor|parking), ...
-  | 	at java.lang.ref.Reference.waitForReferencePendingList(java.base@11.0.14.1/Native Method)
-  | 	at java.lang.ref.Reference.processPendingReferences(java.base@11.0.14.1/Unknown Source)
-  | 	at java.lang.ref.Reference$ReferenceHandler.run(java.base@11.0.14.1/Unknown Source)
-  |
-  |    Locked ownable synchronizers:
-  | 	- None
-  |
-  | "Signal Dispatcher" ...
-  | "Service Thread"     ...
-  | "C2 CompilerThread0" ...
-  | "C1 CompilerThread0" ...
-  | "Sweeper thread" ...
-  |
-  | "Common-Cleaner" ...
-  | "vert.x-eventloop-thread-0" ...
-  | "vert.x-acceptor-thread-0" ...
-  | vert.x-eventloop-thread-2" ...
-  | "vert.x-eventloop-thread-4" ...
-  | "vert.x-eventloop-thread-0|" ...  [0...19]
-  |   Locked ownable synchronizers:
-  | 	- None
-  | ...
-  | "VM Thread"   os_prio=0 cpu=28658.34ms elapsed=256333.80s tid=0x00007faa2c1ef000 nid=0x1d runnable
-  | "GC Thread#0" os_prio=0 cpu=6640.67ms  elapsed=256333.90s tid=0x00007faa2c041800 nid=0x18 runnable
-  | "GC Thread#1" os_prio=0 cpu=6667.69ms  elapsed=256332.51s tid=0x00007fa9f8001000 nid=0x27 runnable
-  | "GC Thread#2" os_prio=0 cpu=6647.53ms  elapsed=256332.51s tid=0x00007fa9f8002800 nid=0x28 runnable
-  | "GC Thread#3" os_prio=0 cpu=6655.38ms  elapsed=256332.51s tid=0x00007fa9f8004000 nid=0x29 runnable
-  | "G1 Main Marker" os_prio=0 cpu=4.05ms  elapsed=256333.90s tid=0x00007faa2c09f000 nid=0x19 runnable
-  | "G1 Conc#0" os_prio=0 cpu=51.33ms elapsed=256333.90s tid=0x00007faa2c0a1000 nid=0x1a runnable
-  | "G1 Refine#0" os_prio=0 cpu=4.17ms elapsed=256333.89s tid=0x00007faa2c190000 nid=0x1b runnable
-  | "G1 Young RemSet Sampling" os_prio=0 cpu=92484.58ms elapsed=256333.89s tid=0x00007faa2c192000 nid=0x1c runnable
-  | "VM Periodic Task Thread" os_prio=0 cpu=378619.90ms elapsed=256333.58s tid=0x00007faa2c2db800 nid=0x26 waiting on condition
-
-
-  $ jcmd pid|main-class PerfCounter.print  ← Send diagnostic command PerfCounter.print to PID JVM
-                                             $ jcmd help to see the list of available diagnostic command
-
-  $ jcmd pid|main-class -f filename        ←  file from which to read diagnostic commands to send to JVM
-
-  $ jcmd pid|main-class command[ arguments]
-
- Ex:
- $ $ jcmd $PID
-  → The following commands are available:
-  → Compiler.CodeHeap_Analytics  → GC.class_histogram    → ManagementAgent.start
-  → Compiler.codecache           → GC.class_stats        → ManagementAgent.start_local
-  → Compiler.codelist            → GC.finalizer_info     → ManagementAgent.status
-  → Compiler.directives_add      → GC.heap_dump          → ManagementAgent.stop
-  → Compiler.directives_clear    → GC.heap_info
-  → Compiler.directives_print    → GC.run                → Thread.print
-  → Compiler.directives_remove   → GC.run_finalization
-  → Compiler.queue
-
-  → VM.class_hierarchy    → VM.print_touched_methods    → JFR.check
-  → VM.classloader_stats  → VM.set_flag                 → JFR.configure
-  → VM.classloaders       → VM.stringtable              → JFR.dump
-  → VM.command_line       → VM.symboltable              → JFR.start
-  → VM.dynlibs            → VM.system_properties        → JFR.stop
-  → VM.flags              → VM.systemdictionary
-  → VM.info               → VM.uptime                   → JVMTI.agent_load
-  → VM.log                → VM.version                  → JVMTI.data_dump
-  → VM.metaspace          → help
-  → VM.native_memory
-[[}]]
-
-
-● Flight Recorder [[{monitoring.101,monitoring.flight_recorder,java_lang.profiling,01_PM.troubleshooting,<02_doc_has.comparative]]
-@[https://www.youtube.com/watch?v=azshjd5Vsv0]
-- Free of use starting with Java 11+ and backported to OpenJDK 8u272+
-  @[https://www.infoq.com/news/2019/11/jfr-openjdk-8/]
-- (JEP 328)
-- created originally in 1998 by students from the Royal
-  Institute of Technology in Stockhoml as part of the JRockit JVM
-  distribution by Appeal Virtual Machines.
-- built directly into the JDK, it   can monitor performance accurately .
-  with about only   2% overhead(production friendly) .
-- accurate metrics to avoid mislead readers via safe points or sampling.
-  avoiding common problems (@[#JVM_safepoints]) with sampling profilers.      [comparative]
-  ┌────────────────┐
-  │ JRE ┌────────┐ │
-  │     │ JFR    ←--- Output profiling to 'myRecording.jfr'
-  │     │ engine │ │  - compact log of   JVM events : ~100.000 events with many stack traces: ~2-4MB
-  │     └────────┘ │  - Use Java Mission Control (JMC)  to read events.
-  └─^──────────────┘
-  ┌─┴───────────────────────────────────────
-  $ java ...   -XX:StartFlightRecording  ... ← Alternatively launch JFR from JMC Visual IDE
-
-  - JFR default metrics focus in JVM's  raw operations:
-    (vs high-level metrics like request/response times)
-    - advanced garbage collection analysis :
-      Include garbage collection statistics, etails on what garbage
-      was collected and who threw it away.
-      allows developers to improve performance by:                   [performance]
-       - identifying what to improve
-       - realize when tunning GC is the wrong solution.
-
-  Java Mission Control (JMC):
-- @[http://www.oracle.com/technetwork/java/javaseproducts/mission-control/java-mission-control-1998576.html]
-- UI to analyze data collected by Flight Recorder and head dumps  built on top of Eclipse IDE.
-- overview of all locally running Java processes, statistics,
-  heap dumps, flame view ( show the aggregate of stack traces for the selected events ),
-
-  WHAT'S NEW
-- JMC 8+ RoadMap:
-  - New allocation event (introduced in JDK 16).
-  - Improve Flame Graph and Graph Views for memory ussage (vs CPU ussage).
-
-- JMC 8: (2021-04)
-@[https://www.infoq.com/news/2021/04/jdk-mission-control-8-released/]
-  - new graphs and heap dump analysis by default.
-  - Can also be used as a library for parsing/processing .jfr files.
-  -
-  - JMX Console can be used to continuously monitor an environment,
-    interact with MBeans, invoke jcmd diagnostics commands remotely,...
-
-  - Flight Recording used to create a recording
-  - Dump Heap        used to create a heap dump
-
-  - low overhead in production environments:
-  - JOverflow: plugin with advanced analysis of heap dumps, included by default.
-               converted to the Standard Widget Toolkit (SWT).
-               It also offers insights and optimizing hints to developers.
-               like Hierarchical Treemaps, may be used to improve the heap usage of the application.
-               - Ussage:
-                 create and open a heap dump in the JMC application.
-
-  - New Graph View: directed graph where each node contains an individual method.
-    NOTE: WebKit required ($ # apt install libwebkit2gtk-4.0-dev ), doesn't work (yet) on Windows.
-
-  - first release of  JMC Agent :
-    - Allows JFR events to be added declaratively to any codebase.
-    - Events can be used to capture (fields, parameter,...) values.
-
-  - Rules API 2.0: Allow to use intermediate results from other rules.
-
-  - JFR Writer is introduced as a new core module.
-
-[[}]]
-
-● CRaSH shell [[{monitoring.101,java_lang.debugging,01_PM.troubleshooting,01_PM.low_code,01_PM.TODO]]
-• Features:
-  ✓ Connect to any JVM running CRaSH through SSH, telnet or web.
-  ✓ Monitor and/or use virtual machine resources:
-    JMX, database access, threads, memory usage, ...
-  ✓ Embed CRaSH and expose services via a command line interface.
-  ✓ Hot reload provides rapid development.
-  ✓ Officially embedded as Spring Boot remote shell.
-
-[[}]]
-
-● Eclipse Mem.Analizer [[{java_lang.profiling,01_PM.troubleshooting,01_PM.TODO]]
-@[https://www.eclipse.org/mat/]
-"""he Eclipse Memory Analyzer is a fast and feature-rich Java heap
-  analyzer that helps you find memory leaks and reduce memory consumption.
-
-  Use the Memory Analyzer to analyze productive heap dumps with hundreds of
-  millions of objects, quickly calculate the retained sizes of objects, see
-  who is preventing the Garbage Collector from collecting objects, run a
-  report to automatically extract leak suspects.
-"""
-
-It can provide reports and warnings similar to:
-  (REF: @[https://www.youtube.com/watch?v=5joejuE2rEM])
-  The classloader/component "sum.misc.Launcher$AppClassLoader@0x123412"
-  occupies 607,654,123(38,27%) bytes.
-  The memory is accumulated in one instance  of
-  java.util.LinkedList$Entry loaded by 'system class loader'
-[[}]]
-
-● SystemTap+Java [[{jvm.dynamic_instrumentation,java_lang.profiling,01_PM.troubleshooting,01_PM.TODO]]
-@[https://laurent-leturgez.com/2017/12/22/profiling-java-application-with-systemtap/]
-[root@spark ~]# yum install systemtap systemtap-runtime-java
-
-JAVA                                              SystemTap Profiling script
-package com.premiseo;                             #!/usr/bin/env stap
-
-import java.lang.*;                               global counter,timespent,t
-import java.io.BufferedReader;
-import java.io.InputStreamReader;                 probe begin {
-import java.io.IOException;                         printf("Press Ctrl+C to stop profiling\n")
-                                                    counter=0
-class Example {                                     timespent=0
-   public static void                             }
-     loop_and_wait(int n)
-         throws InterruptedException{             probe java("com.premiseo.Example").class("Example").method("loop_and_wait")
-         System.out.println(                      {
-            "Waiting "+n+"ms... Tick");             counter++
-         Thread.sleep(n);                           t=gettimeofday_ms()
-     }                                            }
-
-   public static void main(String[] args) {       probe java("com.premiseo.Example").class("Example").method("loop_and_wait").return
-      System.out.println("PID = "+                {
-          java.lang.management.                     timespent+=gettimeofday_ms()-t
-              ManagementFactory.                  }
-                  getRuntimeMXBean().
-                     getName().split("@")[0]);    probe end {
-      System.out.println(                            printf("Number of calls for loop_and_wait method: %ld \n",    counter)
-              "Press key when ready ...");           printf("Time Spent in method loop_and_wait: %ld msecs \n", timespent)
-                                                  }
-      try {                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        BufferedReader in =                       profiling loop_and_wait:
-           new BufferedReader(                    counts number of times the
-              new InputStreamReader(System.in));  loop_and_wait method has been called,
-        String next = in.readLine();              and the time spent in this method execution.
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
-      }
-
-      try {
-        for (int i=0;i<10;i++) {
-           loop_and_wait(1000);
-        }
-      } catch (InterruptedException ie) {
-        ie.printStackTrace();
-      }
-   }
-}
-[[}]]
-
-● Fast Thread [[{java_lang.debugging,jvm.monitoring.threads,01_PM.troubleshooting,01_PM.radar]]
-@[https://fastthread.io/]
-• Features:
-  ✓ Java Thread Dump Analyzer
-  ✓ Troubleshoot JVM crashes, slowdowns, memory leaks, freezes, CPU Spikes
-  ✓ Instant RCA (don`t wait for Vendors)
-  ✓ Machine Learning
-  ✓ Trusted by 4000+ enterprises
-  ✓ Free Service
-[[}]]
-
-[[{jvm.memory,01_PM.troubleshooting,jvm.gc,java_lang.debugging,qa,01_PM.low_code,01_PM.TODO]]
-● gceasy.io
-@[https://gceasy.io/]
-• Features:
-  ✓ machine learning guided Garbage collection log analysis tool.
-    GCeasy has in-built intelligence to auto-detect problems in the JVM ⅋ Android
-    GC logs and recommend solutions to it.
-  ✓ Solve Memory ⅋ GC problems in seconds
-  ✓ Get JVM Heap settings recommendations
-  ✓ Machine Learning Algorithms
-  ✓ Trusted by 4,000+ enterprises
-  ✓ Free
-  ✓ A perfect DevOps tool!
-  ✓ Made by the developers, for the developers
-[[}]]
-
-● libperfagent (perf agent) [[{java_lang.profiling,concurrency.lock,monitoring.distributed,01_PM.TODO]]
-Extracted from:
-  "Apache Spark @Scale: A  production use case"
-@[https://engineering.fb.com/core-data/apache-spark-scale-a-60-tb-production-use-case/]
-  ...  Tools we used to find performance bottleneck
-  - Spark Linux Perf/Flame Graph support: Although the two tools
-    above are very handy, they do not provide an aggregated view of CPU
-    profiling for the job running across hundreds of machines at the same
-    time. On a per-job basis,   we added support for enabling Perf
-    profiling (via libperfagent for Java symbols) and can customize the
-    duration/frequency of sampling. The profiling samples are aggregated
-    and displayed as a Flame Graph across the executors using our
-    internal metrics collection framework.
-[[}]]
-
-● Uber JVM Profiler: Tracing at scale [[{architecture.distributed,monitoring.distributed,java_lang.profiling,01_PM.TODO]]
-@[https://eng.uber.com/jvm-profiler/]
-Our JVM Profiler supports a variety of use cases, most notably making
-it possible to instrument arbitrary Java code. Using a simple
-configuration change, the JVM Profiler can attach to each executor in
-a Spark application and collect Java method runtime metrics. Below,
-we touch on some of these use cases:
-- Right-size executor: We use memory metrics from the JVM Profiler
-  to track actual memory usage for each executor so we can set the
-  proper value for the Spark “executor-memory” argument.
-- Monitor HDFS NameNode RPC latency: We profile methods on the
-  class org.apache.hadoop.hdfs...ClientNamenodeProtocolTranslatorPB
-  in a Spark application and identify long latencies on NameNode calls.
-  We monitor more than 50 thousand Spark applications each day with
-  several billions of such RPC calls.
-- Monitor driver dropped events: We profile methods like
-  org.apache.spark.scheduler.LiveListenerBus.onDropEvent to trace
-  situations during which the Spark driver event queue becomes too long
-  and drops events.
-- Trace data lineage: We profile file path arguments on the method
-org.apache.hadoop.hdfs...getBlockLocations and
-org.apache.hadoop.hdfs...addBlock
-
-Uber JVM Profiler provides a Java Agent to collect various metrics
-and stacktraces for Hadoop/Spark JVM processes in a distributed way,
-for example, CPU/Memory/IO metrics.
-
-Uber JVM Profiler also provides advanced profiling capabilities to
-trace arbitrary Java methods and arguments on the user code without
-user code change requirement. This feature could be used to trace
-HDFS name node call latency for each Spark application and identify
-bottleneck of name node. It could also trace the HDFS file paths each
-Spark application reads or writes and identify hot files for further
-optimization.
-
-This profiler is initially created to profile Spark applications
-which usually have dozens of or hundreds of processes/machines for a
-single application, so people could easily correlate metrics of these
-different processes/machines. It is also a generic Java Agent and
-could be used for any JVM process as well.
-[[}]]
-[[$div}]]
-
-[[{$div]]
-    ● Concurrent Programming
-[[{$div]]
-[[{concurrency.101]]
-● External Links
-- Youtube Concurrency Classes:
-@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4] [  ES lang ]
-[[}]]
-[[{concurrency.101,scalability.101,01_PM.low_code]]
-● 1uSec Thread sync
-REF:
-@[https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/]
-"""
-  ...
-- If caches are so in-sync with one another, why do we need volatiles at all in
-  languages like Java?
-
-  That’s a very complicated question that’s better answered elsewhere, but
-  let me just drop one partial hint. Data that’s read into CPU registers, is
-  not kept in sync with data in cache/memory. The software compiler makes all
-  sorts of optimizations when it comes to loading data into registers, writing it
-  back to the cache, and even reordering of instructions. This is all done
-  assuming that the code will be run single-threaded. Hence why any data that is
-  at risk of race-conditions, needs to be manually protected through concurrency
-  algorithms and language constructs such as atomics and volatiles.
-
- ☞In the case of Java volatiles, part of the solution is to force all
-  reads/writes to bypass the local registers, and immediately trigger cache
-  reads/writes instead. As soon as the data is read/written to the L1 cache, the
-  hardware-coherency protocol takes over and provides guaranteed coherency across
-  all global threads. Thus ensuring that if multiple threads are reading/writing
-  to the same variable, they are all kept in sync with one another. And this is
-  how you can achieve inter-thread coordination in as little as 1ns.
-"""
-
-
-See also: fast Inter-thread communication:
-@[https://www.infoq.com/articles/High-Performance-Java-Inter-Thread-Communications]
-- The story begins with a simple idea: create a developer friendly,
-  simple and lightweight inter-thread communication framework without
-  using any locks, synchronizers, semaphores, waits, notifies; and no
-  queues, messages, events or any other concurrency specific words or
-  tools.
-  Just get POJOs communicating behind plain old Java interfaces.
-[[}]]
-
-● Concurrency Basics [[{concurrency.101]]
-- Concurrency problems arise from the desire to use CPU resources more efficiently. Non concurrent
-  applications (single threaded/single process) are complete Touring machines that can potentially
-  solve any problem with enough time and memory. In practice having a CPU assigned to single thread
-  will be very inneficient since the CPU will stand-by while the thread is waiting for input/output
-  operations. Also, many algorithms allows to split processed data in isolated regions that can be
-  processed in parallel by different CPU/CPU cores
-- Concurrent tries to solve the problem of multiple independents CPUs or threads accesing share
-  resources (memory)
-- Locks is the simples concurrent primite to protect code or data from concurrent
-  access in situations where there are many threads of execution. Locks can be classified like:
-  | According to lock ussage:
-  |    Cooperative   A thread is encouraged (but not forced) to cooperate with other
-  |                  threads by adquiring a lock before accessing the associated data
-  |
-  |    Mandatory     a thread trying to access an already locked resource will throw
-  |                  an exception
-  | _________________________________________________
-  | According to lock rescheduing strategy:
-  |    Blocking      The OS block the thread requesting the lock and rescheduled another thread
-  |
-  |    Spinlock      The thread waits in a loop until the requested lock becomes available.
-  |                  It's more efficient if threads are blocked for very short time (smaller than
-  |                  the time needed by the OS to reschedule another thread into the current CPU)
-  |                  It's inneficient if the lock is held for a long time since a CPU core is
-  |                  waisted on the spinlock loop
-  | _________________________________________________
-  | According to granularity: (measure of the ammount of data the lock is protecting)
-  |    Coarse        Protect large segments of data (few locks). Results in less lock overhead
-  |                  for a single thread, but worse performance for many threads running concurrently
-  |                  (most thread will be lock-contended waiting for share resource access)
-  |
-  |    Fine          Protect small amounts of data. Require more lock instances reducing lock
-                     contention
-
-- Locks require CPU atomic instructions for efficient implementations suchs as
-    "test-and-set", "fetch-and-add", or "compare-and-swap", whether there are blocking
-    (managed by the OS) or spinlocks (managed by the thread)
-- Uniprocessors can just disable interruptions to implement locks, while multiprocessors
-  using shared-memory will require complex hardware and/or software support
--   Monitors wrap mutex-locks with condition variables (container of threads waiting
-    for certain condition) . They are implemented as thread-safe classes
-[[}]]
-[[{]]concurrency.101" >
-● monitors
-- Object providing Mutual exclusion of threads to shared resources
-- simplest form of synchronization:
-  alternatives include:
-  - reads and writes of volatile variables
-  @[https://avaldes.com/examining-volatile-keyword-with-java-threads-example/]
-    typically used in applications when one thread will
-    be making changes to the variables and the others all reading or
-    consumers of the data. If you have multiple threads making changes to
-    the data it will be best to stick with synchronized block or use
-    java.util.concurrent library package.
-    (volatile is actually simpler than monitors, but not universal)
-    Important Points on Volatile Variables:
-    - Volatile variables are not cached in registers or in caches :
-      All read and writes are done in main memory, never done thread-locally
-    - Example Ussage: status flags used in spin loops
-    - Volatile keyword guarantees visibility and ordering
-  - use of classes in the java.util.concurrent package
-- Monitors also have the ability to wait(block a thread) for a certain condition
-  to become true, and signal other threads that their condition has been met
-- Monitors provide a mechanism for threads to temporarily give up exclusive access in
-  order to wait for some condition to be met, before regaining exclusive access and
-  resuming their task
-- each java object can be used as a monitor.
-- Methods/blocks of code requiring mutual exclusion must be explicitly marked with the
-  synchronized keyword :
-  - The synchronized statement computes a reference to an object;
-    it then attempts to perform a lock action on that object's monitor and does not
-    proceed further until the lock action has successfully completed.
-    After the lock action has been performed, the body of the synchronized statement
-    is executed. If execution of the body is ever completed, either normally or abruptly,
-    an unlock action is automatically performed on that same monitor.
-  -   WARN : The Java programming language neither prevents nor requires detection
-    of deadlock conditions.
-- Instead of explicit condition variables, each monitor(/object) is equipped with
-  a single wait queue in addition to its entrance queue.
-- All waiting is done on this singleO wait queue  and allO notify/notifyAll
-  operations apply to this queue.
-
- monitor    enter
- ┌───┬─────── │ ──┐   - Wait sets are manipulated solely and atomically
- │  notified  v   │     through the methods
- │ ─────→         │     Object.wait      : move     running thread    → wait-queue
- │   │        O   │     Object.notify    : move     thread  wait-queue → enter-queue
- │ O │        O   │     Object.notifyAll : move all threads wait-queue → enter-queue
- │ O ├─────── │ ──┴─┐   Interrupt??      : put thread into to monitor enter-queue
- │ O │        v     │
- │  ←──wait   O     │  - In timed-waits  : internal action removes thread to enter-queue?
- │   │     (Running │                      after at least milliseconds plus nanoseconds
- └───┤      thread) │  - Implementations are permitted (but discouraged),
-     │              │    to perform "spurious wake-ups"
-     │    leave     │
-     └────── │ ─────┘  O = Thread (Instruction Pointer + Stack Pointer + ...?)
-             v
-<!--
-TODO Concurrent
-@ma: https://en.wikipedia.org/wiki/Monitor_(synchronization)
-     https://cs.nyu.edu/~lerner/spring12/Preso03-JavaPrimitives.pdf
-     https://en.wikipedia.org/wiki/Concurrent_computing
-     http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
--->
-[[}]]
-
-[[{]]concurrency.barrier" >
-● CountDownLatch
-• (java.util.concurrent) Since JDK 1.5
-@[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
-• Object allowing 1+ threads to wait until a
-  1+ operations are completed in other threads.
-
-• example ussages:
-  - on/off latch or gate:
-    When initialized to "one", parallel processing threads will
-    invoke "await" and standby waiting for a "control" thread to
-    open the gate with countDown().
-  - parallel thread synchonization:  (barriers, ...)
-    When initialized to 2+, it can be used to make a thread
-    wait until "N" processing threads complete their task,
-    (or 1+ proccesing threads complet an action N times).
-
-    NOTE :
-  - Threads calling countDown() can continue processing before count reach 0.
-    Only threads invoquing await will wait.
-
-- The first is a start signal that prevents any worker from
-   proceeding until the driver is ready for them to proceed; The second
-   is a completion signal that allows the driver to wait until all
-   workers have completed.
-
-  -  Ex. 1:
-     class DriverThread { // ...
-
-       class Worker implements Runnable {
-         private final CountDownLatch   startSignal ;
-         private final CountDownLatch   doneSignal ;
-         Worker(CountDownLatch   startSignal , CountDownLatch   doneSignal ) {
-            this.startSignal = startSignal ;
-            this.doneSignal  = doneSignal ;
-         }
-         public void run() {
-            try {
-              startSignal .await();      // ← Wait for driver-thread to be ready.
-              doWork();
-              doneSignal .countDown();   // ← Decrease count.
-            } catch (InterruptedException ex) {} // return;
-         }
-
-         void doWork() { ... }
-       }
-
-       void main() throws InterruptedException {
-         CountDownLatch   startSignal =
-                          new CountDownLatch(1); // ← 1: Gate: Avoid workers to start before
-                                                 //       driver-thread is ready.
-
-         CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
-                          new CountDownLatch(N); //      have completed.
-                                                 //   Consider also CyclicBarrier
-                                                 //   (reset after count),
-
-         for (int i = 0; i < thread_number ; ++i) {
-           new Thread(                           // ← Setup workers in this (driver) thread.
-                new Worker(
-                      startSignal ,
-                      doneSignal
-           )).start();
-         }
-         ...
-         startSignal .countDown();      // ← Decrease count. count cannot be reset.
-         doSomethingElse();
-         doneSignal .await();           // ← block until current count reaches zero
-                                            Thread is released. Any subsequent invocations
-                                            return immediately.
-       }
-     }
-
-  -  Ex. 2:
-     - divide problem into N parts
-     - describe each part with a Runnable executing a portion,
-     - queue all Runnables to an Executor.
-     - When all sub-parts are complete, coordinating-thread will "pass" through await.
-
-     class Driver2 { // ...
-       class WorkerRunnable implements Runnable {
-         private final CountDownLatch   doneSignal ;
-         WorkerRunnable(
-            CountDownLatch   doneSignal , ...) {
-            this.doneSignal = doneSignal ;
-         }
-
-         public void run() {
-            try {
-              doneSignal.countDown();
-            } catch (InterruptedException ex) {} // return;
-         }
-
-         void doWork() { ... }
-       }
-       void main() throws InterruptedException {
-         CountDownLatchO doneSignal = new CountDownLatch(N);
-         Executor e = ...
-
-         for (int i = 0; i < N; ++i) // create and start threads
-           e.execute(new WorkerRunnable(  doneSignal , i));
-
-         doneSignal .await();           // wait for all to finish
-       }
-     }
-
-@[https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67]
-[[}]]
-
-● Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,<02_doc_has.diagram]]
-@[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
-• Basic Thread objects
-
-   Java 1.0+           Java 1.5+
-  ┌────────────┐       (java.util.concurrent)
-  │<<Runnable>>│
-  │────────────│
-  │+run()      │
-  └────────────┘
-        △
-        ┆
-  ┌────────────┐       ┌───────────────┐
-  │Thread      │       │<<Callable<V>>>│
-  │────────────│       │───────────────│
-  │+run()      │       │+call()        │
-  │+start()    │       └───────────────┘
-  │+sleep()    │       Complements Thread, returning a result/exception
-  │....        │       the "parent" thread triggering the Callable
-  └────────────┘
-
-
-• Executor interface ( Java 1.5+):
-  REF: https://www.uml-diagrams.org/java-7-concurrent-uml-class-diagram-example.html
-
-  *0: Executors : Utility Factory + utility methods for Executor,(Scheduled)ExecutorService,
-                  ThreadFactory, Callable) It can also create a "wrapped" ExecutorService
-                  disabling reconfiguration.
-  ┌╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶ <<CompletionService>>                        │
-  ┆                Executors *0                         △                                    │
-  ┆                  ┆┆┆┆      <<Executor>>  ←╶╶╶╶╶╶╶┐  ┆                                    │
-  ┆   <<Callable>> ←─┘┆┆┆      void execute(Runnable)┆  ┆                                    │
-  ┆                   ┆┆┆           △                ┆  ┆                                    │
-  ┆ <<ThreadFactory>>←┘┆┆           │       ExecutorCompletionService ───┐                   │
-  ┆                    ┆┆           │                                    ↓                   │
-  ┆                    ┆┆           │                                <<BlockingQueue>>       │
-  ┆                    ┆└╶╶→ <<ExecutorService>>◁╴╴╴╴╴╴╴┐                    │               │
-  └→ <<Future>> ←╶╶╶╶╶╶┆╶╶╶╶╶╶╶╶╶┘  △ *1                ┆                    │               │
-       △   △           ┆            │             AbstractExecutorSevice     │               │
-       ┆   ┆           └╶╶╶╶╶╶→ <<Scheduled─ *2      △   △                   │               │
-       ┆   ┆                  ExecutorService>>      │   │                   │               │
-    ┌╴─┘   └─╴╴╴╴╴┐                 △                │   │                   │               │
-  FutureTask     ForkJoin           ┆  1.7+     ┌────┘   └──────┐            │               │
-                 Task    ←╶╶╶╶╶╶┐   ┆  ForkJoinPool       ThreadPoolExecutor ◇               │
-                 △  △           ┆   ┆           │               △            ◇               │
-                 │  │           ┆   ┆           │               │            │               │
-           ┌─────┘  └────┐      ┆   ┆           ◇               │        Rejected            │
-       Recursive    Recursive   └╶╶╶┆╶╶╶╶╶ ForkJoin             │      ExecutionHandler      │
-       Action       Task            ┆      WorkerThread         │                            │
-                                    ┆                           │                            │
-                                    └╴╴╴╴╴╴╴╴ ScheduledTreadPoolExecutor                     │
-                                     ┌────────┴────────────────────────┘                     │
-                                     └ Prefered to "old" java.util.timer:                    │
-                                       • timer can be sensitive to system clock changes      │
-                                       • timer has only one execution thread. Long-running   │
-                                         task can delay other tasks. Sch.Thre.PoolEx.        │
-                                         can be configured with "N" threads.                 │
-                                       • runtime exceptions kill the Timer thread.           │
-        CyclicBarrier Semaphore          Sch.Thre.Ex. catches them, allowing to handle       │
- CountDownLatch ┆ Phaser ┆   Exchanger   by overriding 'afterExecute' from ThreadPoolExecutor│
-    └───────────┴──┬─┴───┴───────┘       Only Task throwing the exception will be canceled.  │
-               TimeUnit enum                                                                 │
-
-  *1: ExecutorService:    managed threads collection available to execute tasks
-        <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks[,long timeout, TimeUnit unit])
-                            Executes given tasks. when ALL complete (or timeout expires), return result.
-                      <T> T invokeAny(Collection<? extends Callable<T>> tasks[,long timeout, TimeUnit unit])
-                            Executes given tasks, Returns result of (first?) one completing
-                            without exception, if any do before the given timeout elapses.
-                    boolean isShutdown()  : true if this executor has been shut down.
-                    boolean isTerminated(): true if all tasks have completed following shut down.
-                       void shutdown()    : Init clean shutdown.
-             List<Runnable> shutdownNow() : Attempts non─clean shutdown
-                    boolean awaitTermination(long timeout, TimeUnit unit)
-                            · Blocks until ALL tasks have completed (after shutdown request)
-                              or the timeout occurs, or the current thread is interrupted,
-              <T> Future<T> submit(Callable<T> task): Submit Callable for execution
-                  Future<?> submit(Runnable task)   : Submit Runnable for execution
-              <T> Future<T> submit(Runnable task, T result)
-    ussage Alt 1: use an implementation of the interface (ThreadPoolExecutor, ScheduledThreadPoolExecutor)
-                  an Instance.execute(runnableInstance) to add a Runnable task to thread pool.
-    ussage Alt 2: Use factory methods in the 'Executors' class:
-                  Executors.newSingleThreadExecutor()
-                  Executors.newFixedThreadPool(int numThreads)
-                  Executors.newCachedThreadPool() (← unbounded pool, automatic reclamation)
-                  Executors.newSingleThreadScheduledExecutor()
-                  Executors.newScheduledThreadPool(int size)
-
- *2: ScheduledExecutorService:  schedule tasks periodically/after (absolute/relative) delay/period
-     <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
-         ScheduledFuture<?> schedule(Runnable command    , long delay, TimeUnit unit)
-                            · Creates + exec ScheduledFuture, enabled after delay.
-         ScheduledFuture<?> scheduleAtFixedRate   (Runnable command, long initDelay,
-                                                   long period, TimeUnit unit)
-                            schedules after initDelay + n*period (n=0,..)
-                            Executions running longer than period overlap.
-         ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initDelay,
-                                                   long delay , TimeUnit unit)
-                            Wait until termination. Then wait for 'delay' until next execution.
-                            Executions running longer than delay will just "shift/delay" next executions.
-
-  • Example: (import java.util.concurrent.*;)
-    ...
-    int numWorkers = 10;                                         EXAMPLE 1: Create Pool of Callables
-                                                                 ===================================
-    ExecutorService pool = Executors.newCachedThreadPool();    ← STEP 1) create new pool
-    MyCallableThread workers[]  =  new MyCallable[numWorkers]; ← allocate array for Callables and Futures
-    Future futures[] = new Future[numWorkers];
-    for (int i = 0; i < numWorkers; ++i) {
-       workers[i] = new MyCallable(i+1);                       ← Initialize array
-       futures[i] = pool.submit(workers[i]);
-    }
-    for (int i = 0; i < numWorkers; ++i) {
-          try {
-      futures[i].get();                                        ← Wait (Blocking) on each future.
-          } catch (InterruptedException ex) { ...
-          } catch (ExecutionException ex) {   ...  }
-    }
-
-                                                                EXAMPLE 2: Create Pool of Workers
-    ExecutorService pool =  Executors.newFixedThreadPool(10);   =================================
-    MyWorker[] workers =  new MyWorker[numWorkers];
-    for (int i = 0; i < numWorkers; ++i)
-      pool.execute(new MyWorker(i+1));                        ← Schedule new worker
-    pool.shutdown();                                          ← Don't Forget
-
-  *3 ForkJoinPool (1.7+)
-     REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html]
-     • ForkJoinPool scheduler is similar to "ExecutorService" but
-       IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES
-     • Fork : Task (=="thread") that "Splits itself" into smaller subtasks, executing concurrently.
-     • Join : End children tasks (=="threads") and merge results (if any).
-
-                                   ┌Task04··· CPU1 ·········┐end
-                     ┌Task02(fork) ┤                  ┌──── ┴ ────┐
-                     │             └Task05··· CPU2 ···┘end  ^     │
-        Task01(fork) ┤                                      join >├  Task ...CPU1 ...
-                ^    │             ┌Task06··· CPU3 ······┐end     │
-                │    └Task03(fork) ┤                     └──── ┬ ─┘
-                │             ^    └Task07··· CPU4 ···········─┘
-                │             │
-                │             │
-              - There is an overhead in forks and maintaing new threads.
-                Forking makes sense only for long running tasks with
-                intensive use of CPU
-              - Task01, 02, 03  wait  for subtasks to finish execution.
-
-     • Creating new ForkJoinPool
-       ForkJoinPool   forkJoinPool  = new ForkJoinPool(4);  Desired level of paralellism
-                                                       └─── (Desired number of threads/CPUs)
-     • Submiting tasks to ForkJoinPool scheduler  is very similar
-       to how it is done in the ExecutorService. We can submit:
-        -   RecursiveAction : task not returning any result.
-        -   RecursiveTask   : task     returning a   result.
-
-
-     import java.util.ArrayList;                       │import java.util.ArrayList;
-     import java.util.List;                            │import java.util.List;
-     import java.util.concurrent.RecursiveAction;      │import java.util.concurrent.RecursiveTask;
-                                                       │
-     //   Creating new RecursiveAction                 │//   Creating new RecursiveTask
-     public class   MyRecursiveAction                  │public class   MyRecursiveTask
-     extends   RecursiveAction  {                      │extends   RecursiveTask <Long> {
-       private long workLoad = 0;                      │  private long workLoad = 0;
-       public MyRecursiveAction(long workLoad) {       │
-           this.workLoad = workLoad;                   │  public MyRecursiveTask(long workLoad) {
-       }                                               │      this.workLoad = workLoad;
-                                                       │  }
-       @Override                                       │
-       protected void compute() {                      │  protected Long compute() {
-         if(this.workLoad < 16) {                      │    if(this.workLoad < 16) {
-           // 16 is a  Tunnable Threshold parameter    │      // 16 is a  Tunnable Threshold parameter
-           // Do workload in current thread            │      // Process work in current thread
-           return                                      │      return workLoad * 3;
-         }                                             │    }
-         List<MyRecursiveAction> subtasks =            │    List<MyRecursiveTask> subtasks =
-            Arrays.asList                              │       Arrays.asList
-            ( new MyRecursiveAction(this.workLoad / 2),│       ( new MyRecursiveTask(this.workLoad / 2),
-              new MyRecursiveAction(this.workLoad / 2) │         new MyRecursiveTask(this.workLoad / 2)
-            );                                         │       );
-                                                       │
-         for(RecursiveAction subtask : subtasks)       │    for(MyRecursiveTask subtask : subtasks)
-           subtaskO .fork() ;                          │        subtaskO .fork ();
-           //       ^^^^^^^                            │        //       ^^^^^^^
-           //     work split into subtasks to be       │        //     work split into subtasks to be
-           //     scheduled for execution              │        //     scheduled for execution
-       }                                               │
-                                                       │    long result = 0;
-     }                                                 │    for(MyRecursiveTask subtask : subtasks) {
-                                                       │        result += subtaskO .join ();
-                                                       │    }
-                                                       │    return result;
-                                                       │  }
-                                                       │}
-                                                       │
-       USSAGE:                                         │ USSAGE:
-       MyRecursiveAction myRecursiveAction =           │  MyRecursiveTask myRecursiveTask =
-          new MyRecursiveAction(24);                   │     new MyRecursiveTask(128);
-                                                       │  long mergedResult =
-       forkJoinPool   .invoke(myRecursiveAction);      │  forkJoinPool   .invoke(myRecursiveTask) ;
-                                                       │  System.out.println("mergedResult = " + mergedResult);
-
-     •  ForkJoinPool Detractors
-      @[http://coopsoft.com/ar/CalamityArticle.html]
-[[}]]
-
-● Completable Future [[{async/reactive.101,<02_doc_has.diagram]]
-@[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html]
-• Future:            (Java 5+) Represent an asynchronous computation result.
-  CompletableFuture: (Java 8+)
-  · Extends Future with methods to combine and handle errors
-  · Extends the CompletionStage interface
-    · Contract for an asynchronous computation step that
-      can be combined with other steps.
-  · About 50 different methods for composing/combining/executing async computations.
-
-•       ┌ LOCAL SYSTEM (Under Control) ─────────────────────────┐
-        │               ┌·······(RPE Loop)··················┐   │
-        │               ↓                                   │   │
-        │    Input    Parse    Create      Parse  Create  → ... │
-  INPUT ···→ Thread :  Data → │Future│  →  Data →│Future│       │
-   DATA │    RPEL Loop                                          │
-        │                        │                  │           │
-        │┌───────────────────────┘                  │           │
-        ││ ┌────────────────────────────────────────┘           │
-        ││ │  I/O       External    Wait     Handle    |Future| │
-        ││ └→ Thread :  Request  →  Respose →Respose → .complete│
-        ││                     ↓                                │
-        ││    I/O              ·               ↑                │
-        │└──→ Thread :         ·               ·                │
-        └──────────────────────·───────────────·────────────────┘
-                               ·               · Response|RemoteeError
-                               ·               · |Timeout
-                           ┌───↓───────────────↑─┐
-                           │REMOTE SYSTEM        │
-                           │(Out of control)     │
-                           └─────────────────────┘
-• A Future that may be explicitly completed (setting its value and status),
-  and may be used as a CompletionStage, supporting dependent functions and
-  actions that trigger upon its completion.
-• When two or more threads attempt to complete, completeExceptionally, or
-  cancel a CompletableFuture, only one of them succeeds.
-
-•  Barriers  (  allOf ):
-   CompletableFuture<Void>[] future_list = new CompletableFuture[list.size()];
-  int idx=0;
-  log.info("Connecting plugins ...");
-  for (Object el : list) {
-    final CompletableFuture<Void>
-      connectFuture = new CompletableFuture<>();
-    asyncMethod(connectFuture);  // ← async Method at some moment must call complete()
-    ...
-  }
-  return CompletableFuture.  allOf (future_list);
-
-• Example: Using CompletableFuture as a Simple Future (no-arg constructor)
-  create CompletableFuture instance,
-  launch some computation in another thread,
-  returns Future immediately.
-
-  public Future<String> calculateAsync() throws InterruptedException {
-      Future<String> result = new CompletableFuture<>(); // *1 or .
-
-      Executors.newCachedThreadPool().submit(() -> {
-          Thread.sleep(500);
-          completableFuture.complete("Hello"); // alt.: completableFuture.cancel(false);
-          return null;
-      });
-
-      return completableFuture;
-  }
-  *1: when the result of computation is known:
-      Future<String> result = CompletableFuture.completedFuture("Hello");
-
-  Future<String> completableFuture = calculateAsync();
-  ...
-  String result = completableFuture.get(); // .get() wait for completion/error
-                                              (ExecutionException|InterruptedException)
-  assertEquals("Hello", result);              until second threads "completes" the future.
-
-• Ex: CompletableFuture with Encapsulated Computation Logic <!-- @ma -->
-   (runAsync -<<Runnable>>-, supplyAsync -<<Supplier>>-)
-   <<Supplier>>: generic functional interface with single method
-                 (zero arguments, returns value)
-
-  CompletableFuture<String> future
-    = CompletableFuture.supplyAsync(/* supplier lambda*/ () -> "Hello")
-  .thenApply(/* "processor" lambda */ s -> s + " World") // ← returns CompletableFuture
-  .thenAccept(/* consumer lambda */
-     s -> System.out.println("Computation returned: " + s)).
-  .thenRun(/* Runnable lambda*/ () -> System.out.println("Computation finished."));
-
-• Combining Futures (monadic design pattern in functional languages)
-  CompletableFuture<String> completableFuture
-    = CompletableFuture.supplyAsync(() -> "Hello")
-      .thenCompose(
-            s -> CompletableFuture.supplyAsync(() -> s + " World"));
-  assertEquals("Hello World", completableFuture.get());
-
-• Ex: Execute two independent Futures and do something with their results:
-  CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
-      .thenCombine(CompletableFuture.supplyAsync(
-        () -> " World"), (s1, s2) -> s1 + s2));
-
-  assertEquals("Hello World", future.get());
-
-• Ex: Execute two independent Futures and do nothing with result:
-  CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
-    .thenAcceptBoth(CompletableFuture.supplyAsync(
-       () -> " World"), (s1, s2) -> log(s1 + s2));
-
-• Ex: Running Multiple Futures in Parallel:
-   -  wait for all to execute and process combined results
-
-  CompletableFuture<String> future1
-    = CompletableFuture.supplyAsync(() -> "Hello");
-  CompletableFuture<String> future2
-    = CompletableFuture.supplyAsync(() -> "Beautiful");
-  CompletableFuture<String> future3
-    = CompletableFuture.supplyAsync(() -> "World");
-
-  CompletableFuture<Void> combinedFuture
-    = CompletableFuture.allOf(future1, future2, future3);
-
-  // ...
-
-  combinedFuture.get();
-
-  String combined = Stream.of(future1, future2, future3)
-    .map(CompletableFuture::join)  // ← join(): similar to get, but throws unchecked
-                                                exception if future fails.
-    .collect(Collectors.joining(" "));
-  assertEquals("Hello Beautiful World", combined);
-
-• Handling Errors: <!-- @ma -->
-
-  We can NOT try-catch.
-
-  CompletableFuture<String> completableFuture
-    =  CompletableFuture.supplyAsync(() -> {
-        ...
-        if(errorDetected)
-           throw new RuntimeException("Computation error!");
-        return "Hello ";
-    })
-   .handle( (s, t) -> s != null ? s : "Hello, Stranger!"); //
-   // result ┘  └ exception thrown? TODO:
-  assertEquals("Hello, Stranger!", completableFuture.get());
-
-  completableFuture.completeExceptionally(          Alternatively. Complete with Error
-    new RuntimeException("Calculation failed!"));
-  ...
-  completableFuture.get();                          ← ExecutionException
-
-• Async Methods
-  - methods without Async-postfix run next execution blocking current thread.
-  - async* without the Executor argument runs a step using the common
-    fork/join pool implementation.
-
-  - Ex.: process result of computation with a Function instance
-    CompletableFuture<String> completableFuture
-      = CompletableFuture.supplyAsync(() -> "Hello");
-
-    CompletableFuture<String> future = completableFuture
-      .thenApplyAsync(s -> s + " World"); // lambda is wrapped into ForkJoinTask instance
-    assertEquals("Hello World", future.get());
-[[}]]
-
-● Guava ListenableFuture [[{async/reactive.101,<02_doc_has.comparative,qa]]
-@[https://github.com/google/guava/wiki/ListenableFutureExplained]
-- Concurrency is a hard problem, but it is significantly simplified by
-  working with powerful and simple abstractions. To simplify matters,
-  Guava extends the Future interface of the JDK with ListenableFuture.
-
-- """We strongly advise that you always use ListenableFuture instead
-  of Future in all of your code, because:
-  - Most Futures methods require it.
-  - It's easier than changing to ListenableFuture later.
-  - Providers of utility methods won't need to provide Future and ListenableFuture
-      variants of their methods.
-
-● Listenable vs CompletableFutures
-@[https://stackoverflow.com/questions/38744943/listenablefuture-vs-completablefuture]
-          ListenableFuture                           │               CompletableFuture
-─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
-                                                     │ It is different from ListenableFuture in that it
-                                                     │ can be completed from any thread
-─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
-ListenableFuture listenable = service.submit(...);   │ CompletableFuture completableFuture =
-  Futures.addCallback(listenable,                    │     new CompletableFuture();
-                      new FutureCallback<Object>() { │ completableFuture.whenComplete(new BiConsumer() {
-    @Override                                        │   @Override
-    public void onSuccess(Object o) {                │   public void accept(Object o, Object o2) {
-        //handle on success                          │       //handle complete
-    }                                                │   }
-                                                     │ }); // complete the task
-    @Override                                        │ completableFuture.complete(new Object())
-    public void onFailure(Throwable throwable) {     │
-       //handle on failure                           │ When a thread calls complete on the task,
-    }                                                │ the value received from a call to get() is
-  })                                                 │ set with the parameter value if the task is
-                                                     │ not already completed.
-
-  ..."CompletableFuture is dangerous because it exposes  complete  methods."
-  ..."CompletableFuture would have been good if it extended Future
-     and did not expore toCompletableFuture,... and they could have named
-     it something meaningful like ChainableFuture "
-[[}]]
-
-● DragonWell JDK with Coroutine Support [[{concurrency.*,scalability.jvm,<02_doc_has.comparative]]
-REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
-- AdoptOpenJDK and Alibaba announced that the Dragonwell JDK will be
-  built, tested, and distributed using AdoptOpenJDK's infrastructure.
-  ...  Another interesting feature is the Wisp2 coroutine support.
-       Wips2  maps Java threads to coroutines instead of kernel-level threads: .
-       Many coroutines can be scheduled on a small number of core lines,
-       reducing scheduling overhead.
-
-     Wisp2 engine is similar in some respects to the aims of Project Loom
-     but (unlike Loom)   it works out of the box on existing code by enabling
-     it with these Java arguments:
-     $ java -XX:+UnlockExperimentalVMOptions -XX:+UseWisp2
-
-    I/O intensive applications where tasks are blocked on events and
-  then scheduled can benefit from the coroutine support. On the other
-  side,   CPU intensive applications will probably not benefit from
-  coroutines.
-
-• See also reddit thread "Loom vs DragoWell JV:":
-@[https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3]
-<hr/>
-● Loom Project: Ligthweight threads
-@[https://developers.redhat.com/blog/2019/06/19/project-loom-lightweight-java-threads/]
-@[https://openjdk.java.net/jeps/353]
-
-- MISSION:
-  - make concurrency simple(r) again!
-
-- Threads, provided by Java from its first day, are a convenient concurrency
-  construct
-  putting aside the separate question of communication among threads
-  which is being supplanted by less convenient abstractions because their
-  current implementation as OS kernel threads is insufficient for meeting
-  modern demands, and wasteful in computing resources that are particularly
-  valuable in the cloud.
-
-- Project Loom will introduce   FIBERS:
-  - lightweight, JVM managed, efficient threads ,
-  - A fiber is composed of:
-    -  1 scheduler    : Already in place for Java through the excellent scheduler
-                       ForkJoinPool
-    -  1 continuation : To be implemented in Loom.
-
-  https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-care/
-  ....
-  The overhead of fibers is higher but still very low even when
-  compared to async and monadic APIs, which have the disadvantage of
-  introducing a cumbersome, infectious programming style and don’t
-  interoperate with imperative control flow constructs built into a
-  language.
-  So aren’t fibers generators or async/awaits?
-
-  No, as we have seen fibers are real threads: namely a continuation
-  plus a scheduler. Generators and async/awaits are implemented with
-  continuations (often a more limited form of continuation called
-  stackless, which can only capture a single stack frame), but those
-  continuations don’t have a scheduler, and are therefore not threads.
-
-
-RELATED:
-@[http://www.linuxplumbersconf.org/2013/ocw/system/presentations/1653/original/LPC%20-%20User%20Threading.pdf]
-
-@[https://www.infoq.com/presentations/continuations-java/]
-Ron Pressler discusses and compares the various techniques of dealing with concurrency
-and IO in both:
-- pure functional (monads, affine types)
-- imperative      (threads, continuations, monads, async/await)
-and shows why delimited continuations are a great fit for the imperative style.
-
-Bio
-Ron Pressler is the technical lead for Project Loom, which aims to add delimited
-continuations, fibers and tail-calls to the JVM
-
-● Quasar(Fibers)
-• fast threads for java and Kotlin
-@[http://docs.paralleluniverse.co/quasar/]
-
-NOTE: To be superseded by Prj. Loom?
-Extracted from @[https://github.com/puniverse/quasar/issues/305]
-My understanding is that Ron is currently busy working for/with Oracle on
-project Loom which should bring "native" Fiber/lightweight continuation
-support directly into JVM without the need of auxiliary library like Quasar.
-[[}]]
-[[$div}]]
-[[$div}]]
-
-
-[[{$div]]
-● Async/Reactive Programming
-[[{$div]]
-[[{]]async/reactive.*,java_lang.functional,java_lang.101" >
-● Labmdas Intro
+● Labmdas Intro [[{java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
 • Java 8+.
 • simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
@@ -4256,10 +3019,9 @@ support directly into JVM without the need of auxiliary library like Quasar.
   on the same process (a Unix pipeline requires the help of the underlying
   OS to work), and the type of input/output data can be any sort of Java
   object (not just file text).
-[[}]]
+[[java_lang.functional.lambdas}]]
 
-[[{]]async/reactive.io,async/reactive.101,01_PM.TODO">
-● java.util.concurrent.Flow(1.9+)
+● java.util.concurrent.Flow(1.9+) [[{async/reactive.io,async/reactive.101,01_PM.TODO]]
 @[https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html]
 - JDK 1.9+
 - Reactive Streams was adopted by the JDK in the form of the java.util.concurrent.Flow API.
@@ -4274,8 +3036,7 @@ support directly into JVM without the need of auxiliary library like Quasar.
 - (See also <a href="http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php">What can Reactive Streams offer to EE4J</a>)
 [[}]]
 
-[[{]]async/reactive.rxjava,qa.*" bgorange id="rxjava_summary">
-● RxJava
+● RxJava [[{async/reactive.rxjava,qa]]]] #[rxjava_summary]
 @[https://github.com/ReactiveX/RxJava]
 
 ReactiveX provides a set of very-well thought-out cross-language abstraction to
@@ -4289,7 +3050,7 @@ implement the reactive patterns.
                                     unsubscribe  : - Observable can opt to stop
                                                    event-emission if no more clients
                                                    are subcribed
-rLoop-of-Observable-emitted-events:                - unsubscription will cascade back
+ Loop-of-Observable-emitted-events:                - unsubscription will cascade back
  ·  Observable → <<IObserver>>: onNext(event)      through the chain of operators
  ·                                                 applying to associated Observable.
  ·  observer   →   observer*1 : handle event    *1 also called "subscriber", "watcher"
@@ -4463,7 +3224,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
             |                    |its observers.
     Scheduler "==" Thread
 
-<hr/>
+
 ● External links:
 - Rx Workshop: Introduction
  @[https://channel9.msdn.com/Series/Rx-Workshop/Rx-Workshop-Introduction]
@@ -4479,7 +3240,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
  @[http://xgrommx.github.io/rx-book/content/observable/index.html]
 - Turning a callback into an Rx Observable by @afterecho
  @[https://afterecho.uk/blog/turning-a-callback-into-an-rx-observable.html]
-<hr/>
+
 ● Ops.classification 1
  Operators creating new Observables
 @[http://reactivex.io/documentation/operators.html#creating]
@@ -4630,7 +3391,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 
  Operators to Convert Observables
     To        convert an Observable into another object or data structure
-<hr/>
+
 ● Ops.classification 2
 - Basic Operators:
   - Suppressing operators:
@@ -4670,7 +3431,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
   - replay
   - cache
 
--<span xspam>Subjects
+- Subjects
   - Just like mutable variables are necessary at times even though you
     should strive forimmutability, Subjects are sometimes a necessary tool
     to reconcile imperative paradigmswith reactive ones.
@@ -4681,230 +3442,24 @@ Specialty Observables that have more precisely-controlled subscription dynamics
   - AsyncSubject
   - UnicastSubject
 
-● Custom Ops
+• Custom Ops
 @[http://reactivex.io/documentation/implement-operator.html]
-[[}]]
 
-[[{]]async/reactive.rxjava,qa.*,01_PM.troubleshooting,01_PM.TODO">
-● 5 Not So Obvious Things About RxJava
-@[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc]
+• 5 Not So Obvious Things About RxJava
+[[{async/reactive.rxjava,qa,01_PM.TODO]]
+@[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc] [[}]]
 
 - Error control [qa]
 @[https://github.com/ReactiveX/RxJava/wiki/Error-Handling-Operators]
 
-- Dealing with RxJava's never-ending Observables [troubleshooting]
-@[https://tech.xing.com/dealing-with-rxjavas-never-ending-observables-1ca8f18797ff]
-[[}]]
+- Dealing with RxJava's never-ending Observables                                    [[{JAVA_LANG.DEBUGGING,async/reactive.rxjava.troubleshooting]]
+@[https://tech.xing.com/dealing-with-rxjavas-never-ending-observables-1ca8f18797ff] [[}]]
 
+[[async/reactive.rxjava}]]
 
-
-[[{]]async/reactive.testing,qa.testing.async/reactive,01_PM.TODO">
-● Awaitility(Async→Sync) Tests
-@[https://github.com/awaitility/awaitility]
-- Awaitility: DSL allowing to express async results (test expectations) easely.
-  removing complexity of handling threads, timeouts, concurrency issues, ...
-  that obscured test code.
-
-- Ex 1:
-  @Test
-  public void updatesCustomerStatus() {
-    // Publish a (async) message to a message broker:
-    messageBroker.publishMessage(updateCustomerStatusMessage);
-    await().atMost(5, SECONDS).until(customerStatusIsUpdated()) ;
-    ...
-  }
-[[}]]
-
-[[$div}]]
-
-<pre zoom  labels="vertx.101,devops">
-● Maven Bootstrap
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1]
-
-Ex: minimally viable wiki written with Vert.x
-
-   └ Features:
-     - server-side rendering
-     - data persistence through a JDBC connection
-       and async ddbb access
-
-   └ Dependencies:
-     - Vert.x web: "elegant" APIs to deal with routing, request payloads, etc.
-     - Vert.x JDBC client: asynchronous API over JDBC.
-     - other libreries for HTML/md rendering
-
-                                          ┌ o configured pom.xml:
- $ $ URL="https://github.com/vert-x3"     │   - Maven Shade Plugin configured to create a single
- $ $ URL="${URL}/vertx─maven─starter"   ←─┤     "fat" Jar archive with all required dependencies
- $ $ git clone ${URL} project01           │   - Exec Maven Plugin to provide the exec:java goal
- $ $ cd project01                         │     that in turns starts the application through the
-                                          │     Vert.x io.vertx.core.Launcher class.
-                                          │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                          │     (equivalent to running using the vertx cli tool)
-                                          │
-                                          │ o sample verticle
-                                          │
-                                          │ o unit tests
-                                          │
-                                          └ o redeploy.sh: auto compile+redeploy on code changes.
-                                              (adjust $VERTICLE in script to match main verticle)
- $ $ mvn package exec:java             ← check that maven install is correct
-
-
-Tip: The SQL database modules supported by the Vert.x project do not currently
-   offer anything beyond passing SQL queries (e.g., an object-relational mapper)
-   as they focus on providing asynchronous access to databases.
-   However, nothing forbids using more advanced modules from the community,
-   and we especially recommend checking out projects like this jOOq generator
-   for VertX
-   @[https://github.com/jklingsporn/vertx-jooq]
-
-$ mvn clean package
-$ java -jar target/project01-SNAPSHOT-fat.jar
-[[}]]
-
-[[{]]vertx.101">
-● Create HttpServer
-REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
-
-   import io.vertx.ext.web.handler.BodyHandler;
-   public class MainVerticle  extends io.vertx.core.AbstractVerticle  {
-      ...
-      private io.vertx.core.http.HttpServer server = vertx.createHttpServer(); // vertx defined in Parent Class
-
-      @Override
-      public void start(Future<Void> startFuture) {
-          Json.mapper.registerModule(new JavaTimeModule());
-          FileSystem vertxFileSystem = vertx.fileSystem();
-          vertxFileSystem.readFile("swagger.json", readFile -> {
-              if (readFile.succeeded()) {
-                  // Swagger swagger = new SwaggerParser().parse(readFile.result().toString(Charset.forName("utf-8")));
-                  // SwaggerManager.getInstance().setSwagger(swagger);
-                  Router router = Router.router(vertx);
-                  router.get  (ROUTE_ENTITY01+"/:id")                              .handler(this:: GetEntity01Handler);
-                  router.post (ROUTE_ENTITY01       ).handler(BodyHandler.create()).handler(this::PostEntity01Handler);
-                                                              └───────┬───────────┘         └───────────┬───────────┘
-                                                decode POST req.body (forms,...) to         function signature:
-                                                Vert.x buffer objects                       void functionName( RoutingContext context )
-                  router.delete(ROUTE_ENTITY01+"/:id")                              .handler(this::DeleEntity01Handler);
-                  log.info("Starting Server... Listening on "+RC.host+":"+RC.port);
-                  vertx.createHttpServer(_getHTTPServerOptions()).
-                          requestHandler(router::accept).listen(
-                           8080,                                  ← Different deployments can share the port. Vertx will round-robin
-                           /* AsyncResult */ar -> { //
-                            if (ar.succeeded()) {
-                              LOGGER.info("HTTP server running on port 8080");
-                              startFuture.complete();
-                            } else {
-                              LOGGER.error("Could not start a HTTP server", ar.cause());
-                              startFuture.fail(ar.cause());
-                            }
-                          });
-              } else {
-                  startFuture.fail(readFile.cause());
-              }
-          });
-      }
-    }
-[[}]]
-
-<pre zoom  labels="vertx.101">
-● Reusable Verticles
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc]
-
-- resulting verticles will not have direct references to each other
-  as they will only agree on destination names in the event bus as well
-  as message formats.
-- messages sent on the event bus will be encoded in JSON.
-
-- Ex:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-2/src/main/java/io/vertx/guides/wiki]
- HttpServerVerticle.java
- WikiDatabaseVerticle.java
- MainVerticle.java      ← its sole purpose is to bootstrap the app
-                          and deploy other verticles.
- @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
-  package io.vertx.guides.wiki;
-
-  public class MainVerticle extends AbstractVerticle {
-    @Override
-    public void start(Promise<Void> promise) {
-      Promise<String> promise01 = Promise.promise();
-      vertx.deployVerticle(new WikiDatabaseVerticle(), promise01);
-      promise01.future().compose(id -> {
-        Promise<String> promise02 = Promise.promise();
-        vertx.deployVerticle(
-          "io.vertx.guides.wiki.HttpServerVerticle",  // <4>
-          new DeploymentOptions().setInstances(2),    // <5>
-          promise02);
-        return promise02.future();
-      }).setHandler(ar -> {
-        if (ar.succeeded()) {
-          promise.complete();
-        } else {
-          promise.fail(ar.cause());
-        }
-      });
-    }
-  }
-[[}]]
-
-[[$div}]]
-
-[[{$div]]
-● VertX Continuation [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend,01_PM.TODO]]
-● VertX (TODO)
-• RxJava Integration:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
-  <!-- Refactoring some code to use reactive programming with the
-        popular RxJava library and its Vert.x integration -->
-
-• Vertx+k8s:
-@[http://escoffier.me/vertx-kubernetes/]
-• SockJS:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc]
-  - Event-bus bridge allowing web apps to seamlessly communicate over
-  - event bus from JavaScript running in the browser by receiving and publishing
-  - messsages just like any verticle would do
-• Angular Client:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-9/README.adoc]
-
- TODO:
- Cookbook recipe:
-    Vertx vertx = Vertx.vertx();
-    HttpServer server = vertx.createHttpServer();
-    server.requestHandler(req -> {
-      req.response().end("Hello world");
-    });
-    server.listen(8080);
- ------------------------------------
-  """
-  There are many features and modules that we haven’t covered in this guide, such as:
-    - Clustering using Hazelcast, Infinispan, Apache Ignite or Zookeeper,
-    - Exposing⅋consuming over HTTP/2, possibly (but not necessarily) with gRPC
-    - Using NoSQL databases such as MongoDB or Redis.
-    - Sending emails over SMTP.
-    - Messaging with AMQP, Stomp, Kafka, MQTT or RabbitMQ.
-    - Using OAuth2 authentication from custom and popular providers.
-    - Vert.x sync for writing blocking-style code that is later
-      turned into fibers non-blocking code at runtime.
-    - Publishing and discovering micro-services from registries, for
-      instance when deploying on cloud environments like OpenShift,
-    - Exposing metrics and health checks.
-  """
-
-• What's new Vert.X 4.0: (2020-12-09):
-@[https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes]
-[[}]]
-
-[[$div}]]
-
-[[{$div]]
-● Other frameworks [[{async/reactive.*,01_PM.low_code,messaging.jms,messaging.activemq]]
+● JavaLite: lightweight async.job processing [[{async/reactive.javalite]]
+                   [[01_PM.low_code,messaging.jms,messaging.activemq]]
                    [[architecture.batch,architecture.distributed]]
-● JavaLite
-- lightweight system for processing asynchronous jobs.
 - Use Cases:
   - website that needs to run batch process in background
   - We receive batch of inputs to be processed in a "best-effort"
@@ -5004,11 +3559,11 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
 
 - See also filequeue in this map. It's faster but doesn't support
   Queue to DDBBs.
-[[}]]
+[[async/reactive.javalite}]]
 
-[[{]]async/reactive.*,01_PM.low_code,messaging.jms,messaging.activemq,scalability.101"
-   id="fileQueue_summary">
-<span bgorange xsmall>FileQueue
+● FileQueue #[fileQueue_summary] [[{async/reactive.FileQueue]]
+                                 [[01_PM.low_code,messaging.jms]]
+                                 [[messaging.activemq,scalability.101]]
 @[https://github.com/stimulussoft/filequeue]
 - KISS alternative using MVStore
 @[http://www.h2database.com/html/mvstore.html]
@@ -5104,957 +3659,10 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
       is called as soon as a slot becomes available, just before the item
       is place on the queue. It may be used to cache a file to disk, or
       perform resource availability pre-checks (e.g. disk space check).
-[[}]]
-[[$div}]]
-[[$div}]]
+[[async/reactive.FileQueue}]]
 
-[[{$div]]
-● QA
-[[{$div]]
-[[{]]qa.billion_dolar_mistake">
-● Cost of software failures
-$312 billion per year: global cost of software bug (2013)
-$300 billion dealing with the Y2K problem
 
-$440 million loss by Knight Capital group Inc. in 30 minutes, August 2012
-$650 million loss by NASA Mars missions in 1999; unit conversion bug
-$500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
-"$Nightmare" billion Boeing 737Max
-
-2011: Software caused 25% of all medical device recalls.
-[[}]]
-
-[[{]]qa.101,qa.error_control,qa.billion_dolar_mistake" id="code_analysis_tools_summary">
-● Checker framework (Java 8+)
- fix errors at compile time  (vs later on at execution/runtime)
-@[https://github.com/typetools/checker-framework]
-@[https://checkerframework.org/manual/]
-@[https://www.youtube.com/watch?v=6E1CSydgzQc]
-@[https://www.baeldung.com/checker-framework]
-
-  COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...)
-                 ┌─────────────┬────────┬────────┐                 ┌──────────────────┬─────────────────────┐
-                 │ Null Pointer│        │        │                 │ Verification     │ Bug─Finding         │
-                 │    errors   │ False  │Annotat.│                 │ ( Checker FW ,)  │ (Infer,StopBugs,    │
-                 │             │        │        │                 │                  │  SonarQube,...      │
-                 │Found│ Missed│warnings│written │  ┌──────────────┼──────────────────┼─────────────────────┤
-  ┌──────────────┼─────┼───────┼────────┼────────┤  │Goal          │ prove that       │ find some bugs      │
-  │ Checker FW.  │9    │ 9     │  4     │  35    │  │              │ no bug exits     │ at "low cost"       │
-  ├──────────────┼─────┼───────┼────────┼────────┤  ├──────────────┼──────────────────┼─────────────────────┤
-  │StopBugs      │0    │ 9     │  1     │  0     │  │Check specifis│ user provided    │ infer likely specs  │
-  ├──────────────┼─────┼───────┼────────┼────────┤  │specificat    │                  │                     │
-  │Jlint         │0    │ 9     │  8     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
-  ├──────────────┼─────┼───────┼────────┼────────┤  │False         │ None!!!          │ acceptable          │
-  │PMD           │0    │ 9     │  0     │  0     │  │negatives     │                  │                     │
-  ├──────────────┼─────┼───────┼────────┼────────┤  ├──────────────┼──────────────────┼─────────────────────┤
-  │Eclipse 2017  │0    │ 9     │  8     │  0     │  │False         │ manually supress │ heuristics focus on │
-  ├──────────────┼─────┼───────┼────────┼────────┤  │positives     │ warnings         │ most important bugs │
-  │IntelliJ      │0    │ 9     │  1     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
-  │+@NotNull 2017│3    │ 6     │  1     │ 925+8  │  │Downside      │ user burden      │ missed bugs         │
-  └──────────────┴─────┴───────┴────────┴────────┘  └──────────────┴──────────────────┴─────────────────────┘
-
-  PROBLEM:                                           │  SOLUTION:
-   STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH      │  Java 8+ allows to compile programs
-   - Next example compile, but fail at runtime:      │  using   "PLUGGABLE TYPE SYSTEMs" ,
-     Ex.1:                                           │  allowing to apply stricter checks
-       System.console().readLine(); ←  NullPointer   │  than default ones in compiler like
-     Ex.2:                                           │  Ex:
-       Collections.emptyList()                       │  $ javac  -processor NullnessChecker  MyFile.java
-               .add("one"); ←  Unsupported Operation │
-     Ex.3:                                           │   PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
-       Date key1 = new Date();                       │           (1)           No errors (2)
-       myMap.put(key1, "now");                       │    Source ───→ Compiler ────┬───→ Executable
-       myMap.get(key1);    ←  returns "now"          │      ^            │         │(2)       ^
-       key1.setSeconds(0); ←  Mutate key             │      │            v         v          │
-       myMap.get(key1);    ←  returns null           │      │         Standard    Optional    │ Guaranteed
-                                                     │      │         Compiler    Type     ───┘ Behaviour
-                                                     │      │         Errors      Checker
-                                                     │      │                      │
-                                                     │      │                      v
-                                                     │      └────────────────── Warnings :
-                                                     │
-                                                     │     (2) plugable type system allows generation
-                                                     │         of executable to allow CI continue the
-                                                     │         pipeline with further tests (functional
-                                                     │         testing, configuration testing, ...)
-
-  #################################
-• # Checker Framework Instalation #
-  #################################
-<!-- { -->
-(See new releases/versions at
-  @[https://search.maven.org/search?q=g:org.checkerframework])
-
-  STEP 01:                            │  STEP 02:
-──────────────────────────────────────┼────────────────────────────────────────────────────
-  Add next pom.xml dependencies like: │  tweak  maven-compiler-plugin  to use
-  <dependency>                        │  Checker Framework as a pluggable Type System:
-      <groupId>                       │  <plugin>
-        org.checkerframework          │    <artifactId> maven-compiler-plugin </artifactId>
-      </groupId>                      │    <version>3.6.1</version>
-      <artifactId>                    │    <configuration>
-        checker-qual                  │      <source>1.8</source>
-      </artifactId>                   │      <target>1.8</target>
-      <version>2.11.0</version>       │      <compilerArguments>
-  </dependency>                       │        <Xmaxerrs>10000</Xmaxerrs>
-  <dependency>                        │        <Xmaxwarns>10000</Xmaxwarns>
-      <groupId>                       │      </compilerArguments>
-        org.checkerframework          │      <annotationProcessors>  ← "==" javac -processor ...
-      </groupId>                      │        <annotationProcessor>
-      <artifactId>                    │      org.checkerframework.checker.nullness.NullnessChecker
-        checker<                      │         </annotationProcessor>
-      /artifactId>                    │         <annotationProcessor>
-      <version>2.11.0</version>       │      org.checkerframework.checker.interning.InterningChecker
-  </dependency>                       │         </annotationProcessor>
-  <dependency>                        │         <annotationProcessor>
-      <groupId>                       │      org.checkerframework.checker.fenum.FenumChecker
-        org.checkerframework          │         </annotationProcessor>
-      </groupId>                      │         <annotationProcessor>
-      <artifactId>                    │      org.checkerframework.checker.formatter.FormatterChecker
-        jdk8                          │         </annotationProcessor>
-      </artifactId>                   │      </annotationProcessors>
-      <version>2.11.0</version>       │      <compilerArgs>
-  </dependency>                       │        <arg>-AprintErrorStack</arg>
-                                      │        <arg>-Awarns</arg>
-                                      │      </compilerArgs>
-                                      │    </configuration>
-                                      │  </plugin>
-
-( STEP 03:  Manually add extended type annotations to your java code)
-<!-- } -->
-
-
-  ###########
-• # Ussage  #
-  ###########
-<!-- { -->
--   Avoiding Nulls
-
-  CHECKS  ON TYPES                               │ CHECKS ON FUNCTION DECLARATION
-                                                 │                   ┌────┬────┬───────────────────────────┐
-                                                 │                   │FUNC│FUNC│DESCRIPTION                │
-  private static int func1                       │                   │PRE─│POST│                           │
-    ( @NonNull  String[] args)                   │                   │COND│COND│                           │
-  {                                              │ ┌─────────────────┼────┼────┼───────────────────────────┤
-      return args.length;                        │ │@RequiresNonNull │X   │    │variables are expected  to │
-  }                                              │ │                 │    │    │be non─null when invoked.  │
-                                                 │ ├─────────────────┼────┼────┼───────────────────────────┤
-  public static void main                        │ │@EnsuresNonNull  │    │X   │variables are guaranteed to│
-    ( @Nullable  String[] args) {                │ │                 │    │    │be non─null on return.     │
-      ...                                        │ ├─────────────────┼────┼────┼───────────────────────────┤
-      func1(args);                               │ │@EnsuresNonNullIf│    │X   │variables are guaranteed to│
-  }         ^^^^                                 │ │                 │    │    │benon─null on ret.true/fals│
-      [WARNING] ... [argument.type.incompatible] │ └─────────────────┴────┴────┴───────────────────────────┘
-       incompatible types in argument.           │
-        found    : null                          │
-        required : @Initialized @NonNull ...     │
-
--   Convert String constants into Safe Enum with Fenum
-                                                (Fake enum)
-  static final @Fenum("country") String ITALY = "IT";
-  static final @Fenum("country") String US = "US";
-  ...
-  static final @Fenum("planet") String MARS = "Mars";
-  static final @Fenum("planet") String EARTH = "Earth";
-  ...
-
-  void function1(@Fenum("planet") String inputPlanet){
-      System.out.println("Hello " + planet);
-  }
-
-  public static void main(String[] args) {
-      obj.greetPlanets(US);   ←----  [WARNING] ...
-  }                                   incompatible types in argument.
-                                       found   : @Fenum("country") String
-                                       required: @Fenum("planet") String
-
--   Regular Expressions
-  @Regex(1) private static String FIND_NUMBERS = "\\d*";
-  ^^^^^^^^^                                      ^^^^^^
-  Force String variable                       [WARNING] ...
-  to store a regex with                       incompatible types in assignment.
-  at least one matching                         found   : @Regex String
-  group                                         required: @Regex(1) String
-
-
-
--   Validating tainted (non-trusted) input
-
-   @Untainted
-   String validate (String sqlInput) {
-      // Do any suitable checks, throw on error
-      @SuppressWarnings("tainting")      ← "swear" that developer got sure
-      @Untainted String result = ...;       of input correctness
-      return result;
-  }
-
-  void execSQL( @Untainted  String sqlInput) {
-      ...
-  }
-
-  public static void main(String[] args) {
-      obj.execSQL(arg[0]);             ← warning at compile time
-      obj.execSQL(validate(arg[0]));   ← "OK". validate un-tain the input
-  }
-
--   Mark as Immutable
-  @Immutable Date date = new Date();
-  date.setSeconds(0);   ←   compile-time error
-<!-- } -->
-
-- Avoiding (certain) concurrency errors
-<!-- { -->
-  Lock Checker enforces a locking discipline:
-  "which locks must be held when a given operation occurs"
-
-  CHECKS ON TYPES                             │ CHECKS ON FUNCTION DECLARATION
-                                              │                 ┌────┬────┬───────────────────────────┐
-   @GuardedBy("lockexpr1","lockexpr2",...)    │                 │FUNC│FUNC│DESCRIPTION                │
-             int var1 = ....;                 │                 │PRE─│POST│                           │
-   ^^^^^^^^^^                                 │                 │COND│COND│                           │
-  a thread may dereference the value referred │┌────────────────┼────┼────┼───────────────────────────┤
-  to by var1 only when the thread holds all   ││@Holding        │X   │    │All the given lock exprs   │
-  the locks that ["lockexpr1",...] currently  ││(String[] locks)│    │    │are held at method call    │
-  evaluates to.                               │├────────────────┼────┼────┼───────────────────────────┤
-                                              ││@EnsuresLockHeld│    │X   │Ensures locks are locked on│
-                                              ││(String[] locks)│    │    │return,ex. lock adquired by│
-                                              ││                │    │    │ReentrantLock.lock().      │
-                                              │├────────────────┼────┼────┼───────────────────────────┤
-                                              ││@EnsuresLockHeld│    │X   │Ensures locks are locked on│
-                                              ││(String[] locks)│    │    │return,ex.lock conditionaly│
-                                              ││                │    │    │adquired by ReentrantLock  │
-                                              ││                │    │    │.lock()                    │
-                                              ││                │    │    │if method return true|false│
-                                              │└────────────────┴────┴────┴───────────────────────────┘
-   SIDE EFFECT SPECIFICATIONS
-  ┌────────────────────┬───────────────────────────────────────────────┐
-  │ @LockingFree       │method does NOT acquire│release locks:         │
-  │                    │· it is not synchronized,                      │
-  │                    │· it contains NO synchronized blocks           │
-  │                    │· it contains no calls to lock│unlock methods  │
-  │                    │· it contains no calls to methods that are not │
-  │                    │  themselves @LockingFree                      │
-  │                    │(@SideEffectFree implies @LockingFree)         │
-  ├────────────────────┼───────────────────────────────────────────────┤
-  │ @ReleasesNoLocks   │· method maintains a strictly                  │
-  │                    │  nondecreasing lock hold count                │
-  │                    │  on the current thread for any locks          │
-  │                    │  held at method call.                         │
-  ├────────────────────┼───────────────────────────────────────────────┤
-  │ @EnsuresLockHeld   │method adquires new locsk                      │
-  │ @EnsuresLockHeldIf │(default if no @LockingFree│@MayReleaseLocks│  │
-  │                    │@SideEffectFree│@Pure used).                   │
-  └────────────────────┴───────────────────────────────────────────────┘
-<!-- } -->
-
--  Format String Checker
-  - prevents use of incorrect format strings in System.out.printf,....
-
-    void printFloatAndInt
-         ( @Format({FLOAT, INT})  String   format )
-    {
-      System.out.printf(  format , 3.1415, 42);
-    }
-- I18n Format Checker examples
-  MessageFormat.format("{0} {1}", 3.1415);
-                                        ^
-                              second argument missing
-  MessageFormat.format("{0, time}", "my string");
-                                    ^^^^^^^^^^^
-                                    cannot be formatted
-                                    as Time type.
-  MessageFormat.format("{0, thyme}", new Date());
-                            ^^^^^
-                            unknown format type
-
-  MessageFormat.format("{0, number, #.#.#}", 3.1415);
-                                    ^^^^^
-                              subformat is invalid.
-
-- Property File Checker!!!!    TODO
-  - It ensures that used keys are found in the corresponding
-    property file or resource bundle.
-
-- GUI Effect Checker
-  - It is difficult for a programmer to remember
-    which methods may be called on which thread(s).
-    (Main GUI thread or others)
-   Checker types the method as if:
-   - It accesses no UI elements (and may run on any thread);
-   - It may access UI elements  (and must run on the UI thread)
-
-- (physical) Internation System UNIT annotations :
-  @Acceleration: Meter Per Second Square @mPERs2
-  @Angle       : Radians @radians
-                 Degrees @degrees
-  @Area        : square millimeters @mm2,
-                 square meters @m2
-                 square kilometers @km2
-  @Current     : Ampere @A
-  @Length      : Meters @m
-                 millimeters @mm
-                 kilometers @km
-  @Luminance   : Candela @cd
-  @Mass        : kilograms @kg
-                     grams @g
-  @Speed       : meters per second   @m
-                 kilometers per hour @kmPERh
-  @Substance   : Mole @mol
-  @Temperature : Kelvin @K
-                 Celsius @C
-  @Time        : seconds @s
-                 minutes @min
-                 hours @h
-
-- @Unsigned/@Signed ← guarantees values are not mixed
-
-- type alias or typedef
-  share same representation as another type
-  but is conceptually distinct from it.
-  Ex 1: get sure that Strings representing addresses
-        and passwords are NOT mixed
-  Ex 2: get sure that integers used for meters are
-        not mixed with integers used for centimeters.
-
-  Example:
-  @NonNull List<String>
-  List<@NonNull String>
-  @Regex String validation = "(Java|JDK) [7,8]"
-
-  private String getInput(String parameterName){
-   final String retval = @Tainted request.getParameter(parameterName);
-   return retval;
-  }
-
-  private void runCommand(@Untainted String… commands){
-   // the previously tainted String must be validated before being passed in here.
-   ProcessBuilder processBuilder = new ProcessBuilder(command);
-   Process process = processBuilder.start();
-  }
-<hr/>
-● SpotBugs
-@[https://github.com/spotbugs/spotbugs/issues]
-• OOSS static analysis tool for java code bugs.
-• Well maintained (as of 2021-12-21)
-• "spiritual successor of FindBugs"
-• SpotBugs checks for more than 400 bug patterns.
-• Works from GUI+cli, maven/gradle/eclipse integration.
-• Plugin extension support (just download plugin jar and
-  it will be detected and included):
-  • fb-contrib:
-  • Security Audits for Java Web applications:
-  @[https://find-sec-bugs.github.io/]
-    It can detect 141 different vulnerability types with
-    over 823 unique API signatures.
-
-• Running SpotBugs.
-  · Presetup. Compile java code to classes or jars.
-    SpotBugs runs against compiles class files, using source code
-    as a reference when displaying output.
-
-  $ java -jar ../spotbugs.jar ...$SPOTBUG_ OPTIONS ..
-
-                             JVM OPTIONS
-                             ===========
-  -Xmx1500m                ← set JVM heap to big/1500MB  (recomended)
-
-                             STANDARD OPTIONS
-                             ================
-  -textui                  ← vs -gui
-  -effort min              ← := min|less|default|more|max
-                             min: decrease mem use/precision/exec.time
-                             max: increase mem use/precision/exec.time
-  -project ... \           ← project *.fb or *.fbp created through the GUI
-                             (fb == FindBugs)
-  -pluginList jar1;jar2     \
-  -home $SPOTBUG_DIR       ← ex: /opt/spotbugs
-  -adjustExperimental      ← Lower priority of experimental Bug Patterns.
-  -workHard                ← Ensure analysis effort is at least ‘default’.
-  -sortByClass=dir1/spotbugs.txt ← textui only
-                                   also supported to set multiple reports
-  -include filter01.xml     ← show only bugs match filter specified.
-  -exclude filter02.xml     ← *1
-  -onlyAnalyze com.foo.*,com.bar.* ← Unlike filter, analysis is skipt
-                              for any other class type
-                              WARN: some detectors may produce inaccurate
-                              results
-  -low                      ← Report all bugs.
-  -medium                   ← Report medium and high priority bugs.
-  -high                     ← Report only high priority bugs.
-  -relaxed                  ← suppress heuristics, avoidin false positives.
-  -html=../report.html      ← Output HTML. Alternative:
-                            ← Output HTML. Alternative:
-                              NOTE : It is -html=value while other flags work like
-                                     -flag value (without the "=" sign)
-                              -html:fancy.xsl=...  (DOM+JS for navigation + CSS)
-                              -html:fancy-hist.xsl=...  fancy.xsl evolution
-                              Other output formats include xml/sarif/emacs/xdocs
-  -nested false             ← disable scanning of nested jar (def:enabled)
-  -auxclasspath ...         ← It should include all jar/dirs containing classes
-                              that are part of the program being analyzed but
-                              you do not want to have analyzed for bugs.
-  -auxclasspathFromInput    ← Read auxclasspath from STDIN, line by line
-  -auxclasspathFromFile
-  -analyzeFromFile fileI    ← Read input file list from file line-by-line.
-  -showPlugins              ← listavailable detector plugins.
-
-                              OUTPUT CUSTOMIZATION OPTIONS
-                              ============================
-  -timestampNow             ← Set results timestamp to current time.
-  -quiet                    ← Suppress error messages.
-  -longBugCodes             ← Report long bug codes.
-  -progress                 ← Display progress in console.
-  -release $name            ← Set release name in report
-  -maxRank $rank            ← Only report issues with a bug rank at least
-                              as scary as that provided.
-  -dontCombineWarnings      ← Don’t combine warnings differing only in line num.
-  -train[:outputDir]:       ← Save training data (experimental);
-  -useTraining[:inputDir]:  ← Use training data (experimental);
-  -redoAnalysis $filenam    ← Redo using config. from previous analysis.
-  -sourceInfo $file         ← Specify source info file (line numbers for
-                              fields/classes).
-  -projectName $name        ← Descriptive name of project.
-  -reanalyze $filename      ← Redo analysis in provided file.
-
-                              OUTPUT FILTERING OPTIONS
-                              ========================
-  -bugCategories cat1,cat2  ← Only report bugs in those categories.
-  -excludeBugs baseline_bug ← Exclude bugs that are also reported in
-                              baseline xml output.
-  -applySuppression         ← Exclude bugs matching suppress.filter from *fbp
-
-                              DETECTOR (VISITOR) CONFIGURATION OPTIONS
-                              ========================================
-  -visitors v1,v2,...       ← Run only named visitors.
-  -omitVisitors v1,v2,...   ← Omit named visitors.
-  -chooseVisitors +v1,-v2,. ← enable/disable detectors.
-  -choosePlugins +p1,-p2,   ← Selectively en/dis-able plugins.
-  -adjustPriority v1=raise|lower,v2=...
-
-                              PROJECT CONFIGURATION OPTIONS
-                              =============================
-  -sourcepath $source_path  ← Set source path for analyzed classes.
-  -exitcode                 ← Set exit code of process.
-  -noClassOk                ← Output empty warning file if no classes are
-                              specified.
-  -xargs                    ← Get list of class/jar files from STDIN
-  -bugReporters name,-name2,.. ← Bug-reporter decorators to explicitly
-                                 enable/disable.
-  -printConfiguration       ← Print configuration and exit
-
-*1┌── myIncludeOrExcludeFilter.xml ────
-  │
-  │ <?xml version="1.0" encoding="UTF-8"?>
-  │ <FindBugsFilter>
-  │ <Match>
-  │   <Bug                       match if  pattern and/or code and/or category match
-  │     pattern="..."          ← comma-separated list of patterns to match
-  │                              ex.: DLS_DEAD_LOCAL_STORE,DM_EXIT,
-  │     code="..."             ← coarse-grained matching comma-sep. list of bug
-  │                              abbreviations(DC,DE,IC,IJU,MS,SIC,URF,UUF,XYZ,...)
-  │     category="..."         ← even more coarse-grained :=
-  │                              CORRECTNESS, BAD_PRACTICICE,
-  │   />                         PERFORMANCE, STYLE, MT_CORRECTNESS
-  │                                 (M)ulti(T)hreaded ┘
-  │
-  │
-  │   <Confidence value="1"/>  ← 1 match high-confidence warnings,
-  │                              2 match normal-confidence warnings
-  │                              3 match low-confidence warnings
-  │
-  │    <Rank value="1" />     ←  1  to 4 : scariest
-  │                              5  to 9 : scary
-  │                             10 to 14: troubling
-  │                             15 to 20: concern
-  │
-  │   <Package name="~.."/> ← name/regex. Nested packages are NOT included
-  │   <Class   name="~.. /> ← name/regex. NOTE: Some bug instances relate to
-  │                                       2+ classes.
-  │   <Source  name="..."/> ← name/regex.  match warnings associated to source file.
-  │                           └────┬────┘
-  │                         regex if prefixed by ~
-  │
-  │   <Method
-  │    name="funcXXX"
-  │    params="int,..."
-  │    returns="void"
-  │   />
-  │
-  │   <Field name="..." />   ← type=... instead of name can also be used
-  │   <Local name="..." />
-  │   <Type  name="..." />
-  │ </Match>
-  │
-  │ <Or>  <Match /><Match /></Or>
-  │ <And> <Match /><Match /></And>
-  │ <Not> <Match />         </Not>
-  │
-  │ </FindBugsFilter>
-  └────────────────────────────────────────────
-
-
-
-• See examples at:
-@[https://spotbugs.readthedocs.io/en/latest/filter.html]
-
-
-<hr/>
-
-● Lint4j
-@[http://www.jutils.com/]
-•  WARN : Not maintained any more.
-• Lint4j ("Lint for Java") is a static Java source and byte code
-  analyzer that detects locking and threading issues, performance and
-  scalability problems, and checks complex contracts such as Java
-  serialization by performing type, data flow, and lock graph analysis.
-
-• Ussage @[http://www.jutils.com/uguide.html]
-$ $ lint4j \
-$    -sourcepath src/main \             ← analyze source
-$    -classpath lib/bcel.jar:... \
-$    -exclude "packagename"   \         ← package or package-prefix
-$    "com.jutils.lint4j.*"
-$
-$ $ lint4j -sourcepath .../log4j.jar    ← analyze binary
-$     "org.apache.*"
-$
-$ $ lint4j  \
-$    -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
-$    org.apache.log4j \
-$    org.apache.log4j.spi
-$
-$ $ lint4j \
-$   -sourcepath com/.../ClassN.java \
-$               com/.../CalssJ.java
-
-[[}]]
-
-<pre zoom
-  labels="qa.101,01_PM.low_code,concurrency.101,01_PM.troubleshooting,scalability.profiling,01_PM.WiP"
-  id="sonarqube_summary" >
-● SonarQube
-• SonarQube empowers all developers to write cleaner and safer code.
-• Comunity with 200K+ dev. teams.
-• Easely integrates with CI/CD pipelines.
-  Jenkins, GitHub Actions, Bitbucket Pipelines, GitLab CI, Azure Pipelines, ...
-
-• A simple client/server working enviroment can be setup in minutes like:
-
-  ┌── SERVER SIDE: ────────────────────────────────
-  │
-  │• LAUNCH SERVER INSTANCE
-  │  ======================
-  │$ $ docker run -d --name sonarqube               \
-  │$   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
-  │$   -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
-  │$   -p 9000:9000 sonarqube:latest
-  │
-  │• Create a new project through the web console
-  │  and annotate the 40-random-chars TOKEN.
-  │  (Needed by client-side sonar-scanner).
-  └─────────────────────────────────────────────────
-
-  ┌─ CLIENT SIDE: ──────────────────────────────────
-  │
-  │• 1) PROJECT_SRC_ROOT
-  │  ┌ └ sonar-project.properties ─┐
-  │  │sonar.projectKey=my:project  ← Required
-  │  │                             │
-  │  │#sonar.projectName=...       ← def:project key
-  │  │#sonar.projectVersion=1.0    ← def:'not provided'
-  │  │sonar.sources=src/java/      ← relative to
-  │  │                             │ sonar-project.properties
-  │  │#sonar.sourceEncoding=UTF-8  │
-  │  │sonar.java.binaries=./build/ ← compiled *class dir.
-  │  │sonar.java.libraries=...     ← ex: /lib/*.jar,./plugins/lib/*jar
-  │  └─────────────────────────────┘
-  │
-  │• 2) launch client scanner like
-  │  2.alt1) using mvn plugin:
-  │    $ $ mvn clean verify sonar:sonar \
-  │    $     -Dsonar.projectKey=test2 \
-  │    $     -Dsonar.host.url=http://...:9000 \
-  │    $     -Dsonar.login=$PROJECT_TOKEN
-  │
-  │  2.alt2) using docker
-  │    $  $ docker run \
-  │    $    --rm \
-  │    $    -e SONAR_HOST_URL="http:...:9000" \
-  │    $    -e SONAR_LOGIN="$PROJECT_TOKEN" \
-  │    $    -v "${YOUR_REPO}:/usr/src" \
-  │    $    sonarsource/sonar-scanner-cli
-  └─────────────────────────────────────────────────
-
-• See original source for more info about
-   SonarScanner Troubleshooting recipes, advanced docker config,
-   running, caching scanner files ,  usng self-signed certs:
-@[https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/]
-  *1: not needed if the associated project is already linked to a
-      git repository on the server side.
-
-• alternatives to SonarQube include:
-  - Facebook Infer @[http://fbinfer.com/]
-    (Static analysis Java/C/...)
-  - Scrutinizer:
-  - StopBugs:
-  - Eclipse Static Code Analasys:
-    Eclipse → Properties → Java → Compiler → Errors/Warnings → Null analysis:
-      Null pointer access
-      Potential null pointer access
-      Redundant null check:
-        x Include 'assert' in null analysis
-        x Enable annotation-based null analysis
-          Violation of null specification
-          Conflict between null annotations an null inference
-          Unchecked conversion from non-annotated type to @NonNull type
-          Problems detected by pessimistic analysis fro free type variables
-          Unsafe "@Nonnull" interpretation of the free type variable from library
-          Redundant null anotation:
-          "@NonNull" parametere not annotated in overriding method
-          Missing "@NonNullByDefault" annotation on package
-          x Use default annotations for null specifications (configure)
-          x Inherit null annotations
-          x Enable syntatic null analisys for fields
-      x Treat above errors like fatal compile erros (make compiled code not executable)
-<hr/>
-[[}]]
-
-
-[[{]]qa.101">
-● JavaDoc
------------------------+-------------------------------------+-------------------------+-------   Example
-Tag⅋ Parameter         | Usage                               | Applies to              | Since    /**
------------------------+-------------------------------------+-------------------------+-------    * Short one line description.
-@authorJohn Smith      | Describes an author.                | Class, Interface, Enum  |           * <p>
------------------------+-------------------------------------+-------------------------+-------    * Longer description. ...
-@versionversion        | Provides software version entry.    | Class, Interface, Enum  |           * ...here.
-                       | Max one per Class or Interface.     |                         |           * <p>
------------------------+-------------------------------------+-------------------------+-------    * And even more explanations to follow
-@sincesince-text       | Describes when this functionality   | Class, Interface, Enum, |           * in consecutive paragraphs
-                       | has first existed.                  | Field, Method           |           *
------------------------+-------------------------------------+-------------------------+-------    * @author John Bla
-@seereference          | Provides a link to other element    | Class, Interface, Enum, |           * @param  variable Description ....
-                       | of documentation.                   | Field, Method           |           * @return Description ....
------------------------+-------------------------------------+-------------------------+-------    */
-@paramname descrip     | Describes a method parameter.       | Method                  |          public int methodName (...) {
------------------------+-------------------------------------+-------------------------+-------       // method body with a return statement
-@return description    | Describes the return value.         | Method                  |          }
------------------------+-------------------------------------+-------------------------+-------
-@exceptionclass desc   | Describes an exception that may     | Method                  |
------------------------+-------------------------------------+-------------------------+-------
-@throwsclass desc      | be thrown from this method.         |                         |
------------------------+-------------------------------------+-------------------------+-------
-@deprecated descr      | Describes an outdated method.       | Class, Interface, Enum, |
-                       |                                     | Field, Method           |
------------------------+-------------------------------------+-------------------------+-------
-{@inheritDoc}          | Copies the description from the     | Overriding Method       | 1.4.0
-                       | overridden method.                  |                         |
------------------------+-------------------------------------+-------------------------+-------
-{@linkreference}       | Link to other symbol.               | Class, Interface, Enum, |
-                       |                                     | Field, Method           |
------------------------+-------------------------------------+-------------------------+-------
-{@value#STATIC_FIELD}  | Return the value of static field.   | Static Field            | 1.4.0
------------------------+-------------------------------------+-------------------------+-------
-{@codeliteral}         | Formats literal text in the code    | Class, Interface, Enum, | 1.5.0
-                       | font. It is equivalent to           | Field, Method           |
-                       | {@literal}                          | Class, Interface, Enum, | 1.5.0
------------------------+-------------------------------------+-------------------------+-------
-{@literalliteral}      | Denotes literal text. The enclosed  | Field, Method           |
-                       | text is interpreted as not          |                         |
-                       | containing HTML markup or nested    |                         |
-                       | javadoc tags.                       |                         |
------------------------+-------------------------------------+-------------------------+-------
-[[}]]
-
-<pre zoom id="testing_summary"
-  labels="101.qa.101,_doc_has.comparative,01_PM.WiP" >
-
-● Junit
-• (test scoped) dependencies:
-   org.junit.jupiter:junit-jupiter-api:${junit_version}
-   org.junit.jupiter:junit-jupiter-engine:${junit_version}
-
-• JUnit test summary:
-  @org.junit.jupiter.api.Test
-
-  @DisplayName("Display name Class Level")
-  @DisplayNameGeneration(ReplaceCamelCase.class)
-  class JUnitAPISummaryTest {
-                          // testing Life-Cycle methods:
-    @BeforeEach { ... } // ← executed before each @Test in class
-    @AfterEach  { ... } // ← executed after  each @Test in class
-    @BeforeAll  { ... } // ← executes before all tests.
-    @AfterAll   { ... } // ← executes after  all tests.
-
-
-
-    @org.junit.jupiter.api.Test
-    @DisplayName("Test parameters with nice names")
-    @ParameterizedTest(name = "Use the value {0} for test")
-    @ValueSource(insts = { -1, -4 })
-    void test01( int number ) {
-      Assumptions.assumeTrue (...);            // ← failed assumption aborts test
-      Assumptions.assumeFalse(...);            //   Continuing execution will fail.
-                                               //   Example: Initial state is not expected one
-
-                                               // Frequently Used:
-      Assertions.assertTrue   (param1);        // or assertFalse
-      Assertions.assertNull   (param1);        // or assertNotNull
-      Assertions.assertEquals (param1,param2); // or assertNotEquals
-      Assertions.assertNotSame(param1,param2);
-      Assertions.fail         ("code must not be reached");
-
-      assertAll("check ...",                   //  grouped
-        () -> assertEquals(..),
-        () -> assertEquals(..),
-        () -> assertEquals(..)
-      );
-
-                                               // Collections:
-      Assertions.assertArrayEquals   (array1, array2, "...");
-      Assertions.assertIterableEquals(list1, list2);
-
-
-      Assertions.assertTimeout(                // Timeouts:
-        Duration.ofMillis(100), () -> {
-          Thread.sleep(50);
-          return "result";
-        });
-
-      Throwable exception =                    // Assert exception thrown
-         Assertions.assertThrows(
-           IllegalArgumentException.class,
-           () -> {
-             throw new IllegalArgumentException("...");
-           });
-    }
-
-    @Test @Disabled   ...                      // Conditional execution
-    @Test @EnabledOnOs({ OS.LINUX }) ...
-    @Test @DisabledIfSystemProperty(named = "ci-server", matches = "true")
-    @Test @EnabledIfEnvironmentVariable(named = "ENV", matches = "test-env")
-
-   @RepeatedTest(
-      value = 9,
-      name = "{displayName}-{currentRepetition}/{totalRepetitions}")
-   void valuesCannotPassTen(RepetitionInfo info) {
-       ...info.getCurrentRepetition() ...
-   }
-
-   @ParameterizedTest(
-    name = "Test fruit \"{0}\" with rank {1}")
-   @CsvSource({
-           "'string1', 1",         // ← Repeat test with different input
-           "'string2', 2",
-           ...
-   })
-   void testWithCsvSource(String fruit, int rank) {
-       assertNotNull(fruit);
-       assertNotEquals(0, rank);
-   }
-  }
-
-• Testsuites: run tests in multiple test classes and/or different packages.
-  @RunWith(JUnitPlatform.class)
-  @SelectPackages("com.myComp.junit5.package01")
-  public class JUnit5TestSuiteExample
-  { }
-
-• See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
-
-• AsserJ (Fluent Assertions) is composed of several modules:  [TODO]
-  - core      module: assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
-  - Guava     module: assertions for Guava types (Multimap, Optional...)
-  - Joda Time module: assertions for Joda Time types (DateTime, LocalDateTime)
-  - Neo4J     module: assertions for Neo4J types (Path, Node, Relationship...)
-  - DB        module: assertions for relational database types (Table, Row, Column...)
-  - Swing     module provides a simple and intuitive API for functional testing of Swing user interfaces
-
-  import static org.assertj.core.api.Assertions.*;
-  ...
-  assertThat(frodo.getName()).isEqualTo("Frodo"); //  ← basic assertions
-  assertThat(frodo).isNotEqualTo(sauron);
-
-  assertThat(frodo.getName())                     // ← chaining string specific assertions
-      .startsWith("Fro")
-      .endsWith("do")
-      .isEqualToIgnoringCase("frodo");
-
-  assertThat(fellowshipOfTheRingList)            // ← collection specific assertions
-     .hasSize(9)                                 //   (there are plenty more)
-     .contains(frodo, sam)
-     .doesNotContain(sauron);
-
-  assertThat(frodo.getAge())
-     .as("check %s's age", frodo.getName())     // ← as() used to describe the test
-     .isEqualTo(33);                            //    will be shown before the error message
-
-  assertThatThrownBy(() -> {                    // ← exception assertion ( standard style)
-     throw new Exception("boom!"); })
-  .hasMessage("boom!");
-  Throwable thrown = catchThrowable(() -> {     // ← exception assertion  ( BDD style)
-     throw new Exception("boom!");
-  });
-  assertThat(thrown).hasMessageContaining("boom");
-
-  assertThat(fellowshipOfTheRingList)
-      .extracting(TolkienCharacter::getName)    // ← 'extracting' feature on Collection
-      .doesNotContain("Sauron", "Elrond");      //
-
-  assertThat(fellowshipOfTheRingList)
-     .extracting("name", "age", "race.name")    // extracting multiple values at once grouped in tuples
-     .contains(
-        tuple("Boromir",   37, "Man"   ),
-        tuple("Sam"    ,   38, "Hobbit"),
-        tuple("Legolas", 1000, "Elf"   ) );
-
-  assertThat(fellowshipOfTheRingList)
-    .filteredOn(                              // ← filtering before asserting
-      fellow -> fellow.getName().contains("o")
-    )
-    .containsOnly(aragorn, frodo);
-
-  assertThat(fellowshipOfTheRingList)
-    .filteredOn(                              // combining filtering and extraction
-      fellow -> fellow.getName().contains("o")
-    )
-    .containsOnly(aragorn, frodo)
-    .extracting(
-       fellow -> fellow.getRace().getName())
-    .contains("Hobbit", "Elf");
-
-  // and many more assertions:
-  // iterable, stream, array, map, dates, path, file, numbers, predicate, optional ...
-
-<hr/>
-● Property Testing
-• A property testing is just something like:
-
-  for all (x, y, ...)
-  such as precondition(x, y, ...) holds
-  property(x, y, ...) is true
-
-  It checks that a function/program/whatever is under test
-  abides by a property.  Most of the time, properties do not
-  have to go into too much details about the output, they
-  just have to check for useful characteristics that must be
-  seen in the output.
-
-• Property based testing has become quite famous in the functional
-  world. Mainly introduced by QuickCheck framework in Haskell, it
-  suggests another way to test software. IT TARGETS ALL THE SCOPE
-  COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
-
-• Available automated test technics:
- @[https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237]
-
-          △ • Random
-     full ┆   - Fuzzing
-       △  ┆   - Monkey testing
-       ┆  ┆
-    Input ┆ • Static Analysis
-    scope ┆   - Mem. leaks        • Example based
-  covered ┆   - Unitialized mem.    - Unit tests
-       ┆  ┆   - Nulls.              - QA test
-       ▽  ┆   - Threading issues    - UI tests
-   partial┆   - ...
-         ─┼─╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶▷
-            Low  ← Feature compliance →    High
-
-
-• Extracted from @[https://en.wikipedia.org/wiki/QuickCheck].
-  List of Java libs for property testing :
-  "FunctionalJava's QuickCheck module". FunctionalJava.  2015-08-14
-  "Quickcheck for Java". Quickcheck.dev.java.net.        2011-12-09
-  "JCheck". JCheck.                                      2011-12-09
-  "junit-quickcheck". junit-quickcheck.                  2013-07-03
-  "jqwik for the JUnit5 Platform". jqwik.                2017-06-19
-  "Quick Theories property tests Java 8"                 2017-10-30
-  "jetCheck prop.-based tests    Java 8" (JetBrains)     2018-07-10
-
-
-• e.g. test using 'jqwik':
-  """ fizzBuzz() must return "Fizz"
-      for every divisible-by-3 input """
-  →  PRECONDITION: Consider inputs in [1 ... 100] divisible by 3
-  → POSTCONDITION: fizzBuzz() returns "Fizz"
-
-  import java.util.*;
-  import java.util.stream.*;
-  import net.jqwik.api.*;
-
-  class FizzBuzzTests {
-
-      String fizzBuzz(int i) {               // ← function to test
-         boolean div3 = (i % 3 == 0),
-                 div5 = (i % 5 == 0);
-         if (div3⅋⅋ div5) return "FizzBuzz";
-         if (div3) return "Fizz";
-         if (div5) return "Buzz"
-         return String.valueOf(i);
-      }
-
-      @Provide
-      Arbitrary<Integer> divisibleBy3() {    // ← Precondition
-        return Arbitraries.integers()        //   input to function
-          .between(1, 100)                   //   divides by 3.
-          .filter(i -> i % 3 == 0);
-      }
-
-      final List<String> IN_OUT =
-        IntStream.range(1, 100)
-          .mapToObj((int i) -> )
-          .collect(Collectors.toList());
-
-      @Property                              // ← Test to execute
-      boolean divBy3_starts_with_Fizz(
-        @ForAll("divisibleBy3") int i) {     // ← "inject" precondition
-        return IN_OUT
-               .get(i - 1)
-               .startsWith("Fizz");          // ← check Postcondition
-      }
-  }
-[[}]]
-
-[[{]]qa.testing,cloud.aws,devops,01_PM.backlog">
-● Amazon CodeGuru
-- Powered by IA.
-- CodeGuru consists of two components
-– Amazon CodeGuru Profiler:
-helps developers find an application’s most expensive lines
-of code along with specific visualizations and recommendations
-on how to improve code to save money.
-- Amazon CodeGuru Reviewer:
-helps enhance the quality of code by scanning for critical issues,
-identifying bugs, and recommending how to remediate them.
-
-  ┌→ Write Code
-  |    |
-  |    v
-  |  Review Code  ← CodeGuru Reviewer
-  |    |
-  |    v
-  |  Test App     ← CodeGuru Profiler
-  |    |
-  |    v
-  |  Deploy App
-  |    |
-  |    v
-  |  Run App      ← CodeGuru Profiler
-  |    |
-  └----┘
-
-- Profiler supports application written
-in Java virtual machine (JVM) languages such as Clojure,
-JRuby, Jython, Groovy, Kotlin, Scala, and Java.
-- Reviewer’s bug-fixing recommendations currently support
-Java code stored in GitHub, AWS CodeCommit, or Bitbucket.
-[[}]]
-[[$div}]]
-
-[[{$div]]
-[[{]]java_lang.101,qa.error_control,java_lang.debugging,qa.billion_dolar_mistake">
-<span xsmall bgorange>Exceptions
+● JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]
 - (compiler) checked vs unchecked (Error, RuntimeException and their subclasses).
 - Checked: All except Error, RuntimeException and their subclasses
 - Error: Exceptional conditions external to the application.
@@ -6079,16 +3687,17 @@ java.lang.Object
                                                     is also a subclass of Error because most apps
                                                     should not try to catch it.
 
- Dump Exception stack trace to STDERR:
-StringWriter writer = new StringWriter();
-PrintWriter printWriter = new PrintWriter( writer );
-e.printStackTrace( printWriter );
-printWriter.flush();
-System.err.println(writer);
+- Dump Exception stack trace to STDERR: [[{java_lang.debugging]]
+  StringWriter writer = new StringWriter();
+  PrintWriter printWriter = new PrintWriter( writer );
+  e.printStackTrace( printWriter );
+  printWriter.flush();
+  System.err.println(writer);           [[}]]
+[[java_lang.101.exceptions}]]
 
+● "Optional": Avoid Nulls [[{QA.BILLION_DOLAR_MISTAKE]]
 
-● "Optional": Avoid Nulls
-<a href="http://files.zeroturnaround.com/pdf/zt_java8_best_practices.pdf">REF</a>
+ REF: http://files.zeroturnaround.com/pdf/zt_java8_best_practices.pdf
 import java.util.Optional;
 Optional<Sgtring> optional = Optional.ofNullable(a); // ← Create an optional
 optional.map ( s -> "RebelLabs:" + s);               // ← Process the optional
@@ -6102,7 +3711,8 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
 
 [[}]]
 
-● FailSafe [[{qa.error_control,architecture.distributed,01_PM.WiP]]
+● FailSafe [[{enterprise_patterns,qa.error_control,architecture.distributed,01_PM.WiP]]
+
 @[https://github.com/failsafe-lib/failsafe]
 • Fault tolerance and resilience patterns for the JVM
 • lightweight, zero-dependency library for handling failures
@@ -6125,91 +3735,7 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
   · Standalone Execution
   · Strong Typing
   · Extension Points
-[[}]]
-
-[[{]]qa.error_control,qa.billion_dolar_mistake" >
-● JSR Annotations for Defect Detection
-@[https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard]
-[[}]]
-
-[[{]]qa.billion_dolar_mistake,01_PM.TODO">
-<a xsmall href='https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type'>Type Annotations</a>
-( TODO: Compare how it compares/overlaps CheckerFramework )
-
-  @NonNull      compiler can determine cases where a      │ @(Un)Tainted          Identity types of data that should
-                code path might receive a null value,     │                       not be used together, such as remote
-                without ever having to debug a            │                       user input being used in system
-                NullPointerException. The compiler        │                       commands, or sensitive information in
-                just print a warning, but it              │                       log streams
-                continues to compile!!!                   │
-                                                          │ @                     Units of measure ensures that numbers
-  @ReadOnly     compiler will flag any attempt to         │                       used for measuring objects are used
-                change the object. This is similar to     │                       and compared correctly, or have
-                Collections.unmodifiableList, but         │                       undergone the proper unit
-                more general and verified at compile time.│                       conversion.
-                                                          │
-  @Regex        Provides compile-time verification        │ @FunctionalInterface  indicates that the type declaration
-                that a String intended to be used as      │                       is intended to be a functional
-                a regular expression is a properly        │                       interface, as defined by the Java
-                formatted regular expression.             │                       Language Spec.
-
-└  Examples :
-  Annotation
-  @NonNull List<String>                              ← A non-null list of Strings.
-  List<@NonNull String>                              ← A list of non-null Strings.
-  @Regex String validation = "(Java|JDK) [7,8]"      ← Check at compile time that this String is a valid regular expression.
-  private String getInput(String parameterName){     ← The object assigned to retval is tainted and not for use in sensitive operations.
-    final String retval =
-      @Tainted request.getParameter(parameterName);
-    return retval;
-  }
-
-  private void runCommand(@Untainted String… commands){            Each command must be untainted. For example, the previously
-    ProcessBuilder processBuilder = new ProcessBuilder(command);   tainted String must be validated before being passed in here.
-
-    Process process = processBuilder.start();
-  }
-[[}]]
-
-[[{]]qa.testing.bdd,01_PM.TODO">
-● JBehave
-• testing framework for Behaviour-Driven Development (BDD).
-• BDD is an evolution of test-driven development (TDD) and acceptance-test
-  driven design, and is intended to make these practices more
-  accessible and intuitive to newcomers and experts alike. It shifts
-  the vocabulary from being test-based to behaviour-based, and
-  positions itself as a design philosophy.
-
-• BDD Summary:
-  1) Write story
-    Scenario: A trader is alerted of status
-    Given a stock and a threshold of 15.0
-    When stock is traded at 5.0
-    Then the alert status should be OFF
-    When stock is traded at 16.0
-    Then the alert status should be ON
-
-  2) Map to java
-
-  3) Configure Stories
-
-  4) Run Stories
-[[}]]
-
-● OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
-                               [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
-@[https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx]
-- "Contract Driven Development" (or API Design First approach) is a methodology
-  that uses declarative API Contracts to enable developers to efficiently design,
-  communicate, and evolve their HTTP APIs, while automating API implementation
-  phases where possible.
-[[}]]
-
-
-[[$div}]]
-[[$div}]]<!-- qa -->
-
-
+[[enterprise_patterns}]]
 
 ● JDepend [[{qa.reporting,qa.versioning,security.auditing]]
 @[https://github.com/clarkware/jdepend]
@@ -6220,216 +3746,6 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
   to effectively manage and control package dependencies.
 [[}]]
 
-
-
-[[{$div]]
-● DDBB/persistence:
-[[{$div]]
-[[{persistence.sql,qa.data,01_PM.low_code,cloud.*,spring.*,persistence.jpa,01_PM.TODO]]
-● Flyway: SQL schema versioning
-• tool providing version control for database (SQL) schemas
-  and automated schema (tables, columns, sequences), data, views, procedures
-  and packages evolution.
-• Single source of truth for DDBB versioning.
-• highly reliable
-• Supports for many different SQL databases, including        [cloud]
-  cloud ones (Amazon RDS, Azure Database, Google Cloud SQL).
-
-  ##########
-  # HOW-TO #
-  ##########
-• PRESETUP: The target database to manage and user with update privileges be created first,
-            "outside" of flyway.
-
-• Database changee are called   Migrations . They can be:
-  · Versioned  migrations: identified by a version number, applied in order exactly once.
-                           An optional revert migration version can be provided to roolback
-                           changes in case of error.
-  · Repeatable migrations:
-
-• Flyway used an internal flyway_schema_history ddbb to keep track of migrations applied .
-
-• SQL and JAVA  migrations in src/main/resources/db/migration/ are automatically      [spring]
-  applied in Spring Boot when  'org.flywaydb:flyway-core' compile dependency is
-  detected.
-  src/main/resources/db/migration/
-  └ V1__Initial_schema.sql   ← Flyway expected file name
-                               "Verssion"__"Prefix".sql
-    CREATE TABLE table01 (
-     id      BIGSERIAL PRIMARY KEY NOT NULL,
-     column1 BIGINT NOT NULL,
-     column2 FLOAT8 NOT NULL,
-     column3 INTEGER NOT NULL,
-     column4 VARCHAR(255) UNIQUE NOT NULL,
-    );
-
-  └ V2__Add_column5.sql
-    ALTER TABLE table01
-      ADD COLUMN column5 VARCHAR(255);
-
-● Obevo: DDBB change manager
-@[https://github.com/goldmansachs/obevo]
-- Obevo: ddbb deployment tool handling enterprise scale schemas and complexity.
-- By Goldman Sachs.
-- Obevo is a database deployment tool that helps teams manage database
-  changes in their Software Development Life Cycle (SDLC) process. In
-  addition to handling production deployments, Obevo aids the
-  development phase by defining a clean structure to maintain DB object
-  code, and helps the testing phase with features such as in-memory
-  database conversion. Notably, Obevo was designed for systems of
-  enterprise scale and complexity and can manage hundreds of DB objects
-  in a schema, while still handling new schemas in a simple manner.
-  “We feel our ability to onboard a large and long-lived system to a
-  clean SDLC process is a key differentiator in the open source
-  space,” said Shant, a vice president in the Technology Division.
-  “By publishing this to the open source community, we hope to aid
-  others in their own DB deployment estates while growing a strong
-  community around the tool.”
-
-
-  """ Deploying tables for a new application?
-    Or looking to improve the DB Deployment of a years-old system with
-    hundreds (or thousands) of tables, views, stored procedures, and
-    other objects?
-
-    Obevo has your use case covered.
-
-    Supported platforms: DB2, H2, HSQLDB, Microsoft SQL Server, MongoDB,
-    Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
-  """
-• Alternatives to Flyway include LiquidBase, ... [TODO]
-[[}]]
-
-
-● Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
-@[https://www.jooq.org/]
-
-● Vertx+Jooq
-@[https://github.com/jklingsporn/vertx-jooq]
-  jOOQ-CodeGenerator to create vertxified DAOs and POJOs.
-  Now with JDBC, async and reactive support!
-@[https://github.com/jklingsporn/vertx-jooq]
-
-[[}]]
-
-● Hibernate/JPA Summary [[{persistence.jpa,01_PM.troubleshooting,01_PM.TODO]]
-@[https://quarkus.io/guides/hibernate-orm-panache-guide]
-
-- Hibernate Gotchas:
-  https://github.com/theotherian/hibernate-gotchas
-  http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html
-  hibernate, joins, and max results: a match made in hell
-
-- Common Hibernate Exceptions Every Developer Must Know
-  https://thorben-janssen.com/hibernate-exceptions/
-[[}]]
-
-● speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
-@[https://github.com/speedment/speedment]
-- Stream ORM toolkit and runtime.
-- The toolkit analyzes the metadata of an existing SQL database and
-  automatically creates a Java representation of the data model.
-- The powerful ORM enables you to create scalable and efficient Java
-  applications using standard Java streams with no need to type SQL or
-  use any new API.
-
-  SQL                                    JAVA 8 Stream Equivalent
- --------------------------------------------------------------------
-  FROM                                   stream()
- --------------------------------------------------------------------
-  COUNT                                  count()
- --------------------------------------------------------------------
-  LIMIT                                  limit()
- --------------------------------------------------------------------
-  DISTINCT                               distinct()
- --------------------------------------------------------------------
-  SELECT                                 map()
- --------------------------------------------------------------------
-  WHERE                                  filter() (before collecting)
- --------------------------------------------------------------------
-  HAVING                                 filter() (after  collecting)
- --------------------------------------------------------------------
-  JOIN                                   flatMap()
- --------------------------------------------------------------------
-  UNION                                  concat(s0, s1).distinct()
- --------------------------------------------------------------------
-  ORDER BY                               sorted()
- --------------------------------------------------------------------
-  OFFSET                                 skip()
- --------------------------------------------------------------------
-  GROUP BY                               collect(groupingBy())
- --------------------------------------------------------------------
-       SEARCH FILMS WITH LENGTH > 120 MINUTES:
-  SELECT                             ←   final
-   `film_id`,`title`,`description`,      Optional<Film>longFilm =
-   `release_year`, `language_id`,          films.stream()
-   `original_language_id`,                .filter(
-   `rental_duration`,`rental_rate`,          Film.LENGTH.greaterThan(120)
-   `length`,`replacement_cost`,            )
-   `rating`,`special_features`,           .findAny();
-   `last_update`
-  FROM                                    Searches optimized in background!
-       `sakila`.`film
-  WHERE
-      (`length` > 120)
-[[}]]
-
-[[{]]persistence.sql,01_PM.low_code,01_PM.TODO" >
-<span xsmall TODO>reladomo
-(by Goldman Sachs)
-@[https://github.com/goldmansachs/reladomo]
-enterprise grade (ORM) object-relational mapping framework for Java with
-the following enterprise features:
-
-- Strongly typed   compile-time  checked query language
-- Bi-temporal chaining
-- Transparent multi-schema support
-- Full support for unit-testable code
-[[}]]
-
-● c3p0 [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
-@[https://www.mchange.com/projects/c3p0/#what_is]
-• c3p0: easy-to-use library for making traditional JDBC drivers
-        "enterprise-ready" augmenting them with jdbc3 functionality,
-        , optional jdbc2 extensions and jdbc4 (v 0.9.5+).
-• It provides for:
-  - A class which adapt traditional DriverManager-based JDBC drivers to the
-    newer javax.sql.DataSource scheme for acquiring database Connections.
-  - Transparent pooling of Connection and PreparedStatements behind DataSources
-    which can "wrap" around traditional drivers or arbitrary unpooled DataSources.
-• The library tries hard to get the details right:
-  - c3p0 DataSources are both Referenceable and Serializable, and are thus
-    suitable for binding to a wide-variety of JNDI-based naming services.
-  - Statement and ResultSets are carefully cleaned up when pooled Connections
-    and Statements are checked in, to prevent resource- exhaustion when clients use
-    the lazy but common resource-management strategy of only cleaning up their
-    Connections. (Don't be naughty.)
-  - The library adopts the approach defined by the JDBC 2 and 3 specification
-    (even where these conflict with the library author's preferences). DataSources
-    are written in the JavaBean style, offering all the required and most of the
-    optional properties (as well as some non-standard ones), and no-arg
-    constructors. All JDBC-defined internal interfaces are implemented
-    (ConnectionPoolDataSource, PooledConnection, ConnectionEvent-generating
-    Connections, etc.) You can mix c3p0 classes with compliant third-party
-    implementations (although not all c3p0 features will work with external
-    implementations of ConnectionPoolDataSource).
-[[}]]
-[[$div}]]
-[[{$div]]
-● Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
-@[https://github.com/xerial/snappy-java]
-- Java port of the snappy @[http://code.google.com/p/snappy/]
-[[}]]
-
-● Cache
-● JCache [[{scalability.cache,01_PM.TODO]]
-- Map-Like API optimized for caching.
-- 1.0 drawbacks:
-  - No async operations.
-- Implemented by Hazelcast and others
-[[}]]
-
-● JSON
 ● JSON-P /JSR-374 [[{persistence.JSON,security.TLS/X509,security.aaa]]
 - TODO: Patterns of JSON Matching:
   Streaming based, binding based, expression based.
@@ -6571,340 +3887,80 @@ the following enterprise features:
   }
 [[}]]
 
-● RESTAssured: REST API testing [[{qa.testing.REST_API,persistence.json]]
- FULL JOURNEY == Simulate full (REST) API in expected order
-└ Pre-Setup:
-  <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>scala-support</artifactId>
-      <version>3.0.6</version>
-      <scope>test</scope>
-  </dependency>
-  <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>json-schema-validator</artifactId>
-      <version>3.0.6</version>
-      <scope>test</scope>
-  </dependency>
+●  Java Platform Module System (JPMS) (1.9+) <!-- @ma --> [[{java_lang.101]]
+Related:
+- JEP 200: THE MODULAR JDK
+- JEP 201: MODULAR SOURCE CODE
+- JEP 220: MODULAR RUN-TIME IMAGES
+- JEP 260: ENCAPSULATE MOST INTERNAL APIS
+- JEP 261: MODULE SYSTEM
+- JEP 275: MODULAR JAVA APPLICATION PACKAGING
+- JEP 282: JLINK: THE JAVA LINKER
+- JSR 376: JAVA PLATFORM MODULE SYSTEM
+- JSR 379: JAVA SE 9
+@[https://www.oracle.com/corporate/features/understanding-java-9-modules.html]
+By Paul Deitel
 
-└ Ussage Example:
-  package com.mycompany.myproject.mymodule;
+module:
+- higher level of aggregation above packages.
+- uniquely named, reusable group of related packages and resources.
 
-  import static junit.framework.TestCase.assertTrue;
-  import static org.hamcrest.Matchers.*;
+- module descriptor: (compiled version of module-info.java )
+  /module-info.class  ( @ module root's folder)
+  -------------------
+  - name
+  - dependencies (modules)
+  - packages explicitly marked as available to other modules
+    (by default  implicitly unavailable / strong encapsulation)
+  - services offered
+  - services consumed
+  - module list allowed reflection
 
-  import static io.restassured.RestAssured.given;
+- Rules:
+  - Each module must explicitly state its dependencies.
+  - provides explicit mechanism to declare dependencies between
+    modules in a manner that’s recognized both at   compile time
+    and   execution time .
 
-  import io.restassured.RestAssured;
-  import io.restassured.config.HttpClientConfig;
-  import io.restassured.path.json.JsonPath;
-  import io.restassured.response.Response;
-  import io.restassured.specification.RequestSpecification;
-  import junit.framework.TestCase;
-  import org.apache.http.client.HttpClient;
-  import org.apache.http.impl.client.SystemDefaultHttpClient;
-  import org.apache.http.params.HttpConnectionParams;
-  import org.apache.http.params.HttpParams;
-  import org.eclipse.jetty.http.HttpStatus;
-  import org.junit.Ignore;
-  import org.junit.Test;
-  import org.junit.BeforeClass;
+- The java platform is now modularized into ~ 95 modules
+$ $ java --list-modules  ←  List modules in SE, JDK, Oracle, ...
+  ( custom runtimes can be created )
 
-  import org.hamcrest.BaseMatcher;
-  import org.hamcrest.Description;
+  Module Declarations
+$ $ cat module-info.java
+  module java.desktop { ← body can be empty
+     requires modulename; ← 'static' flag: required just at compile time.
+     requires transitive java.xml; ← if a java.desktop method returns a type
+                                     from the java.xml module, code using
+                                     (reading) java.desktop become dependent
+                                     on java.xml. Without 'transitive' compilation
+                                     will fail.
+     exports ...    ← declares module’s packages whose public types
+                      (and their nested public and protected types)
+                      are accessible to code in all other modules.
+     exports to ... ← fine grained export
+     uses           ← specifies a service used by this module
+                      (making our module a service consumer).
+                      → modules implements/extends the interface/abstract class
 
-  import java.util.Base64;
-  import java.util.Map;
+     provides...with ← specifies that a module provides a service implementation
 
-  public class FullJourneyTest {
+     open 'package'  ← Specifies object introspection scope
+     opens
+     opens ... to
 
-      // Custom regex matcher for RestAssured Framework
-      public static classB RegexMatcher extends BaseMatcher<Object> {
-          private final String regex;
-          public   RegexMatcher (String regex){ this.regex = regex; }
-          @Override public boolean matches (Object o){ return ((String)o).matches(regex); }
-          @Override public void describeTo (Description description){
-              description.appendText("matches regex=");
-          }
-          public staticB RegexMatcher  matches(String regex){ return newB RegexMatcher (regex); }
-      }
-
-       public static classG Base64Matcher extends BaseMatcher<Object> {
-          public Base64Matcher(){}
-          @Override public boolean matches (Object o){
-              try {
-                  Base64.getDecoder().decode((String)o);
-                  return true;
-              }catch (Exception e){
-                  return false;
-              }
-          }
-
-          @Override public void describeTo (Description description){
-              description.appendText("can be parsed as Base64");
-          }
-
-          public static Base64Matcher isBase64Encoded(){
-              return new Base64Matcher();
-          }
-      }
-      private static final String AUTH_HEADER_VALUE = "Bearer " + ServerConfig.apiKey;
-
-      protected static RequestSpecification setupCommonHeaders() {
-          return given().header("Authorization", AUTH_HEADER_VALUE)
-                        .header("Accept"       , "application/json")
-                        .header("content-type" , "application/json;charset=utf-8")
-          .log().all();
-      }
-
-
-      final String
-          NAME="COMMUNITY_1", SYMBOL="SY1";
-
-      Response response;
-      @BeforeClass
-      public static void setup() {
-          RestAssured.port     = ServerConfig.serverPort;
-          RestAssured.basePath = "/";
-          RestAssured.baseURI  = "http://localhost";
-
-          HttpClientConfig clientConfig = RestAssured.config().getHttpClientConfig();
-          clientConfig = clientConfig.httpClientFactory(new HttpClientConfig.HttpClientFactory() {
-              @Override
-              public HttpClient createHttpClient() {
-                  HttpClient rv =  new SystemDefaultHttpClient();
-                  HttpParams httpParams = rv.getParams();
-                  //  Wait 5s max for a connection
-                  HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
-                  // Default session is 60s
-                  HttpConnectionParams.setSoTimeout(httpParams, 60 * 1000);
-                  return rv;
-              }
-          });
-          // This is necessary to ensure, that the client is reused.
-          clientConfig = clientConfig.reuseHttpClientInstance();
-          RestAssured.config = RestAssured.config().httpClient(clientConfig);
-      }
-
-      @Test
-      public void A010_PutNewCommunityAndNewUserForPendingToMineCommunity() {
-          String jsonBody =
-              "{ " +
-                  " \"name\": \""+NAME+"\", " +
-                  " \"symbol\": \"" + SYMBOL + "\","
-              "}";
-          response = setupCommonHeaders().body(jsonBody).when(). post("/Route/To/REST/API/01") ;
-          System.out.println(response.body().prettyPrint());
-          response.then()
-              /*  get sure JSON serializer do not include extra (maybe sensitive) infO  */
-              .body("size()",   is(5)                           )
-              .body("id"    ,   not(isEmptyString())            )
-              .body("pubkey",   not(isEmptyString())            )
-              .body("pubkey",   RegexMatcher   .matches("^{65}$") )
-              .body("pubkey",   Base64Matcher.isBase64Encoded() )
-              .body("name"  ,   equalTo(NAME)                   )
-              .body("symbol",   equalTo(SYMBOL)                 )
-              .statusCode(HttpStatus.ACCEPTED_202);
-          String   NEW_ID = response.getBody().jsonPath().get("id") ;
-
-          // Next related test to execute synchronously after fetching NEW_ID
-          String jsonBody =
-              "{ " +
-                  B*" \"FK_ID\": \""+NEW_ID+"\", " +*
-                  ...
-              "}";
-
-          response = setupCommonHeaders().body(jsonBody).when(). post("/Route/To/REST/API/02") ;
-          ...
-      }
+     transitive
   }
+
+
+ --release $version compiler flag:                                            [[{DEVOPS.101.troubleshooting]]
+  @[https://stackoverflow.com/questions/43102787/what-is-the-release-flag-in-the-java-9-compiler/]
+   """ ... --release X is more than just a shortcut to -source X
+       -target X because -source and -target are not sufficient to safely
+       compile to an older release. You also need to set a -bootclasspath
+       flag which must correspond to the older release (and this flag is
+       often forgotten). So, in Java 9 they made a single --release flag
+       which is a replacement for three flags: -source, -target and
+       -bootclasspath.                                                        [[}]]
 [[}]]
-
-● BDD Serenity Testing [[{qa.testing.bdd,01_PM.TODO]]
-@[https://serenity-bdd.github.io/theserenitybook/latest/index.html]
-
-- Serenity BDD is an open source library that aims to make the idea of living
-  documentation a reality.
-
-- write cleaner and more maintainable automated acceptance and
-  regression tests faster. Serenity also uses the test results to
-  produce illustrated, narrative reports that document and describe
-  what your application does and how it works. Serenity tells you not
-  only what tests have been executed, but more importantly, what
-  requirements have been tested.
-
-- One key advantage of using Serenity BDD is that you do not have to invest time
-  in building and maintaining your own automation framework.
-
-- Serenity BDD provides strong support for different types of automated acceptance testing, including:
-  - Rich built-in support for web testing with Selenium.
-  - REST API testing with RestAssured.
-  - Highly readable, maintainable and scalable automated testing with the
-    Screenplay pattern.
-
-- The aim of Serenity is to make it easy to quickly write well-structured,
-  maintainable automated acceptance criteria, using your favourite BDD or
-  conventional testing library. You can work with Behaviour-Driven-Development
-  tools like Cucumber or JBehave, or simply use JUnit. You can integrate with
-  requirements stored in an external source (such as JIRA or any other test cases
-  management tool), or just use a simple directory-based approach to organise
-  your requirements.
-
-<hr/>
-● JBehave
-- framework for Behaviour-Driven Development (BDD). BDD is an
-  evolution of test-driven development (TDD) and acceptance-test driven
-  design, and is intended to make these practices more accessible and
-  intuitive to newcomers and experts alike. It shifts the vocabulary
-  from being test-based to behaviour-based, and positions itself as a
-  design philosophy.
-
-  STEP 1) Write story
-    Scenario: A trader is alerted of status
-    Given a stock and a threshold of 15.0
-    When stock is traded at 5.0
-    Then the alert status should be OFF
-    When stock is traded at 16.0
-    Then the alert status should be ON
-
-  STEP 2) Map to java
-
-  STEP 3) Configure Stories
-
-  STEP 4) Run Stories
-[[}]]
-
-● JAVA FlameGraph Profiling [[{JVM,java_lang.profiling.101,java_lang.profiling.flamegraph,architecture.real-time]]
-
-UPDATE (Aug 2015): See the Java in Flames Netflix Tech Blog post for the latest
-and best method for Java flame graphs, which uses Linux perf_events to show Java
-and system code paths together.
-https://netflixtechblog.com/java-in-flames-e763b3d32166
-
-(I also describe the steps in Java CPU Flame Graphs.
- https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html#Java)
-
-
-Java in Flames
-
-Java mixed-mode flame graphs (complete visualization of CPU usage)
- have just been made possible by new JDK option: -XX:+PreserveFramePointer. (max +3%CPU increase)
-
-It allows to identify all profiling issues, including
-THOSE THAT ARE HIDDEN FROM OTHER PROFILERS by showing CPU consumption
-by a Java process both in user and kernel-level.
-
-eg.:
-- kernel code peaks performing TCP sends, (which often leads to a TCP receive
-  while handling the send) with Java code responsible.
-- Java code compilation vs code cache vs other system libraries,
-  differences in kernel code execution for different frameworks, ...
-
- All of these CPU consumers were invisible to other Java profilers, which only
- focus on the execution of Java methods.
-
-
-Flame Graph Interpretation:
-
-- y axis is stack depth
-- x axis spans the sample population.
-- Each rectangle is a stack frame (a function), where the width shows how often
-  it was present in the profile.
-  ordering from left to right is unimportant (stacks are sorted alphabetically).
-
-- You can read the flame graph from the bottom up, which follows the flow of
-  code from parent to child functions.
-- Another way is top down, as the top edge shows the function running on CPU,
-  and beneath it is its ancestry.
-
-- KEY-POINT: Focus on the widest functions, which were present in the profile the most.
-
-- There have historically been two types of profilers used on Java:  [[02_doc_has.comparative]]
-  - System profilers: eg: Linux perf_events, profiling system code paths, including libjvm
-                         internals, GC, and the kernel, but not Java methods.
-  - JVM profilers: such as hprof, Lightweight Java Profiler (LJP), and commercial profilers.
-    showing Java methods, but not system code paths.
-
-- KEY-POINT: In 2009, Linux perf_events added JIT symbol support, so that symbols from
-  language virtual machines like the JVM could be inspected.
-  To use it:
-  - application creates a /tmp/perf-PID.map text file, which lists symbol addresses
-    (in hex), sizes, and symbol names.
-    Java can create this file using perf-map-agent, an open source JVMTI agent written by
-    Johannes Rudolph. The first version needed to be attached on Java startup, but
-    Johannes enhanced it to attach later on demand and take a symbol dump.
-    That way, we only load it if we need it for a profile.
-  - perf_events looks for this file by default and, if found, uses it for symbol translations.
-
-  NOTE: symbols can change slightly during the profile session (around 30-60 secs) a symbol
-      dump may include stale symbols.
-
-Fixing Frame Pointers
-- For many years the gcc compiler has reused the frame pointer as a compiler optimization,
-  breaking stack traces. Some applications compile with the gcc option -fno-omit-frame-pointer,
-  to preserve this type of stack walking, however, the JVM had no equivalent option.
-
-PRESETUP:
- - linux perf
- - JDK
- - perf-map-agent: JVMTI agent providing Java symbol translation for perf_events
-   $ apt-get install cmake
-   $ export JAVA_HOME=/path-to-your-new-jdk8
-   $ git clone --depth=1 https://github.com/jrudolph/perf-map-agent
-   $ cd perf-map-agent
-   $ cmake .
-   $ make
-
- - perl software generating flamegraphs:
-   $ git clone --depth=1 https://github.com/brendangregg/FlameGraph
-
-USSAGE:
-- taking a 30-second profile at 99 Hertz (samples per second) of all processes
-  then caching symbols for Java PID 1690, then generating a flame graph:
-
-  $ sudo perf record -F 99 -a -g -- sleep 30
-  $ java -cp \
-    attach-main.jar:$JAVA_HOME/lib/tools.jar \             <- attach-main.jar from perf-map-agent
-    net.virtualvoid.perf.AttachOnce 1690                   <- run as same user as java
-  $ sudo chown root /tmp/perf-*.map
-  $ sudo perf script | stackcollapse-perf.pl | \
-  $     flamegraph.pl --color=java --hash > flamegraph.svg
-
-
-- With jmaps: automating symbol files.
-
-  $ sudo perf record -F 99 -a -g -- sleep 30; sudo jmaps
-  $ sudo perf script | stackcollapse-perf.pl | \
-  $     flamegraph.pl --color=java --hash > flamegraph.svg
-
-   jmaps creates symbol files for all Java processes, with root ownership.
-
-  REMEMBER: lean up the /tmp symbol files when you no longer need them!
-
-- EG: Generate By-Process Flame Graphs:
-
-  $ sudo perf record -F 99 -a -g -- sleep 30; sudo jmaps
-  $ sudo perf script -f comm,pid,tid,cpu,time,event,ip,sym,dso,trace | \
-        stackcollapse-perf.pl --pid | \
-        flamegraph.pl --color=java --hash > flamegraph.svg
-
-  stackcollapse-perf.pl output formats each stack as a single line, and is great
-  food for grep/sed/awk.
-
-- Missing Frames:
-  you’ll notice that many Java frames (methods) are missing compared to jstack(1)
-  command line tool. This is because of inlining, combined with this type of profiling
-  (frame pointer based) which only captures the final executed code.
-  This hasn’t been much of a problem so far: even when many frames are missing, enough
-  remain that we can figure out what’s going on.
-   We’ve also experimented with reducing the amount of inlining, eg, using
-   -XX:InlineSmallCode=500, to increase the number of frames in the profile. In some     [[performance]]
-  cases this even improves performance slightly, as the final compiled instruction size
-  is reduced, fitting better into the processor caches (we confirmed this using
-  perf_events separately).
-
-
-[[$div}]]
-[[$div}]]
-
 

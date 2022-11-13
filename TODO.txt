@@ -554,7 +554,7 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 • more than one decorator on any functional interface, lambda or method ref
   can be stacked.
 [[}]]
-● JDeps [[{devops.101,01_PM.troubleshooting,01_PM.TODO]]
+● JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
 • JDeps: dependency analysis tool for Java bytecode (class files and JARs).
 @[https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/]
 
@@ -662,7 +662,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   }
 [[}]]
 
-● JobRunr [[{architecture.batch,doc_has.comparative,01_PM.TODO]]
+● JobRunr [[{architecture.batch,02_doc_has.comparative,01_PM.TODO]]
 @[https://www.infoq.com/news/2021/09/jobrunr-4-released/]
 • JobRunr 4.0 Delivers Improved Integration with Spring Starter, Quarkus and Micronaut.
 
@@ -704,7 +704,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   asynchronous APIs.
 [[}]]
 
-● Sign/Verify JARs [[{devops.*,security.cryptography,01_PM.TODO]]
+● Sign/Verify JARs [[{devops,security.cryptography,01_PM.TODO]]
 @[https://docs.oracle.com/javase/9/tools/jarsigner.htm]
 
 $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to set sign. algorithm
@@ -765,82 +765,6 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 -...
 [[}]]
 
-●  Java Platform Module System (JPMS) (1.9+) <!-- @ma --> [[{java_lang.101]]
-Related:
-- JEP 200: THE MODULAR JDK
-- JEP 201: MODULAR SOURCE CODE
-- JEP 220: MODULAR RUN-TIME IMAGES
-- JEP 260: ENCAPSULATE MOST INTERNAL APIS
-- JEP 261: MODULE SYSTEM
-- JEP 275: MODULAR JAVA APPLICATION PACKAGING
-- JEP 282: JLINK: THE JAVA LINKER
-- JSR 376: JAVA PLATFORM MODULE SYSTEM
-- JSR 379: JAVA SE 9
-@[https://www.oracle.com/corporate/features/understanding-java-9-modules.html]
-By Paul Deitel
-
-module:
-- higher level of aggregation above packages.
-- uniquely named, reusable group of related packages and resources.
-
-- module descriptor: (compiled version of module-info.java )
-  /module-info.class  ( @ module root's folder)
-  -------------------
-  - name
-  - dependencies (modules)
-  - packages explicitly marked as available to other modules
-    (by default  implicitly unavailable / strong encapsulation)
-  - services offered
-  - services consumed
-  - module list allowed reflection
-
-- Rules:
-  - Each module must explicitly state its dependencies.
-  - provides explicit mechanism to declare dependencies between
-    modules in a manner that’s recognized both at   compile time
-    and   execution time .
-
-- The java platform is now modularized into ~ 95 modules
-$ $ java --list-modules  ←  List modules in SE, JDK, Oracle, ...
-  ( custom runtimes can be created )
-
-  Module Declarations
-$ $ cat module-info.java
-  module java.desktop { ← body can be empty
-     requires modulename; ← 'static' flag: required just at compile time.
-     requires transitive java.xml; ← if a java.desktop method returns a type
-                                     from the java.xml module, code using
-                                     (reading) java.desktop become dependent
-                                     on java.xml. Without 'transitive' compilation
-                                     will fail.
-     exports ...    ← declares module’s packages whose public types
-                      (and their nested public and protected types)
-                      are accessible to code in all other modules.
-     exports to ... ← fine grained export
-     uses           ← specifies a service used by this module
-                      (making our module a service consumer).
-                      → modules implements/extends the interface/abstract class
-
-     provides...with ← specifies that a module provides a service implementation
-
-     open 'package'  ← Specifies object introspection scope
-     opens
-     opens ... to
-
-     transitive
-  }
-
-
- --release $version compiler flag:                                            [troubleshooting]
-  @[https://stackoverflow.com/questions/43102787/what-is-the-release-flag-in-the-java-9-compiler/]
-   """ ... --release X is more than just a shortcut to -source X
-       -target X because -source and -target are not sufficient to safely
-       compile to an older release. You also need to set a -bootclasspath
-       flag which must correspond to the older release (and this flag is
-       often forgotten). So, in Java 9 they made a single --release flag
-       which is a replacement for three flags: -source, -target and
-       -bootclasspath.
-[[}]]
 
 ● JAAS [[{security.aaa,01_PM.TODO]]
 @[https://en.wikipedia.org/wiki/Java_Authentication_and_Authorization_Service]
@@ -949,7 +873,7 @@ $ $ cat module-info.java
         max-size: 10                             those used for JDBC.
 [[}]]
 
-● Nailgun [[{devops.containarization,scalability.jvm,01_PM.troubleshooting,01_PM.TODO]]
+● Nailgun [[{devops.containarization,scalability.jvm,01_PM.TODO]]
 - Nailgun is a client, protocol, and server for running Java programs
   from the command line without incurring the JVM startup overhead.
 
@@ -959,7 +883,7 @@ $ $ cat module-info.java
 @[https://github.com/facebook/nailgun]
 [[}]]
 
-● 9 Profiling tools [[{java_lang.profiling,01_PM.troubleshooting,01_PM.TODO]]
+● 9 Profiling tools [[{java_lang.profiling,01_PM.TODO]]
 @[https://blog.idrsolutions.com/2014/06/java-performance-tuning-tools/]
 [[}]]
 
@@ -1064,7 +988,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
   $ jenv shell oracle64-1.6.0.39 Configure shell instance version
 [[}]]
 
-● SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,doc_has.comparative,qa,01_PM.TODO]]
+● SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,qa,01_PM.TODO]]
 @[https://smallrye.io/smallrye-mutiny/]
 
 • SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
@@ -1085,7 +1009,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html
 [[}]]
 
-● Netty [[{async/reactive.io.network,doc_has.comparative,01_PM.radar,01_PM.backlog]]
+● Netty [[{async/reactive.io.network,02_doc_has.comparative,01_PM.radar,01_PM.backlog]]
 - One Framework to rule them all by Norman Maurer
 @[https://www.youtube.com/watch?v=DKJ0w30M0vg]
 ──────────────────────────────────────────────
@@ -1146,7 +1070,7 @@ TODO:
 @[https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4]
 [[}]]
 
-[[{java_lang.configuration,standards.JSR330,qa,doc_has.comparative,Spring,standards.JSR330]]
+[[{java_lang.configuration,standards.JSR330,qa,02_doc_has.comparative,Spring,standards.JSR330]]
 ● Spring vs Google Guice
 @[https://www.baeldung.com/guice-spring-dependency-injection]
 ────────────────────────
@@ -1219,13 +1143,7 @@ is.close();
   Spring Framework for example).
 [[}]]
 
-● Debugger Architecture [[{java_lang.debugging,01_PM.troubleshooting,01_PM.TODO]]
-https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/jdwp-spec.html
-https://en.wikipedia.org/wiki/Java_Platform_Debugger_Architecture
-https://www.baeldung.com/spring-debugging
-[[}]]
-
-● Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,doc_has.comparative,01_PM.TODO]]
+● Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,01_PM.TODO]]
 @[https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html]
 @[https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm]
 @[https://spring.io/guides/gs/async-method/]
@@ -1944,5 +1862,58 @@ REF: @[http://tribe.ow2.org/]
   effortless deployment and management of micro-services and serverless apps,
   with superior performance. (Includes CRaSH shell)
 [[}]]
+
+● Excellent Java Blog (spanish)
+  @[https://picodotdev.github.io/blog-bitix/tags/java/">Excellent Java Blog (spanish)
+
+● @[https://github.com/akullpp/awesome-java] Awesome Java
+
+● Amazon CodeGuru [[{qa.testing,cloud.aws,devops,01_PM.backlog]]
+- Powered by IA.
+- CodeGuru consists of two components
+– Amazon CodeGuru Profiler:
+helps developers find an application’s most expensive lines
+of code along with specific visualizations and recommendations
+on how to improve code to save money.
+- Amazon CodeGuru Reviewer:
+helps enhance the quality of code by scanning for critical issues,
+identifying bugs, and recommending how to remediate them.
+
+  ┌→ Write Code
+  |    |
+  |    v
+  |  Review Code  ← CodeGuru Reviewer
+  |    |
+  |    v
+  |  Test App     ← CodeGuru Profiler
+  |    |
+  |    v
+  |  Deploy App
+  |    |
+  |    v
+  |  Run App      ← CodeGuru Profiler
+  |    |
+  └----┘
+
+- Profiler supports application written
+in Java virtual machine (JVM) languages such as Clojure,
+JRuby, Jython, Groovy, Kotlin, Scala, and Java.
+- Reviewer’s bug-fixing recommendations currently support
+Java code stored in GitHub, AWS CodeCommit, or Bitbucket.
+[[}]]
+
+● OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
+                               [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
+@[https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx]
+- "Contract Driven Development" (or API Design First approach) is a methodology
+  that uses declarative API Contracts to enable developers to efficiently design,
+  communicate, and evolve their HTTP APIs, while automating API implementation
+  phases where possible.
+[[}]]
+
+
+
+
+
 
 [[java,01_PM.TODO}]]

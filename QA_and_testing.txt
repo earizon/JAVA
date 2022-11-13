@@ -1,0 +1,1168 @@
+Cost of software failures [[{qa.billion_dolar_mistake]]
+$312 billion per year: global cost of software bug (2013)
+$300 billion dealing with the Y2K problem
+
+$440 million loss by Knight Capital group Inc. in 30 minutes, August 2012
+$650 million loss by NASA Mars missions in 1999; unit conversion bug
+$500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
+"$Nightmare" billion Boeing 737Max
+
+2011: Software caused 25% of all medical device recalls.
+[[}]]
+
+● Checker framework (Java 8+) #[code_analysis_tools_summary]
+           [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
+ fix errors at compile time  (vs later on at execution/runtime)
+@[https://github.com/typetools/checker-framework]
+@[https://checkerframework.org/manual/]
+@[https://www.youtube.com/watch?v=6E1CSydgzQc]
+@[https://www.baeldung.com/checker-framework]
+
+  COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...)
+                 ┌─────────────┬────────┬────────┐                 ┌──────────────────┬─────────────────────┐
+                 │ Null Pointer│        │        │                 │ Verification     │ Bug─Finding         │
+                 │    errors   │ False  │Annotat.│                 │ ( Checker FW ,)  │ (Infer,StopBugs,    │
+                 │             │        │        │                 │                  │  SonarQube,...      │
+                 │Found│ Missed│warnings│written │  ┌──────────────┼──────────────────┼─────────────────────┤
+  ┌──────────────┼─────┼───────┼────────┼────────┤  │Goal          │ prove that       │ find some bugs      │
+  │ Checker FW.  │9    │ 9     │  4     │  35    │  │              │ no bug exits     │ at "low cost"       │
+  ├──────────────┼─────┼───────┼────────┼────────┤  ├──────────────┼──────────────────┼─────────────────────┤
+  │StopBugs      │0    │ 9     │  1     │  0     │  │Check specifis│ user provided    │ infer likely specs  │
+  ├──────────────┼─────┼───────┼────────┼────────┤  │specificat    │                  │                     │
+  │Jlint         │0    │ 9     │  8     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
+  ├──────────────┼─────┼───────┼────────┼────────┤  │False         │ None!!!          │ acceptable          │
+  │PMD           │0    │ 9     │  0     │  0     │  │negatives     │                  │                     │
+  ├──────────────┼─────┼───────┼────────┼────────┤  ├──────────────┼──────────────────┼─────────────────────┤
+  │Eclipse 2017  │0    │ 9     │  8     │  0     │  │False         │ manually supress │ heuristics focus on │
+  ├──────────────┼─────┼───────┼────────┼────────┤  │positives     │ warnings         │ most important bugs │
+  │IntelliJ      │0    │ 9     │  1     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
+  │+@NotNull 2017│3    │ 6     │  1     │ 925+8  │  │Downside      │ user burden      │ missed bugs         │
+  └──────────────┴─────┴───────┴────────┴────────┘  └──────────────┴──────────────────┴─────────────────────┘
+
+  PROBLEM:                                           │  SOLUTION:
+   STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH      │  Java 8+ allows to compile programs
+   - Next example compile, but fail at runtime:      │  using   "PLUGGABLE TYPE SYSTEMs" ,
+     Ex.1:                                           │  allowing to apply stricter checks
+       System.console().readLine(); ←  NullPointer   │  than default ones in compiler like
+     Ex.2:                                           │  Ex:
+       Collections.emptyList()                       │  $ javac  -processor NullnessChecker  MyFile.java
+               .add("one"); ←  Unsupported Operation │
+     Ex.3:                                           │   PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
+       Date key1 = new Date();                       │           (1)           No errors (2)
+       myMap.put(key1, "now");                       │    Source ───→ Compiler ────┬───→ Executable
+       myMap.get(key1);    ←  returns "now"          │      ^            │         │(2)       ^
+       key1.setSeconds(0); ←  Mutate key             │      │            v         v          │
+       myMap.get(key1);    ←  returns null           │      │         Standard    Optional    │ Guaranteed
+                                                     │      │         Compiler    Type     ───┘ Behaviour
+                                                     │      │         Errors      Checker
+                                                     │      │                      │
+                                                     │      │                      v
+                                                     │      └────────────────── Warnings :
+                                                     │
+                                                     │     (2) plugable type system allows generation
+                                                     │         of executable to allow CI continue the
+                                                     │         pipeline with further tests (functional
+                                                     │         testing, configuration testing, ...)
+
+  #################################
+• # Checker Framework Instalation #
+  #################################
+<!-- { -->
+(See new releases/versions at
+  @[https://search.maven.org/search?q=g:org.checkerframework])
+
+  STEP 01:                            │  STEP 02:
+──────────────────────────────────────┼────────────────────────────────────────────────────
+  Add next pom.xml dependencies like: │  tweak  maven-compiler-plugin  to use
+  <dependency>                        │  Checker Framework as a pluggable Type System:
+      <groupId>                       │  <plugin>
+        org.checkerframework          │    <artifactId> maven-compiler-plugin </artifactId>
+      </groupId>                      │    <version>3.6.1</version>
+      <artifactId>                    │    <configuration>
+        checker-qual                  │      <source>1.8</source>
+      </artifactId>                   │      <target>1.8</target>
+      <version>2.11.0</version>       │      <compilerArguments>
+  </dependency>                       │        <Xmaxerrs>10000</Xmaxerrs>
+  <dependency>                        │        <Xmaxwarns>10000</Xmaxwarns>
+      <groupId>                       │      </compilerArguments>
+        org.checkerframework          │      <annotationProcessors>  ← "==" javac -processor ...
+      </groupId>                      │        <annotationProcessor>
+      <artifactId>                    │      org.checkerframework.checker.nullness.NullnessChecker
+        checker<                      │         </annotationProcessor>
+      /artifactId>                    │         <annotationProcessor>
+      <version>2.11.0</version>       │      org.checkerframework.checker.interning.InterningChecker
+  </dependency>                       │         </annotationProcessor>
+  <dependency>                        │         <annotationProcessor>
+      <groupId>                       │      org.checkerframework.checker.fenum.FenumChecker
+        org.checkerframework          │         </annotationProcessor>
+      </groupId>                      │         <annotationProcessor>
+      <artifactId>                    │      org.checkerframework.checker.formatter.FormatterChecker
+        jdk8                          │         </annotationProcessor>
+      </artifactId>                   │      </annotationProcessors>
+      <version>2.11.0</version>       │      <compilerArgs>
+  </dependency>                       │        <arg>-AprintErrorStack</arg>
+                                      │        <arg>-Awarns</arg>
+                                      │      </compilerArgs>
+                                      │    </configuration>
+                                      │  </plugin>
+
+( STEP 03:  Manually add extended type annotations to your java code)
+<!-- } -->
+
+
+  ###########
+• # Ussage  #
+  ###########
+<!-- { -->
+-   Avoiding Nulls
+
+  CHECKS  ON TYPES                               │ CHECKS ON FUNCTION DECLARATION
+                                                 │                   ┌────┬────┬───────────────────────────┐
+                                                 │                   │FUNC│FUNC│DESCRIPTION                │
+  private static int func1                       │                   │PRE─│POST│                           │
+    ( @NonNull  String[] args)                   │                   │COND│COND│                           │
+  {                                              │ ┌─────────────────┼────┼────┼───────────────────────────┤
+      return args.length;                        │ │@RequiresNonNull │X   │    │variables are expected  to │
+  }                                              │ │                 │    │    │be non─null when invoked.  │
+                                                 │ ├─────────────────┼────┼────┼───────────────────────────┤
+  public static void main                        │ │@EnsuresNonNull  │    │X   │variables are guaranteed to│
+    ( @Nullable  String[] args) {                │ │                 │    │    │be non─null on return.     │
+      ...                                        │ ├─────────────────┼────┼────┼───────────────────────────┤
+      func1(args);                               │ │@EnsuresNonNullIf│    │X   │variables are guaranteed to│
+  }         ^^^^                                 │ │                 │    │    │benon─null on ret.true/fals│
+      [WARNING] ... [argument.type.incompatible] │ └─────────────────┴────┴────┴───────────────────────────┘
+       incompatible types in argument.           │
+        found    : null                          │
+        required : @Initialized @NonNull ...     │
+
+-   Convert String constants into Safe Enum with Fenum
+                                                (Fake enum)
+  static final @Fenum("country") String ITALY = "IT";
+  static final @Fenum("country") String US = "US";
+  ...
+  static final @Fenum("planet") String MARS = "Mars";
+  static final @Fenum("planet") String EARTH = "Earth";
+  ...
+
+  void function1(@Fenum("planet") String inputPlanet){
+      System.out.println("Hello " + planet);
+  }
+
+  public static void main(String[] args) {
+      obj.greetPlanets(US);   ←----  [WARNING] ...
+  }                                   incompatible types in argument.
+                                       found   : @Fenum("country") String
+                                       required: @Fenum("planet") String
+
+-   Regular Expressions
+  @Regex(1) private static String FIND_NUMBERS = "\\d*";
+  ^^^^^^^^^                                      ^^^^^^
+  Force String variable                       [WARNING] ...
+  to store a regex with                       incompatible types in assignment.
+  at least one matching                         found   : @Regex String
+  group                                         required: @Regex(1) String
+
+
+
+-   Validating tainted (non-trusted) input
+
+   @Untainted
+   String validate (String sqlInput) {
+      // Do any suitable checks, throw on error
+      @SuppressWarnings("tainting")      ← "swear" that developer got sure
+      @Untainted String result = ...;       of input correctness
+      return result;
+  }
+
+  void execSQL( @Untainted  String sqlInput) {
+      ...
+  }
+
+  public static void main(String[] args) {
+      obj.execSQL(arg[0]);             ← warning at compile time
+      obj.execSQL(validate(arg[0]));   ← "OK". validate un-tain the input
+  }
+
+-   Mark as Immutable
+  @Immutable Date date = new Date();
+  date.setSeconds(0);   ←   compile-time error
+<!-- } -->
+
+- Avoiding (certain) concurrency errors
+<!-- { -->
+  Lock Checker enforces a locking discipline:
+  "which locks must be held when a given operation occurs"
+
+  CHECKS ON TYPES                             │ CHECKS ON FUNCTION DECLARATION
+                                              │                 ┌────┬────┬───────────────────────────┐
+   @GuardedBy("lockexpr1","lockexpr2",...)    │                 │FUNC│FUNC│DESCRIPTION                │
+             int var1 = ....;                 │                 │PRE─│POST│                           │
+   ^^^^^^^^^^                                 │                 │COND│COND│                           │
+  a thread may dereference the value referred │┌────────────────┼────┼────┼───────────────────────────┤
+  to by var1 only when the thread holds all   ││@Holding        │X   │    │All the given lock exprs   │
+  the locks that ["lockexpr1",...] currently  ││(String[] locks)│    │    │are held at method call    │
+  evaluates to.                               │├────────────────┼────┼────┼───────────────────────────┤
+                                              ││@EnsuresLockHeld│    │X   │Ensures locks are locked on│
+                                              ││(String[] locks)│    │    │return,ex. lock adquired by│
+                                              ││                │    │    │ReentrantLock.lock().      │
+                                              │├────────────────┼────┼────┼───────────────────────────┤
+                                              ││@EnsuresLockHeld│    │X   │Ensures locks are locked on│
+                                              ││(String[] locks)│    │    │return,ex.lock conditionaly│
+                                              ││                │    │    │adquired by ReentrantLock  │
+                                              ││                │    │    │.lock()                    │
+                                              ││                │    │    │if method return true|false│
+                                              │└────────────────┴────┴────┴───────────────────────────┘
+   SIDE EFFECT SPECIFICATIONS
+  ┌────────────────────┬───────────────────────────────────────────────┐
+  │ @LockingFree       │method does NOT acquire│release locks:         │
+  │                    │· it is not synchronized,                      │
+  │                    │· it contains NO synchronized blocks           │
+  │                    │· it contains no calls to lock│unlock methods  │
+  │                    │· it contains no calls to methods that are not │
+  │                    │  themselves @LockingFree                      │
+  │                    │(@SideEffectFree implies @LockingFree)         │
+  ├────────────────────┼───────────────────────────────────────────────┤
+  │ @ReleasesNoLocks   │· method maintains a strictly                  │
+  │                    │  nondecreasing lock hold count                │
+  │                    │  on the current thread for any locks          │
+  │                    │  held at method call.                         │
+  ├────────────────────┼───────────────────────────────────────────────┤
+  │ @EnsuresLockHeld   │method adquires new locsk                      │
+  │ @EnsuresLockHeldIf │(default if no @LockingFree│@MayReleaseLocks│  │
+  │                    │@SideEffectFree│@Pure used).                   │
+  └────────────────────┴───────────────────────────────────────────────┘
+<!-- } -->
+
+-  Format String Checker
+  - prevents use of incorrect format strings in System.out.printf,....
+
+    void printFloatAndInt
+         ( @Format({FLOAT, INT})  String   format )
+    {
+      System.out.printf(  format , 3.1415, 42);
+    }
+- I18n Format Checker examples
+  MessageFormat.format("{0} {1}", 3.1415);
+                                        ^
+                              second argument missing
+  MessageFormat.format("{0, time}", "my string");
+                                    ^^^^^^^^^^^
+                                    cannot be formatted
+                                    as Time type.
+  MessageFormat.format("{0, thyme}", new Date());
+                            ^^^^^
+                            unknown format type
+
+  MessageFormat.format("{0, number, #.#.#}", 3.1415);
+                                    ^^^^^
+                              subformat is invalid.
+
+- Property File Checker!!!!    TODO
+  - It ensures that used keys are found in the corresponding
+    property file or resource bundle.
+
+- GUI Effect Checker
+  - It is difficult for a programmer to remember
+    which methods may be called on which thread(s).
+    (Main GUI thread or others)
+   Checker types the method as if:
+   - It accesses no UI elements (and may run on any thread);
+   - It may access UI elements  (and must run on the UI thread)
+
+- (physical) Internation System UNIT annotations :
+  @Acceleration: Meter Per Second Square @mPERs2
+  @Angle       : Radians @radians
+                 Degrees @degrees
+  @Area        : square millimeters @mm2,
+                 square meters @m2
+                 square kilometers @km2
+  @Current     : Ampere @A
+  @Length      : Meters @m
+                 millimeters @mm
+                 kilometers @km
+  @Luminance   : Candela @cd
+  @Mass        : kilograms @kg
+                     grams @g
+  @Speed       : meters per second   @m
+                 kilometers per hour @kmPERh
+  @Substance   : Mole @mol
+  @Temperature : Kelvin @K
+                 Celsius @C
+  @Time        : seconds @s
+                 minutes @min
+                 hours @h
+
+- @Unsigned/@Signed ← guarantees values are not mixed
+
+- type alias or typedef
+  share same representation as another type
+  but is conceptually distinct from it.
+  Ex 1: get sure that Strings representing addresses
+        and passwords are NOT mixed
+  Ex 2: get sure that integers used for meters are
+        not mixed with integers used for centimeters.
+
+  Example:
+  @NonNull List<String>
+  List<@NonNull String>
+  @Regex String validation = "(Java|JDK) [7,8]"
+
+  private String getInput(String parameterName){
+   final String retval = @Tainted request.getParameter(parameterName);
+   return retval;
+  }
+
+  private void runCommand(@Untainted String… commands){
+   // the previously tainted String must be validated before being passed in here.
+   ProcessBuilder processBuilder = new ProcessBuilder(command);
+   Process process = processBuilder.start();
+  }
+<hr/>
+● SpotBugs
+@[https://github.com/spotbugs/spotbugs/issues]
+• OOSS static analysis tool for java code bugs.
+• Well maintained (as of 2021-12-21)
+• "spiritual successor of FindBugs"
+• SpotBugs checks for more than 400 bug patterns.
+• Works from GUI+cli, maven/gradle/eclipse integration.
+• Plugin extension support (just download plugin jar and
+  it will be detected and included):
+  • fb-contrib:
+  • Security Audits for Java Web applications:
+  @[https://find-sec-bugs.github.io/]
+    It can detect 141 different vulnerability types with
+    over 823 unique API signatures.
+
+• Running SpotBugs.
+  · Presetup. Compile java code to classes or jars.
+    SpotBugs runs against compiles class files, using source code
+    as a reference when displaying output.
+
+  $ java -jar ../spotbugs.jar ...$SPOTBUG_ OPTIONS ..
+
+                             JVM OPTIONS
+                             ===========
+  -Xmx1500m                ← set JVM heap to big/1500MB  (recomended)
+
+                             STANDARD OPTIONS
+                             ================
+  -textui                  ← vs -gui
+  -effort min              ← := min|less|default|more|max
+                             min: decrease mem use/precision/exec.time
+                             max: increase mem use/precision/exec.time
+  -project ... \           ← project *.fb or *.fbp created through the GUI
+                             (fb == FindBugs)
+  -pluginList jar1;jar2     \
+  -home $SPOTBUG_DIR       ← ex: /opt/spotbugs
+  -adjustExperimental      ← Lower priority of experimental Bug Patterns.
+  -workHard                ← Ensure analysis effort is at least ‘default’.
+  -sortByClass=dir1/spotbugs.txt ← textui only
+                                   also supported to set multiple reports
+  -include filter01.xml     ← show only bugs match filter specified.
+  -exclude filter02.xml     ← *1
+  -onlyAnalyze com.foo.*,com.bar.* ← Unlike filter, analysis is skipt
+                              for any other class type
+                              WARN: some detectors may produce inaccurate
+                              results
+  -low                      ← Report all bugs.
+  -medium                   ← Report medium and high priority bugs.
+  -high                     ← Report only high priority bugs.
+  -relaxed                  ← suppress heuristics, avoidin false positives.
+  -html=../report.html      ← Output HTML. Alternative:
+                            ← Output HTML. Alternative:
+                              NOTE : It is -html=value while other flags work like
+                                     -flag value (without the "=" sign)
+                              -html:fancy.xsl=...  (DOM+JS for navigation + CSS)
+                              -html:fancy-hist.xsl=...  fancy.xsl evolution
+                              Other output formats include xml/sarif/emacs/xdocs
+  -nested false             ← disable scanning of nested jar (def:enabled)
+  -auxclasspath ...         ← It should include all jar/dirs containing classes
+                              that are part of the program being analyzed but
+                              you do not want to have analyzed for bugs.
+  -auxclasspathFromInput    ← Read auxclasspath from STDIN, line by line
+  -auxclasspathFromFile
+  -analyzeFromFile fileI    ← Read input file list from file line-by-line.
+  -showPlugins              ← listavailable detector plugins.
+
+                              OUTPUT CUSTOMIZATION OPTIONS
+                              ============================
+  -timestampNow             ← Set results timestamp to current time.
+  -quiet                    ← Suppress error messages.
+  -longBugCodes             ← Report long bug codes.
+  -progress                 ← Display progress in console.
+  -release $name            ← Set release name in report
+  -maxRank $rank            ← Only report issues with a bug rank at least
+                              as scary as that provided.
+  -dontCombineWarnings      ← Don’t combine warnings differing only in line num.
+  -train[:outputDir]:       ← Save training data (experimental);
+  -useTraining[:inputDir]:  ← Use training data (experimental);
+  -redoAnalysis $filenam    ← Redo using config. from previous analysis.
+  -sourceInfo $file         ← Specify source info file (line numbers for
+                              fields/classes).
+  -projectName $name        ← Descriptive name of project.
+  -reanalyze $filename      ← Redo analysis in provided file.
+
+                              OUTPUT FILTERING OPTIONS
+                              ========================
+  -bugCategories cat1,cat2  ← Only report bugs in those categories.
+  -excludeBugs baseline_bug ← Exclude bugs that are also reported in
+                              baseline xml output.
+  -applySuppression         ← Exclude bugs matching suppress.filter from *fbp
+
+                              DETECTOR (VISITOR) CONFIGURATION OPTIONS
+                              ========================================
+  -visitors v1,v2,...       ← Run only named visitors.
+  -omitVisitors v1,v2,...   ← Omit named visitors.
+  -chooseVisitors +v1,-v2,. ← enable/disable detectors.
+  -choosePlugins +p1,-p2,   ← Selectively en/dis-able plugins.
+  -adjustPriority v1=raise|lower,v2=...
+
+                              PROJECT CONFIGURATION OPTIONS
+                              =============================
+  -sourcepath $source_path  ← Set source path for analyzed classes.
+  -exitcode                 ← Set exit code of process.
+  -noClassOk                ← Output empty warning file if no classes are
+                              specified.
+  -xargs                    ← Get list of class/jar files from STDIN
+  -bugReporters name,-name2,.. ← Bug-reporter decorators to explicitly
+                                 enable/disable.
+  -printConfiguration       ← Print configuration and exit
+
+*1┌── myIncludeOrExcludeFilter.xml ────
+  │
+  │ <?xml version="1.0" encoding="UTF-8"?>
+  │ <FindBugsFilter>
+  │ <Match>
+  │   <Bug                       match if  pattern and/or code and/or category match
+  │     pattern="..."          ← comma-separated list of patterns to match
+  │                              ex.: DLS_DEAD_LOCAL_STORE,DM_EXIT,
+  │     code="..."             ← coarse-grained matching comma-sep. list of bug
+  │                              abbreviations(DC,DE,IC,IJU,MS,SIC,URF,UUF,XYZ,...)
+  │     category="..."         ← even more coarse-grained :=
+  │                              CORRECTNESS, BAD_PRACTICICE,
+  │   />                         PERFORMANCE, STYLE, MT_CORRECTNESS
+  │                                 (M)ulti(T)hreaded ┘
+  │
+  │
+  │   <Confidence value="1"/>  ← 1 match high-confidence warnings,
+  │                              2 match normal-confidence warnings
+  │                              3 match low-confidence warnings
+  │
+  │    <Rank value="1" />     ←  1  to 4 : scariest
+  │                              5  to 9 : scary
+  │                             10 to 14: troubling
+  │                             15 to 20: concern
+  │
+  │   <Package name="~.."/> ← name/regex. Nested packages are NOT included
+  │   <Class   name="~.. /> ← name/regex. NOTE: Some bug instances relate to
+  │                                       2+ classes.
+  │   <Source  name="..."/> ← name/regex.  match warnings associated to source file.
+  │                           └────┬────┘
+  │                         regex if prefixed by ~
+  │
+  │   <Method
+  │    name="funcXXX"
+  │    params="int,..."
+  │    returns="void"
+  │   />
+  │
+  │   <Field name="..." />   ← type=... instead of name can also be used
+  │   <Local name="..." />
+  │   <Type  name="..." />
+  │ </Match>
+  │
+  │ <Or>  <Match /><Match /></Or>
+  │ <And> <Match /><Match /></And>
+  │ <Not> <Match />         </Not>
+  │
+  │ </FindBugsFilter>
+  └────────────────────────────────────────────
+
+
+
+• See examples at:
+@[https://spotbugs.readthedocs.io/en/latest/filter.html]
+
+
+<hr/>
+
+● Lint4j
+@[http://www.jutils.com/]
+•  WARN : Not maintained any more.
+• Lint4j ("Lint for Java") is a static Java source and byte code
+  analyzer that detects locking and threading issues, performance and
+  scalability problems, and checks complex contracts such as Java
+  serialization by performing type, data flow, and lock graph analysis.
+
+• Ussage @[http://www.jutils.com/uguide.html]
+$ $ lint4j \
+$    -sourcepath src/main \             ← analyze source
+$    -classpath lib/bcel.jar:... \
+$    -exclude "packagename"   \         ← package or package-prefix
+$    "com.jutils.lint4j.*"
+$
+$ $ lint4j -sourcepath .../log4j.jar    ← analyze binary
+$     "org.apache.*"
+$
+$ $ lint4j  \
+$    -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
+$    org.apache.log4j \
+$    org.apache.log4j.spi
+$
+$ $ lint4j \
+$   -sourcepath com/.../ClassN.java \
+$               com/.../CalssJ.java
+
+[[qa.101.checker_fw}]]
+
+
+● SonarQube #[sonarqube_summary] [[{qa.101.snarqube,01_PM.low_code,]]
+                                   [[concurrency.101,JAVA_LANG.DEBUGGING]]
+                                   [[scalability.profiling,01_PM.WiP]]
+
+• SonarQube empowers all developers to write cleaner and safer code.
+• Comunity with 200K+ dev. teams.
+• Easely integrates with CI/CD pipelines.
+  Jenkins, GitHub Actions, Bitbucket Pipelines, GitLab CI, Azure Pipelines, ...
+
+• A simple client/server working enviroment can be setup in minutes like:
+
+  ┌── SERVER SIDE: ────────────────────────────────
+  │
+  │• LAUNCH SERVER INSTANCE
+  │  ======================
+  │$ $ docker run -d --name sonarqube               \
+  │$   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
+  │$   -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
+  │$   -p 9000:9000 sonarqube:latest
+  │
+  │• Create a new project through the web console
+  │  and annotate the 40-random-chars TOKEN.
+  │  (Needed by client-side sonar-scanner).
+  └─────────────────────────────────────────────────
+
+  ┌─ CLIENT SIDE: ──────────────────────────────────
+  │
+  │• 1) PROJECT_SRC_ROOT
+  │  ┌ └ sonar-project.properties ─┐
+  │  │sonar.projectKey=my:project  ← Required
+  │  │                             │
+  │  │#sonar.projectName=...       ← def:project key
+  │  │#sonar.projectVersion=1.0    ← def:'not provided'
+  │  │sonar.sources=src/java/      ← relative to
+  │  │                             │ sonar-project.properties
+  │  │#sonar.sourceEncoding=UTF-8  │
+  │  │sonar.java.binaries=./build/ ← compiled *class dir.
+  │  │sonar.java.libraries=...     ← ex: /lib/*.jar,./plugins/lib/*jar
+  │  └─────────────────────────────┘
+  │
+  │• 2) launch client scanner like
+  │  2.alt1) using mvn plugin:
+  │    $ $ mvn clean verify sonar:sonar \
+  │    $     -Dsonar.projectKey=test2 \
+  │    $     -Dsonar.host.url=http://...:9000 \
+  │    $     -Dsonar.login=$PROJECT_TOKEN
+  │
+  │  2.alt2) using docker
+  │    $  $ docker run \
+  │    $    --rm \
+  │    $    -e SONAR_HOST_URL="http:...:9000" \
+  │    $    -e SONAR_LOGIN="$PROJECT_TOKEN" \
+  │    $    -v "${YOUR_REPO}:/usr/src" \
+  │    $    sonarsource/sonar-scanner-cli
+  └─────────────────────────────────────────────────
+
+• See original source for more info about
+   SonarScanner Troubleshooting recipes, advanced docker config,
+   running, caching scanner files ,  usng self-signed certs:
+@[https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/]
+  *1: not needed if the associated project is already linked to a
+      git repository on the server side.
+
+• alternatives to SonarQube include:
+  - Facebook Infer @[http://fbinfer.com/]
+    (Static analysis Java/C/...)
+  - Scrutinizer:
+  - StopBugs:
+  - Eclipse Static Code Analasys:
+    Eclipse → Properties → Java → Compiler → Errors/Warnings → Null analysis:
+      Null pointer access
+      Potential null pointer access
+      Redundant null check:
+        x Include 'assert' in null analysis
+        x Enable annotation-based null analysis
+          Violation of null specification
+          Conflict between null annotations an null inference
+          Unchecked conversion from non-annotated type to @NonNull type
+          Problems detected by pessimistic analysis fro free type variables
+          Unsafe "@Nonnull" interpretation of the free type variable from library
+          Redundant null anotation:
+          "@NonNull" parametere not annotated in overriding method
+          Missing "@NonNullByDefault" annotation on package
+          x Use default annotations for null specifications (configure)
+          x Inherit null annotations
+          x Enable syntatic null analisys for fields
+      x Treat above errors like fatal compile erros (make compiled code not executable)
+[[qa.101.snarqube}]]
+
+
+● JavaDoc [[{qa.101.javadoc,qa.documentation]]
+-----------------------+-------------------------------------+-------------------------+-------   Example
+Tag⅋ Parameter         | Usage                               | Applies to              | Since    /**
+-----------------------+-------------------------------------+-------------------------+-------    * Short one line description.
+@authorJohn Smith      | Describes an author.                | Class, Interface, Enum  |           * <p>
+-----------------------+-------------------------------------+-------------------------+-------    * Longer description. ...
+@versionversion        | Provides software version entry.    | Class, Interface, Enum  |           * ...here.
+                       | Max one per Class or Interface.     |                         |           * <p>
+-----------------------+-------------------------------------+-------------------------+-------    * And even more explanations to follow
+@sincesince-text       | Describes when this functionality   | Class, Interface, Enum, |           * in consecutive paragraphs
+                       | has first existed.                  | Field, Method           |           *
+-----------------------+-------------------------------------+-------------------------+-------    * @author John Bla
+@seereference          | Provides a link to other element    | Class, Interface, Enum, |           * @param  variable Description ....
+                       | of documentation.                   | Field, Method           |           * @return Description ....
+-----------------------+-------------------------------------+-------------------------+-------    */
+@paramname descrip     | Describes a method parameter.       | Method                  |          public int methodName (...) {
+-----------------------+-------------------------------------+-------------------------+-------       // method body with a return statement
+@return description    | Describes the return value.         | Method                  |          }
+-----------------------+-------------------------------------+-------------------------+-------
+@exceptionclass desc   | Describes an exception that may     | Method                  |
+-----------------------+-------------------------------------+-------------------------+-------
+@throwsclass desc      | be thrown from this method.         |                         |
+-----------------------+-------------------------------------+-------------------------+-------
+@deprecated descr      | Describes an outdated method.       | Class, Interface, Enum, |
+                       |                                     | Field, Method           |
+-----------------------+-------------------------------------+-------------------------+-------
+{@inheritDoc}          | Copies the description from the     | Overriding Method       | 1.4.0
+                       | overridden method.                  |                         |
+-----------------------+-------------------------------------+-------------------------+-------
+{@linkreference}       | Link to other symbol.               | Class, Interface, Enum, |
+                       |                                     | Field, Method           |
+-----------------------+-------------------------------------+-------------------------+-------
+{@value#STATIC_FIELD}  | Return the value of static field.   | Static Field            | 1.4.0
+-----------------------+-------------------------------------+-------------------------+-------
+{@codeliteral}         | Formats literal text in the code    | Class, Interface, Enum, | 1.5.0
+                       | font. It is equivalent to           | Field, Method           |
+                       | {@literal}                          | Class, Interface, Enum, | 1.5.0
+-----------------------+-------------------------------------+-------------------------+-------
+{@literalliteral}      | Denotes literal text. The enclosed  | Field, Method           |
+                       | text is interpreted as not          |                         |
+                       | containing HTML markup or nested    |                         |
+                       | javadoc tags.                       |                         |
+-----------------------+-------------------------------------+-------------------------+-------
+[[}]]
+
+
+
+
+● Junit [[{101.qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
+  Junit (TEST scoped) dependencies:
+  org.junit.jupiter:junit-jupiter-api:${junit_version}
+  org.junit.jupiter:junit-jupiter-engine:${junit_version}
+
+  @org.junit.jupiter.api.Test
+
+  @DisplayName("Display name Class Level")
+  @DisplayNameGeneration(ReplaceCamelCase.class)
+  class JUnitAPISummaryTest {
+                          // testing Life-Cycle methods:
+    @BeforeEach { ... } // ← executed before each @Test in class
+    @AfterEach  { ... } // ← executed after  each @Test in class
+    @BeforeAll  { ... } // ← executes before all tests.
+    @AfterAll   { ... } // ← executes after  all tests.
+
+
+
+    @org.junit.jupiter.api.Test
+    @DisplayName("Test parameters with nice names")
+    @ParameterizedTest(name = "Use the value {0} for test")
+    @ValueSource(insts = { -1, -4 })
+    void test01( int number ) {
+      Assumptions.assumeTrue (...);            // ← failed assumption aborts test
+      Assumptions.assumeFalse(...);            //   Continuing execution will fail.
+                                               //   Example: Initial state is not expected one
+
+                                               // Frequently Used:
+      Assertions.assertTrue   (param1);        // or assertFalse
+      Assertions.assertNull   (param1);        // or assertNotNull
+      Assertions.assertEquals (param1,param2); // or assertNotEquals
+      Assertions.assertNotSame(param1,param2);
+      Assertions.fail         ("code must not be reached");
+
+      assertAll("check ...",                   //  grouped
+        () -> assertEquals(..),
+        () -> assertEquals(..),
+        () -> assertEquals(..)
+      );
+
+                                               // Collections:
+      Assertions.assertArrayEquals   (array1, array2, "...");
+      Assertions.assertIterableEquals(list1, list2);
+
+
+      Assertions.assertTimeout(                // Timeouts:
+        Duration.ofMillis(100), () -> {
+          Thread.sleep(50);
+          return "result";
+        });
+
+      Throwable exception =                    // Assert exception thrown
+         Assertions.assertThrows(
+           IllegalArgumentException.class,
+           () -> {
+             throw new IllegalArgumentException("...");
+           });
+    }
+
+    @Test @Disabled   ...                      // Conditional execution
+    @Test @EnabledOnOs({ OS.LINUX }) ...
+    @Test @DisabledIfSystemProperty(named = "ci-server", matches = "true")
+    @Test @EnabledIfEnvironmentVariable(named = "ENV", matches = "test-env")
+
+   @RepeatedTest(
+      value = 9,
+      name = "{displayName}-{currentRepetition}/{totalRepetitions}")
+   void valuesCannotPassTen(RepetitionInfo info) {
+       ...info.getCurrentRepetition() ...
+   }
+
+   @ParameterizedTest(
+    name = "Test fruit \"{0}\" with rank {1}")
+   @CsvSource({
+           "'string1', 1",         // ← Repeat test with different input
+           "'string2', 2",
+           ...
+   })
+   void testWithCsvSource(String fruit, int rank) {
+       assertNotNull(fruit);
+       assertNotEquals(0, rank);
+   }
+  }
+
+• Testsuites: run tests in multiple test classes and/or different packages.
+  @RunWith(JUnitPlatform.class)
+  @SelectPackages("com.myComp.junit5.package01")
+  public class JUnit5TestSuiteExample
+  { }
+
+• See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
+[[}]]
+
+• AssertJ (Fluent Assertions) is composed of several modules:  [[{01_PM.TODO]]
+  - core      module: assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
+  - Guava     module: assertions for Guava types (Multimap, Optional...)
+  - Joda Time module: assertions for Joda Time types (DateTime, LocalDateTime)
+  - Neo4J     module: assertions for Neo4J types (Path, Node, Relationship...)
+  - DB        module: assertions for relational database types (Table, Row, Column...)
+  - Swing     module provides a simple and intuitive API for functional testing of Swing user interfaces
+
+  import static org.assertj.core.api.Assertions.*;
+  ...
+  assertThat(frodo.getName()).isEqualTo("Frodo"); //  ← basic assertions
+  assertThat(frodo).isNotEqualTo(sauron);
+
+  assertThat(frodo.getName())                     // ← chaining string specific assertions
+      .startsWith("Fro")
+      .endsWith("do")
+      .isEqualToIgnoringCase("frodo");
+
+  assertThat(fellowshipOfTheRingList)            // ← collection specific assertions
+     .hasSize(9)                                 //   (there are plenty more)
+     .contains(frodo, sam)
+     .doesNotContain(sauron);
+
+  assertThat(frodo.getAge())
+     .as("check %s's age", frodo.getName())     // ← as() used to describe the test
+     .isEqualTo(33);                            //    will be shown before the error message
+
+  assertThatThrownBy(() -> {                    // ← exception assertion ( standard style)
+     throw new Exception("boom!"); })
+  .hasMessage("boom!");
+  Throwable thrown = catchThrowable(() -> {     // ← exception assertion  ( BDD style)
+     throw new Exception("boom!");
+  });
+  assertThat(thrown).hasMessageContaining("boom");
+
+  assertThat(fellowshipOfTheRingList)
+      .extracting(TolkienCharacter::getName)    // ← 'extracting' feature on Collection
+      .doesNotContain("Sauron", "Elrond");      //
+
+  assertThat(fellowshipOfTheRingList)
+     .extracting("name", "age", "race.name")    // extracting multiple values at once grouped in tuples
+     .contains(
+        tuple("Boromir",   37, "Man"   ),
+        tuple("Sam"    ,   38, "Hobbit"),
+        tuple("Legolas", 1000, "Elf"   ) );
+
+  assertThat(fellowshipOfTheRingList)
+    .filteredOn(                              // ← filtering before asserting
+      fellow -> fellow.getName().contains("o")
+    )
+    .containsOnly(aragorn, frodo);
+
+  assertThat(fellowshipOfTheRingList)
+    .filteredOn(                              // combining filtering and extraction
+      fellow -> fellow.getName().contains("o")
+    )
+    .containsOnly(aragorn, frodo)
+    .extracting(
+       fellow -> fellow.getRace().getName())
+    .contains("Hobbit", "Elf");
+
+  // and many more assertions:
+  // iterable, stream, array, map, dates, path, file, numbers, predicate, optional ...
+[[}]]
+
+● Property Testing [[{qa.testing.property]]
+• A property testing is just something like:
+
+  for all (x, y, ...)
+  such as precondition(x, y, ...) holds
+  property(x, y, ...) is true
+
+  It checks that a function/program/whatever is under test
+  abides by a property.  Most of the time, properties do not
+  have to go into too much details about the output, they
+  just have to check for useful characteristics that must be
+  seen in the output.
+
+• Property based testing has become quite famous in the functional
+  world. Mainly introduced by QuickCheck framework in Haskell, it
+  suggests another way to test software. IT TARGETS ALL THE SCOPE
+  COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
+
+• Available automated test technics:
+ @[https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237]
+
+          △ • Random
+     full ┆   - Fuzzing
+       △  ┆   - Monkey testing
+       ┆  ┆
+    Input ┆ • Static Analysis
+    scope ┆   - Mem. leaks        • Example based
+  covered ┆   - Unitialized mem.    - Unit tests
+       ┆  ┆   - Nulls.              - QA test
+       ▽  ┆   - Threading issues    - UI tests
+   partial┆   - ...
+         ─┼─╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶▷
+            Low  ← Feature compliance →    High
+
+
+• Extracted from @[https://en.wikipedia.org/wiki/QuickCheck].
+  List of Java libs for property testing :
+  "FunctionalJava's QuickCheck module". FunctionalJava.  2015-08-14
+  "Quickcheck for Java". Quickcheck.dev.java.net.        2011-12-09
+  "JCheck". JCheck.                                      2011-12-09
+  "junit-quickcheck". junit-quickcheck.                  2013-07-03
+  "jqwik for the JUnit5 Platform". jqwik.                2017-06-19
+  "Quick Theories property tests Java 8"                 2017-10-30
+  "jetCheck prop.-based tests    Java 8" (JetBrains)     2018-07-10
+
+
+• e.g. test using 'jqwik':
+  """ fizzBuzz() must return "Fizz"
+      for every divisible-by-3 input """
+  →  PRECONDITION: Consider inputs in [1 ... 100] divisible by 3
+  → POSTCONDITION: fizzBuzz() returns "Fizz"
+
+  import java.util.*;
+  import java.util.stream.*;
+  import net.jqwik.api.*;
+
+  class FizzBuzzTests {
+
+      String fizzBuzz(int i) {               // ← function to test
+         boolean div3 = (i % 3 == 0),
+                 div5 = (i % 5 == 0);
+         if (div3⅋⅋ div5) return "FizzBuzz";
+         if (div3) return "Fizz";
+         if (div5) return "Buzz"
+         return String.valueOf(i);
+      }
+
+      @Provide
+      Arbitrary<Integer> divisibleBy3() {    // ← Precondition
+        return Arbitraries.integers()        //   input to function
+          .between(1, 100)                   //   divides by 3.
+          .filter(i -> i % 3 == 0);
+      }
+
+      final List<String> IN_OUT =
+        IntStream.range(1, 100)
+          .mapToObj((int i) -> )
+          .collect(Collectors.toList());
+
+      @Property                              // ← Test to execute
+      boolean divBy3_starts_with_Fizz(
+        @ForAll("divisibleBy3") int i) {     // ← "inject" precondition
+        return IN_OUT
+               .get(i - 1)
+               .startsWith("Fizz");          // ← check Postcondition
+      }
+  }
+[[qa.testing.property}]]
+
+
+● JSR Annotations for Defect Detection [[{qa.error_control,qa.billion_dolar_mistake]]
+@[https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard]
+[[}]]
+
+● TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,01_PM.TODO]]
+@[https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type]
+( TODO: Compare how it compares/overlaps CheckerFramework )
+
+  @NonNull      compiler can determine cases where a      │ @(Un)Tainted          Identity types of data that should
+                code path might receive a null value,     │                       not be used together, such as remote
+                without ever having to debug a            │                       user input being used in system
+                NullPointerException. The compiler        │                       commands, or sensitive information in
+                just print a warning, but it              │                       log streams
+                continues to compile!!!                   │
+                                                          │ @                     Units of measure ensures that numbers
+  @ReadOnly     compiler will flag any attempt to         │                       used for measuring objects are used
+                change the object. This is similar to     │                       and compared correctly, or have
+                Collections.unmodifiableList, but         │                       undergone the proper unit
+                more general and verified at compile time.│                       conversion.
+                                                          │
+  @Regex        Provides compile-time verification        │ @FunctionalInterface  indicates that the type declaration
+                that a String intended to be used as      │                       is intended to be a functional
+                a regular expression is a properly        │                       interface, as defined by the Java
+                formatted regular expression.             │                       Language Spec.
+
+└  Examples :
+  Annotation
+  @NonNull List<String>                              ← A non-null list of Strings.
+  List<@NonNull String>                              ← A list of non-null Strings.
+  @Regex String validation = "(Java|JDK) [7,8]"      ← Check at compile time that this String is a valid regular expression.
+  private String getInput(String parameterName){     ← The object assigned to retval is tainted and not for use in sensitive operations.
+    final String retval =
+      @Tainted request.getParameter(parameterName);
+    return retval;
+  }
+
+  private void runCommand(@Untainted String… commands){            Each command must be untainted. For example, the previously
+    ProcessBuilder processBuilder = new ProcessBuilder(command);   tainted String must be validated before being passed in here.
+
+    Process process = processBuilder.start();
+  }
+[[}]]
+
+● JBehave [[{qa.testing.bdd,01_PM.TODO]]
+• testing framework for Behaviour-Driven Development (BDD).
+• BDD is an evolution of test-driven development (TDD) and acceptance-test
+  driven design, and is intended to make these practices more
+  accessible and intuitive to newcomers and experts alike. It shifts
+  the vocabulary from being test-based to behaviour-based, and
+  positions itself as a design philosophy.
+
+• How-to-Summary:
+  1) Write story
+    Scenario: A trader is alerted of status
+    Given a stock and a threshold of 15.0
+    When stock is traded at 5.0
+    Then the alert status should be OFF
+    When stock is traded at 16.0
+    Then the alert status should be ON
+
+  2) Map to java
+
+  3) Configure Stories
+
+  4) Run Stories
+[[}]]
+
+● BDD Serenity Testing [[{qa.testing.bdd,qa.documentation,01_PM.TODO]]
+@[https://serenity-bdd.github.io/theserenitybook/latest/index.html]
+
+- Serenity BDD is an open source library that aims to make the idea of living
+  documentation a reality.
+
+- write cleaner and more maintainable automated acceptance and
+  regression tests faster. Serenity also uses the test results to
+  produce illustrated, narrative reports that document and describe
+  what your application does and how it works. Serenity tells you not
+  only what tests have been executed, but more importantly, what
+  requirements have been tested.
+
+- One key advantage of using Serenity BDD is that you do not have to invest time
+  in building and maintaining your own automation framework.
+
+- Serenity BDD provides strong support for different types of automated acceptance testing, including:
+  - Rich built-in support for web testing with Selenium.
+  - REST API testing with RestAssured.
+  - Highly readable, maintainable and scalable automated testing with the
+    Screenplay pattern.
+
+- The aim of Serenity is to make it easy to quickly write well-structured,
+  maintainable automated acceptance criteria, using your favourite BDD or
+  conventional testing library. You can work with Behaviour-Driven-Development
+  tools like Cucumber or JBehave, or simply use JUnit. You can integrate with
+  requirements stored in an external source (such as JIRA or any other test cases
+  management tool), or just use a simple directory-based approach to organise
+  your requirements.
+[[}]]
+
+[[{async/reactive.testing,qa.testing.async/reactive,01_PM.TODO]]
+● Awaitility(Async->Sync) Tests
+@[https://github.com/awaitility/awaitility]
+- Awaitility: DSL allowing to express async results (test expectations) easely.
+  removing complexity of handling threads, timeouts, concurrency issues, ...
+  that obscured test code.
+
+- Ex 1:
+  @Test
+  public void updatesCustomerStatus() {
+    // Publish a (async) message to a message broker:
+    messageBroker.publishMessage(updateCustomerStatusMessage);
+    await().atMost(5, SECONDS).until(customerStatusIsUpdated()) ;
+    ...
+  }
+[[}]]
+
+● RESTAssured: REST API testing [[{qa.testing.REST_API,persistence.json]]
+ FULL JOURNEY == Simulate full (REST) API in expected order
+└ Pre-Setup:
+  <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>scala-support</artifactId>
+      <version>3.0.6</version>
+      <scope>test</scope>
+  </dependency>
+  <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>3.0.6</version>
+      <scope>test</scope>
+  </dependency>
+
+└ Ussage Example:
+  package com.mycompany.myproject.mymodule;
+
+  import static junit.framework.TestCase.assertTrue;
+  import static org.hamcrest.Matchers.*;
+
+  import static io.restassured.RestAssured.given;
+
+  import io.restassured.RestAssured;
+  import io.restassured.config.HttpClientConfig;
+  import io.restassured.path.json.JsonPath;
+  import io.restassured.response.Response;
+  import io.restassured.specification.RequestSpecification;
+  import junit.framework.TestCase;
+  import org.apache.http.client.HttpClient;
+  import org.apache.http.impl.client.SystemDefaultHttpClient;
+  import org.apache.http.params.HttpConnectionParams;
+  import org.apache.http.params.HttpParams;
+  import org.eclipse.jetty.http.HttpStatus;
+  import org.junit.Ignore;
+  import org.junit.Test;
+  import org.junit.BeforeClass;
+
+  import org.hamcrest.BaseMatcher;
+  import org.hamcrest.Description;
+
+  import java.util.Base64;
+  import java.util.Map;
+
+  public class FullJourneyTest {
+
+      // Custom regex matcher for RestAssured Framework
+      public static classB RegexMatcher extends BaseMatcher<Object> {
+          private final String regex;
+          public   RegexMatcher (String regex){ this.regex = regex; }
+          @Override public boolean matches (Object o){ return ((String)o).matches(regex); }
+          @Override public void describeTo (Description description){
+              description.appendText("matches regex=");
+          }
+          public staticB RegexMatcher  matches(String regex){ return newB RegexMatcher (regex); }
+      }
+
+       public static classG Base64Matcher extends BaseMatcher<Object> {
+          public Base64Matcher(){}
+          @Override public boolean matches (Object o){
+              try {
+                  Base64.getDecoder().decode((String)o);
+                  return true;
+              }catch (Exception e){
+                  return false;
+              }
+          }
+
+          @Override public void describeTo (Description description){
+              description.appendText("can be parsed as Base64");
+          }
+
+          public static Base64Matcher isBase64Encoded(){
+              return new Base64Matcher();
+          }
+      }
+      private static final String AUTH_HEADER_VALUE = "Bearer " + ServerConfig.apiKey;
+
+      protected static RequestSpecification setupCommonHeaders() {
+          return given().header("Authorization", AUTH_HEADER_VALUE)
+                        .header("Accept"       , "application/json")
+                        .header("content-type" , "application/json;charset=utf-8")
+          .log().all();
+      }
+
+
+      final String
+          NAME="COMMUNITY_1", SYMBOL="SY1";
+
+      Response response;
+      @BeforeClass
+      public static void setup() {
+          RestAssured.port     = ServerConfig.serverPort;
+          RestAssured.basePath = "/";
+          RestAssured.baseURI  = "http://localhost";
+
+          HttpClientConfig clientConfig = RestAssured.config().getHttpClientConfig();
+          clientConfig = clientConfig.httpClientFactory(new HttpClientConfig.HttpClientFactory() {
+              @Override
+              public HttpClient createHttpClient() {
+                  HttpClient rv =  new SystemDefaultHttpClient();
+                  HttpParams httpParams = rv.getParams();
+                  //  Wait 5s max for a connection
+                  HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
+                  // Default session is 60s
+                  HttpConnectionParams.setSoTimeout(httpParams, 60 * 1000);
+                  return rv;
+              }
+          });
+          // This is necessary to ensure, that the client is reused.
+          clientConfig = clientConfig.reuseHttpClientInstance();
+          RestAssured.config = RestAssured.config().httpClient(clientConfig);
+      }
+
+      @Test
+      public void A010_PutNewCommunityAndNewUserForPendingToMineCommunity() {
+          String jsonBody =
+              "{ " +
+                  " \"name\": \""+NAME+"\", " +
+                  " \"symbol\": \"" + SYMBOL + "\","
+              "}";
+          response = setupCommonHeaders().body(jsonBody).when(). post("/Route/To/REST/API/01") ;
+          System.out.println(response.body().prettyPrint());
+          response.then()
+              /*  get sure JSON serializer do not include extra (maybe sensitive) infO  */
+              .body("size()",   is(5)                           )
+              .body("id"    ,   not(isEmptyString())            )
+              .body("pubkey",   not(isEmptyString())            )
+              .body("pubkey",   RegexMatcher   .matches("^{65}$") )
+              .body("pubkey",   Base64Matcher.isBase64Encoded() )
+              .body("name"  ,   equalTo(NAME)                   )
+              .body("symbol",   equalTo(SYMBOL)                 )
+              .statusCode(HttpStatus.ACCEPTED_202);
+          String   NEW_ID = response.getBody().jsonPath().get("id") ;
+
+          // Next related test to execute synchronously after fetching NEW_ID
+          String jsonBody =
+              "{ " +
+                  B*" \"FK_ID\": \""+NEW_ID+"\", " +*
+                  ...
+              "}";
+
+          response = setupCommonHeaders().body(jsonBody).when(). post("/Route/To/REST/API/02") ;
+          ...
+      }
+  }
+[[}]]
+

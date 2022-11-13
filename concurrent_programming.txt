@@ -1,0 +1,716 @@
+Concurrent Programming [[{$ Concurrent Programming]]
+[[{concurrency.101]]
+● External Links
+- Youtube Concurrency Classes:
+@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4] [  ES lang ]
+[[}]]
+[[{concurrency.101,scalability.101,01_PM.low_code]]
+● 1uSec Thread sync
+REF:
+@[https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/]
+"""
+  ...
+- If caches are so in-sync with one another, why do we need volatiles at all in
+  languages like Java?
+
+  That’s a very complicated question that’s better answered elsewhere, but
+  let me just drop one partial hint. Data that’s read into CPU registers, is
+  not kept in sync with data in cache/memory. The software compiler makes all
+  sorts of optimizations when it comes to loading data into registers, writing it
+  back to the cache, and even reordering of instructions. This is all done
+  assuming that the code will be run single-threaded. Hence why any data that is
+  at risk of race-conditions, needs to be manually protected through concurrency
+  algorithms and language constructs such as atomics and volatiles.
+
+ ☞In the case of Java volatiles, part of the solution is to force all
+  reads/writes to bypass the local registers, and immediately trigger cache
+  reads/writes instead. As soon as the data is read/written to the L1 cache, the
+  hardware-coherency protocol takes over and provides guaranteed coherency across
+  all global threads. Thus ensuring that if multiple threads are reading/writing
+  to the same variable, they are all kept in sync with one another. And this is
+  how you can achieve inter-thread coordination in as little as 1ns.
+"""
+
+
+See also: fast Inter-thread communication:
+@[https://www.infoq.com/articles/High-Performance-Java-Inter-Thread-Communications]
+- The story begins with a simple idea: create a developer friendly,
+  simple and lightweight inter-thread communication framework without
+  using any locks, synchronizers, semaphores, waits, notifies; and no
+  queues, messages, events or any other concurrency specific words or
+  tools.
+  Just get POJOs communicating behind plain old Java interfaces.
+[[}]]
+
+● Concurrency Basics [[{concurrency.101]]
+- Concurrency problems arise from the desire to use CPU resources more efficiently. Non concurrent
+  applications (single threaded/single process) are complete Touring machines that can potentially
+  solve any problem with enough time and memory. In practice having a CPU assigned to single thread
+  will be very inneficient since the CPU will stand-by while the thread is waiting for input/output
+  operations. Also, many algorithms allows to split processed data in isolated regions that can be
+  processed in parallel by different CPU/CPU cores
+- Concurrent tries to solve the problem of multiple independents CPUs or threads accesing share
+  resources (memory)
+- Locks is the simples concurrent primite to protect code or data from concurrent
+  access in situations where there are many threads of execution. Locks can be classified like:
+  | According to lock ussage:
+  |    Cooperative   A thread is encouraged (but not forced) to cooperate with other
+  |                  threads by adquiring a lock before accessing the associated data
+  |
+  |    Mandatory     a thread trying to access an already locked resource will throw
+  |                  an exception
+  | _________________________________________________
+  | According to lock rescheduing strategy:
+  |    Blocking      The OS block the thread requesting the lock and rescheduled another thread
+  |
+  |    Spinlock      The thread waits in a loop until the requested lock becomes available.
+  |                  It's more efficient if threads are blocked for very short time (smaller than
+  |                  the time needed by the OS to reschedule another thread into the current CPU)
+  |                  It's inneficient if the lock is held for a long time since a CPU core is
+  |                  waisted on the spinlock loop
+  | _________________________________________________
+  | According to granularity: (measure of the ammount of data the lock is protecting)
+  |    Coarse        Protect large segments of data (few locks). Results in less lock overhead
+  |                  for a single thread, but worse performance for many threads running concurrently
+  |                  (most thread will be lock-contended waiting for share resource access)
+  |
+  |    Fine          Protect small amounts of data. Require more lock instances reducing lock
+                     contention
+
+- Locks require CPU atomic instructions for efficient implementations suchs as
+    "test-and-set", "fetch-and-add", or "compare-and-swap", whether there are blocking
+    (managed by the OS) or spinlocks (managed by the thread)
+- Uniprocessors can just disable interruptions to implement locks, while multiprocessors
+  using shared-memory will require complex hardware and/or software support
+-   Monitors wrap mutex-locks with condition variables (container of threads waiting
+    for certain condition) . They are implemented as thread-safe classes
+[[}]]
+[[{]]concurrency.101" >
+● monitors
+- Object providing Mutual exclusion of threads to shared resources
+- simplest form of synchronization:
+  alternatives include:
+  - reads and writes of volatile variables
+  @[https://avaldes.com/examining-volatile-keyword-with-java-threads-example/]
+    typically used in applications when one thread will
+    be making changes to the variables and the others all reading or
+    consumers of the data. If you have multiple threads making changes to
+    the data it will be best to stick with synchronized block or use
+    java.util.concurrent library package.
+    (volatile is actually simpler than monitors, but not universal)
+    Important Points on Volatile Variables:
+    - Volatile variables are not cached in registers or in caches :
+      All read and writes are done in main memory, never done thread-locally
+    - Example Ussage: status flags used in spin loops
+    - Volatile keyword guarantees visibility and ordering
+  - use of classes in the java.util.concurrent package
+- Monitors also have the ability to wait(block a thread) for a certain condition
+  to become true, and signal other threads that their condition has been met
+- Monitors provide a mechanism for threads to temporarily give up exclusive access in
+  order to wait for some condition to be met, before regaining exclusive access and
+  resuming their task
+- each java object can be used as a monitor.
+- Methods/blocks of code requiring mutual exclusion must be explicitly marked with the
+  synchronized keyword :
+  - The synchronized statement computes a reference to an object;
+    it then attempts to perform a lock action on that object's monitor and does not
+    proceed further until the lock action has successfully completed.
+    After the lock action has been performed, the body of the synchronized statement
+    is executed. If execution of the body is ever completed, either normally or abruptly,
+    an unlock action is automatically performed on that same monitor.
+  -   WARN : The Java programming language neither prevents nor requires detection
+    of deadlock conditions.
+- Instead of explicit condition variables, each monitor(/object) is equipped with
+  a single wait queue in addition to its entrance queue.
+- All waiting is done on this singleO wait queue  and allO notify/notifyAll
+  operations apply to this queue.
+
+ monitor    enter
+ ┌───┬─────── │ ──┐   - Wait sets are manipulated solely and atomically
+ │  notified  v   │     through the methods
+ │ ─────→         │     Object.wait      : move     running thread    → wait-queue
+ │   │        O   │     Object.notify    : move     thread  wait-queue → enter-queue
+ │ O │        O   │     Object.notifyAll : move all threads wait-queue → enter-queue
+ │ O ├─────── │ ──┴─┐   Interrupt??      : put thread into to monitor enter-queue
+ │ O │        v     │
+ │  ←──wait   O     │  - In timed-waits  : internal action removes thread to enter-queue?
+ │   │     (Running │                      after at least milliseconds plus nanoseconds
+ └───┤      thread) │  - Implementations are permitted (but discouraged),
+     │              │    to perform "spurious wake-ups"
+     │    leave     │
+     └────── │ ─────┘  O = Thread (Instruction Pointer + Stack Pointer + ...?)
+             v
+<!--
+TODO Concurrent
+@ma: https://en.wikipedia.org/wiki/Monitor_(synchronization)
+     https://cs.nyu.edu/~lerner/spring12/Preso03-JavaPrimitives.pdf
+     https://en.wikipedia.org/wiki/Concurrent_computing
+     http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
+-->
+[[}]]
+
+[[{]]concurrency.barrier" >
+● CountDownLatch
+• (java.util.concurrent) Since JDK 1.5
+@[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
+• Object allowing 1+ threads to wait until a
+  1+ operations are completed in other threads.
+
+• example ussages:
+  - on/off latch or gate:
+    When initialized to "one", parallel processing threads will
+    invoke "await" and standby waiting for a "control" thread to
+    open the gate with countDown().
+  - parallel thread synchonization:  (barriers, ...)
+    When initialized to 2+, it can be used to make a thread
+    wait until "N" processing threads complete their task,
+    (or 1+ proccesing threads complet an action N times).
+
+    NOTE :
+  - Threads calling countDown() can continue processing before count reach 0.
+    Only threads invoquing await will wait.
+
+- The first is a start signal that prevents any worker from
+   proceeding until the driver is ready for them to proceed; The second
+   is a completion signal that allows the driver to wait until all
+   workers have completed.
+
+  -  Ex. 1:
+     class DriverThread { // ...
+
+       class Worker implements Runnable {
+         private final CountDownLatch   startSignal ;
+         private final CountDownLatch   doneSignal ;
+         Worker(CountDownLatch   startSignal , CountDownLatch   doneSignal ) {
+            this.startSignal = startSignal ;
+            this.doneSignal  = doneSignal ;
+         }
+         public void run() {
+            try {
+              startSignal .await();      // ← Wait for driver-thread to be ready.
+              doWork();
+              doneSignal .countDown();   // ← Decrease count.
+            } catch (InterruptedException ex) {} // return;
+         }
+
+         void doWork() { ... }
+       }
+
+       void main() throws InterruptedException {
+         CountDownLatch   startSignal =
+                          new CountDownLatch(1); // ← 1: Gate: Avoid workers to start before
+                                                 //       driver-thread is ready.
+
+         CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
+                          new CountDownLatch(N); //      have completed.
+                                                 //   Consider also CyclicBarrier
+                                                 //   (reset after count),
+
+         for (int i = 0; i < thread_number ; ++i) {
+           new Thread(                           // ← Setup workers in this (driver) thread.
+                new Worker(
+                      startSignal ,
+                      doneSignal
+           )).start();
+         }
+         ...
+         startSignal .countDown();      // ← Decrease count. count cannot be reset.
+         doSomethingElse();
+         doneSignal .await();           // ← block until current count reaches zero
+                                            Thread is released. Any subsequent invocations
+                                            return immediately.
+       }
+     }
+
+  -  Ex. 2:
+     - divide problem into N parts
+     - describe each part with a Runnable executing a portion,
+     - queue all Runnables to an Executor.
+     - When all sub-parts are complete, coordinating-thread will "pass" through await.
+
+     class Driver2 { // ...
+       class WorkerRunnable implements Runnable {
+         private final CountDownLatch   doneSignal ;
+         WorkerRunnable(
+            CountDownLatch   doneSignal , ...) {
+            this.doneSignal = doneSignal ;
+         }
+
+         public void run() {
+            try {
+              doneSignal.countDown();
+            } catch (InterruptedException ex) {} // return;
+         }
+
+         void doWork() { ... }
+       }
+       void main() throws InterruptedException {
+         CountDownLatchO doneSignal = new CountDownLatch(N);
+         Executor e = ...
+
+         for (int i = 0; i < N; ++i) // create and start threads
+           e.execute(new WorkerRunnable(  doneSignal , i));
+
+         doneSignal .await();           // wait for all to finish
+       }
+     }
+
+@[https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67]
+[[}]]
+
+● Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,02_doc_has.diagram]]
+@[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
+• Basic Thread objects
+
+   Java 1.0+           Java 1.5+
+  ┌────────────┐       (java.util.concurrent)
+  │<<Runnable>>│
+  │────────────│
+  │+run()      │
+  └────────────┘
+        △
+        ┆
+  ┌────────────┐       ┌───────────────┐
+  │Thread      │       │<<Callable<V>>>│
+  │────────────│       │───────────────│
+  │+run()      │       │+call()        │
+  │+start()    │       └───────────────┘
+  │+sleep()    │       Complements Thread, returning a result/exception
+  │....        │       the "parent" thread triggering the Callable
+  └────────────┘
+
+
+• Executor interface ( Java 1.5+):
+  REF: https://www.uml-diagrams.org/java-7-concurrent-uml-class-diagram-example.html
+
+  *0: Executors : Utility Factory + utility methods for Executor,(Scheduled)ExecutorService,
+                  ThreadFactory, Callable) It can also create a "wrapped" ExecutorService
+                  disabling reconfiguration.
+  ┌╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶ <<CompletionService>>                        │
+  ┆                Executors *0                         △                                    │
+  ┆                  ┆┆┆┆      <<Executor>>  ←╶╶╶╶╶╶╶┐  ┆                                    │
+  ┆   <<Callable>> ←─┘┆┆┆      void execute(Runnable)┆  ┆                                    │
+  ┆                   ┆┆┆           △                ┆  ┆                                    │
+  ┆ <<ThreadFactory>>←┘┆┆           │       ExecutorCompletionService ───┐                   │
+  ┆                    ┆┆           │                                    ↓                   │
+  ┆                    ┆┆           │                                <<BlockingQueue>>       │
+  ┆                    ┆└╶╶→ <<ExecutorService>>◁╴╴╴╴╴╴╴┐                    │               │
+  └→ <<Future>> ←╶╶╶╶╶╶┆╶╶╶╶╶╶╶╶╶┘  △ *1                ┆                    │               │
+       △   △           ┆            │             AbstractExecutorSevice     │               │
+       ┆   ┆           └╶╶╶╶╶╶→ <<Scheduled─ *2      △   △                   │               │
+       ┆   ┆                  ExecutorService>>      │   │                   │               │
+    ┌╴─┘   └─╴╴╴╴╴┐                 △                │   │                   │               │
+  FutureTask     ForkJoin           ┆  1.7+     ┌────┘   └──────┐            │               │
+                 Task    ←╶╶╶╶╶╶┐   ┆  ForkJoinPool       ThreadPoolExecutor ◇               │
+                 △  △           ┆   ┆           │               △            ◇               │
+                 │  │           ┆   ┆           │               │            │               │
+           ┌─────┘  └────┐      ┆   ┆           ◇               │        Rejected            │
+       Recursive    Recursive   └╶╶╶┆╶╶╶╶╶ ForkJoin             │      ExecutionHandler      │
+       Action       Task            ┆      WorkerThread         │                            │
+                                    ┆                           │                            │
+                                    └╴╴╴╴╴╴╴╴ ScheduledTreadPoolExecutor                     │
+                                     ┌────────┴────────────────────────┘                     │
+                                     └ Prefered to "old" java.util.timer:                    │
+                                       • timer can be sensitive to system clock changes      │
+                                       • timer has only one execution thread. Long-running   │
+                                         task can delay other tasks. Sch.Thre.PoolEx.        │
+                                         can be configured with "N" threads.                 │
+                                       • runtime exceptions kill the Timer thread.           │
+        CyclicBarrier Semaphore          Sch.Thre.Ex. catches them, allowing to handle       │
+ CountDownLatch ┆ Phaser ┆   Exchanger   by overriding 'afterExecute' from ThreadPoolExecutor│
+    └───────────┴──┬─┴───┴───────┘       Only Task throwing the exception will be canceled.  │
+               TimeUnit enum                                                                 │
+
+  *1: ExecutorService:    managed threads collection available to execute tasks
+        <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks[,long timeout, TimeUnit unit])
+                            Executes given tasks. when ALL complete (or timeout expires), return result.
+                      <T> T invokeAny(Collection<? extends Callable<T>> tasks[,long timeout, TimeUnit unit])
+                            Executes given tasks, Returns result of (first?) one completing
+                            without exception, if any do before the given timeout elapses.
+                    boolean isShutdown()  : true if this executor has been shut down.
+                    boolean isTerminated(): true if all tasks have completed following shut down.
+                       void shutdown()    : Init clean shutdown.
+             List<Runnable> shutdownNow() : Attempts non─clean shutdown
+                    boolean awaitTermination(long timeout, TimeUnit unit)
+                            · Blocks until ALL tasks have completed (after shutdown request)
+                              or the timeout occurs, or the current thread is interrupted,
+              <T> Future<T> submit(Callable<T> task): Submit Callable for execution
+                  Future<?> submit(Runnable task)   : Submit Runnable for execution
+              <T> Future<T> submit(Runnable task, T result)
+    ussage Alt 1: use an implementation of the interface (ThreadPoolExecutor, ScheduledThreadPoolExecutor)
+                  an Instance.execute(runnableInstance) to add a Runnable task to thread pool.
+    ussage Alt 2: Use factory methods in the 'Executors' class:
+                  Executors.newSingleThreadExecutor()
+                  Executors.newFixedThreadPool(int numThreads)
+                  Executors.newCachedThreadPool() (← unbounded pool, automatic reclamation)
+                  Executors.newSingleThreadScheduledExecutor()
+                  Executors.newScheduledThreadPool(int size)
+
+ *2: ScheduledExecutorService:  schedule tasks periodically/after (absolute/relative) delay/period
+     <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
+         ScheduledFuture<?> schedule(Runnable command    , long delay, TimeUnit unit)
+                            · Creates + exec ScheduledFuture, enabled after delay.
+         ScheduledFuture<?> scheduleAtFixedRate   (Runnable command, long initDelay,
+                                                   long period, TimeUnit unit)
+                            schedules after initDelay + n*period (n=0,..)
+                            Executions running longer than period overlap.
+         ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initDelay,
+                                                   long delay , TimeUnit unit)
+                            Wait until termination. Then wait for 'delay' until next execution.
+                            Executions running longer than delay will just "shift/delay" next executions.
+
+  • Example: (import java.util.concurrent.*;)
+    ...
+    int numWorkers = 10;                                         EXAMPLE 1: Create Pool of Callables
+                                                                 ===================================
+    ExecutorService pool = Executors.newCachedThreadPool();    ← STEP 1) create new pool
+    MyCallableThread workers[]  =  new MyCallable[numWorkers]; ← allocate array for Callables and Futures
+    Future futures[] = new Future[numWorkers];
+    for (int i = 0; i < numWorkers; ++i) {
+       workers[i] = new MyCallable(i+1);                       ← Initialize array
+       futures[i] = pool.submit(workers[i]);
+    }
+    for (int i = 0; i < numWorkers; ++i) {
+          try {
+      futures[i].get();                                        ← Wait (Blocking) on each future.
+          } catch (InterruptedException ex) { ...
+          } catch (ExecutionException ex) {   ...  }
+    }
+
+                                                                EXAMPLE 2: Create Pool of Workers
+    ExecutorService pool =  Executors.newFixedThreadPool(10);   =================================
+    MyWorker[] workers =  new MyWorker[numWorkers];
+    for (int i = 0; i < numWorkers; ++i)
+      pool.execute(new MyWorker(i+1));                        ← Schedule new worker
+    pool.shutdown();                                          ← Don't Forget
+
+  *3 ForkJoinPool (1.7+)
+     REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html]
+     • ForkJoinPool scheduler is similar to "ExecutorService" but
+       IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES
+     • Fork : Task (=="thread") that "Splits itself" into smaller subtasks, executing concurrently.
+     • Join : End children tasks (=="threads") and merge results (if any).
+
+                                   ┌Task04··· CPU1 ·········┐end
+                     ┌Task02(fork) ┤                  ┌──── ┴ ────┐
+                     │             └Task05··· CPU2 ···┘end  ^     │
+        Task01(fork) ┤                                      join >├  Task ...CPU1 ...
+                ^    │             ┌Task06··· CPU3 ······┐end     │
+                │    └Task03(fork) ┤                     └──── ┬ ─┘
+                │             ^    └Task07··· CPU4 ···········─┘
+                │             │
+                │             │
+              - There is an overhead in forks and maintaing new threads.
+                Forking makes sense only for long running tasks with
+                intensive use of CPU
+              - Task01, 02, 03  wait  for subtasks to finish execution.
+
+     • Creating new ForkJoinPool
+       ForkJoinPool   forkJoinPool  = new ForkJoinPool(4);  Desired level of paralellism
+                                                       └─── (Desired number of threads/CPUs)
+     • Submiting tasks to ForkJoinPool scheduler  is very similar
+       to how it is done in the ExecutorService. We can submit:
+        -   RecursiveAction : task not returning any result.
+        -   RecursiveTask   : task     returning a   result.
+
+
+     import java.util.ArrayList;                       │import java.util.ArrayList;
+     import java.util.List;                            │import java.util.List;
+     import java.util.concurrent.RecursiveAction;      │import java.util.concurrent.RecursiveTask;
+                                                       │
+     //   Creating new RecursiveAction                 │//   Creating new RecursiveTask
+     public class   MyRecursiveAction                  │public class   MyRecursiveTask
+     extends   RecursiveAction  {                      │extends   RecursiveTask <Long> {
+       private long workLoad = 0;                      │  private long workLoad = 0;
+       public MyRecursiveAction(long workLoad) {       │
+           this.workLoad = workLoad;                   │  public MyRecursiveTask(long workLoad) {
+       }                                               │      this.workLoad = workLoad;
+                                                       │  }
+       @Override                                       │
+       protected void compute() {                      │  protected Long compute() {
+         if(this.workLoad < 16) {                      │    if(this.workLoad < 16) {
+           // 16 is a  Tunnable Threshold parameter    │      // 16 is a  Tunnable Threshold parameter
+           // Do workload in current thread            │      // Process work in current thread
+           return                                      │      return workLoad * 3;
+         }                                             │    }
+         List<MyRecursiveAction> subtasks =            │    List<MyRecursiveTask> subtasks =
+            Arrays.asList                              │       Arrays.asList
+            ( new MyRecursiveAction(this.workLoad / 2),│       ( new MyRecursiveTask(this.workLoad / 2),
+              new MyRecursiveAction(this.workLoad / 2) │         new MyRecursiveTask(this.workLoad / 2)
+            );                                         │       );
+                                                       │
+         for(RecursiveAction subtask : subtasks)       │    for(MyRecursiveTask subtask : subtasks)
+           subtaskO .fork() ;                          │        subtaskO .fork ();
+           //       ^^^^^^^                            │        //       ^^^^^^^
+           //     work split into subtasks to be       │        //     work split into subtasks to be
+           //     scheduled for execution              │        //     scheduled for execution
+       }                                               │
+                                                       │    long result = 0;
+     }                                                 │    for(MyRecursiveTask subtask : subtasks) {
+                                                       │        result += subtaskO .join ();
+                                                       │    }
+                                                       │    return result;
+                                                       │  }
+                                                       │}
+                                                       │
+       USSAGE:                                         │ USSAGE:
+       MyRecursiveAction myRecursiveAction =           │  MyRecursiveTask myRecursiveTask =
+          new MyRecursiveAction(24);                   │     new MyRecursiveTask(128);
+                                                       │  long mergedResult =
+       forkJoinPool   .invoke(myRecursiveAction);      │  forkJoinPool   .invoke(myRecursiveTask) ;
+                                                       │  System.out.println("mergedResult = " + mergedResult);
+
+     •  ForkJoinPool Detractors
+      @[http://coopsoft.com/ar/CalamityArticle.html]
+[[}]]
+
+● Completable Future [[{async/reactive.101,02_doc_has.diagram]]
+@[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html]
+• Future:            (Java 5+) Represent an asynchronous computation result.
+  CompletableFuture: (Java 8+)
+  · Extends Future with methods to combine and handle errors
+  · Extends the CompletionStage interface
+    · Contract for an asynchronous computation step that
+      can be combined with other steps.
+  · About 50 different methods for composing/combining/executing async computations.
+
+•       ┌ LOCAL SYSTEM (Under Control) ─────────────────────────┐
+        │               ┌·······(RPE Loop)··················┐   │
+        │               ↓                                   │   │
+        │    Input    Parse    Create      Parse  Create  → ... │
+  INPUT ···→ Thread :  Data → │Future│  →  Data →│Future│       │
+   DATA │    RPEL Loop                                          │
+        │                        │                  │           │
+        │┌───────────────────────┘                  │           │
+        ││ ┌────────────────────────────────────────┘           │
+        ││ │  I/O       External    Wait     Handle    |Future| │
+        ││ └→ Thread :  Request  →  Respose →Respose → .complete│
+        ││                     ↓                                │
+        ││    I/O              ·               ↑                │
+        │└──→ Thread :         ·               ·                │
+        └──────────────────────·───────────────·────────────────┘
+                               ·               · Response|RemoteeError
+                               ·               · |Timeout
+                           ┌───↓───────────────↑─┐
+                           │REMOTE SYSTEM        │
+                           │(Out of control)     │
+                           └─────────────────────┘
+• A Future that may be explicitly completed (setting its value and status),
+  and may be used as a CompletionStage, supporting dependent functions and
+  actions that trigger upon its completion.
+• When two or more threads attempt to complete, completeExceptionally, or
+  cancel a CompletableFuture, only one of them succeeds.
+
+•  Barriers  (  allOf ):
+   CompletableFuture<Void>[] future_list = new CompletableFuture[list.size()];
+  int idx=0;
+  log.info("Connecting plugins ...");
+  for (Object el : list) {
+    final CompletableFuture<Void>
+      connectFuture = new CompletableFuture<>();
+    asyncMethod(connectFuture);  // ← async Method at some moment must call complete()
+    ...
+  }
+  return CompletableFuture.  allOf (future_list);
+
+• Example: Using CompletableFuture as a Simple Future (no-arg constructor)
+  create CompletableFuture instance,
+  launch some computation in another thread,
+  returns Future immediately.
+
+  public Future<String> calculateAsync() throws InterruptedException {
+      Future<String> result = new CompletableFuture<>(); // *1 or .
+
+      Executors.newCachedThreadPool().submit(() -> {
+          Thread.sleep(500);
+          completableFuture.complete("Hello"); // alt.: completableFuture.cancel(false);
+          return null;
+      });
+
+      return completableFuture;
+  }
+  *1: when the result of computation is known:
+      Future<String> result = CompletableFuture.completedFuture("Hello");
+
+  Future<String> completableFuture = calculateAsync();
+  ...
+  String result = completableFuture.get(); // .get() wait for completion/error
+                                              (ExecutionException|InterruptedException)
+  assertEquals("Hello", result);              until second threads "completes" the future.
+
+• Ex: CompletableFuture with Encapsulated Computation Logic <!-- @ma -->
+   (runAsync -<<Runnable>>-, supplyAsync -<<Supplier>>-)
+   <<Supplier>>: generic functional interface with single method
+                 (zero arguments, returns value)
+
+  CompletableFuture<String> future
+    = CompletableFuture.supplyAsync(/* supplier lambda*/ () -> "Hello")
+  .thenApply(/* "processor" lambda */ s -> s + " World") // ← returns CompletableFuture
+  .thenAccept(/* consumer lambda */
+     s -> System.out.println("Computation returned: " + s)).
+  .thenRun(/* Runnable lambda*/ () -> System.out.println("Computation finished."));
+
+• Combining Futures (monadic design pattern in functional languages)
+  CompletableFuture<String> completableFuture
+    = CompletableFuture.supplyAsync(() -> "Hello")
+      .thenCompose(
+            s -> CompletableFuture.supplyAsync(() -> s + " World"));
+  assertEquals("Hello World", completableFuture.get());
+
+• Ex: Execute two independent Futures and do something with their results:
+  CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
+      .thenCombine(CompletableFuture.supplyAsync(
+        () -> " World"), (s1, s2) -> s1 + s2));
+
+  assertEquals("Hello World", future.get());
+
+• Ex: Execute two independent Futures and do nothing with result:
+  CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
+    .thenAcceptBoth(CompletableFuture.supplyAsync(
+       () -> " World"), (s1, s2) -> log(s1 + s2));
+
+• Ex: Running Multiple Futures in Parallel:
+   -  wait for all to execute and process combined results
+
+  CompletableFuture<String> future1
+    = CompletableFuture.supplyAsync(() -> "Hello");
+  CompletableFuture<String> future2
+    = CompletableFuture.supplyAsync(() -> "Beautiful");
+  CompletableFuture<String> future3
+    = CompletableFuture.supplyAsync(() -> "World");
+
+  CompletableFuture<Void> combinedFuture
+    = CompletableFuture.allOf(future1, future2, future3);
+
+  // ...
+
+  combinedFuture.get();
+
+  String combined = Stream.of(future1, future2, future3)
+    .map(CompletableFuture::join)  // ← join(): similar to get, but throws unchecked
+                                                exception if future fails.
+    .collect(Collectors.joining(" "));
+  assertEquals("Hello Beautiful World", combined);
+
+• Handling Errors: <!-- @ma -->
+
+  We can NOT try-catch.
+
+  CompletableFuture<String> completableFuture
+    =  CompletableFuture.supplyAsync(() -> {
+        ...
+        if(errorDetected)
+           throw new RuntimeException("Computation error!");
+        return "Hello ";
+    })
+   .handle( (s, t) -> s != null ? s : "Hello, Stranger!"); //
+   // result ┘  └ exception thrown? TODO:
+  assertEquals("Hello, Stranger!", completableFuture.get());
+
+  completableFuture.completeExceptionally(          Alternatively. Complete with Error
+    new RuntimeException("Calculation failed!"));
+  ...
+  completableFuture.get();                          ← ExecutionException
+
+• Async Methods
+  - methods without Async-postfix run next execution blocking current thread.
+  - async* without the Executor argument runs a step using the common
+    fork/join pool implementation.
+
+  - Ex.: process result of computation with a Function instance
+    CompletableFuture<String> completableFuture
+      = CompletableFuture.supplyAsync(() -> "Hello");
+
+    CompletableFuture<String> future = completableFuture
+      .thenApplyAsync(s -> s + " World"); // lambda is wrapped into ForkJoinTask instance
+    assertEquals("Hello World", future.get());
+[[}]]
+
+
+● DragonWell JDK with Coroutine Support [[{concurrency.*,scalability.jvm,02_doc_has.comparative]]
+REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
+- AdoptOpenJDK and Alibaba announced that the Dragonwell JDK will be
+  built, tested, and distributed using AdoptOpenJDK's infrastructure.
+  ...  Another interesting feature is the Wisp2 coroutine support.
+       Wips2  maps Java threads to coroutines instead of kernel-level threads: .
+       Many coroutines can be scheduled on a small number of core lines,
+       reducing scheduling overhead.
+
+     Wisp2 engine is similar in some respects to the aims of Project Loom
+     but (unlike Loom)   it works out of the box on existing code by enabling
+     it with these Java arguments:
+     $ java -XX:+UnlockExperimentalVMOptions -XX:+UseWisp2
+
+    I/O intensive applications where tasks are blocked on events and
+  then scheduled can benefit from the coroutine support. On the other
+  side,   CPU intensive applications will probably not benefit from
+  coroutines.
+
+• See also reddit thread "Loom vs DragoWell JV:":
+@[https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3]
+<hr/>
+● Loom Project: Ligthweight threads
+@[https://developers.redhat.com/blog/2019/06/19/project-loom-lightweight-java-threads/]
+@[https://openjdk.java.net/jeps/353]
+
+- MISSION:
+  - make concurrency simple(r) again!
+
+- Threads, provided by Java from its first day, are a convenient concurrency
+  construct
+  putting aside the separate question of communication among threads
+  which is being supplanted by less convenient abstractions because their
+  current implementation as OS kernel threads is insufficient for meeting
+  modern demands, and wasteful in computing resources that are particularly
+  valuable in the cloud.
+
+- Project Loom will introduce   FIBERS:
+  - lightweight, JVM managed, efficient threads ,
+  - A fiber is composed of:
+    -  1 scheduler    : Already in place for Java through the excellent scheduler
+                       ForkJoinPool
+    -  1 continuation : To be implemented in Loom.
+
+  https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-care/
+  ....
+  The overhead of fibers is higher but still very low even when
+  compared to async and monadic APIs, which have the disadvantage of
+  introducing a cumbersome, infectious programming style and don’t
+  interoperate with imperative control flow constructs built into a
+  language.
+  So aren’t fibers generators or async/awaits?
+
+  No, as we have seen fibers are real threads: namely a continuation
+  plus a scheduler. Generators and async/awaits are implemented with
+  continuations (often a more limited form of continuation called
+  stackless, which can only capture a single stack frame), but those
+  continuations don’t have a scheduler, and are therefore not threads.
+
+
+RELATED:
+@[http://www.linuxplumbersconf.org/2013/ocw/system/presentations/1653/original/LPC%20-%20User%20Threading.pdf]
+
+@[https://www.infoq.com/presentations/continuations-java/]
+Ron Pressler discusses and compares the various techniques of dealing with concurrency
+and IO in both:
+- pure functional (monads, affine types)
+- imperative      (threads, continuations, monads, async/await)
+and shows why delimited continuations are a great fit for the imperative style.
+
+Bio
+Ron Pressler is the technical lead for Project Loom, which aims to add delimited
+continuations, fibers and tail-calls to the JVM
+
+● Quasar(Fibers)
+• fast threads for java and Kotlin
+@[http://docs.paralleluniverse.co/quasar/]
+
+NOTE: To be superseded by Prj. Loom?
+Extracted from @[https://github.com/puniverse/quasar/issues/305]
+My understanding is that Ron is currently busy working for/with Oracle on
+project Loom which should bring "native" Fiber/lightweight continuation
+support directly into JVM without the need of auxiliary library like Quasar.
+[[}]]
+[[{$ Concurrent Programming}]]
+
+

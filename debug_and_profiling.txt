@@ -1,0 +1,523 @@
+● JVM Troubleshooting and Monitoring [[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
+
+- jcmd:  (See section)
+- Flight Recorder:
+- jstat:
+
+  - jmap (WARN: NOT RECOMENDED, experimental&unsupported in JDK)
+  @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jmap.md]
+   $ jmap -dump:[live],format=b,file=$filePath  $jvm_pid  # <- capture heap-dump
+                 └┬─┘         └ binary-format dump
+                  └ live: prints objects with active references,
+                    discards those ready for GC
+
+  - jhat ...
+  - jstack
+  @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jstack.md]
+
+                                   - Container aware tools
+- Expose JMX port                    - ctop
+  - VisualVM                         - dstat
+  - jConsole
+                                   - CAdvisor
+- Micrometer@[#micrometer_summary] - Prometheus
+- Others: New Relic, Stackiy,      - Docker EE, Datadog, Sysdig,...
+  AppDynamics, Dynatrace, ...
+[[}]]
+
+• Debug remote (container) JVM [[{java_lang.debugging,devops.containarization,jvm.monitoring,monitoring.jvm]]
+• STEP 1: inject next ENV.VAR into app JVM:
+  JAVA_TOOL_OPTIONS=""
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS}-agentlib:jdwp=transport=dt_socket"
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},server=y"
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},suspend=n"
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},address=*:8001"
+                                      ┌──┬──────────┴──┘
+• STEP 2: Export debuggin port (e.g.: 8001)
+
+• STEP 3: In JAVA IDE configure debugger to attach to remote machine
+  (e.g., in IntelliJ , add remote debugger in Run/Debug Configurations)
+[[}]]
+
+
+● 'man 1 jcmd' Summary: [[{101,JVM.monitoring.101,java_lang.debugging]]
+                        [[java_lang.profiling,monitoring.flight_recorder]]
+- 'jcmd' must run on same machine+user+group on which the JVM is running.
+
+  $ jcmd [-l]                              <- Print list of running Java PIDs.
+
+  $ jcmd $pid Thread.print -l              <- Prints all threads with stacktraces.
+                                              -l: dump java.util.concurrent locks  [[concurrency.lock]]
+  Ex. Output:
+  | 2022-09-29 06:38:08
+  | Full thread dump OpenJDK 64-Bit Server VM (11.0.14.1+1 mixed mode):
+  |
+  | Threads class SMR info:
+  | _java_thread_list=0x00007fa9e4002e70, length=44, elements={
+  | 0x00007faa2c1f8000, 0x00007faa2c1fa800, 0x00007faa2c218000, 0x00007faa2c21a000,
+  | 0x00007faa2c21c000, 0x00007faa2c21e000, 0x00007faa2c220000, 0x00007faa2c2d7800,
+  | 0x00007faa2d2ab000, 0x00007faa2d44a800, 0x00007faa2d4b1800, 0x00007faa2d556000,
+  | 0x00007fa9b0004000, 0x00007faa2c02a000, 0x00007fa9a80e7000, 0x00007fa9a80ee000,
+  | 0x00007fa9a8111800, 0x00007fa9a8113800, 0x00007fa9a8118000, 0x00007fa9a80f0000,
+  | 0x00007fa9a8115000, 0x00007fa99005d000, 0x00007fa9a409a000, 0x00007fa9a0011800,
+  | 0x00007fa99c03d000, 0x00007fa998095800, 0x0000556d44845800, 0x00007fa99405d800,
+  | 0x00007fa990083000, 0x00007fa9a8143000, 0x00007fa9a8121800, 0x00007fa9a8123000,
+  | 0x00007fa9a814b800, 0x00007fa9a814d000, 0x00007fa9a814f000, 0x00007fa9a815d000,
+  | 0x00007fa9a8160800, 0x00007fa9a8148000, 0x00007fa9a8149800, 0x00007fa9a8165800,
+  | 0x00007fa9a8167000, 0x00007fa9a8169000, 0x00007fa9f0026000, 0x00007fa9e4002000
+  | }
+  |
+  | "Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.35ms elapsed=256333.77s
+  |                     tid=0x00007faa2c1f8000 nid=0x1e waiting on condition [0x00007faa18866000]
+  |    java.lang.Thread.State: RUNNABLE   <- := RUNNABLE, TIMED_WAITING (on object monitor),
+  |                                             WAITING (on object monitor|parking), ...
+  | 	at java.lang.ref.Reference.waitForReferencePendingList(java.base@11.0.14.1/Native Method)
+  | 	at java.lang.ref.Reference.processPendingReferences(java.base@11.0.14.1/Unknown Source)
+  | 	at java.lang.ref.Reference$ReferenceHandler.run(java.base@11.0.14.1/Unknown Source)
+  |
+  |    Locked ownable synchronizers:
+  | 	- None
+  |
+  | "Signal Dispatcher" ...
+  | "Service Thread"     ...
+  | "C2 CompilerThread0" ...
+  | "C1 CompilerThread0" ...
+  | "Sweeper thread" ...
+  |
+  | "Common-Cleaner" ...
+  | "vert.x-eventloop-thread-0" ...
+  | "vert.x-acceptor-thread-0" ...
+  | vert.x-eventloop-thread-2" ...
+  | "vert.x-eventloop-thread-4" ...
+  | "vert.x-eventloop-thread-0|" ...  [0...19]
+  |   Locked ownable synchronizers:
+  | 	- None
+  | ...
+  | "VM Thread"   os_prio=0 cpu=28658.34ms elapsed=256333.80s tid=0x00007faa2c1ef000 nid=0x1d runnable
+  | "GC Thread#0" os_prio=0 cpu=6640.67ms  elapsed=256333.90s tid=0x00007faa2c041800 nid=0x18 runnable
+  | "GC Thread#1" os_prio=0 cpu=6667.69ms  elapsed=256332.51s tid=0x00007fa9f8001000 nid=0x27 runnable
+  | "GC Thread#2" os_prio=0 cpu=6647.53ms  elapsed=256332.51s tid=0x00007fa9f8002800 nid=0x28 runnable
+  | "GC Thread#3" os_prio=0 cpu=6655.38ms  elapsed=256332.51s tid=0x00007fa9f8004000 nid=0x29 runnable
+  | "G1 Main Marker" os_prio=0 cpu=4.05ms  elapsed=256333.90s tid=0x00007faa2c09f000 nid=0x19 runnable
+  | "G1 Conc#0" os_prio=0 cpu=51.33ms elapsed=256333.90s tid=0x00007faa2c0a1000 nid=0x1a runnable
+  | "G1 Refine#0" os_prio=0 cpu=4.17ms elapsed=256333.89s tid=0x00007faa2c190000 nid=0x1b runnable
+  | "G1 Young RemSet Sampling" os_prio=0 cpu=92484.58ms elapsed=256333.89s tid=0x00007faa2c192000 nid=0x1c runnable
+  | "VM Periodic Task Thread" os_prio=0 cpu=378619.90ms elapsed=256333.58s tid=0x00007faa2c2db800 nid=0x26 waiting on condition
+
+
+  $ jcmd pid|main-class PerfCounter.print  ← Send diagnostic command PerfCounter.print to PID JVM
+                                             $ jcmd help to see the list of available diagnostic command
+
+  $ jcmd pid|main-class -f filename        ←  file from which to read diagnostic commands to send to JVM
+
+  $ jcmd pid|main-class command[ arguments]
+
+ Ex:
+ $ jcmd $PID
+  → The following commands are available:
+  → Compiler.CodeHeap_Analytics  → GC.class_histogram    → ManagementAgent.start
+  → Compiler.codecache           → GC.class_stats        → ManagementAgent.start_local
+  → Compiler.codelist            → GC.finalizer_info     → ManagementAgent.status
+  → Compiler.directives_add      → GC.heap_dump          → ManagementAgent.stop
+  → Compiler.directives_clear    → GC.heap_info
+  → Compiler.directives_print    → GC.run                → Thread.print
+  → Compiler.directives_remove   → GC.run_finalization
+  → Compiler.queue
+
+  → VM.class_hierarchy    → VM.print_touched_methods    → JFR.check
+  → VM.classloader_stats  → VM.set_flag                 → JFR.configure
+  → VM.classloaders       → VM.stringtable              → JFR.dump
+  → VM.command_line       → VM.symboltable              → JFR.start
+  → VM.dynlibs            → VM.system_properties        → JFR.stop
+  → VM.flags              → VM.systemdictionary
+  → VM.info               → VM.uptime                   → JVMTI.agent_load
+  → VM.log                → VM.version                  → JVMTI.data_dump
+  → VM.metaspace          → help
+  → VM.native_memory
+
+
+ $ jcmd $JVM_PID GC.heap_dump $FILE_PATH  <-  dump heap to (binary) file
+   NOTE: this command captures heap dumps manually at a specific time.
+   KEYPOINT: If we want to get a heap dump just on java.lang.OutOfMemoryError
+             exceptions then we launch java process with the option:
+             $ java -XX:+HeapDumpOnOutOfMemoryError \     <- Dump stored as *hprof file
+                     -XX:HeapDumpPath=$FILE_OR_DIR_PATH      <-  Optional. default to $JVM_PID.hprof
+
+[[}]]
+
+
+● Flight Recorder [[{monitoring.101,monitoring.flight_recorder,java_lang.profiling,02_doc_has.comparative]]
+@[https://www.youtube.com/watch?v=azshjd5Vsv0]
+- Free of use starting with Java 11+ and backported to OpenJDK 8u272+
+  @[https://www.infoq.com/news/2019/11/jfr-openjdk-8/]
+- (JEP 328)
+- created originally in 1998 by students from the Royal
+  Institute of Technology in Stockhoml as part of the JRockit JVM
+  distribution by Appeal Virtual Machines.
+- built directly into the JDK, it   can monitor performance accurately .
+  with about only   2% overhead(production friendly) .
+- accurate metrics to avoid mislead readers via safe points or sampling.
+  avoiding common problems (@[#JVM_safepoints]) with sampling profilers.      [comparative]
+  ┌────────────────┐
+  │ JRE ┌────────┐ │
+  │     │ JFR    ←--- Output profiling to 'myRecording.jfr'
+  │     │ engine │ │  - compact log of   JVM events : ~100.000 events with many stack traces: ~2-4MB
+  │     └────────┘ │  - Use Java Mission Control (JMC)  to read events.
+  └─^──────────────┘
+  ┌─┴───────────────────────────────────────
+  $ java ...   -XX:StartFlightRecording  ... ← Alternatively launch JFR from JMC Visual IDE
+
+  - JFR default metrics focus in JVM's  raw operations:
+    (vs high-level metrics like request/response times)
+    - advanced garbage collection analysis :
+      Include garbage collection statistics, etails on what garbage
+      was collected and who threw it away.
+      allows developers to improve performance by:                   [performance]
+       - identifying what to improve
+       - realize when tunning GC is the wrong solution.
+
+  Java Mission Control (JMC):
+- @[http://www.oracle.com/technetwork/java/javaseproducts/mission-control/java-mission-control-1998576.html]
+- UI to analyze data collected by Flight Recorder and head dumps  built on top of Eclipse IDE.
+- overview of all locally running Java processes, statistics,
+  heap dumps, flame view ( show the aggregate of stack traces for the selected events ),
+
+  WHAT'S NEW
+- JMC 8+ RoadMap:
+  - New allocation event (introduced in JDK 16).
+  - Improve Flame Graph and Graph Views for memory ussage (vs CPU ussage).
+
+- JMC 8: (2021-04)
+@[https://www.infoq.com/news/2021/04/jdk-mission-control-8-released/]
+  - new graphs and heap dump analysis by default.
+  - Can also be used as a library for parsing/processing .jfr files.
+  -
+  - JMX Console can be used to continuously monitor an environment,
+    interact with MBeans, invoke jcmd diagnostics commands remotely,...
+
+  - Flight Recording used to create a recording
+  - Dump Heap        used to create a heap dump
+
+  - low overhead in production environments:
+  - JOverflow: plugin with advanced analysis of heap dumps, included by default.
+               converted to the Standard Widget Toolkit (SWT).
+               It also offers insights and optimizing hints to developers.
+               like Hierarchical Treemaps, may be used to improve the heap usage of the application.
+               - Ussage:
+                 create and open a heap dump in the JMC application.
+
+  - New Graph View: directed graph where each node contains an individual method.
+    NOTE: WebKit required ($ # apt install libwebkit2gtk-4.0-dev ), doesn't work (yet) on Windows.
+
+  - first release of  JMC Agent :
+    - Allows JFR events to be added declaratively to any codebase.
+    - Events can be used to capture (fields, parameter,...) values.
+
+  - Rules API 2.0: Allow to use intermediate results from other rules.
+
+  - JFR Writer is introduced as a new core module.
+
+[[}]]
+
+● CRaSH shell [[{monitoring.101,java_lang.debugging,01_PM.low_code,01_PM.TODO]]
+• Features:
+  ✓ Connect to any JVM running CRaSH through SSH, telnet or web.
+  ✓ Monitor and/or use virtual machine resources:
+    JMX, database access, threads, memory usage, ...
+  ✓ Embed CRaSH and expose services via a command line interface.
+  ✓ Hot reload provides rapid development.
+  ✓ Officially embedded as Spring Boot remote shell.
+
+[[}]]
+
+● Eclipse Mem.Analizer [[{java_lang.profiling01_PM.TODO]]
+@[https://www.eclipse.org/mat/]
+"""he Eclipse Memory Analyzer is a fast and feature-rich Java heap
+  analyzer that helps you find memory leaks and reduce memory consumption.
+
+  Use the Memory Analyzer to analyze productive heap dumps with hundreds of
+  millions of objects, quickly calculate the retained sizes of objects, see
+  who is preventing the Garbage Collector from collecting objects, run a
+  report to automatically extract leak suspects.
+"""
+
+It can provide reports and warnings similar to:
+  (REF: @[https://www.youtube.com/watch?v=5joejuE2rEM])
+  The classloader/component "sum.misc.Launcher$AppClassLoader@0x123412"
+  occupies 607,654,123(38,27%) bytes.
+  The memory is accumulated in one instance  of
+  java.util.LinkedList$Entry loaded by 'system class loader'
+[[}]]
+
+● SystemTap+Java [[{jvm.dynamic_instrumentation,java_lang.profiling,01_PM.TODO]]
+@[https://laurent-leturgez.com/2017/12/22/profiling-java-application-with-systemtap/]
+[root@spark ~]# yum install systemtap systemtap-runtime-java
+
+JAVA                                              SystemTap Profiling script
+package com.premiseo;                             #!/usr/bin/env stap
+
+import java.lang.*;                               global counter,timespent,t
+import java.io.BufferedReader;
+import java.io.InputStreamReader;                 probe begin {
+import java.io.IOException;                         printf("Press Ctrl+C to stop profiling\n")
+                                                    counter=0
+class Example {                                     timespent=0
+   public static void                             }
+     loop_and_wait(int n)
+         throws InterruptedException{             probe java("com.premiseo.Example").class("Example").method("loop_and_wait")
+         System.out.println(                      {
+            "Waiting "+n+"ms... Tick");             counter++
+         Thread.sleep(n);                           t=gettimeofday_ms()
+     }                                            }
+
+   public static void main(String[] args) {       probe java("com.premiseo.Example").class("Example").method("loop_and_wait").return
+      System.out.println("PID = "+                {
+          java.lang.management.                     timespent+=gettimeofday_ms()-t
+              ManagementFactory.                  }
+                  getRuntimeMXBean().
+                     getName().split("@")[0]);    probe end {
+      System.out.println(                            printf("Number of calls for loop_and_wait method: %ld \n",    counter)
+              "Press key when ready ...");           printf("Time Spent in method loop_and_wait: %ld msecs \n", timespent)
+                                                  }
+      try {                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        BufferedReader in =                       profiling loop_and_wait:
+           new BufferedReader(                    counts number of times the
+              new InputStreamReader(System.in));  loop_and_wait method has been called,
+        String next = in.readLine();              and the time spent in this method execution.
+      } catch (IOException ioe) {
+        ioe.printStackTrace();
+      }
+
+      try {
+        for (int i=0;i<10;i++) {
+           loop_and_wait(1000);
+        }
+      } catch (InterruptedException ie) {
+        ie.printStackTrace();
+      }
+   }
+}
+[[}]]
+
+● Fast Thread [[{java_lang.debugging,jvm.monitoring.threads,01_PM.radar]]
+@[https://fastthread.io/]
+• Features:
+  ✓ Java Thread Dump Analyzer
+  ✓ Troubleshoot JVM crashes, slowdowns, memory leaks, freezes, CPU Spikes
+  ✓ Instant RCA (don`t wait for Vendors)
+  ✓ Machine Learning
+  ✓ Trusted by 4000+ enterprises
+  ✓ Free Service
+[[}]]
+
+[[{jvm.memory,jvm.gc,java_lang.debugging,qa,01_PM.low_code,01_PM.TODO]]
+● gceasy.io
+@[https://gceasy.io/]
+• Features:
+  ✓ machine learning guided Garbage collection log analysis tool.
+    GCeasy has in-built intelligence to auto-detect problems in the JVM ⅋ Android
+    GC logs and recommend solutions to it.
+  ✓ Solve Memory ⅋ GC problems in seconds
+  ✓ Get JVM Heap settings recommendations
+  ✓ Machine Learning Algorithms
+  ✓ Trusted by 4,000+ enterprises
+  ✓ Free
+  ✓ A perfect DevOps tool!
+  ✓ Made by the developers, for the developers
+[[}]]
+
+● libperfagent (perf agent) [[{java_lang.profiling,concurrency.lock,monitoring.distributed,01_PM.TODO]]
+Extracted from:
+  "Apache Spark @Scale: A  production use case"
+@[https://engineering.fb.com/core-data/apache-spark-scale-a-60-tb-production-use-case/]
+  ...  Tools we used to find performance bottleneck
+  - Spark Linux Perf/Flame Graph support: Although the two tools
+    above are very handy, they do not provide an aggregated view of CPU
+    profiling for the job running across hundreds of machines at the same
+    time. On a per-job basis,   we added support for enabling Perf
+    profiling (via libperfagent for Java symbols) and can customize the
+    duration/frequency of sampling. The profiling samples are aggregated
+    and displayed as a Flame Graph across the executors using our
+    internal metrics collection framework.
+[[}]]
+
+● Uber JVM Profiler: Tracing at scale [[{architecture.distributed,monitoring.distributed,java_lang.profiling,01_PM.TODO]]
+@[https://eng.uber.com/jvm-profiler/]
+Our JVM Profiler supports a variety of use cases, most notably making
+it possible to instrument arbitrary Java code. Using a simple
+configuration change, the JVM Profiler can attach to each executor in
+a Spark application and collect Java method runtime metrics. Below,
+we touch on some of these use cases:
+- Right-size executor: We use memory metrics from the JVM Profiler
+  to track actual memory usage for each executor so we can set the
+  proper value for the Spark “executor-memory” argument.
+- Monitor HDFS NameNode RPC latency: We profile methods on the
+  class org.apache.hadoop.hdfs...ClientNamenodeProtocolTranslatorPB
+  in a Spark application and identify long latencies on NameNode calls.
+  We monitor more than 50 thousand Spark applications each day with
+  several billions of such RPC calls.
+- Monitor driver dropped events: We profile methods like
+  org.apache.spark.scheduler.LiveListenerBus.onDropEvent to trace
+  situations during which the Spark driver event queue becomes too long
+  and drops events.
+- Trace data lineage: We profile file path arguments on the method
+org.apache.hadoop.hdfs...getBlockLocations and
+org.apache.hadoop.hdfs...addBlock
+
+Uber JVM Profiler provides a Java Agent to collect various metrics
+and stacktraces for Hadoop/Spark JVM processes in a distributed way,
+for example, CPU/Memory/IO metrics.
+
+Uber JVM Profiler also provides advanced profiling capabilities to
+trace arbitrary Java methods and arguments on the user code without
+user code change requirement. This feature could be used to trace
+HDFS name node call latency for each Spark application and identify
+bottleneck of name node. It could also trace the HDFS file paths each
+Spark application reads or writes and identify hot files for further
+optimization.
+
+This profiler is initially created to profile Spark applications
+which usually have dozens of or hundreds of processes/machines for a
+single application, so people could easily correlate metrics of these
+different processes/machines. It is also a generic Java Agent and
+could be used for any JVM process as well.
+[[}]]
+
+
+
+● JAVA FlameGraph Profiling [[{java_lang.profiling.flamegraph,JVM,java_lang.profiling.101,architecture.real-time]]
+
+UPDATE (Aug 2015): See the Java in Flames Netflix Tech Blog post for the latest
+and best method for Java flame graphs, which uses Linux perf_events to show Java
+and system code paths together.
+https://netflixtechblog.com/java-in-flames-e763b3d32166
+
+(I also describe the steps in Java CPU Flame Graphs.
+ https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html#Java)
+
+
+Java in Flames
+
+Java mixed-mode flame graphs (complete visualization of CPU usage)
+ have just been made possible by new JDK option: -XX:+PreserveFramePointer. (max +3%CPU increase)
+
+It allows to identify all profiling issues, including
+THOSE THAT ARE HIDDEN FROM OTHER PROFILERS by showing CPU consumption
+by a Java process both in user and kernel-level.
+
+eg.:
+- kernel code peaks performing TCP sends, (which often leads to a TCP receive
+  while handling the send) with Java code responsible.
+- Java code compilation vs code cache vs other system libraries,
+  differences in kernel code execution for different frameworks, ...
+
+ All of these CPU consumers were invisible to other Java profilers, which only
+ focus on the execution of Java methods.
+
+
+Flame Graph Interpretation:
+
+- y axis is stack depth
+- x axis spans the sample population.
+- Each rectangle is a stack frame (a function), where the width shows how often
+  it was present in the profile.
+  ordering from left to right is unimportant (stacks are sorted alphabetically).
+
+- You can read the flame graph from the bottom up, which follows the flow of
+  code from parent to child functions.
+- Another way is top down, as the top edge shows the function running on CPU,
+  and beneath it is its ancestry.
+
+- KEY-POINT: Focus on the widest functions, which were present in the profile the most.
+
+- There have historically been two types of profilers used on Java:  [[02_doc_has.comparative]]
+  - System profilers: eg: Linux perf_events, profiling system code paths, including libjvm
+                         internals, GC, and the kernel, but not Java methods.
+  - JVM profilers: such as hprof, Lightweight Java Profiler (LJP), and commercial profilers.
+    showing Java methods, but not system code paths.
+
+- KEY-POINT: In 2009, Linux perf_events added JIT symbol support, so that symbols from
+  language virtual machines like the JVM could be inspected.
+  To use it:
+  - application creates a /tmp/perf-PID.map text file, which lists symbol addresses
+    (in hex), sizes, and symbol names.
+    Java can create this file using perf-map-agent, an open source JVMTI agent written by
+    Johannes Rudolph. The first version needed to be attached on Java startup, but
+    Johannes enhanced it to attach later on demand and take a symbol dump.
+    That way, we only load it if we need it for a profile.
+  - perf_events looks for this file by default and, if found, uses it for symbol translations.
+
+  NOTE: symbols can change slightly during the profile session (around 30-60 secs) a symbol
+      dump may include stale symbols.
+
+Fixing Frame Pointers
+- For many years the gcc compiler has reused the frame pointer as a compiler optimization,
+  breaking stack traces. Some applications compile with the gcc option -fno-omit-frame-pointer,
+  to preserve this type of stack walking, however, the JVM had no equivalent option.
+
+PRESETUP:
+ - linux perf
+ - JDK
+ - perf-map-agent: JVMTI agent providing Java symbol translation for perf_events
+   $ apt-get install cmake
+   $ export JAVA_HOME=/path-to-your-new-jdk8
+   $ git clone --depth=1 https://github.com/jrudolph/perf-map-agent
+   $ cd perf-map-agent
+   $ cmake .
+   $ make
+
+ - perl software generating flamegraphs:
+   $ git clone --depth=1 https://github.com/brendangregg/FlameGraph
+
+USSAGE:
+- taking a 30-second profile at 99 Hertz (samples per second) of all processes
+  then caching symbols for Java PID 1690, then generating a flame graph:
+
+  $ sudo perf record -F 99 -a -g -- sleep 30
+  $ java -cp \
+    attach-main.jar:$JAVA_HOME/lib/tools.jar \             <- attach-main.jar from perf-map-agent
+    net.virtualvoid.perf.AttachOnce 1690                   <- run as same user as java
+  $ sudo chown root /tmp/perf-*.map
+  $ sudo perf script | stackcollapse-perf.pl | \
+  $     flamegraph.pl --color=java --hash > flamegraph.svg
+
+
+- With jmaps: automating symbol files.
+
+  $ sudo perf record -F 99 -a -g -- sleep 30; sudo jmaps
+  $ sudo perf script | stackcollapse-perf.pl | \
+  $     flamegraph.pl --color=java --hash > flamegraph.svg
+
+   jmaps creates symbol files for all Java processes, with root ownership.
+
+  REMEMBER: lean up the /tmp symbol files when you no longer need them!
+
+- EG: Generate By-Process Flame Graphs:
+
+  $ sudo perf record -F 99 -a -g -- sleep 30; sudo jmaps
+  $ sudo perf script -f comm,pid,tid,cpu,time,event,ip,sym,dso,trace | \
+        stackcollapse-perf.pl --pid | \
+        flamegraph.pl --color=java --hash > flamegraph.svg
+
+  stackcollapse-perf.pl output formats each stack as a single line, and is great
+  food for grep/sed/awk.
+
+- Missing Frames:
+  you’ll notice that many Java frames (methods) are missing compared to jstack(1)
+  command line tool. This is because of inlining, combined with this type of profiling
+  (frame pointer based) which only captures the final executed code.
+  This hasn’t been much of a problem so far: even when many frames are missing, enough
+  remain that we can figure out what’s going on.
+   We’ve also experimented with reducing the amount of inlining, eg, using
+   -XX:InlineSmallCode=500, to increase the number of frames in the profile. In some     [[performance]]
+  cases this even improves performance slightly, as the final compiled instruction size
+  is reduced, fitting better into the processor caches (we confirmed this using
+  perf_events separately).
+[[java_lang.profiling.flamegraph}]]
+
+● Debugger Architecture [[{java_lang.debugging,01_PM.TODO]]
+https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/jdwp-spec.html
+https://en.wikipedia.org/wiki/Java_Platform_Debugger_Architecture
+https://www.baeldung.com/spring-debugging
+[[}]]
+

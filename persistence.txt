@@ -1,0 +1,200 @@
+JAVA persistence:
+
+● Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,cloud.*,spring.*,persistence.jpa,01_PM.TODO]]
+• tool providing version control for database (SQL) schemas
+  and automated schema (tables, columns, sequences), data, views, procedures
+  and packages evolution.
+• Single source of truth for DDBB versioning.
+• highly reliable
+• Supports for many different SQL databases, including        [cloud]
+  cloud ones (Amazon RDS, Azure Database, Google Cloud SQL).
+
+  ##########
+  # HOW-TO #
+  ##########
+• PRESETUP: The target database to manage and user with update privileges be created first,
+            "outside" of flyway.
+
+• Database changee are called   Migrations . They can be:
+  · Versioned  migrations: identified by a version number, applied in order exactly once.
+                           An optional revert migration version can be provided to roolback
+                           changes in case of error.
+  · Repeatable migrations:
+
+• Flyway used an internal flyway_schema_history ddbb to keep track of migrations applied .
+
+• SQL and JAVA  migrations in src/main/resources/db/migration/ are automatically      [spring]
+  applied in Spring Boot when  'org.flywaydb:flyway-core' compile dependency is
+  detected.
+  src/main/resources/db/migration/
+  └ V1__Initial_schema.sql   ← Flyway expected file name
+                               "Verssion"__"Prefix".sql
+    CREATE TABLE table01 (
+     id      BIGSERIAL PRIMARY KEY NOT NULL,
+     column1 BIGINT NOT NULL,
+     column2 FLOAT8 NOT NULL,
+     column3 INTEGER NOT NULL,
+     column4 VARCHAR(255) UNIQUE NOT NULL,
+    );
+
+  └ V2__Add_column5.sql
+    ALTER TABLE table01
+      ADD COLUMN column5 VARCHAR(255);
+
+● Obevo: DDBB change manager
+@[https://github.com/goldmansachs/obevo]
+- Obevo: ddbb deployment tool handling enterprise scale schemas and complexity.
+- By Goldman Sachs.
+- Obevo is a database deployment tool that helps teams manage database
+  changes in their Software Development Life Cycle (SDLC) process. In
+  addition to handling production deployments, Obevo aids the
+  development phase by defining a clean structure to maintain DB object
+  code, and helps the testing phase with features such as in-memory
+  database conversion. Notably, Obevo was designed for systems of
+  enterprise scale and complexity and can manage hundreds of DB objects
+  in a schema, while still handling new schemas in a simple manner.
+  “We feel our ability to onboard a large and long-lived system to a
+  clean SDLC process is a key differentiator in the open source
+  space,” said Shant, a vice president in the Technology Division.
+  “By publishing this to the open source community, we hope to aid
+  others in their own DB deployment estates while growing a strong
+  community around the tool.”
+
+
+  """ Deploying tables for a new application?
+    Or looking to improve the DB Deployment of a years-old system with
+    hundreds (or thousands) of tables, views, stored procedures, and
+    other objects?
+
+    Obevo has your use case covered.
+
+    Supported platforms: DB2, H2, HSQLDB, Microsoft SQL Server, MongoDB,
+    Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
+  """
+• Alternatives to Flyway include LiquidBase, ... [TODO]
+[[}]]
+
+● Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
+@[https://www.jooq.org/]
+
+● Vertx+Jooq
+@[https://github.com/jklingsporn/vertx-jooq]
+  jOOQ-CodeGenerator to create vertxified DAOs and POJOs.
+  Now with JDBC, async and reactive support!
+@[https://github.com/jklingsporn/vertx-jooq]
+
+[[}]]
+
+● Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
+@[https://quarkus.io/guides/hibernate-orm-panache-guide]
+
+- Hibernate Gotchas:
+  https://github.com/theotherian/hibernate-gotchas
+  http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html
+  hibernate, joins, and max results: a match made in hell
+
+- Common Hibernate Exceptions Every Developer Must Know
+  https://thorben-janssen.com/hibernate-exceptions/
+[[}]]
+
+● speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
+@[https://github.com/speedment/speedment]
+- Stream ORM toolkit and runtime.
+- The toolkit analyzes the metadata of an existing SQL database and
+  automatically creates a Java representation of the data model.
+- The powerful ORM enables you to create scalable and efficient Java
+  applications using standard Java streams with no need to type SQL or
+  use any new API.
+
+  SQL                                    JAVA 8 Stream Equivalent
+ --------------------------------------------------------------------
+  FROM                                   stream()
+ --------------------------------------------------------------------
+  COUNT                                  count()
+ --------------------------------------------------------------------
+  LIMIT                                  limit()
+ --------------------------------------------------------------------
+  DISTINCT                               distinct()
+ --------------------------------------------------------------------
+  SELECT                                 map()
+ --------------------------------------------------------------------
+  WHERE                                  filter() (before collecting)
+ --------------------------------------------------------------------
+  HAVING                                 filter() (after  collecting)
+ --------------------------------------------------------------------
+  JOIN                                   flatMap()
+ --------------------------------------------------------------------
+  UNION                                  concat(s0, s1).distinct()
+ --------------------------------------------------------------------
+  ORDER BY                               sorted()
+ --------------------------------------------------------------------
+  OFFSET                                 skip()
+ --------------------------------------------------------------------
+  GROUP BY                               collect(groupingBy())
+ --------------------------------------------------------------------
+       SEARCH FILMS WITH LENGTH > 120 MINUTES:
+  SELECT                             ←   final
+   `film_id`,`title`,`description`,      Optional<Film>longFilm =
+   `release_year`, `language_id`,          films.stream()
+   `original_language_id`,                .filter(
+   `rental_duration`,`rental_rate`,          Film.LENGTH.greaterThan(120)
+   `length`,`replacement_cost`,            )
+   `rating`,`special_features`,           .findAny();
+   `last_update`
+  FROM                                    Searches optimized in background!
+       `sakila`.`film
+  WHERE
+      (`length` > 120)
+[[}]]
+
+● reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
+@[https://github.com/goldmansachs/reladomo]
+  - Enterprise grade ORM framework featuring:
+    - Strongly typed   compile-time  checked query language
+    - Bi-temporal chaining
+    - Transparent multi-schema support
+    - Full support for unit-testable code
+[[}]]
+
+● c3p0 [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
+@[https://www.mchange.com/projects/c3p0/#what_is]
+• c3p0: easy-to-use library for making traditional JDBC drivers
+        "enterprise-ready" augmenting them with jdbc3 functionality,
+        , optional jdbc2 extensions and jdbc4 (v 0.9.5+).
+• It provides for:
+  - A class which adapt traditional DriverManager-based JDBC drivers to the
+    newer javax.sql.DataSource scheme for acquiring database Connections.
+  - Transparent pooling of Connection and PreparedStatements behind DataSources
+    which can "wrap" around traditional drivers or arbitrary unpooled DataSources.
+• The library tries hard to get the details right:
+  - c3p0 DataSources are both Referenceable and Serializable, and are thus
+    suitable for binding to a wide-variety of JNDI-based naming services.
+  - Statement and ResultSets are carefully cleaned up when pooled Connections
+    and Statements are checked in, to prevent resource- exhaustion when clients use
+    the lazy but common resource-management strategy of only cleaning up their
+    Connections. (Don't be naughty.)
+  - The library adopts the approach defined by the JDBC 2 and 3 specification
+    (even where these conflict with the library author's preferences). DataSources
+    are written in the JavaBean style, offering all the required and most of the
+    optional properties (as well as some non-standard ones), and no-arg
+    constructors. All JDBC-defined internal interfaces are implemented
+    (ConnectionPoolDataSource, PooledConnection, ConnectionEvent-generating
+    Connections, etc.) You can mix c3p0 classes with compliant third-party
+    implementations (although not all c3p0 features will work with external
+    implementations of ConnectionPoolDataSource).
+[[}]]
+[[$div}]]
+
+● Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
+@[https://github.com/xerial/snappy-java]
+- Java port of the snappy @[http://code.google.com/p/snappy/]
+[[}]]
+
+● JCache [[{scalability.cache,01_PM.TODO]]
+- Map-Like API optimized for caching.
+- 1.0 drawbacks:
+  - No async operations.
+- Implemented by Hazelcast and others
+[[}]]
+
+

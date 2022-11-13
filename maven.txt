@@ -11,7 +11,7 @@
 
 [[{DEVOPS.MAVEN]]
 
-● Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,_PM.troubleshooting,_PM.WiP]] #[mvn_summary]
+● Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,DevOps.maven.troubleshooting,_PM.WiP]] #[mvn_summary]
 • External Links
   - PUBLIC REPOSITORY:      @[https://mvnrepository.com/]
   - Artifact Search Engine: @[http://search.maven.org/]
@@ -75,7 +75,7 @@ $ $ mvn                              ← Default to next goals: (  WARN: no clea
            ·                           3) process-classes    6) test                   9) install
            ·
    mvn common Common options include :
-  -U                   Force library (download) update. Fix problems with           [troubleshooting]
+  -U                   Force library (download) update. Fix problems with           [DevOps.maven.troubleshooting]
                        unstable networks, unstable package releases.
   -P myProfileX        Execute profile myProfileX defined in pom.xml
   -o                   offline mode. Search deps in local repo.
@@ -535,7 +535,7 @@ $ mvn release:perform    ← Stage release for a vote. release will
                            automatically be added to temp staging dir.
 [[}]]
 
-● Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,doc_has.diagram,_PM.TODO]]
+● Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
 FROM maven:3.6-jdk-12-alpine as build
 WORKDIR /builder
 ADD pom.xml /builder/pom.xml

@@ -1,6 +1,6 @@
 [[{spring]]
     ● Spring
-● External Links [[{spring,<02_doc_has.ext_resource]]
+● External Links [[{spring,02_doc_has.ext_resource]]
 https://spring.io/projects/
 @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/]
 @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/overview.html#spring-introduction']
@@ -248,7 +248,7 @@ REF:
       <property name="email">         </property> ← email = ""
 [[}]]
 
-● Spring+JPA+JWT summary [[{spring.101,spring.configuration,01_PM.troubleshooting]]   #[spring_summary]
+● Spring+JPA+JWT summary [[{spring.101,spring.configuration,spring.troubleshooting]]   #[spring_summary]
 
 - file: com/myComp/openApi/SwaggerConfig.java  [[{,architecture.api_management.OpenAPI.swagger,spring.config]]
     package com.myComp.swagger;
@@ -594,7 +594,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     }
 
     @Override
-    public int hashCode() {              // ← Override when needed to avoid  [troubleshooting]
+    public int hashCode() {              // ← Override when needed to avoid
       return Objects.hash( ...);         //   hash collisions
     }
 
@@ -1513,7 +1513,7 @@ beans to      ┌──like─  ─┐
   marks methods to fall back to another method if they cannot succeed normally.
 [[}]]
 
-● Spring Batch [[{spring.batch,architecture.batch,01_PM.TODO.00]]
+● Spring Batch [[{spring.batch,architecture.batch,01_PM.TODO.NOW]]
   FROM https://stackoverflow.com/questions/33188368/spring-batch-vs-quartz-jobs
   Quartz is a scheduling framework. Like "execute something every hour
   or every last friday of the month"

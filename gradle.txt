@@ -11,8 +11,7 @@
 
 [[{devops.gradle]]
 
-● Gradle Summary [[{devops.gradle.101]]
-
+● Gradle Summary [[{devops.gradle.101,devops.gradle.troubleshooting]]
   • TLDR
 
                            ● SETUP TASKS
@@ -32,7 +31,7 @@
                                 $ gradle tasks --all  <- List all tasks
     $ buildEnvironment       <- show all buildscript dependencies declared in root project 'JAVA'.
     $ components             <- show components produced by root project 'JAVA'.
-    $ dependencies           <- show all deps. declared in root project 'JAVA'. [{troubleshooting}]]
+    $ dependencies           <- show all deps. declared in root project 'JAVA'.
     $ dependencyInsight      <- show insight into a specific dep. in root project 'JAVA'.
     $ dependentComponents    <- show dependent components of components in root project 'JAVA'. [incubating]
     $ help                   <- show a help message.
