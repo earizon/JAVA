@@ -535,6 +535,15 @@ $ mvn release:perform    ← Stage release for a vote. release will
                            automatically be added to temp staging dir.
 [[}]]
 
+● OWASP (maven) Plugin [[{security.101.owasp,devops.maven,01_PM.TODO]]
+@[https://maven.apache.org/plugins/]
+• OWASP Dependency-Check identifies project dependencies and checks
+  if there are any known, publicly disclosed, vulnerabilities.
+@[https://www.owasp.org/index.php/OWASP_Dependency_Check]
+[[}]]
+
+
+
 ● Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
 FROM maven:3.6-jdk-12-alpine as build
 WORKDIR /builder

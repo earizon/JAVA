@@ -1,4 +1,4 @@
-●  Apropos:
+Apropos:
 - Visit next Web site for a great experience:
   https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/notes.txt
 
@@ -15,7 +15,7 @@ This "cheat-sheet with steroids" presents an always-growing set of
 DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 ... as well as author's own experience in different projects.
 
-● External Links
+● External Links [[{]]
   @[https://openjdk.java.net/jeps/0] JAVA Enhancements proposals
   @[https://docs.oracle.com/javase/specs/] Lang & VM specs
   @[https://docs.oracle.com/javase/17/docs/api/]
@@ -34,15 +34,108 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 -@[https://java-source.net/] Production-ready software developed with Java,
    from DDBBs, caches, servers, ...
 
-● Bibliography
+• Bibliography
 - Effective Java 3rd Edition, Joshua Bloch
   ISBN-10: 0134685997
   ISBN-13: 978-0134685991
 
--  Java Performance: The Definitive Guide, by Scott Oaks
-   ISBN-10: 1449358454
-   ISBN-13: 978-1449358457
+- Java Performance: The Definitive Guide, by Scott Oaks
+  ISBN-10: 1449358454
+  ISBN-13: 978-1449358457
+[[}]]
 
+● JAVA LANGUAGE 101 [[{java_lang.101]]
+
+  import static java.lang.System.out;
+  public class HelloWorld {
+    public static void main(String[] args){
+      if ( args == null || args.length != 1 ){
+         throw RuntimeException("Try again!");
+      }
+      out.printf("Hello %s !!", args[0]);
+    }
+  }
+                                  BEFORE JAVA 11:
+  $ javac ./HelloUniverse.java      ← compile (./HelloUniverse.class generated)
+  $ java  ./HelloUniverse  arg1     ← start up JVM, load class, execute code
+  $ java  SomeClass.class           ← Java launcher 1.0+
+  $ java  SomeLib.jar               ← Java launcher 1.0+: Run    JAR's main class
+  $ java  SomeLib.jar               ← Java launcher 9.0+: Run Module's main class
+
+                                  AFTER JAVA 11 (JEP 330)
+  $ java HelloUniverse.java arg1    ← compile, start up JVM, load class, execute code
+    --add-modules=ALL-DEFAULT         (no *.class generated on disk). Options include:
+    └─────────┬─────────────┘         ──source $version: when '.java' extension is NOT available
+              ·                                          or to set specific language version
+              └······················ By default compiled code is part of an 'unnamed' module.
+                                      This provides access to ALL standard modules in JDK.
+
+  $ cat script.java
+  #!/path/to/java --source $version  <·· UNIX scripting using "Shebang notation"
+  public class HelloUniverse{
+    ...
+  }
+
+● JBang: Simplified Java
+@[https://www.youtube.com/watch?v=X4x2jM3Y0uE]
+
+● String Manipulation  [[{java_lang.strings,java_lang.101,01_PM.WiP]]
+  final String
+     output1 = String .format ("%s = %d", "joe", 35), ← Format string
+     output2 = String .format ("%4d",100);            ←
+  See also notes about "Format String Checker"
+
+  final String[] args = ...
+  final String s1 = String.join(List.of(args),"'" )); // ← alt 1: String array to CSV
+  final String s1 = String.join(","          ,args)); // ← alt 2: String array to CSV
+
+  s1.isBlank()                  <·· Java 11+, true for Empty | only-white-spaces
+  s1.lines()                    <·· Java 11+, returns string[] collecting all substrings split by lines.
+                                    System.out.println(
+                                       "JD\nJD\nJD".str.lines().collect(Collectors.toList())
+                                    );
+  s1.strip()                    <·· Java 11+, like trim() but unicode-aware
+  s1.stripLeading()
+  s1.stripTrailing()
+  s1.repeat(int n)              <·· Java 11+: repeats string  n times.
+
+  final String textBlock = """  <·· Java 15+: https://openjdk.org/jeps/378
+                                    Rules:
+                                    - \r\n is converted to \n.
+       line1                        - Indent (spaces, tabs) are removed by default.
+       line2                        - Traling whitespace is removed by default.
+       line3    \s                  <·· \s: Avoid removing trailing white-spaces
+  |1234                             <·· from here on, indent with 4 white-spaces.
+       """
+
+  java.util.StringJoiner  (1.8+) Concatenate Strings
+  https://docs.oracle.com/javase/8/docs/api/java/util/StringJoiner.html
+- Ex:
+  "[George:Sally:Fred]" may be constructed as follows:
+  final StringJoiner sj = new StringJoiner(
+                             ":" /* Delimiter */,
+                             "[" /* prefix */,
+                             "]" /* sufix */);
+  sj.add("George").add("Sally").add("Fred");
+  String desiredString = sj.toString();
+
+  Collectors.joining(CharSequence):
+
+  List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
+  String commaSeparatedNumbers = numbers.stream()
+      .map(i -> i.toString())
+      .collect( Collectors.joining(", ") );
+
+• StringBuffer/StringBuilder: Much faster when concatenating strings at runtime.
+  (See also java.io.StringWriter: 'character stream' collecting output to StringBuffer).
+  - StringBuffer   is thread-safe.
+  - StringBuilder  is faster. (when thread-safety is not needed)
+    for (int i = 0; i < 0 ; i++) { sbuffer.append(""); } // ← 2241 millisec
+    for (int i = 0; i < 0 ; i++) { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
+[[java_lang.strings}]]
+
+
+[[}]]
 
 ● JAVA DONT's #[java_donts] [[{java_lang.101.donts,scalability.101,qa.101,01_PM.WiP]]
 • Avoid Nulls, prefer final:
@@ -63,7 +156,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 
   RIGHT:
   ========================
-  final int instance;  ← "final" keywords force compiler to check every possible execution
+  final SomeClass instance;  ← "final" keywords force compiler to check every possible execution
   if (condition1) {     condition and fail to compile is some branch does not initiliaze
       instance = val1;   instance properly.
   }                     - Final values are safer (to and developer mistakes concurent code).
@@ -174,24 +267,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 ● v.15 2020-09-15
 @[https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features]
 
--   RECORDS!!!: non-verbose inmutable classes.  [[{java_lang.records]]
-    Ex.:
-    Alt 1: short writing
-    record Person (String name, int age) { }
-    Alt 2: Validating constructor
-    record Person (String name, int age) {
-      Person {           ←  (optional) constructor can NOT compute state, only validate|throw
-        if (age < 0)
-          throw new IllegalArgumentException("Too young");
-      }
-    }
-
-    var john = new Person ("john", 76);
-
-    Records:
-    - can NOT have any additional (internally computed) private or public instance fields.
-    - can NOT extend classes.
-    - are ALWAYS FINAL (cannot be extended),     [[}]]
+-   RECORDS!!!: non-verbose inmutable classes.  [[{java_lang.records}]]
 
 - production ready ZGC low-latency garbage collector.
   "...Oracle expects ZGC to be quite impactful for a multitude of workloads,
@@ -248,7 +324,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    - JFR jdk.CPUInformation event epots incorrect info. when running in  [[{devops.containarization]]
      Docker container (JDK-8219999)                                      [[}]]
 
-● v.11(LTS) 2018/09
+● v.11(LTS) 2018/09 [[{]]
 @[https://www.journaldev.com/24601/java-11-features]
 @[https://www.infoq.com/news/2018/09/java11-released]
 - More container awaeness...                                             [[{devops.containarization]]
@@ -263,16 +339,6 @@ New major features:
   $ java someFile.java
 
 - New string methods:
-  - isBlank(): true for Empty or only white spaces strings
-  - lines()  : returns string[] that collects all substrings split by lines.
-    System.out.println(
-       "JD\nJD\nJD".str.lines().collect(Collectors.toList())
-    );
-  - strip()         : similar to trim() but unicode-aware
-    stripLeading()
-    stripTrailing()
-  - repeat(int n)     : repeats string  n times.
-
 
 - Local-Variable Syntax for Lambda Parameters (JEP 323)
   (var s1, var s2) -> s1 + s2
@@ -299,36 +365,18 @@ New major features:
     - Last-drop throughput improvements
 
 - Remove the JavaEE and CORBA Modules(JEP 320):
-  java.xml.ws, java.xml.bind, java.activation,
-  java.xml.ws.annotation, java.corba, java.transaction,
-  java.se.ee, jdk.xml.ws, jdk.xml.bind
-   WARN : EE modules contain the support for JAXB and SOAP,
-          still in relatively widespread use.
-        - Check carefully whether build scripts need to
-          be modified.
 
-- HTTP Client (JEP 321)
-  - HTTP/1.1, HTTP/2 and WebSockets
-  - Designed to improve overall performance of
-    sending requests by a client and receiving
-    responses from the server.
+- HTTP/1.1, HTTP/2 and WebSockets Client (JEP 321)  [[{io.http]]
+  designed to improve overall performance.          [[}]]
 
-- TLS 1.3
+- TLS 1.3                                           [[{SECURITY.CRYPTOGRAPHY}]]
+- ChaCha20,Poly1305 Crypto (JEP 329)
+  - implemented in the SunJCE provider.
+                                                    [[}]]
 
 - Convenient Reading/Writing Strings to/from Files
-  - readString()
-  - writeString()
-  Path path = Files .writeString (
-    Files.createTempFile("test", ".txt"),
-    "This was posted on JD");
-  System.out.println(path);
-  String s = Files .readString (path);
-  System.out.println(s); //This was posted on JD
 
-- ChaCha20,Poly1305 Crypto (JEP 329)            [[{security.cryptography]]
-  - implemented in the SunJCE provider.         [[}]]
-
-- Improve (string and array)Aarch64 processor Intrinsics(JEP 315)
+- Improve (string and array) Aarch64 processor Intrinsics(JEP 315)
   - implement also new intrinsics for
     (java.lang.Math) sin, cos, and log functions.
 
@@ -338,6 +386,7 @@ New major features:
   - low latency GC.
   - sub-10ms pause times, less than 15% perf.penalty.
 - Deprecate Nashorn JS Engine(JEP 335)
+[[}]]
 
 ● v.10 (2018/03)
 - More container awareness...                                 [[{devops.containarization]]
@@ -724,12 +773,10 @@ Reference Types regarding how the object on the heap is eligible for garbage col
 └─────────┴───────────────────────────────────────────────────────────────────────────
 [[}]]
 
-[[{jvm.memory,scalability.jvm,java_lang.strings]]
-● Force string pool reuse
+● FORCING STRING POOL REUSE [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
 - Strings are immutable.
-- Stored on the heap
-- Java manages a string pool in memory,
-  reusing strings whenever possible.
+- Stored on the heap.
+- Java manages a string pool in memory, reusing strings whenever possible.
 
 String string01 = "297",                                string01 == string02 : true
        string02 = "297",                                string01 == string03 :   false
@@ -1005,62 +1052,41 @@ $ $ sudo update-alternatives --config java
 
 [[}]]
 
-[[{java_lang.strings,java_lang.101,01_PM.WiP]]
-● Strings
-  final String
-     output1 = String .format ("%s = %d", "joe", 35), ← Format string
-     output2 = String .format ("%4d",100);            ←
-  See also notes about "Format String Checker"
+● RECORDS!!!: non-verbose inmutable classes. Java 15+ [[{java_lang.records,java_lang.data_structure]]
 
-  final String[] args = ...
-  final String s1 = String.join(List.of(args),"'" )); // ← alt 1: String array to CSV
-  final String s1 = String.join(","          ,args)); // ← alt 2: String array to CSV
+  record Person (String name, int age) { } <·· Alt 1: short writing
 
-  java.util.StringJoiner  (1.8+) Concatenate Strings
-  https://docs.oracle.com/javase/8/docs/api/java/util/StringJoiner.html
-- Ex:
-  "[George:Sally:Fred]" may be constructed as follows:
-  final StringJoiner sj = new StringJoiner(
-                             ":" /* Delimiter */,
-                             "[" /* prefix */,
-                             "]" /* sufix */);
-  sj.add("George").add("Sally").add("Fred");
-  String desiredString = sj.toString();
+  record Person (String name, int age) {   <·· Alt 2: Validating constructor
+    Person {                                   ←  (optional) constructor: can NOT compute state,
+      if (age < 0)                                                        only validate or throw
+        throw new IllegalArgumentException("Too young");
+    }
+  }
 
-  Collectors.joining(CharSequence):
+  var john = new Person ("john", 76);
 
-  List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
-  String commaSeparatedNumbers = numbers.stream()
-      .map(i -> i.toString())
-      .collect( Collectors.joining(", ") );
+  Basic Rules:
+  - can NOT have any additional (internally computed) private or public instance fields.
+  - can NOT extend classes.
+  - are ALWAYS FINAL (cannot be extended),
 
-● StringBuffer/StringBuilder
-• Concatenating strings is very slow when compared to StringBuffer/StringBuilder.
-  - StringBuffer   is thread-safe.
-  - StringBuilder  is faster. (when thread-safety is not needed)
-@[https://stackoverflow.com/questions/355089/difference-between-stringbuilder-and-stringbuffer]
-    for (int i = 0; i < 0 ; i++) { sbuffer.append(""); } // ← 2241 millisec
-    for (int i = 0; i < 0 ; i++) { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
+  WARN: Until the release of Hibernate 6, records could NOT be mapped to "anything" in JPA/Hibernate.
+        The could only be used as DTO projections in your queries. In Hibernate 6 they CAN'T be used
+        to model entity classes but can be used as embeddables.
+
 [[}]]
 
-[[{java_lang.101,persistence.FS]]
-● Reading file
-  Reading as lines of text
-  final File input = new File("input.txt");
-  final String result =
-        Files.toString(input, Charsets.UTF_8);   // ← Alt 1.(Guava) Read to String
-                                                       WARN: Only for small sizes
 
-  final File input = new File("input.txt");
-  final List<String> result =
-       Files.readLines(input, Charsets.UTF_8);   // ← Alt 2.(Guava) Read to List
-             ^^^^^^^^^                                WARN: Only for small sizes
-             readFirstLine() can be useful sometimes
+● Reading from file [[{java_lang.101,persistence.FS,io.101]]
 
-  final File input = new File("input.txt");
-  final CharSource source =
-      Files.asCharSource(input, Charsets.UTF_8); // ← Alt 3.(Guava) Use CharSource
-  final String result = source.read();           // ←   WARN: Only for small sizes
+• Reading as lines of text:
+  import java.nio.file.Path
+  import java.nio.file.Files
+
+  final Path path01 = Files.writeString (     // <·· 'writeString' Java 11+
+    Files.createTempFile("test", ".txt"),
+    "Some string to dump to file");
+  out.println(Files.readString(path01));      // <·· 'readString' Java 11+
 
   final File input1 = new File("input1.txt"),
              input2 = new File("input1.txt");
@@ -1076,7 +1102,7 @@ $ $ sudo update-alternatives --config java
         CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
   reader.close();                              // ←   WARN:  Don't forget to close
 
-  Read file as bytes
+• Read file as bytes:
   final File file = new File("input.raw");
   final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
         = Files.asByteSource(file).
@@ -1139,38 +1165,28 @@ LineIterator.closeQuietly(it);                ← Close resources
   - Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
 
 
-- java.nio.file.Files.writeString/readString (Java 11+ "utility" classes)
-  java.nio.file.Path fileName = Path.of("demo.txt");
-  String content  = "hello world !!";
-  java.nio.file.Files.writeString(fileName, content);        ← String    to text-file
-
-  String actual = java.nio.file.Files.readString(fileName);  ← text-file to String
-  System.out.println(actual);
-
 - java.nio.files.Files.lines: (Java 8+)
-    private static String readLineByLine(String filePath)
-    {
-        final StringBuilder contentBuilder = new StringBuilder();
-        try (
-          final java.util.stream.Stream<String> stream =   ← stream resource must be closed
-              java.nio.file.Files.lines(                      (with a try-with in this example)
-                  java.nio.file.Paths.get(filePath),
-                  java.nio.charset.StandardCharsets.UTF_8)
-         ) {
-            stream.forEach(
-                s -> contentBuilder.append(s).append("\n")
-            );
-        } catch(java.io.IOException e) { ...  }
-        return contentBuilder.toString();
-    }
+  private static String readLineByLine(String filePath)
+  {
+      final StringBuilder contentBuilder = new StringBuilder();
+      try (
+        final java.util.stream.Stream<String> stream =   ← stream resource must be closed
+            java.nio.file.Files.lines(                      (with a try-with in this example)
+                java.nio.file.Paths.get(filePath),
+                java.nio.charset.StandardCharsets.UTF_8)
+       ) {
+          stream.forEach(
+              s -> contentBuilder.append(s).append("\n")
+          );
+      } catch(java.io.IOException e) { ...  }
+      return contentBuilder.toString();
+  }
 [[}]]
 
-[[{java_lang.101,concurrency]]
-● java.time
-java.time.*
-- JDK 1.8+
-- "deprecates" java.util.(Date|Calendar|TimeZome)
-- All the classes are IMMUTABLE and THREAD-SAFE
+● java.time.* [[{java_lang.101,java_lang.date_time,concurrency]]
+- JDK 1.8+, "deprecating" java.util.(Date|Calendar|TimeZome):
+  All the classes are IMMUTABLE and THREAD-SAFE
+
   import java.time.Instant;
   import java.time.ZonedDateTime;
   import java.time.ZoneId;
@@ -1653,8 +1669,6 @@ to plug in the desired logging framework at deployment time.
    - Use secrets on-demand and remove from memory as soon as possible.
      Ideally manage secrets through HSM. Secrets (signature keys, password,
      ...) must never leave the HSM.
-   - If using Lombok generated toString(), mark with @ToString.Exclude
-     sensitive fields.
 
 6. Sanitize all input.
    Example 1, sanitizing HTML
@@ -2865,33 +2879,23 @@ TODO: HTTPClient Quick intro:
 
 
 
-● OkHTTP
+● OkHTTP [[{io.HTTP.OkHTTP]]
 -   OkHTTP vs java.net.http.HTTPClient
 From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
    OkHTTP PROs over                     OkHTTP CONs over
    java.net.http.HTTPClient             java.net.http.HTTPClient
+   -------------------------------      -------------------------------------------
  - built-in response cache.           - timeout like configuration can not be
- - web sockets.                         modified after singleton connection.
- - Simpler API.                       - Requires (small) extra non-JDK dependencies
- - Better defaults                      (okIO and okHTTP itself) in non-Android
- - easier to use efficiently.           deployments
- - Better URL model.
- - Android support. (  HTTPClient
-   supported in Android? )
- - Better cookie model.
- - Better headers model.
- - Better call model.
- - canceling calls is easy.
- - Carefully managed TLS defaults
-   secure and widely compatible.
+ - HTTP 2.0 web sockets support.        modified after singleton connection.
+ - easier to use/better defaults.     - Requires (small) extra non-JDK dependencies
+ - used by 1+ billion Android devices   (okIO and okHTTP itself) in non-Android
+ - Better cookie/headers/call model.    deployments
  - Retrofit compatibility
-   (Brilliant API for REST).
- - eorks with okIO great library
-   for data streams.
- - less code to learn
- - 1+ billion Android devices
-   using it interlally
- - Standard in Android 5.0+ (API level 21+).
+ - HTTP 1.1 Connection pooling and HTTP/2 support.
+ - Transparent GZIP up/downloads.
+ - silently recover from common connection problems.
+   (alternate IP addresses if available,...)
+ - synch or async+callback API.
 
 @[https://square.github.io/okhttp/]
 
@@ -2931,30 +2935,10 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
     return res.body().string();
   }
 
-- "efficient by default".
-
-- HTTP/2 support allows all requests to the same host to share a socket.
-- Connection pooling reduces request latency (if HTTP/2 isn't available).
-- Transparent GZIP shrinks download sizes.
-- Response caching avoids the network completely for repeat requests.
-
-- OkHttp perseveres when the network is troublesome: it will silently recover
-  from common connection problems.
-  If target service has multiple IP addresses OkHttp will attempt alternate
-  addresses if the first connect fails .
-  This is necessary for IPv4+IPv6 and for services hosted in redundant data centers .
-
-   OkHttp supports modern TLS features (TLS 1.3, ALPN, certificate pinning). It
-  can be configured to fall back for broad connectivity.
-
-- request/response API is designed with  fluent builders and immutability
--.synch/sync+callback API.
-
 - Ex: Balancing connections with OKHttp:
   https://medium.com/wandera-engineering/kubernetes-network-load-balancing-using-okhttp-client-54a2db8fc668
 
-- Recipes: https://square.github.io/okhttp/recipes/
-[[}]]
+[[io.HTTP.OkHTTP}]]
 
 ● okIO [[{async/reactive.io.network,qa]]
 ● complements java.nio
@@ -3963,4 +3947,146 @@ $ $ cat module-info.java
        which is a replacement for three flags: -source, -target and
        -bootclasspath.                                                        [[}]]
 [[}]]
+
+
+NON-Classified/TODO [[{01_PM.TODO]]
+
+• java_lang.101,java_lang.functional:  [[{JAVA_LANG.FUNCTIONAL]]
+  Collectors (1.8+)
+[[}]]
+
+• Modern functional programming in Java:  [[{JAVA_LANG.FUNCTIONAL.01_PM.TODO.NOW]]
+@[https://dzone.com/articles/introduction-to-pragmatic-functional-java]
+
+• Monads in Java [[{java_lang.functional,java_lang.101,01_PM.TODO]]
+@[https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394]
+- two of the most commonly known Java 8 features are monad
+  implementations, namely Stream and Optional
+- Monad is a concept:  we can view it as a wrapper which puts our
+  value in some context and allows us to perform operations on the
+  value. In this context, the output of an operation at any step is the
+  input to the operation at the next step.
+[[}]]
+
+
+[[}]]
+
+• Resilience4j [[{architecture.distributed,JAVA_LANG.FUNCTIONAL,qa.error_control,01_PM.TODO]]
+- higher-order functions (decorators) to enhance any functional interface,
+  lambda expression or method reference with a Circuit Breaker, Rate
+  Limiter, Retry or Bulkhead.
+• more than one decorator on any functional interface, lambda or method ref
+  can be stacked.
+[[}]]
+
+• SummaryStatistics(1.8+) [[{java_lang.functional,01_PM.TODO]]
+- Three of the new classes introduced in JDK 8 are
+  DoubleSummaryStatistics, IntSummaryStatistics,
+  andLongSummaryStatistics of the java.util package. These classes make
+  quick and easy work of calculating total number of elements, minimum
+  value of elements, maximum value of elements, average value of
+  elements, and the sum of elements in a collection of doubles,
+  integers, or longs. Each class's class-level Javadoc documentation
+  begins with the same single sentence that succinctly articulates
+  this, describing each as "A state object for collecting statistics
+  such as count, min, max, sum, and average."
+[[}]]
+
+• Create zipped summary of java.util.concurrent:  [[{concurrency.101,01_PM.TODO]]
+
+  - Inmmutable Objects are faster and thread-safe:
+   https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html
+
+  - Concurrency Classes Video
+@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4]
+
+  - java.util.concurrent.locks.ReentrantLock vs synchronized { ... } block
+
+  - example stack trace (extracted from Vert.X):
+    at jdk.internal.misc.Unsafe.park(Native Method)
+    at java.util.concurrent.locks.LockSupport.park
+    at java.util.concurrent.LinkedTransferQueue.awaitMatch
+    at java.util.concurrent.LinkedTransferQueue.xfer
+    at java.util.concurrent.LinkedTransferQueue.take
+    at java.util.concurrent.ThreadPoolExecutor.getTask
+    at java.util.concurrent.ThreadPoolExecutor.runWorker
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run
+[[}]]
+
+• BascomTask Lib: Complement to 'CompletableFutures' [[{async/reactive.101,01_PM.TODO.NOW]]
+  https://dzone.com/articles/lightweight-parallel-tasks-in-java-microservices
+  - lightweight task-orchestration library providing frictionless thread-level
+    parallelization.
+  - by design, use is very close to pure Java code, including use of
+  CompletableFutures (where they can be used effectively), but without
+  having to rely solely on them for task-level organization of a
+  codebase.
+   BascomTask aims to compliment rather than replace 'CompletableFutures'
+  and freely integrates with them.
+[[}]]
+
+• Amdahl's law [[{concurrency.101,01_PM.TODO]]
+- Amdahl's law provides a formula to compute the theoretical maximum
+  speed up by providing multiple processors to an application like:
+  S(n) = 1 / (B + (1-B)/n)  : n == number-of-processors
+                              B == fraction of non-paralellizable code
+
+  S(n) ~  1 / B when big 'n' <·· maximum speedup is reciprocal to
+                                 fraction of non-paralellizable code
+[[}]]
+
+● Sub-processes [[{concurrency.101,01_PM.TODO,01_PM.low_cost]]
+- Concurrency can be greately simplified by using OS processes
+  (vs in-process threads).  This automatically avoid many/most of the problems
+  with thread concurrency.
+- When context switching among OS process is not an issue multi-process
+  architecture is a safer, easier and faster (fewer locks) approach.
+  Note for example how all modern web browser have switched to a
+  multi-process (one per-tab) approach to gain estability and safety.
+
+- Invoquing sub-processes from java, curl example:
+  https://www.baeldung.com/java-curl
+[[}]]
+
+● jLine [[{java_lang.repl,java_lang.101,01_PM.low_code,01_PM.TODO]]
+jLine: GNU/readline alike library for JAVA:
+@[https://github.com/jline/jline3]
+- Builtin support for console variables, scripts, custom pipes, widgets and object printing.
+- Autosuggestions
+- Language REPL Support
+──────────────────────────────────────────────
+● PicoCli
+@[https://github.com/remkop/picocli]
+@[https://picocli.info/]
+  Picocli is a one-file framework for creating Java user-friendly
+ (autocompletion, subcommands, ...)  command line  , GraalVM-enabled
+  applications with almost zero code. It supports a variety of command
+  line syntax styles including POSIX, GNU, MS-DOS and more. It
+  generates highly customizable usage help messages that use ANSI
+  colors and styles to contrast important elements and reduce the
+  cognitive load on the user.
+  - 1 source file so apps can include as source and avoid adding a dependency!!!
+──────────────────────────────────────────────
+● Clig.Dev
+@[https://clig.dev/]
+· Command Line Interface Guidelines
+  · An open-source guide to help you write better command-line
+    programs, taking traditional UNIX principles and updating them for
+    the modern day.
+    · ...
+    · Use a command-line argument parsing library where you can. Either
+       your language’s built-in one, or a good third-party one. They will
+       normally handle arguments, flag parsing, help text, and even spelling
+       suggestions in a sensible way.
+
+· Note: Alternatives in other languajes:
+  · Go: Cobra, cli
+  · Node: oclif
+  · Python: Click, Typer
+  · Ruby: TTY
+  · Rust: clap, structopt
+  · PHP: console
+[[}]]
+
+[[01_PM.TODO}]]
 

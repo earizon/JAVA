@@ -46,11 +46,11 @@
                                                       ┌>1┃Plugin┃ packaging way to distribute
                                                       v           standard,community&custom tasks.
   ┃ Settings        ┃                                 1
-  ┃(settings.gradle)┃ ┌···>1┃ProjectDescriptor┃   ┌·>0+┃Task┃(Task==Unit of work!)
-    ^           ◆     v      └───┬──1────────┘    ·  ┌───┴────────────────────────┐
-    │           │     1          ·  ^             ·   Inputs  : Optional (values,files/dirs)
-    │           └>1+┃Project┃    ·  └>1+┃Build┃1<·┘  Actions : Optional (compile, cp, ... )
-  ┌─┴──────────────────────────┐ ·   (build.gradle) Outputs : Optional (files/dirs)
+  ┃(settings.gradle)┃ ┌···>1┃ProjectDescriptor┃   ┌·>0+┃Task┃(Task==Unit of work!) N <···········> 1┃Plugin┃
+    ^           ◆     v      └───┬──1────────┘    ·  ┌───┴────────────────────────┐              ┌────┴───────────────────┐
+    │           │     1          ·  ^             ·   Inputs  : Optional (values,files/dirs)     Java/Android/C++/... plugins
+    │           └>1+┃Project┃    ·  └>1+┃Build┃1<·┘  Actions : Optional (compile, cp, ... )      "feed" gradle with Task-types
+  ┌─┴──────────────────────────┐ ·   (build.gradle) Outputs : Optional (files/dirs)              for projects of different nature.
   + root-project always present  ·         ^        *action customization:
   + Other projects can be added  ·         ·         Task.doLast  {}
     in hierarchy of build deps.  ·         ·         Task.doFirst {}
@@ -159,7 +159,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   │ · }    compileOnly    : used only at compile time (eg. transpiler).
   │ └····· implementation : dep. used for compilation and runtime
   │                         (most dependencies fall in this category).
-  │                         (supersedes 'compile' that failed to distinguish
+  │                         (supersedes deprecated 'compile' that failed to distinguish
   │                          among deps. impacting the public API of a Java lib)
   │        runtimeOnly    : (supersedes runtime), used only at runtime (vs compilation)
   │                         (e.g.: JDBC drivers needed only at runtime)
@@ -567,3 +567,32 @@ compile the consumer and have task to create the POM file.
   https://docs.gradle.org/current/userguide/composite_builds.html#composite_builds
   https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:maven_local
 [[devops.gradle}]]
+
+● Dependencies among (multimodule) Subprojects
+  https://docs.gradle.org/current/userguide/declaring_dependencies_between_subprojects.html
+
+  • buildSrc/
+  ├ settings.gradle <··· + include 'api', 'shared', 'services:person-service'
+  │
+  ├ shared
+  │ ├── src
+  │ │   └──...
+  │ └── build.gradle
+  ├ api
+  │ ├ src
+  │ │ └──...
+  │ └ build.gradle
+  │   ^^^^^^^^^^^^        ┌─··············  special form of execution dependency causing
+  │ + dependencies {   ┌──┴──┐              the other project to be built first and adding
+  │ +   implementation project(':shared')   the jar to the classpath.
+  │ + }                                     $ gradle :api:compile # build "shared" then "api"
+  │
+  ├ services
+  │ └─ person-service    <·· has dependency on shared,api
+  │    ├─ build.gradle
+  │    .. ^^^^^^^^^^^^
+  │     + dependencies {
+  │     +   implementation project(':shared')
+  │     +   implementation project(':api')
+  │     + }
+

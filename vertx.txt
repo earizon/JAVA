@@ -397,12 +397,12 @@ $ mvn clean package
 $ java -jar target/project01-SNAPSHOT-fat.jar
 [[}]]
 
-● VertX Continuation [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend,01_PM.TODO]]
-• VertX (TODO)
-• RxJava Integration:
+Non-Classified / TODO [[{01_PM.TODO]]
+• RxJava Integration: [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend]]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
-  <!-- Refactoring some code to use reactive programming with the
-        popular RxJava library and its Vert.x integration -->
+  Refactoring some code to use reactive programming with the
+  popular RxJava library and its Vert.x integration.
+ [[}]
 
 • Vertx+k8s:
 @[http://escoffier.me/vertx-kubernetes/]
@@ -440,7 +440,69 @@ $ java -jar target/project01-SNAPSHOT-fat.jar
 
 • What's new Vert.X 4.0: (2020-12-09):
 @[https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes]
+
+
+• https://github.com/vert-x3/vertx-4-migration-guide
+
+● Vert.x 3.9 Fluent API Query [[{vertx,01_PM.TODO]]
+https://developers.redhat.com/blog/2020/05/25/red-hat-build-of-eclipse-vert-x-3-9-brings-fluent-api-query/
+Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
 [[}]]
+
+● OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
+                               [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
+@[https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx]
+- "Contract Driven Development" (or API Design First approach) is a methodology
+  that uses declarative API Contracts to enable developers to efficiently design,
+  communicate, and evolve their HTTP APIs, while automating API implementation
+  phases where possible.
+[[}]]
+
+• Microsoft Open-Sources GCToolkit to Tap into JVM GC Logs  [[{]]
+  https://www.infoq.com/news/2021/09/msft-opensourced-gctoolkit/
+
+Besides the API, there are two other modules: the parser and the
+Vert.x module. The parser module is based on a collection of regular
+expressions and code written over many years to be considered the
+most robust GC log parser available. The Vert.x-based messaging
+backend makes use of two message buses: the first one streams data
+from a data source. The current implementation streams log lines from
+the GC log file. The consumers of this bus are the parsers that
+convert the data from the data source into events that represent
+either a GC cycle or safe point. These events are published on the
+second message bus: the event bus. Subscribers on the event bus are
+then able to be notified and to process events that are of interest
+to them.
+
+More importantly, it has long been known that a suboptimal
+configuration collector will result in an application requiring more
+CPU and memory, while at the same time, degrading the end user’s
+experience. In other words, poorly tuned often equates to a more
+expensive runtime and unhappy users. The challenge is that to
+optimally tune the GC, one needs to create a delicate balance between
+several concerns all of which are not easily seen without the
+assistance of tooling. GCToolKit has been helpful in making this
+easier. [[}]]
+
+
+● Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO.NOW]]
+• Reactive isn't Complicated with Vert.x and the new Mutiny APIs
+@[https://www.youtube.com/watch?v=3tdU5WRvuuo]
+[[}]]
+
+• @[https://quarkus.io/guides/using-vertx.html]
+
+• Reactive Spring with Vert.x
+@[https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/]
+- Reactive Spring Boot programming with Vert.x
+  The latest bundle of Red Hat supported Spring Boot starters was recently
+  released. In addition to supporting the popular Red Hat products for our Spring
+  Boot customers, the Red Hat Spring Boot team was also busy creating new ones.
+  The most recent technical preview added is a group of Eclipse Vert.x Spring
+  Boot starters, which provide a Spring-native vocabulary for the popular JVM
+  reactive toolkit.
+
+[[01_PM.TODO}]]
 
 
 [[vertx}]]

@@ -1,15 +1,4 @@
 [[{java,01_PM.TODO]]
-•  Spring SecurityContext* [[{]]
-https://www.javacodegeeks.com/spring-interview-questions-and-answers.html
-https://www.javacodegeeks.com/java-interview-questions.html
-https://www.javacodegeeks.com/2014/11/multithreading-concurrency-interview-questions-answers.html
-https://www.javacodegeeks.com/2013/02/40-java-collections-interview-questions-and-answers.html
-https://www.javacodegeeks.com/spring-batch-tutorial.html
-https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boot,cli:
-[[}]]
-
-• Sprint Tools 4 (Integration with Visual Studio Code, Eclipse, Theia IDE)
-  https://spring.io/tools/
 
 • [[{]]
   @[https://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/]
@@ -23,21 +12,9 @@ https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boo
   @[https://www.programcreek.com/2013/08/top-books-for-advanced-level-java-developers/]
 [[}]]
 
-• Spring Cloud Function promotes the implementation of business [[{]]
-  logic via functions based on the standard interfaces introduced by Java   :
-  Supplier: A supplier is a function with only output, no input.
-            It’s also known as a 'producer', 'publisher' or 'source'.
-  Function :A function has both input and output.
-            It’s also known as a processor.
-  Consumer. A consumer is a function with input but no output.
-            It’s also known as a 'subscriber' or 'sink'
-[[}]]
-
-• https://hantsy.github.io/spring-r2dbc-sample/auditing.html
 
 • https://blog.frankel.ch/jvm-security/4/ [[{jvm,security}]]
 
-• https://github.com/vert-x3/vertx-4-migration-guide
 
 • SPARTA (anti-malware)
   - Aimed at preventing malware from appearing in an app store.
@@ -47,14 +24,8 @@ https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boo
     The paper "Collaborative verification of information flow for a
     high-assurance app store" appeared in CCS 2014.
 
-• java_lang.101,java_lang.functional:
-  Collectors (1.8+)
-
 • Java 9 to 13 in a Nutshell!!!: @ma
   https://bentolor.github.io/java9to13/#/_preview_features_preview_12
-
-• "The Netflix Domain Graph Service framework - OSS GraphQL for Spring Boot by Paul Bakker"
-  https://youtu.be/WfK44fDuijI
 
 • Guava Collections [[{data_structures,qa.data]]
 - Widely used Google Core Libraries for Java 6+.
@@ -105,37 +76,6 @@ https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boo
 • Scala 3 Overhauls Language for Better Developer Experience
   https://www.infoq.com/news/2021/06/scala-3-overhaul/
 
-• Microsoft Open-Sources GCToolkit to Tap into JVM GC Logs  [[{]]
-  https://www.infoq.com/news/2021/09/msft-opensourced-gctoolkit/
-
-Besides the API, there are two other modules: the parser and the
-Vert.x module. The parser module is based on a collection of regular
-expressions and code written over many years to be considered the
-most robust GC log parser available. The Vert.x-based messaging
-backend makes use of two message buses: the first one streams data
-from a data source. The current implementation streams log lines from
-the GC log file. The consumers of this bus are the parsers that
-convert the data from the data source into events that represent
-either a GC cycle or safe point. These events are published on the
-second message bus: the event bus. Subscribers on the event bus are
-then able to be notified and to process events that are of interest
-to them.
-
-More importantly, it has long been known that a suboptimal
-configuration collector will result in an application requiring more
-CPU and memory, while at the same time, degrading the end user’s
-experience. In other words, poorly tuned often equates to a more
-expensive runtime and unhappy users. The challenge is that to
-optimally tune the GC, one needs to create a delicate balance between
-several concerns all of which are not easily seen without the
-assistance of tooling. GCToolKit has been helpful in making this
-easier. [[}]]
-
-• VMware Overhauls Spring 6 & Spring Boot 3 for Another Decade  @ma
-  https://www.infoq.com/news/2021/09/spring-6-spring-boot-3-overhaul/
-
-• java.util.concurrent.locks.ReentrantLock vs synchronized { ... } block  [[{concurrency.101]]
-
  1) Another significant difference between ReentrantLock and the
 synchronized keyword is fairness. The synchronized keyword doesn't
 support fairness. Any thread can acquire lock once released, no
@@ -158,9 +98,6 @@ and there was no way to control that. ReentrantLock provides a method
 called lockInterruptibly(), which can be used to interrupt thread
 when it is waiting for lock. Similarly, tryLock() with timeout can be
 used to timeout if the lock is not available in certain time period. [[}]]
-
-• Modern functional programming in Java:  ¡¡¡@ma!!!
-@[https://dzone.com/articles/introduction-to-pragmatic-functional-java]
 
 • JAVA DONT's:
   https://dzone.com/articles/we-should-write-java-code-differently?edition=598293#
@@ -315,8 +252,6 @@ CONFIG_SECCOMP=y
 
 • cache2k - Java Caching –https://cache2k.org/
 
-• Java: Spring Boot 2.7.0 Released With Support for GraphQL, Podman and Cache2k
-  https://www.infoq.com/news/2022/06/spring-boot-2-7/
 • Java 18
   https://www.infoq.com/news/2022/03/java18-released/
 • Failsafe 3.2 Released with New Resilience Policies
@@ -325,9 +260,6 @@ CONFIG_SECCOMP=y
 • 101: Six Features From Java 12 to 17 to Get Excited About!
   https://www.infoq.com/articles/six-features-jdk12-to-jdk17/
 
-• Java: Spring Boot 2.6 Improves Docker Images and Metrics, Version 2.4 Is EOL
-  https://www.infoq.com/news/2021/12/spring-boot-2-6/
-
 • log4j, Log4Shell: A new fix, details of active attacks, and risk mitigation recommendations
   https://www.helpnetsecurity.com/2021/12/15/log4shell-mitigation/
 
@@ -335,8 +267,6 @@ CONFIG_SECCOMP=y
   https://developers.redhat.com/e-books
 • Introducing the KivaKit Framework
   https://www.infoq.com/articles/introducing-kivakit/
-• Extending Swagger and Spring Doc Open API
-  https://dzone.com/articles/extending-swagger-and-spring-doc-open-api?edition=699391 
 
 • concurrency, 101? Measuring ForkJoinPool Parallelism
   https://www.javaspecialists.eu/archive/Issue297-Measuring-ForkJoinPool-Parallelism.html
@@ -399,8 +329,7 @@ under development
 Eclipse Jifa’s heap dump analysis, based on Eclipse MAT, provides
 detailed documentation about analyzing heap dumps
 
-Vue 2.0 and Vert.x are used for the frontend and backend,
-respectively.
+Vue 2.0 and Vert.x are used for the frontend and backend, respectively.
 
 There are several ways to deploy Eclipse Jifa: only one worker, one
 master and several workers or the Kubernetes model.
@@ -425,14 +354,6 @@ https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214
   faster.
 https://www.baeldung.com/java-weekly-425
 
-• Spring for GraphQL Version 1.0 Released
-  https://www.infoq.com/news/2022/06/spring-graphql/ 
-  Still in its infancy, Spring for GraphQL will most likely evolve with
-  new features and bug fixes, and could become an alternative to the
-  popular DGS framework, developed at Netflix in the last three years.
-
-• Java, Introduction To Pragmatic Functional Java - DZone Java
-  https://dzone.com/articles/introduction-to-pragmatic-functional-java?edition=699391
 
 • Java, quarkus + neo4j,...:
   https://www.infoq.com/news/2021/10/java-news-roundup-oct04-2021/
@@ -454,19 +375,6 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 • JAVA JDK version, JVM version, javac -source/-target/-release/ ... related info: [[{java,01_PM.TODO}]]
   https://stackoverflow.com/questions/43102787/what-is-the-release-flag-in-the-java-9-compiler
 
-• java.util.concurrent [[{concurrency.101,01_PM.TODO]]
-• TODO: Create package summary
-  example stack trace extracted from Vert.X :
-  at jdk.internal.misc.Unsafe.park(Native Method)
-  at java.util.concurrent.locks.LockSupport.park
-  at java.util.concurrent.LinkedTransferQueue.awaitMatch
-  at java.util.concurrent.LinkedTransferQueue.xfer
-  at java.util.concurrent.LinkedTransferQueue.take
-  at java.util.concurrent.ThreadPoolExecutor.getTask
-  at java.util.concurrent.ThreadPoolExecutor.runWorker
-  at java.util.concurrent.ThreadPoolExecutor$Worker.run
-[[}]]
-
 ● JVM Journey to Cloud-native [[{cloud.101,01_PM.TODO]]
 (by BellSoft)
 • JDK 9 : Compact Strings
@@ -485,75 +393,13 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 
 [[}]]
 
-● Monads in Java [[{java_lang.functional,java_lang.101,01_PM.TODO]]
-@[https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394]
-• two of the most commonly known Java 8 features are monad
-  implementations, namely Stream and Optional
-• Monad is a concept:  we can view it as a wrapper which puts our
-  value in some context and allows us to perform operations on the
-  value. In this context, the output of an operation at any step is the
-  input to the operation at the next step.
-[[}]]
-● Simplifying Async code [[{async/reactive.101,01_PM.TODO]]
-• Simplifying Async/CompletableFuture code with BascomTask @ma
-  https://dzone.com/articles/lightweight-parallel-tasks-in-java-microservices
-  BascomTask is a lightweight task orchestration library that provides
-  thread-level parallelization in a way that is as frictionless as
-  possible. This means that, by design, using BascomTask is very close
-  to pure Java code in both usage and performance, including use of
-  CompletableFutures where they can be used effectively, but without
-  having to rely solely on them for task-level organization of a
-  codebase. BascomTask aims to compliment rather than replace
-  CompletableFutures and freely integrates with them.
-[[}]]
-
 ● JPA Summary [[{01_PM.TODO]]
 • Java: Migrating from JPA 2.x to 3.0
   https://thorben-janssen.com/migrating-jpa-2-x-to-3-0/?ck_subscriber_id=935368299
 • https://www.javacodegeeks.com/2015/02/jpa-tutorial.html
-• JAVA, Soft Arch: REST Query Language with Spring Data JPA and Querydsl
-  " The Holy Grail - a REST Query Language"
-  https://www.baeldung.com/rest-api-search-language-spring-data-querydsl
 [[}]]
 
-● Amdahl's law [[{concurrency.101,01_PM.TODO]]
-• Amdahl's law provides a formula to compute the theoretical maximum
-  speed up by providing multiple processors to an application.
-• theoretical speedup is computed by S(n) = 1 / (B + (1-B)/n) where n
-  denotes the number of processors and B the fraction of the program
-  that cannot be executed in parallel. When n converges against
-  infinity, the term (1-B)/n converges against zero. Hence the formula
-  can be reduced in this special case to 1/B. As we can see, the
-  theoretical maximum speedup behaves reciprocal to the fraction that
-  has to be executed serially. This means the lower this fraction is,
-  the more theoretical speedup can be achieved.
-[[}]]
 
-● Sub-processes [[{concurrency.101,01_PM.TODO]]
-• Concurrency can be greately simplified by using OS processes
-  (vs in-process threads).  This automatically avoid many/most of the problems
-  with thread concurrency.
-• When context switching among OS process is not an issue multi-process
-  architecture is a safer and easier approach.
-  Note for example how all modern web browser have switched to a
-  multi-process (one per-tab) approach to gain estability and safety.
-
-• Invoquing sub-processes from java, curl example:
-  https://www.baeldung.com/java-curl
-[[}]]
-
-● Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO]]
-• Reactive isn't Complicated with Vert.x and the new Mutiny APIs
-@[https://www.youtube.com/watch?v=3tdU5WRvuuo]
-[[}]]
-
-● Resilience4j [[{architecture.distributed,qa.error_control,01_PM.TODO]]
-• higher-order functions (decorators) to enhance any functional interface,
-  lambda expression or method reference with a Circuit Breaker, Rate
-  Limiter, Retry or Bulkhead.
-• more than one decorator on any functional interface, lambda or method ref
-  can be stacked.
-[[}]]
 ● JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
 • JDeps: dependency analysis tool for Java bytecode (class files and JARs).
 @[https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/]
@@ -614,24 +460,13 @@ Ex Ussage:
      --enable-https \
      --enable-http
 [[}]]
-● Spring GraalVM issues [[{spring,jvm.graalvm,01_PM.backlog]]
-REF:
-@[https://github.com/spring-projects/spring-framework/wiki/GraalVM-native-image-support]
-Working toward GraalVM native image support without requiring additional
-configuration or workaround is one of the themes of upcoming Spring Framework
-5.3. The main missing piece for considering GraalVM as a suitable deployment
-target for Spring applications is providing custom GraalVM Feature
-implementation at Spring Framework level to automatically register classes
-used in the dependency mechanism or Spring factories, see the related issue #
-22968 for more details.
-[[}]]
+
 
 
 ● Quarkus (GraalVM) Framework [[{jvm.graalvm,cloud.k8s,scalability.jvm,01_PM.TODO]]
 @[https://quarkus.io/guides/]
 @[https://quarkus.io/guides/kogito-guide]
 @[https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle]
-@[https://quarkus.io/guides/using-vertx.html]
 ..
 @[https://www.infoq.com/news/2019/03/redhat-release-quarkus]
 
@@ -662,40 +497,6 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   }
 [[}]]
 
-● JobRunr [[{architecture.batch,02_doc_has.comparative,01_PM.TODO]]
-@[https://www.infoq.com/news/2021/09/jobrunr-4-released/]
-• JobRunr 4.0 Delivers Improved Integration with Spring Starter, Quarkus and Micronaut.
-
-• Spring Batch or Quartz frameworks force to implement custom interfaces and
-  they add a lot of overhead whereas I just want to run some long-running
-  tasks in the background. JobRunr solves all of this by just
-  accepting any Java 8 lambda, analyzing it and storing the job
-  information in a SQL or NoSQL database. You can schedule these jobs
-  to be executed as soon as possible, somewhere in the future or in a
-  recurring manner using Cron expressions.
-
-• Dehuysser: I would like to highlight three things:
-  • JobRunr does some magic with ASM (which is also used by Spring,
-    Hibernate and a lot of other frameworks) to analyze the job lambda.
-    By using ASM, I really learned a lot about the JVM bytecode, which is
-    not as difficult as I imagined.
-  • As JobRunr performs bytecode analysis, it also participates in
-    the Oracle Quality Outreach program. This means JobRunr is tested
-    against upcoming releases of the JVM. This helps me to make sure that
-    it will continue working on newer Java releases and also helps the
-    Java community as bugs in the JVM itself are caught earlier.
-  • For users that need support or extra features, there is also JobRunr Pro.
-    Adding extra features like queues with different priorities (high priority
-    jobs get processed before low priority jobs), job chaining, atomic batches
-    and a better dashboard which adds search capabilities.
-[[}]]
-
-● OWASP (maven) Plugin <!-- @ma --> [[{security.101,security.owasp,devops.maven,01_PM.TODO]]
-@[https://maven.apache.org/plugins/]
-• OWASP Dependency-Check identifies project dependencies and checks
-  if there are any known, publicly disclosed, vulnerabilities.
-@[https://www.owasp.org/index.php/OWASP_Dependency_Check]
-[[}]]
 ● AsyncAPI.org [[{async/reactive.101,standards.openapi,qa.*,01_PM.TODO]]
 @[https://www.asyncapi.org/]
 - Building the future of event-driven architectures.
@@ -712,9 +513,6 @@ $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to
 $ $ jarsigner -verify file01.jar           ← Verify jar
 [[}]]
 
-
-
-● Non Classified/BackLog:
 ● Guava VisibleForTesting[qa] [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
 [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
 REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-method-public-only-for-test-classes]
@@ -827,10 +625,6 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
       that can be leveraged system-wide.
 [[}]]
 
-● Concurrency Classes Video [[{concurrency.101,01_PM.TODO]]
-@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4]
-[[}]]
-
 ● JavaPoet [[{java_lang,01_PM.TODO]]
 @[https://github.com/square/javapoet]
 - Library/API for generating .java source files.
@@ -887,50 +681,13 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 @[https://blog.idrsolutions.com/2014/06/java-performance-tuning-tools/]
 [[}]]
 
-● jLine [[{java_lang.repl,java_lang.101,01_PM.low_code,01_PM.TODO]]
-jLine: GNU/readline alike library for JAVA:
-@[https://github.com/jline/jline3]
-- Builtin support for console variables, scripts, custom pipes, widgets and object printing.
-- Autosuggestions
-- Language REPL Support
-──────────────────────────────────────────────
-● PicoCli
-@[https://github.com/remkop/picocli]
-@[https://picocli.info/]
-  Picocli is a one-file framework for creating Java user-friendly
- (autocompletion, subcommands, ...)  command line  , GraalVM-enabled
-  applications with almost zero code. It supports a variety of command
-  line syntax styles including POSIX, GNU, MS-DOS and more. It
-  generates highly customizable usage help messages that use ANSI
-  colors and styles to contrast important elements and reduce the
-  cognitive load on the user.
-  - 1 source file so apps can include as source and avoid adding a dependency!!!
-
-──────────────────────────────────────────────
-● Clig.Dev
-@[https://clig.dev/]
-· Command Line Interface Guidelines
-  · An open-source guide to help you write better command-line
-    programs, taking traditional UNIX principles and updating them for
-    the modern day.
-    · ...
-    · Use a command-line argument parsing library where you can. Either
-       your language’s built-in one, or a good third-party one. They will
-       normally handle arguments, flag parsing, help text, and even spelling
-       suggestions in a sensible way.
-
-· Note: Alternatives in other languajes:
-  · Go: Cobra, cli
-  · Node: oclif
-  · Python: Click, Typer
-  · Ruby: TTY
-  · Rust: clap, structopt
-  · PHP: console
-[[}]]
-
 ● A Year with Java 11 in Production!  [[{01_PM.TODO]]
 @[https://www.infoq.com/presentations/java-11-production-story/?itm_source=www.oficina24x7.com]
-Andrzej Grzesik talks about Revolut’s experience in running Java 11 in production for over a year. He talks about the doubts they had, some pain points and gains, as well as surprises that surprised them. He discusses tools, alternative JVM languages, and some 3rd party products.
+Andrzej Grzesik talks about Revolut’s experience in running Java 11
+in production for over a year. He talks about the doubts they had,
+some pain points and gains, as well as surprises that surprised them.
+He discusses tools, alternative JVM languages, and some 3rd party
+products.
 [[}]]
 
 ● Aviam:Light Weight JVM [[{jvm,01_PM.TODO]]
@@ -1004,10 +761,6 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 [[}]]
 
 
-
-● Inmmutable Objects are faster [[{java_lang.101,qa,01_PM.TODO]]
-https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html
-[[}]]
 
 ● Netty [[{async/reactive.io.network,02_doc_has.comparative,01_PM.radar,01_PM.backlog]]
 - One Framework to rule them all by Norman Maurer
@@ -1153,16 +906,6 @@ is.close();
      and fancy Java 8 features.
      - If you are going to use Spring 5, Reactor might be the better option.
      - But if you are happy with your RxJava2, there is no direct need to migrate to Reactor."""
-<hr/>
-● Reactive Spring with Vert.x
-@[https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/]
-- Reactive Spring Boot programming with Vert.x
-  The latest bundle of Red Hat supported Spring Boot starters was recently
-  released. In addition to supporting the popular Red Hat products for our Spring
-  Boot customers, the Red Hat Spring Boot team was also busy creating new ones.
-  The most recent technical preview added is a group of Eclipse Vert.x Spring
-  Boot starters, which provide a Spring-native vocabulary for the popular JVM
-  reactive toolkit.
 
 [[}]]
 
@@ -1221,11 +964,6 @@ https://www.infoq.com/news/2020/04/maven-wrapper/
 <hr/>
 ● Java on VC.Studio
 https://devblogs.microsoft.com/java/java-on-visual-studio-code-update-february-2020/?WT.mc_id=social-reddit-marouill
-[[}]]
-
-● Vert.x 3.9 Fluent API Query [[{vertx,01_PM.TODO]]
-https://developers.redhat.com/blog/2020/05/25/red-hat-build-of-eclipse-vert-x-3-9-brings-fluent-api-query/
-Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
 [[}]]
 
 ● JHSDB [[{java_lang.debugging,monitoring.forensic,01_PM.TODO]]
@@ -1333,19 +1071,6 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
   changes to deprecation.
 [[}]]
 
-● SummaryStatistics(1.8+) [[{java_lang.functional,01_PM.TODO]]
-- Three of the new classes introduced in JDK 8 are
-  DoubleSummaryStatistics, IntSummaryStatistics,
-  andLongSummaryStatistics of the java.util package. These classes make
-  quick and easy work of calculating total number of elements, minimum
-  value of elements, maximum value of elements, average value of
-  elements, and the sum of elements in a collection of doubles,
-  integers, or longs. Each class's class-level Javadoc documentation
-  begins with the same single sentence that succinctly articulates
-  this, describing each as "A state object for collecting statistics
-  such as count, min, max, sum, and average."
-[[}]]
-
 ● Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,cloud.k8s]]
 @[https://developers.redhat.com/blog/2020/07/27/deploy-your-java-web-application-into-the-cloud-using-eclipse-jkube/]
 
@@ -1420,52 +1145,6 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
     $ mvn k8s:log          ← Retrieve app Logs
 [[}]]
 
-[[{]]java_lang.101,java_lang.configuration,01_PM.low_code,01_PM.TODO" bgorange>
-● Running *.java (java 11+)
-@[https://www.infoq.com/articles/single-file-execution-java11/] by Mohamed Taman
-  public class HelloUniverse{
-      public static void main(String[] args){
-        if ( args == null || args.length != 1 ){
-           throw RuntimeException("Name required");
-        }
-        System.out.printf("Hello, %s to InfoQ Universe!! %n", args[0]);
-      }
-  }
-                                    Before Java 11:
-  $ $ javac ./HelloUniverse.java      ← compile (./HelloUniverse.class generated)
-  $ $ java  ./HelloUniverse  arg1     ← start up JVM, load class, execute code
-
-                                    After Java 11 (JEP 330)
-  $ $ java HelloUniverse.java arg1    ← compile, start up JVM, load class, execute code
-                                        (no ./*.class generated on disk)
-                                        Use $ java HelloUniverse.java --source $version
-                                        when .java extension is not available or to
-                                        specify the language version of the source code.
-                                      - By default compiled code is part of an unnamed module.
-                                        Add flag --add-modules=ALL-DEFAULT to have access to
-                                        standard modules in JDK.
-
-
-
-  - Run *.class file         ← Java launcher 1.0+
-  - Run JAR's    main class  ← Java launcher 1.0+
-  - Run Module's main class  ← Java launcher 9+
-  - Run class in source.java ← Java launcher 11+
-
-  - Integrate with UNIX scripting using the old beloved Shebang notation:
-  $ $ cat script.java
-    #!/path/to/java --source $version
-    public class HelloUniverse{
-        public static void main(String[] args){
-          ...
-        }
-    }
-
-<hr/>
-
-<span xsmall bgorange>JBang: Simplified Java
-@[https://www.youtube.com/watch?v=X4x2jM3Y0uE]
-[[}]]
 
 ● Conclave [[{security.secret_mng,01_PM.TODO]]
 https://medium.com/corda/conclave-beta-3-graalvm-mail-more-5038bd6d50da
@@ -1734,7 +1413,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 • Avoid boilerplate while also keeping a  single source of truth .
 [[}]]
 
-● Storing HttpSessions to Redis [[{persistence.session,cache,architecture.distributed]]
+● Storing HttpSessions to Redis [[{persistence.session,scalability.cache,architecture.distributed]]
 @[https://github.com/AmadeusITGroup/HttpSessionReplacer]
 AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
@@ -1902,15 +1581,791 @@ JRuby, Jython, Groovy, Kotlin, Scala, and Java.
 Java code stored in GitHub, AWS CodeCommit, or Bitbucket.
 [[}]]
 
-● OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
-                               [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
-@[https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx]
-- "Contract Driven Development" (or API Design First approach) is a methodology
-  that uses declarative API Contracts to enable developers to efficiently design,
-  communicate, and evolve their HTTP APIs, while automating API implementation
-  phases where possible.
-[[}]]
+● Java, Soft. Arch: E.C.S. Dominon favors composition over inheritance
+https://www.reddit.com/r/java/comments/z5yj0i/dominion_vs_artemis_the_missing_benchmarks_link/
+Entity Component System (ECS) architecture promotes data-oriented
+programming. It’s all about data (components) andfirst-class
+functions (systems) that operate on data.This means that, unlike OOP,
+data and operations are not encapsulated together in objects, which
+are called entities inECS.Entities model the business objects of the
+user application, and the entity promotes “composition over
+inheritance” bygrouping a dynamic list of components to define its
+specific features.
 
+● Spring Batch 5.0GA
+  https://www.reddit.com/r/java/comments/z3vmb2/spring_batch_50_goes_ga/
+
+● What's New in Spring Framework 6.x
+ · spring-projects/spring-framework Wiki · GitHub
+https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-6.x/
+Juergen Hoeller edited this page Nov 11, 2022 · 27 revisions s
+Entire framework codebase based on Java 17 source code level
+now.Migration from javax to jakarta namespace for Servlet, JPA,
+etc.Runtime compatibility with Jakarta EE 9 as well as Jakarta EE 10
+APIs.Compatible with latest web servers: Tomcat 10.1, Jetty 11,
+Undertow 2.3.Early compatibility with virtual threads (in preview as
+of JDK 19).General Core RevisionUpgrade to ASM 9.4 and Kotlin
+1.7.Complete CGLIB fork with support for capturing CGLIB-generated
+classes.Comprehensive foundation for Ahead-Of-Time
+transformations.First-class support for GraalVM native images (see
+related Spring Boot 3 blog post).Core ContainerBasic bean property
+determination without java.beans.Introspector by default.AOT
+processing support in GenericApplicationContext
+(refreshForAotProcessing).Bean definition transformation based on
+pre-resolved constructors and factory methods.Support for early proxy
+class determination for AOP proxies and configuration
+classes.PathMatchingResourcePatternResolver uses NIO and module path
+APIs for scanning, enabling support for classpath scanning within a
+GraalVM native image and within the Java module path,
+respectively.DefaultFormattingConversionService supports ISO-based
+default java.time type parsing.Data Access and TransactionsSupport
+for predetermining JPA managed types (for inclusion in AOT
+processing).JPA support for Hibernate ORM 6.1 (retaining
+compatibility with Hibernate ORM 5.6).Upgrade to R2DBC 1.0 (including
+R2DBC transaction definitions).Removal of JCA CCI support.Spring
+MessagingRSocket interface client based on @RSocketExchange service
+interfaces.Early support for Reactor Netty 2 based on Netty 5
+alpha.Support for Jakarta WebSocket 2.1 and its standard WebSocket
+protocol upgrade mechanism.General Web RevisionHTTP interface client
+based on @HttpExchange service interfaces.Support for RFC 7807
+problem details.Unified HTTP status code handling.Support for Jackson
+2.14.Alignment with Servlet 6.0 (while retaining runtime
+compatibility with Servlet 5.0).Spring MVCPathPatternParser used by
+default (with the ability to opt into PathMatcher).Removal of
+outdated Tiles and FreeMarker JSP support.Spring WebFluxNew PartEvent
+API to stream multipart form uploads (both on client and server).New
+ResponseEntityExceptionHandler to customize WebFlux exceptions and
+render RFC 7807 error responses.Flux return values for non-streaming
+media types (no longer collected to List before written).Early
+support for Reactor Netty 2 based on Netty 5 alpha.JDK HttpClient
+integrated with WebClient.ObservabilityDirect Observability
+instrumentation with Micrometer Observation in several parts of the
+Spring Framework. The spring-web module now requires
+io.micrometer:micrometer-observation:1.10+ as a compile
+dependency.RestTemplate and WebClient are instrumented to produce
+HTTP client request observations.Spring MVC can be instrumented for
+HTTP server observations using the new
+org.springframework.web.filter.ServerHttpObservationFilter.Spring
+WebFlux can be instrumented for HTTP server observations using the
+new
+org.springframework.web.filter.reactive.ServerHttpObservationFilter.In
+tegration with Micrometer Context Propagation for Flux and Mono
+return values from controller methods.TestingSupport for testing
+AOT-processed application contexts on the JVM or within a GraalVM
+native image.Integration with HtmlUnit 2.64+ request parameter
+handling.Servlet mocks (MockHttpServletRequest, MockHttpSession) are
+based on Servlet API 6.0 now.
+
+● https://www.reddit.com/r/java/comments/z1s58l/spring_6_migration_guide/
+
+● Porting Million Lines of Code from Java to Kotlin at Meta
+  https://www.infoq.com/news/2022/11/meta-port-java-kotlin/
+
+● Getting Ready for Spring Framework 6 - Spring Framework Guru
+  https://springframework.guru/getting-ready-for-spring-framework-6/
+
+● BellSoft Introduces Alpaquita Linux
+  https://www.infoq.com/news/2022/10/java-news-roundup-sep26-2022/
+  BellSoft has introduced Alpaquita Linux, an operating system tailored
+  for the Java programming language. Based on Alpine Linux, this new
+  operating system: enables the effective containerization of Java
+  applications developed with Liberica JDK; improves security; contains
+  new features for better performance; and allows developers to take
+  advantage of native image technology through the Liberica Native
+  Image Kit. InfoQ will follow up with a more detailed news story.
+
+● Project Loom: Revolution in Java Concurrency or Obscure Implementation Detail?
+  https://www.infoq.com/presentations/loom-java-concurrency/
+    Project Loom: Revolution in Java Concurrency or Obscure
+  Implementation Details Summary Tomasz Nurkiewicz explores what Loom
+  is, how it's implemented, what problems it solves, its shortcomings,
+  and will it make reactive programming obsolete? Bio Tomasz Nurkiewicz
+  works in the e-commerce sector. Involved in open-source, DZone’s
+  Most Valuable Blogger, used to be very active on StackOverflow.
+  Author, trainer, conference speaker, technical reviewer, runner.
+  Claims that code not tested automatically is not a feature but just a
+  rumor. Wrote a book on RxJava for O’Reilly. About the conference
+  QCon Plus is a virtual conference for senior software engineers and
+  architects that covers the trends, best practices, and solutions
+  leveraged by the world's most innovative software organizations.
+  				INFOQ EVENTS
+
+  	Oct 24-28 (In-Person, San Francisco)
+
+● Nurkiewicz: I'd like to talk about Project Loom, a very new and
+exciting initiative that will land eventually in the Java Virtual
+Machine. Most importantly, I would like to briefly explain whether
+it's going to be a revolution in the way we write concurrent
+software, or maybe it's just some implementation detail that's going
+to be important for framework or library developers, but we won't
+really see it in real life. The first question is, what is Project
+Loom? The question I give you in the subtitle is whether it's going
+to be a revolution or just an obscure implementation detail. My name
+is Tomasz Nurkiewicz.First of all, we would like to understand how we
+can create millions of threads using Project Loom. This is an
+overstatement. In general, this will be possible with Project Loom.
+As you probably know, these days, it's only possible to create
+hundreds, maybe thousands of threads, definitely not millions. This
+is what Project Loom unlocks in the Java Virtual Machine. This is
+mainly possible by allowing you to block and sleep everywhere,
+without paying too much attention to it. Blocking, sleeping, or any
+other locking mechanisms were typically quite expensive, in terms of
+the number of threads we could create. These days, it's probably
+going to be very safe and easy. The last but the most important
+question is, how is it going to impact us developers? Is it actually
+so worthwhile, or maybe it's just something that is buried deeply in
+the virtual machine, and it's not really that much needed?Before we
+actually explain, what is Project Loom, we must understand what is a
+thread in Java? I know it sounds really basic, but it turns out
+there's much more into it. First of all, a thread in Java is called a
+user thread. Essentially, what we do is that we just create an object
+of type thread, we parse in a piece of code. When we start such a
+thread here on line two, this thread will run somewhere in the
+background. The virtual machine will make sure that our current flow
+of execution can continue, but this separate thread actually runs
+somewhere. At this point in time, we have two separate execution
+paths running at the same time, concurrently. The last line is
+joining. It essentially means that we are waiting for this background
+task to finish. This is not typically what we do. Typically, we want
+two things to run concurrently.This is a user thread, but there's
+also the concept of a kernel thread. A kernel thread is something
+that is actually scheduled by your operating system. I will stick to
+Linux, because that's probably what you use in production. With the
+Linux operating system, when you start a kernel thread, it is
+actually the operating system's responsibility to make sure all
+kernel threads can run concurrently, and that they are nicely sharing
+system resources like memory and CPU. For example, when a kernel
+thread runs for too long, it will be preempted so that other threads
+can take over. It more or less voluntarily can give up the CPU and
+other threads may use that CPU. It's much easier when you have
+multiple CPUs, but most of the time, this is almost always the case,
+you will never have as many CPUs as many kernel threads are running.
+There has to be some coordination mechanism. This mechanism happens
+in the operating system level.User threads and kernel threads aren't
+actually the same thing. User threads are created by the JVM every
+time you say newthread.start. Kernel threads are created and managed
+by the kernel. That's obvious. This is not the same thing. In the
+very prehistoric days, in the very beginning of the Java platform,
+there used to be this mechanism called the many-to-one model. In the
+many-to-one model. The JVM was actually creating user threads, so
+every time you set newthread.start, a JVM was creating a new user
+thread. However, these threads, all of them were actually mapped to a
+single kernel thread, meaning that the JVM was only utilizing a
+single thread in your operating system. It was doing all the
+scheduling, so making sure your user threads are effectively using
+the CPU. All of this was done inside the JVM. The JVM from the
+outside was only using a single kernel thread, which means only a
+single CPU. Internally, it was doing all this back and forth
+switching between threads, also known as context switching, it was
+doing it for ourselves.There was also this rather obscure
+many-to-many model, in which case you had multiple user threads,
+typically a smaller number of kernel threads, and the JVM was doing
+mapping between all of these. However, luckily, the Java Virtual
+Machine engineers realized that there's not much point in duplicating
+the scheduling mechanism, because the operating system like Linux
+already has all the facilities to share CPUs and threads with each
+other. They came up with a one-to-one model. With that model, every
+single time you create a user thread in your JVM, it actually creates
+a kernel thread. There is one-to-one mapping, which means
+effectively, if you create 100 threads, in the JVM you create 100
+kernel resources, 100 kernel threads that are managed by the kernel
+itself. This has some other interesting side effects. For example,
+thread priorities in the JVM are effectively ignored, because the
+priorities are actually handled by the operating system, and you
+cannot do much about them.It turns out that user threads are actually
+kernel threads these days. To prove that that's the case, just check,
+for example, jstack utility that shows you the stack trace of your
+JVM. Besides the actual stack, it actually shows quite a few
+interesting properties of your threads. For example, it shows you the
+thread ID and so-called native ID. It turns out, these IDs are
+actually known by the operating system. If you know the operating
+system's utility called top, which is a built in one, it has a switch
+-H. With the H switch, it actually shows individual threads rather
+than processes. This might be a little bit surprising. After all, why
+does this top utility that was supposed to be showing which processes
+are consuming your CPU, why does it have a switch to show you the
+actual threads? It doesn't seem to make much sense.However, it turns
+out, first of all, it's very easy with that tool to show you the
+actual Java threads. Rather than showing a single Java process, you
+see all Java threads in the output. More importantly, you can
+actually see, what is the amount of CPU consumed by each and every of
+these threads? This is useful. Why is that the case? Does it mean
+that Linux has some special support for Java? Definitely not. Because
+it turns out that not only user threads on your JVM are seen as
+kernel threads by your operating system. On newer Java versions, even
+thread names are visible to your Linux operating system. Even more
+interestingly, from the kernel point of view, there is no such thing
+as a thread versus process. Actually, all of these are called tasks.
+This is just a basic unit of scheduling in the operating system. The
+only difference between them is just a single flag, when you're
+creating a thread rather than a process. When you're creating a new
+thread, it shares the same memory with the parent thread. When you're
+creating a new process, it does not. It's just a matter of a single
+bit when choosing between them. From the operating system's
+perspective, every time you create a Java thread, you are creating a
+kernel thread, which is, in some sense you're actually creating a new
+process. This may actually give you some overview like how
+heavyweight Java threads actually are.First of all, they are Kernel
+resources. More importantly, every thread you create in your Java
+Virtual Machine consumes more or less around 1 megabyte of memory,
+and it's outside of heap. No matter how much heap you allocate, you
+have to factor out the extra memory consumed by your threads. This is
+actually a significant cost, every time you create a thread, that's
+why we have thread pools. That's why we were taught not to create too
+many threads on your JVM, because the context switching and memory
+consumption will kill us.This is where Project Loom shines. This is
+still work in progress, so everything can change. I'm just giving you
+a brief overview of how this project looks like. Essentially, the
+goal of the project is to allow creating millions of threads. This is
+an advertising talk, because you probably won't create as many.
+Technically, it is possible, and I can run millions of threads on
+this particular laptop. How is it achieved? First of all, there's
+this concept of a virtual thread. A virtual thread is very
+lightweight, it's cheap, and it's a user thread. By lightweight, I
+mean you can really allocate millions of them without using too much
+memory. There's a virtual thread. Secondly, there's also a carrier
+thread. A carrier thread is the real one, it's the kernel one that's
+actually running your virtual threads. Of course, the bottom line is
+that you can run a lot of virtual threads sharing the same carrier
+thread. In some sense, it's like an implementation of an actor system
+where we have millions of actors using a small pool of threads. All
+of this can be achieved using a so-called continuation. Continuation
+is a programming construct that was put into the JVM, at the very
+heart of the JVM. There are actually similar concepts in different
+languages. Continuation, the software construct is the thing that
+allows multiple virtual threads to seamlessly run on very few carrier
+threads, the ones that are actually operated by your Linux system.I
+will not go into the API too much because it's subject to change. As
+you can see, it's actually fairly simple. You essentially say
+Thread.startVirtualThread, as opposed to new thread or starting a
+platform thread. A platform thread is your old typical user threads,
+that's actually a kernel thread, but we're talking about virtual
+threads here. We can create a thread from scratch. You can create it
+using a builder method, whatever. You can also create a very weird
+ExecutorService. This ExecutorService doesn't actually pull threads.
+Typically, ExecutorService has a pool of threads that can be reused
+in case of new VirtualThreadExecutor, it creates a new virtual thread
+every time you submit a task. It's not really a thread pool, per se.
+You can also create a ThreadFactory if you need it in some API, but
+this ThreadFactory just creates virtual threads. That's very simple
+API.The API is not the important part, I would like you to actually
+understand what happens underneath, and what impact may it have on
+your code bases. A virtual thread is essentially a continuation plus
+scheduler. A scheduler is a pool of physical called carrier threads
+that are running your virtual threads. Typically, a scheduler is just
+a fork join pool with a handful of threads. You don't need more than
+one to four, maybe eight carrier threads, because they use the CPU
+very effectively. Every time a virtual thread no longer needs a CPU,
+it will just give up the scheduler, it will no longer use a thread
+from that scheduler, and another virtual thread will kick in. That's
+the first mechanism. How does the virtual thread and the scheduler
+know that the virtual thread no longer needs a scheduler?This is
+where continuations come into play. This is a fairly convoluted
+explanation. Essentially, a continuation is a piece of code that can
+suspend itself at any moment in time and then it can be resumed later
+on, typically on a different thread. You can freeze your piece of
+code, and then you can unlock it, or you can unhibernate it, you can
+wake it up on a different moment in time, and preferably even on a
+different thread. This is a software construct that's built into the
+JVM, or that will be built into the JVM.Let's look into a very simple
+pseudo-code here. This is a main function that calls foo, then foo
+calls bar. There's nothing really exciting here, except from the fact
+that the foo function is wrapped in a continuation. Wrapping up a
+function in a continuation doesn't really run that function, it just
+wraps a Lambda expression, nothing specific to see here. However, if
+I now run the continuation, so if I call run on that object, I will
+go into foo function, and it will continue running. It runs the first
+line, and then goes to bar method, it goes to bar function, it
+continues running. Then on line 16, something really exciting and
+interesting happens. The function bar voluntarily says it would like
+to suspend itself. The code says that it no longer wishes to run for
+some bizarre reason, it no longer wishes to use the CPU, the carrier
+thread. What happens now is that we jump directly back to line four,
+as if it was an exception of some kind. We jump to line four, we
+continue running. The continuation is suspended. Then we move on, and
+in line five, we run the continuation once again. Will it run the foo
+function once more? Not really, it will jump straight to line 17,
+which essentially means we are continuing from the place we left off.
+This is really surprising. Also, it means we can take any piece of
+code, it could be running a loop, it could be doing some recursive
+function, whatever, and we can all the time and every time we want,
+we can suspend it, and then bring it back to life. This is the
+foundation of Project Loom. Continuations are actually useful, even
+without multi-threading.Continuations that you see in here are
+actually quite common in different languages. You have coroutines or
+goroutines, in languages like Kotlin and Go. You have async/await in
+JavaScript. You have generators in Python, or fibers in Ruby. All of
+these are actually very similar concepts, which are finally brought
+into the JVM. What difference does it make? Let's see how thread
+sleep is implemented. It used to be simply a function that just
+blocks your current thread so that it still exists on your operating
+system. However, it no longer runs, so it will be woken up by your
+operating system. A new version that takes advantage of virtual
+threads, notice that if you're currently running a virtual thread, a
+different piece of code is run.This piece of code is quite
+interesting, because what it does is it calls yield function. It
+suspends itself. It voluntarily says that it no longer wishes to run
+because we asked that thread to sleep. That's interesting. Why is
+that? Before we actually yield, we schedule unparking. Unparking or
+waking up means basically, that we would like ourselves to be woken
+up after a certain period of time. Before we put ourselves to sleep,
+we are scheduling an alarm clock. This scheduling will wake us up. It
+will continue running our thread, it will continue running our
+continuation after a certain time passes by. In between calling the
+sleep function and actually being woken up, our virtual thread no
+longer consumes the CPU. At this point, the carrier thread is free to
+run another virtual thread. Technically, you can have millions of
+virtual threads that are sleeping without really paying that much in
+terms of the memory consumption.This is our Hello World. This is
+overblown, because everyone says millions of threads and I keep
+saying that as well. That's the piece of code that you can run even
+right now. You can download Project Loom with Java 18 or Java 19, if
+you're cutting edge at the moment, and just see how it works. There
+is a count variable. If you put 1 million, it will actually start 1
+million threads, and your laptop will not melt and your system will
+not hang, it will simply just create these millions of threads. As
+you already know, there is no magic here. Because what actually
+happens is that we created 1 million virtual threads, which are not
+kernel threads, so we are not spamming our operating system with
+millions of kernel threads. The only thing these kernel threads are
+doing is actually just scheduling, or going to sleep, but before they
+do it, they schedule themselves to be woken up after a certain time.
+Technically, this particular example could easily be implemented with
+just a scheduled ExecutorService, having a bunch of threads and 1
+million tasks submitted to that executor. There is not much
+difference. As you can see, there is no magic here. It's just that
+the API finally allows us to build in a much different, much easier
+way.Here's another code snippet of the carrier threads. The API may
+change, but the thing I wanted to show you is that every time you
+create a virtual thread, you're actually allowed to define a
+carrierExecutor. In our case, I just create an executor with just one
+thread. Even with just a single thread, single carriers, or single
+kernel thread, you can run millions of threads as long as they don't
+consume the CPU all the time. Because, after all, Project Loom will
+not magically scale your CPU so that it can perform more work. It's
+just a different API, it's just a different way of defining tasks
+that for most of the time are not doing much. They are sleeping
+blocked on a synchronization mechanism, or waiting on I/O. There's no
+magic here. It's just a different way of performing or developing
+software.There's also a different algorithm or a different initiative
+coming as part of Project Loom called structured concurrency. It's
+actually fairly simple. There's not much to say here. Essentially, it
+allows us to create an ExecutorService that waits for all tasks that
+were submitted to it in a try with resources block. This is just a
+minor addition to the API, and it may change.The reason I'm so
+excited about Project Loom is that finally, we do not have to think
+about threads. When you're building a server, when you're building a
+web application, when you're building an IoT device, whatever, you no
+longer have to think about pooling threads, about queues in front of
+a thread pool. At this point, all you have to do is just creating
+threads every single time you want to. It works as long as these
+threads are not doing too much work. Because otherwise, you just need
+more hardware. There's nothing special here. If you have a ton of
+threads that are not doing much, they're just waiting for data to
+arrive, or they are just locked on a synchronization mechanism
+waiting for a semaphore or CountDownLatch, whatever, then Project
+Loom works really well. We no longer have to think about this low
+level abstraction of a thread, we can now simply create a thread
+every time for every time we have a business use case for that. There
+is no leaky abstraction of expensive threads because they are no
+longer expensive. As you can probably tell, it's fairly easy to
+implement an actor system like Akka using virtual threads, because
+essentially what you do is you create a new actor, which is backed by
+a virtual thread. There is no extra level of complexity that arises
+from the fact that a large number of actors has to share a small
+number of threads.A few use cases that are actually insane these
+days, but they will be maybe useful to some people when Project Loom
+arrives. For example, let's say you want to run something after eight
+hours, so you need a very simple scheduling mechanism. Doing it this
+way without Project Loom is actually just crazy. Creating a thread
+and then sleeping for eight hours, because for eight hours, you are
+consuming system resources, essentially for nothing. With Project
+Loom, this may be even a reasonable approach, because a virtual
+thread that sleeps consumes very little resources. You don't pay this
+huge price of scheduling operating system resources and consuming
+operating system's memory.Another use case, let's say you're building
+a massive multiplayer game, or a very highly concurrent server, or a
+chat application like WhatsApp that needs to handle millions of
+connections, there is actually nothing wrong with creating a new
+thread per each player, per each connection, per each message even.
+Of course, there are some limits here, because we still have a
+limited amount of memory and CPU. Anyways, confront that with the
+typical way of building software where you had a limited worker pool
+in a servlet container like Tomcat, and you had to do all these fancy
+algorithms that are sharing this thread pool, and making sure it's
+not exhausted, making sure you're monitoring the queue. Now it's
+easy, every time a new HTTP connection comes in, you just create a
+new virtual thread, as if nothing happens. This is how we were taught
+Java 20 years ago, then we realized it's a poor practice. These days,
+it may actually be a valuable approach again.Another example. Let's
+say we want to download 10,000 images. With Project Loom, we simply
+start 10,000 threads, each thread per each image. That's just it.
+Using the structured concurrency, it's actually fairly simple. Once
+we reach the last line, it will wait for all images to download. This
+is really simple. Once again, confront that with your typical code,
+where you would have to create a thread pool, make sure it's
+fine-tuned. There's a caveat here. Notice that with a traditional
+thread pool, all you had to do was essentially just make sure that
+your thread pool is not too big, like 100 threads, 200 threads, 500,
+whatever. This was the natural limit of concurrency. You cannot
+download more than 100 images at once, if you have just 100 threads
+in your standard thread pool.With this approach with Project Loom,
+notice that I'm actually starting as many concurrent connections, as
+many concurrent virtual threads, as many images there are. I
+personally don't pay that much price for starting these threads
+because all they do is just like being blocked on I/O. In Project
+Loom, every blocking operation, so I/O like network typically, so
+waiting on a synchronization mechanism like semaphores, or sleeping,
+all these blocking operations are actually yielding, which means that
+they are voluntarily giving up a carrier thread. It's absolutely fine
+to start 10,000 concurrent connections, because you won't pay the
+price of 10,000 carrier or kernel threads, because these virtual
+threads will be hibernated anyway. Only when the data arrives, the
+JVM will wake up your virtual thread. In the meantime, you don't pay
+the price. This is pretty cool. However, you just have to be aware of
+the fact that the kernel threads of your thread pools were actually
+just natural like limit to concurrency. Just blindly switching from
+platform threads, the old ones, to virtual threads will change the
+semantics of your application.To make matters even worse, if you
+would like to use Project Loom directly, you will have to relearn all
+these low level structures like CountDownLatch or semaphore to
+actually do some synchronization or to actually do some throttling.
+This is not the path I would like to take. I would definitely like to
+see some high level frameworks that are actually taking advantage of
+Project Loom.Do we have such frameworks and what problems and
+limitations can we reach here? Before we move on to some high level
+constructs, so first of all, if your threads, either platform or
+virtual ones have a very deep stack. This is your typical Spring Boot
+application, or any other framework like Quarkus, or whatever, if you
+put a lot of different technologies like adding security, aspect
+oriented programming, your stack trace will be very deep. With
+platform threads, the size of the stack trace is actually fixed. It's
+like half a megabyte, 1 megabyte, and so on. With virtual threads,
+the stack trace can actually shrink and grow, and that's why virtual
+threads are so inexpensive, especially in Hello World examples, where
+all what they do is just like sleeping most of the time, or
+incrementing a counter, or whatever. In real life, what you will get
+normally is actually, for example, a very deep stack with a lot of
+data. If you suspend such a virtual thread, you do have to keep that
+memory that holds all these stack lines somewhere. The cost of the
+virtual thread will actually approach the cost of the platform
+thread. Because after all, you do have to store the stack trace
+somewhere. Most of the time it's going to be less expensive, you will
+use less memory, but it doesn't mean that you can create millions of
+very complex threads that are doing a lot of work. It's just an
+advertising gimmick. It doesn't hold true for normal workloads. Keep
+that in mind. There's no magic here.Another thing that's not yet
+handled is preemption, when you have a very CPU intensive task. Let's
+say you have 4 CPU cores, and you create 4 platform threads, or 4
+kernel threads that are doing very CPU intensive work, like crunching
+numbers, cryptography, hashing, compression, encoding, whatever. If
+you have 4 physical threads, or platform threads doing that, you're
+essentially just maxing your CPU. If instead you create 4 virtual
+threads, you will basically do the same amount of work. It doesn't
+mean that if you replace 4 virtual threads with 400 virtual threads,
+you will actually make your application faster, because after all,
+you do use the CPU. There's not much hardware to do the actual work,
+but it gets worse. Because if you have a virtual thread that just
+keeps using the CPU, it will never voluntarily suspend itself,
+because it never reaches a blocking operation like sleeping, locking,
+waiting for I/O, and so on. In that case, it's actually possible that
+you will only have a handful of virtual threads that never allow any
+other virtual threads to run, because they just keep using the CPU.
+That's the problem that's already handled by platform threads or
+kernel threads because they do support preemption, so stopping a
+thread in some arbitrary moment in time. It's not yet supported with
+Project Loom. It may be one day, but it's not yet the case.There's
+also a whole list of unsupported APIs. One of the main goals of
+Project Loom is to actually rewrite all the standard APIs. For
+example, socket API, or file API, or lock APIs, so lock support,
+semaphores, CountDownLatches. All of these APIs are sleep, which we
+already saw. All of these APIs need to be rewritten so that they play
+well with Project Loom. However, there's a whole bunch of APIs, most
+importantly, the file API. I just learned that there's some work
+happening. There's a list of APIs that do not play well with Project
+Loom, so it's easy to shoot yourself in the foot.One more thing. With
+Project Loom, you no longer consume the so-called stack space. The
+virtual threads that are not running at the moment, which is
+technically called pinned, so they are not pinned to a carrier
+thread, but they are suspended. These virtual threads actually reside
+on heap, which means they are subject to garbage collection. In that
+case, it's actually fairly easy to get into a situation where your
+garbage collector will have to do a lot of work, because you have a
+ton of virtual threads. You don't pay the price of platform threads
+running and consuming memory, but you do get the extra price when it
+comes to garbage collection. The garbage collection may take
+significantly more time. This was actually an experiment done by the
+team behind Jetty. After switching to Project Loom as an experiment,
+they realized that the garbage collection was doing way more work.
+The stack traces were actually so deep under normal load, that it
+didn't really bring that much value. That's an important
+takeaway.Another question is whether we still need reactive
+programming. If you think about it, we do have a very old class like
+RestTemplate, which is like this old school blocking HTTP client.
+With Project Loom, technically, you can start using RestTemplate
+again, and you can use it to, very efficiently, run multiple
+concurrent connections. Because RestTemplate underneath uses HTTP
+client from Apache, which uses sockets, and sockets are rewritten so
+that every time you block, or wait for reading or writing data, you
+are actually suspending your virtual thread. It seems like
+RestTemplate or any other blocking API is exciting again. At least
+that's what we might think, you no longer need reactive programming
+and all these like WebFluxes, RxJavas, Reactors, and so on.Project
+Loom addresses just a tiny fraction of the problem, it addresses
+asynchronous programming. It makes asynchronous programming much
+easier. However, it doesn't address quite a few other features that
+are supported by reactive programming, namely backpressure, change
+propagation, composability. These are all features or frameworks like
+Reactor, or Akka, or Akka streams, whatever, which are not addressed
+by Loom because Loom is actually quite low level. After all, it's
+just a different way of creating threads.Should you just blindly
+install the new version of Java whenever it comes out and just switch
+to virtual threads? I think the answer is no, for quite a few
+reasons. First of all, the semantics of your application change. You
+no longer have this natural way of throttling because you have a
+limited number of threads. Also, the profile of your garbage
+collection will be much different. We have to take that into
+account.When will Project Loom be available? It was supposed to be
+available in Java 17, we just got Java 18 and it's still not there.
+Hopefully, it will be ready when it's ready. Hopefully, we will live
+into that moment. I'm experimenting with Project Loom for quite some
+time already. It works. It sometimes crashes. It's not vaporware, it
+actually exists.I leave you with a few materials which I collected,
+more presentations and more articles that you might find interesting.
+Quite a few blog posts that explain the API a little bit more
+thoroughly. A few more critical or skeptic points of view, mainly
+around the fact that Project Loom won't really change that much. It's
+especially for the people who believe that we will no longer need
+reactive programming because we will all just write our code using
+plain Project Loom. Also, my personal opinion, that's not going to be
+the case, we will still need some higher level abstraction.Cummins:
+How do you debug it? Does it make it harder to debug? Does it make it
+easier to debug? What tooling support is there? Is there more tooling
+support coming?Nurkiewicz: The answer is actually twofold. On one
+hand, it's easier, because you no longer have to hop between threads
+so much, in reactive programming or asynchronous programming in
+general. What you typically do is that you have a limited number of
+threads, but you jump between threads very often, which means that
+stack traces are cut in between, so you don't see the full picture.
+It gets a little bit convoluted, and frameworks like Reactor try to
+somehow reassemble the stack trace, taking into account that you are
+jumping between thread pools, or some asynchronous Netty threads. In
+that case, Loom makes it easier, because you can survive, you can
+make a whole request just in a single thread, because logically,
+you're still on the same thread, this thread is being paused. It's
+being unpinned, and pinned back to a carrier thread. When the
+exception arises, this exception will show the whole stack trace
+because you're not jumping between threads. What you typically do is
+that when you want to do something asynchronous, you put it into a
+thread pool. Once you're in a thread pool, you lose the original
+stack trace, you lose the original thread.In case of Project Loom,
+you don't offload your work into a separate thread pool, because
+whenever you're blocked your virtual thread has very little cost. In
+some sense, it's going to be easier. However, you will still be
+probably using multiple threads to handle a single request. That
+problem doesn't really go away. In some cases, it will be easier but
+it's not like an entirely better experience. On the other hand, you
+now have 10 times or 100 times more threads, which are all doing
+something. These aren't really like Java threads. You won't, for
+example, see them on a thread dump. This may change but that's the
+case right now. You have to take that into account. When you're doing
+a thread dump, which is probably one of the most valuable things you
+can get when troubleshooting your application, you won't see virtual
+threads which are not running at the moment.If you are doing the
+actual debugging, so you want to step over your code, you want to
+see, what are the variables? What is being called? What is sleeping
+or whatever? You can still do that. Because when your virtual thread
+runs, it's a normal Java thread. It's a normal platform thread
+because it uses carrier thread underneath. You don't really need any
+special tools. However, you just have to remember on the back of your
+head, that there is something special happening there, that there is
+a whole variety of threads that you don't see, because they are
+suspended. As far as JVM is concerned, they do not exist, because
+they are suspended. They're just objects on heap, which is
+surprising.Cummins: It's hard to know which is worse, you have a
+million threads, and they don't turn up in your heap thread dump, or
+you have a million threads and they do turn up in your heap
+dump.Nurkiewicz: Actually, reactive is probably the worst here
+because you have million ongoing requests, for example, HTTP
+requests, and you don't see them anywhere. Because with reactive,
+with truly asynchronous APIs, HTTP database, whatever, what happens
+is that you have a thread that makes a request, and then absolutely
+forgets about that request until it gets a response. A single thread
+handles hundreds of thousands of requests concurrently or truly
+concurrently. In that case, if you make a thread dump, it's actually
+the worst of both worlds, because what you see is just a very few
+reactive threads like Netty, for example, which is typically used.
+These native threads are not actually doing any business logic,
+because most of the time, they are just waiting for data to be sent
+or received. Troubleshooting a reactive application using a thread
+dump is actually very counterproductive. In that case, virtual
+threads are actually helping a little bit, because at least you will
+see the running threads.Cummins: It's probably like a lot of things
+where when the implementation moves closer to our mental model,
+because nobody has a mental model of thread pools, they have a mental
+model of threads, and so then when you get those two closer together,
+it means that debugging is easier.Nurkiewicz: I really love the quote
+by Cay Horstmann, that you're no longer thinking about this low level
+abstraction of a thread pool, which is convoluted. You have a bunch
+of threads that are reused. There's a queue, you're submitting a
+task. It stands in a queue, it waits in that queue. You no longer
+have to think about it. You have a bunch of tasks that you need to
+run concurrently. You just run them, you just create a thread and get
+over it. That was the promise of actor systems like Akka, that when
+you have 100,000 connections, you create 100,000 actors, but actors
+reuse threads underneath, because that's how JVM works at the moment.
+With virtual threads, you just create a new virtual thread per
+connection, per player, per message, whatever. It's closer,
+surprisingly, to an Erlang model, where you were just starting new
+processes. Of course, it's really far away from Erlang still, but
+it's a little bit closer to that.Cummins: Do you think we're going to
+see a new world of problem reproduction ickiness, where some of us
+are on Java 19 and taking advantage of threads, and some of us are
+not. At the top level, it looks similar, but then once you go
+underneath the behavior is really fundamentally different. Then we
+get these non-reproducible things where it's the timing dependency
+plus a different implementation means that we just spend all our time
+chasing weird threading variations.Nurkiewicz: I can give you even a
+simpler example of when it can blow up. We used to rely on the fact
+that thread pool is the natural way of throttling tasks. When you
+have a thread pool of 20 threads, it means you will not run more than
+20 tasks at the same time. If you just blindly replace
+ExecutorService with this virtual thread, ExecutorService, the one
+that doesn't really pull any threads, it just starts them like crazy,
+you no longer have this throttling mechanism. If you naively refactor
+from Java 18 to Java 19, because Project Loom was already merged to
+project 19, to the master branch. If you just switch to Project Loom,
+you will be surprised, because suddenly, the level of concurrency
+that you achieve on your machine is way greater than you expected.You
+might think that it's actually fantastic because you're handling more
+load. It also may mean that you are overloading your database, or you
+are overloading another service, and you haven't changed much. You
+just changed a single line that changes the way threads are created
+rather than platform, then you move to the virtual threads. Suddenly,
+you have to rely on these low level CountDownLatches, semaphores, and
+so on. I barely remember how they work, and I will either have to
+relearn them or use some higher level mechanisms. This is probably
+where reactive programming or some higher level abstractions still
+come into play. From that perspective, I don't believe Project Loom
+will revolutionize the way we develop software, or at least I hope it
+won't. It will significantly change the way libraries or frameworks
+can be written so that we can take advantage of them.
+
+● Web Tech, sof Arch:  Apache ShenYu: Java Responsive API Gateway Announced as Apache Top-Level Project
+  https://www.infoq.com/news/2022/09/shenyu-gateway/ 
+
+● JEP 429: Extent-Local Variables to Promote Immutability in Java
+  https://www.infoq.com/news/2022/09/extent-local-variables-java/
+
+● Announcing Conclave SDK 1.3 and Open Source
+  https://www.conclave.net/blog/announcing-conclave-sdk-1-3-and-open-source
+We are pleased to announce the release of version 1.3 of the Conclave
+SDK. This is an important milestone for confidential computing as it
+enables confidential workloads in the cloud with the KDS. You can
+find out more about the KDS, what it is and how you can benefit from
+it, in the release notes, along with all the other fixes and
+improvements in 1.3.
+However, that’s not all! 1.3 is also the first release of the core
+SDK to be open source. We are pleased to announce the SDK code is
+publicly available under Apache 2.0 and is available for you to
+download or view at https://github.com/R3Conclave/conclave-core-sdk.
+Before we explain why we’ve open sourced the Conclave SDK, perhaps
+this is the first time you’re hearing of Conclave or confidential
+computing.What is Conclave?
+Conclave is R3’s privacy preserving platform enabling you to write
+secure confidential applications with ease. With the core SDK you can
+create Intel® SGX enclaves using high-level languages such as Java,
+Kotlin, and JavaScript. It has a simple but powerful high-level API
+which hides the low-level complexities of using SGX so that you can
+spend more time concentrating on your enclave’s business logic. The
+core SDK also powers Conclave Cloud, our privacy-preserving SaaS
+platform for deploying confidential even-driven workloads in the
+cloud.
+Confidential computing protects data at rest and in transit as well
+as during processing. Trusted Execution Environments (TEEs) such as
+SGX use hardware to provide a secure region of the CPU, an enclave,
+in which code and data are physically isolated and cannot be tampered
+with, not even by the system or cloud administrator. It enables use
+cases which were previously not possible, such as sharing of
+confidential data for analysis or fraud detection.Why have we open
+sourced Conclave?
+Confidential computing is all about trust. It is about removing the
+need to trust your cloud service provider, or your application
+service provider, or any software stack in between. This includes
+R3’s Conclave. We are open sourcing so that you can verify and
+audit Conclave yourself and remove R3 from your trust model.
+We also feel it’s vitally important that we build and grow a
+community around Conclave, and that is best achieved when the product
+is open source. By increasing transparency and allowing
+accessibility, we want to foster collaboration within the ecosystem
+to boost innovation and accelerate the adoption of confidential
+computing technologies.  
+Involving the community in the development of Conclave makes sure we
+are building the right toolkit for our users. To that end, we would
+love to hear your thoughts and suggestions and we can’t wait to see
+your contributions to make Conclave even better. Hit us up on our
+Discord or mailing list and share your ideas with us, and if you have
+contributions you’d like to make then have a read of our
+contribution guidelines.Next steps
+If this is the first time you’re hearing of Conclave, then no
+worries! Download our hello world sample and see how easy it is to
+build enclaves in languages like Java and Kotlin. If you have already
+used Conclave before, then you’ll be pleased to know that using
+Conclave is now even easier. Have a read of our release notes and
+learn about the improvements and new features we’ve added in 1.3.
+Java and Kotlin are just the beginning. We want to expand the
+Conclave API to other programming languages as well. If you like what
+you see with Conclave but find it lacking due to it not supporting
+your language of choice, then do let us know. Or if you find any bugs
+or have suggestions for other improvements, then ping us on Discord
+or GitHub.
+Happy coding!
+
+● spring: https://www.reddit.com/r/java/comments/zlnhbz/just_a_command_line_toolkit_for_developing_spring/
+
+● Ver "Programmer's Guide to JDK Flight Recorder" en YouTubehttps://youtu.be/K1ApBZGiT-Y
+
+● Resilience4j 2.0.0 Delivers Support for JDK 17
+  https://www.infoq.com/news/2022/12/resilience4j-2-0-0/
+
+● Consolidated JDK 19 Release Notes
+  https://www.oracle.com/java/technologies/javase/19all-relnotes.html
+
+● quartz alternatives, batch, schedule task runners "cron".
+  https://www.reddit.com/r/java/comments/zariyv/is_quartz_abandoned/See alternatives
+
+● JVM Options Explorer - OpenJDK11 HotSpot 101https://chriswhocodes.com/ 
+
+● https://github.com/ben-manes/caffeine  [[{scalability.cache]]
+  high performance, near optimal caching library.
+  LoadingCache<Key, Graph> graphs = Caffeine.newBuilder()
+      .maximumSize(10_000)
+      .expireAfterWrite(Duration.ofMinutes(5))
+      .refreshAfterWrite(Duration.ofMinutes(1))
+      .build(key -> createExpensiveGraph(key));
+
+  - Features:
+    - automatic loading of entries into cache: optionally asynchronously
+    - size-based eviction: when a maximum is exceeded based on frequency and recency
+    - time-based expiration of entries, measured since last access or last write
+    - asynchronously refresh when the first stale request for an entry occurs
+    - keys automatically wrapped in weak references
+    - values automatically wrapped in weak or soft references
+    - notification of evicted (or otherwise removed) entries
+    - writes propagated to an external resource
+    - accumulation of cache access statistics
+
+  - Community provided integration:
+    - Play Framework: High velocity web framework
+    - Micronaut: A modern, full-stack framework
+    - Spring Cache: As of Spring 4.3 & Boot 1.4
+    - Quarkus: Supersonic Subatomic Java
+    - Scaffeine: Scala wrapper for Caffeine
+    - ScalaCache: Simple caching in Scala
+    - Camel: Routing and mediation engine
+    - JHipster: Generate, develop, deploy
+    - Aedile: Kotlin wrapper for Caffeine
+  [[}]]
 
 
 
