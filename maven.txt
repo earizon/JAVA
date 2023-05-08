@@ -1,4 +1,4 @@
-●  Apropos:
+#  Apropos:
 - Visit next Web site for a great experience:
   https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/maven.txt
 
@@ -11,7 +11,7 @@
 
 [[{DEVOPS.MAVEN]]
 
-● Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,DevOps.maven.troubleshooting,_PM.WiP]] #[mvn_summary]
+# Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,DevOps.maven.troubleshooting,_PM.WiP]] #[mvn_summary]
 • External Links
   - PUBLIC REPOSITORY:      @[https://mvnrepository.com/]
   - Artifact Search Engine: @[http://search.maven.org/]
@@ -174,7 +174,7 @@ A:☞A snapshot version is one that has not been released (  future release ).
    </repository>
 
 <hr/>
-● pom utils (Cleaner/Updater/...)
+# pom utils (Cleaner/Updater/...)
 @[https://github.com/kdgregory/pomutil]
 
 Utilities to clean, organize, and restructure Maven POMs.                   [qa]
@@ -210,7 +210,7 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
   - Peter Palaga:main contributor
 
 <hr/>
-● pom.xml Summary
+# pom.xml Summary
 @[https://maven.apache.org/pom.html]
 
   <project
@@ -282,7 +282,7 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
     </dependencies>
   </project>
 <hr/>
-● Parent+Children Multiproject
+# Parent+Children Multiproject
 - Allows to inherit project dependency in children projects
 
   .../parent/pom.xml              │ .../parent/child1/pom.xml
@@ -332,13 +332,13 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
 
 
 
-● Install non-mavenized jar
+# Install non-mavenized jar
 
 $ $ mvn install:install-file -Dfile=path_to_local_file -DgroupId=<groupId> \
 $   -DartifactId=<artifactId> -Dversion=<version> -Dpackaging=<packaging>
 
 
-● POM BEST PRACTICES:
+# POM BEST PRACTICES:
 REF: @[http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/]
 
 $ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
@@ -372,7 +372,7 @@ $ $ mvn dependency:analyze
 [[}]]
 
 <pre zoom  labels="DevOps.maven,qa.101,java_lang.*,qa.*,_PM.WiP" id="dependency_management_summary" >
-● Package Dependency Management
+# Package Dependency Management
 $ $ mvn dependency:analyze       ← Inform about:
                                    - Dependencies used but not declared.
                                      If found in the parent pom, there is no problem when compiling,
@@ -410,7 +410,7 @@ $ $ mvn dependency:tree -Dscope=compile
   → [INFO] |  |  \- com.github.jnr:jnr-posix:jar:3.0.47:compile
   → ...
 
-● Publishing to Maven Central [[{DevOps.maven,devops]] #[mvn_pub2central]
+# Publishing to Maven Central [[{DevOps.maven,devops]] #[mvn_pub2central]
 • External references:
   · @[https://www.apache.org/dev/publishing-maven-artifacts.html]
   · @[http://maven.apache.org/repository/guide-central-repository-upload.html]
@@ -535,7 +535,7 @@ $ mvn release:perform    ← Stage release for a vote. release will
                            automatically be added to temp staging dir.
 [[}]]
 
-● OWASP (maven) Plugin [[{security.101.owasp,devops.maven,01_PM.TODO]]
+# OWASP (maven) Plugin [[{security.101.owasp,devops.maven,01_PM.TODO]]
 @[https://maven.apache.org/plugins/]
 • OWASP Dependency-Check identifies project dependencies and checks
   if there are any known, publicly disclosed, vulnerabilities.
@@ -544,7 +544,7 @@ $ mvn release:perform    ← Stage release for a vote. release will
 
 
 
-● Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
+# Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
 FROM maven:3.6-jdk-12-alpine as build
 WORKDIR /builder
 ADD pom.xml /builder/pom.xml
@@ -562,7 +562,7 @@ COPY --from=build /builder/src/main/resources /app/src/main/resources
 EXPOSE 8080
 CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME
 <hr/>
-● Jib: Image Builder
+# Jib: Image Builder
 Docker+mvn/gradle integration:
 @[https://www.infoq.com/news/2018/08/jib]
 @[https://github.com/GoogleContainerTools/jib]

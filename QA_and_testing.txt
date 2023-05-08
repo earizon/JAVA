@@ -10,7 +10,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 2011: Software caused 25% of all medical device recalls.
 [[}]]
 
-● Checker framework (Java 8+) #[code_analysis_tools_summary]
+# Checker framework (Java 8+) #[code_analysis_tools_summary]
            [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
  fix errors at compile time  (vs later on at execution/runtime)
 @[https://github.com/typetools/checker-framework]
@@ -318,7 +318,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
    Process process = processBuilder.start();
   }
 <hr/>
-● SpotBugs
+# SpotBugs
 @[https://github.com/spotbugs/spotbugs/issues]
 • OOSS static analysis tool for java code bugs.
 • Well maintained (as of 2021-12-21)
@@ -486,7 +486,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 <hr/>
 
-● Lint4j
+# Lint4j
 @[http://www.jutils.com/]
 •  WARN : Not maintained any more.
 • Lint4j ("Lint for Java") is a static Java source and byte code
@@ -516,7 +516,7 @@ $               com/.../CalssJ.java
 [[qa.101.checker_fw}]]
 
 
-● SonarQube #[sonarqube_summary] [[{qa.101.snarqube,01_PM.low_code,]]
+# SonarQube #[sonarqube_summary] [[{qa.101.snarqube,01_PM.low_code,]]
                                    [[concurrency.101,JAVA_LANG.DEBUGGING]]
                                    [[scalability.profiling,01_PM.WiP]]
 
@@ -606,9 +606,9 @@ $               com/.../CalssJ.java
 [[qa.101.snarqube}]]
 
 
-● JavaDoc [[{qa.101.javadoc,qa.documentation]]
+# JavaDoc [[{qa.101.javadoc,qa.documentation]]
 -----------------------+-------------------------------------+-------------------------+-------   Example
-Tag⅋ Parameter         | Usage                               | Applies to              | Since    /**
+Tag& Parameter         | Usage                               | Applies to              | Since    /**
 -----------------------+-------------------------------------+-------------------------+-------    * Short one line description.
 @authorJohn Smith      | Describes an author.                | Class, Interface, Enum  |           * <p>
 -----------------------+-------------------------------------+-------------------------+-------    * Longer description. ...
@@ -654,7 +654,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
 
 
 
-● Junit [[{101.qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
+# Junit [[{101.qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
   Junit (TEST scoped) dependencies:
   org.junit.jupiter:junit-jupiter-api:${junit_version}
   org.junit.jupiter:junit-jupiter-engine:${junit_version}
@@ -812,7 +812,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   // iterable, stream, array, map, dates, path, file, numbers, predicate, optional ...
 [[}]]
 
-● Property Testing [[{qa.testing.property]]
+# Property Testing [[{qa.testing.property]]
 • A property testing is just something like:
 
   for all (x, y, ...)
@@ -873,7 +873,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
       String fizzBuzz(int i) {               // ← function to test
          boolean div3 = (i % 3 == 0),
                  div5 = (i % 5 == 0);
-         if (div3⅋⅋ div5) return "FizzBuzz";
+         if (div3&& div5) return "FizzBuzz";
          if (div3) return "Fizz";
          if (div5) return "Buzz"
          return String.valueOf(i);
@@ -902,11 +902,11 @@ Tag⅋ Parameter         | Usage                               | Applies to     
 [[qa.testing.property}]]
 
 
-● JSR Annotations for Defect Detection [[{qa.error_control,qa.billion_dolar_mistake]]
+# JSR Annotations for Defect Detection [[{qa.error_control,qa.billion_dolar_mistake]]
 @[https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard]
 [[}]]
 
-● TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,01_PM.TODO]]
+# TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,01_PM.TODO]]
 @[https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type]
 ( TODO: Compare how it compares/overlaps CheckerFramework )
 
@@ -945,7 +945,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   }
 [[}]]
 
-● JBehave [[{qa.testing.bdd,01_PM.TODO]]
+# JBehave [[{qa.testing.bdd,01_PM.TODO]]
 • testing framework for Behaviour-Driven Development (BDD).
 • BDD is an evolution of test-driven development (TDD) and acceptance-test
   driven design, and is intended to make these practices more
@@ -969,7 +969,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   4) Run Stories
 [[}]]
 
-● BDD Serenity Testing [[{qa.testing.bdd,qa.documentation,01_PM.TODO]]
+# BDD Serenity Testing [[{qa.testing.bdd,qa.documentation,01_PM.TODO]]
 @[https://serenity-bdd.github.io/theserenitybook/latest/index.html]
 
 - Serenity BDD is an open source library that aims to make the idea of living
@@ -1001,7 +1001,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
 [[}]]
 
 [[{async/reactive.testing,qa.testing.async/reactive,01_PM.TODO]]
-● Awaitility(Async->Sync) Tests
+# Awaitility(Async->Sync) Tests
 @[https://github.com/awaitility/awaitility]
 - Awaitility: DSL allowing to express async results (test expectations) easely.
   removing complexity of handling threads, timeouts, concurrency issues, ...
@@ -1017,7 +1017,7 @@ Tag⅋ Parameter         | Usage                               | Applies to     
   }
 [[}]]
 
-● RESTAssured: REST API testing [[{qa.testing.REST_API,persistence.json]]
+# RESTAssured: REST API testing [[{qa.testing.REST_API,persistence.json]]
  FULL JOURNEY == Simulate full (REST) API in expected order
 └ Pre-Setup:
   <dependency>

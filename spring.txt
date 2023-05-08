@@ -1,6 +1,6 @@
 [[{spring]]
     ● Spring
-● External Links [[{spring,02_doc_has.ext_resource]]
+# External Links [[{spring,02_doc_has.ext_resource]]
 https://spring.io/projects/
 @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/]
 @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/overview.html#spring-introduction']
@@ -13,7 +13,7 @@ https://spring.io/projects/
 @[https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-the-Spring-Framework]
 [[}]]
 
-● Spring DONT's!!!  [[{spring.101]] #[sprint_donts]
+# Spring DONT's!!!  [[{spring.101]] #[sprint_donts]
 - If a interface has a single implementation and is going
   to be instantiated just once in a single line of code,
   do NOT use Spring dependency injection.
@@ -28,8 +28,8 @@ https://spring.io/projects/
 
 [[}]]
 
-[[{]]spring.101" bgorange>
-● Annotations Quick Sheet
+[[{spring.101]]
+# Annotations Quick Sheet
 REF:
 @[https://www.javagists.com/spring-boot-cheatsheet]  ← TODO: Testing annotations,
 @[https://groupe-sii.github.io/cheat-sheets/spring/spring-boot/index.html]
@@ -79,7 +79,7 @@ REF:
     @DependsOn     |                                            |
                    ------------------------------------------------------
 
-<hr/>
+
   SPRING FRAMEWORK ANNOTATIONS
 
     ANNOTATION      DESCRIPTION                                  LEVEL
@@ -114,7 +114,7 @@ REF:
     @PathVariable |bind placeholder from URI to method.param   |
 [[}]]
 
-● IoC Summary [[{spring.101]]
+# IoC Summary [[{spring.101]]
   BASE PACKAGES of Spring IoC:
   - org.springframework.beans
     - @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#beans-definition]
@@ -233,7 +233,7 @@ REF:
       on the fly.
 [[}]]
 
-● Nullability [[{spring.101,qa.billion_dolar_mistake]]
+# Nullability [[{spring.101,qa.billion_dolar_mistake]]
   -  @NonNull        ← forces param|return value|field to be NON-null
   -  @Nullable       ← allows param|return value|field to be     null
   -  @NonNullApi     ← forces param|return value       to be NON-null at package level
@@ -248,7 +248,7 @@ REF:
       <property name="email">         </property> ← email = ""
 [[}]]
 
-● Spring+JPA+JWT summary [[{spring.101,spring.configuration,spring.troubleshooting]]   #[spring_summary]
+# Spring+JPA+JWT summary [[{spring.101,spring.configuration,spring.troubleshooting]]   #[spring_summary]
 
 - file: com/myComp/openApi/SwaggerConfig.java  [[{,architecture.api_management.OpenAPI.swagger,spring.config]]
     package com.myComp.swagger;
@@ -299,7 +299,7 @@ REF:
     }
 [[architecture.API_management.OpenAPI.swagger}]]
 
-● Persistence with JPA:                     [[{persistence.jpa]]
+# Persistence with JPA:                     [[{persistence.jpa]]
 TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specifications.html
       https://www.objectdb.com/api/java/jpa/MapsId
       https://www.objectdb.com/api/java/jpa/Embeddable
@@ -602,8 +602,8 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     public boolean equals(Object obj) {
       Entity1 that = (Entity1) obj;
       return Objects.equals(column1, that.column1)
-          ⅋⅋ Objects.equals(column2, that.column2)
-          ⅋⅋ ... ;
+          && Objects.equals(column2, that.column2)
+          && ... ;
     }
 
     @CreatedDate private Long createdDate;// JPA Audit:  *
@@ -632,9 +632,9 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     · @Version            updated at every op.
                           starting by 0.
 
-  [[persistence.jpa}]]
+[[persistence.jpa}]]
 
-● JWT (OAuth2)Support:  [[{security.aaa,security.oauth,security.cryptography,standards.oauth]]
+# JWT (OAuth2)Support:  [[{security.aaa,security.oauth,security.cryptography,standards.oauth]]
   com/myComp/security/OAuth2Const.java
   public class OAuth2Const {
       static final String
@@ -894,8 +894,11 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
         return new ResponseEntity<>(user, HttpStatus.OK);
       }
     }
-───────────────────────────────────────────────────────────────
-- file: com/myComp/App.java                                      [configuration][devops]
+[[security.aaa,security.oauth}]]
+
+[[{configuration,devops]]
+# Spring Configuration:
+- file: com/myComp/App.java
   MAIN (entry point to Spring Boot app)
 
   package com.myComp;
@@ -927,8 +930,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     }
   }
 
-───────────────────────────────────────────────────────────────
-- file: com/myComp/config/CustomControllerAdvice.java
+- file: com/myComp/config/CustomControllerAdvice.java  [[{]]
 
     package com.myComp.config;
 
@@ -986,9 +988,10 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
       @Override protected ResponseEntity<Object>
       handleConstraintViolation(...) { ... }
     }
-───────────────────────────────────────────────────────────────
-- file: com/myComp/config/ConfigurationCore.java [configuration]   // ← Main Config point.
-    package com.myComp.config;                                     //   (autoscan is another possibility)
+[[}]]
+
+- file: com/myComp/config/ConfigurationCore.java [[{configuration]] // ← Main Config point.
+    package com.myComp.config;                                      //   (autoscan is another possibility)
 
     import org.springframework.beans.factory.annotation.Value;
     import org.springframework.context.annotation.Bean;
@@ -1024,11 +1027,12 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
       }
 
     }
-───────────────────────────────────────────────────────────────
-- file: com/myComp/apirest/ControllerService1.java
+[[}]]
+
+- file: com/myComp/apirest/ControllerService1.java  [[{]]
     package com.myComp.api.serviceZ.controller;
 
-    import javax.transaction.Transactional;                          // ← [persistence][jpa][erro_control][qa]
+    import javax.transaction.Transactional;             // ← [[{persistence.jpa,qa.error_control}]]
     import javax.validation.Valid;
 
     import org.slf4j.Logger;
@@ -1111,8 +1115,9 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
       { ... }
 
     }
-───────────────────────────────────────────────────────────────
-- file: com/myComp/service/Service1.java
+[[}]]
+
+- file: com/myComp/service/Entity1Service.java     [[{]]
     package com.myComp.api.serviceZ.service;
 
     import java.util.List;
@@ -1123,8 +1128,9 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
       void            insert            (Entity1 entity);
 
     }
-───────────────────────────────────────────────────────────────
-- file: com/myComp/service/Service1Impl.java
+[[}]]
+
+- file: com/myComp/service/Service1Impl.java  [[{]]
     package com.myComp.api.serviceZ.service;
 
     import javax.persistence.*;
@@ -1172,7 +1178,10 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
     }
 [[}]]
 
-● Spring Cloud Configuration [[{spring.cloud,cloud,architecture.distributed.service_discovery]]
+
+[[configuration}]]
+
+# Spring Cloud Configuration [[{spring.cloud,cloud,architecture.distributed.service_discovery]]
 • CONTEXT:
   2+ APIs running independently have been developed.
 
@@ -1474,7 +1483,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   }
 [[}]]
 
-● "Cloudify" [[{spring.cloud,cloud.spring,architecture.distributed.service_discovery,01_PM.WiP]]
+# "Cloudify" [[{spring.cloud,cloud.spring,architecture.distributed.service_discovery,01_PM.WiP]]
 @[http://files.zeroturnaround.com/pdf/zt_spring_annotations_cheat_sheet.pdf]
 
   ┌────────→ @SpringBootApplication      HTTP Request                         CLOUD
@@ -1513,7 +1522,7 @@ beans to      ┌──like─  ─┐
   marks methods to fall back to another method if they cannot succeed normally.
 [[}]]
 
-● Spring Batch [[{spring.batch,architecture.batch,01_PM.TODO.NOW]]
+# Spring Batch [[{spring.batch,architecture.batch,01_PM.TODO.NOW]]
   FROM https://stackoverflow.com/questions/33188368/spring-batch-vs-quartz-jobs
   Quartz is a scheduling framework. Like "execute something every hour
   or every last friday of the month"
@@ -1528,7 +1537,7 @@ beans to      ┌──like─  ─┐
     for the Java Platform)
 [[}]]
 
-● Reactive (5.0+) [[{spring.async/reactive,async/reactive.spring]]
+# Reactive (5.0+) [[{spring.async/reactive,async/reactive.spring]]
 @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/web-reactive.html#webflux]
 - Note: Servlet 3.1+ API for non-blocking I/O leads away from
   the rest of the Servlet API where contracts are synchronous
@@ -1714,11 +1723,11 @@ Jetty           │ org.eclipse.jetty      │ etty-server        │ HttpHandle
 ────────────────┴────────────────────────┴────────────────────┴────────────────
 [[}]]
 
-● STOMP: WebSockets [[{spring,async/reactive.web_sockets,01_PM.backlog]]
+# STOMP: WebSockets [[{spring,async/reactive.web_sockets,01_PM.backlog]]
 @[https://www.toptal.com/java/stomp-spring-boot-websocket]
 [[}]]
 
-● JHipster [[{spring.101,01_PM.low_code,architecture.frontend]]
+# JHipster [[{spring.101,01_PM.low_code,architecture.frontend]]
 @[https://www.jhipster.tech/]
 • JHipster is a development platform to generate, develop and deploy
   Spring Boot + Angular / React / Vue Web applications and Spring
@@ -1727,8 +1736,8 @@ Jetty           │ org.eclipse.jetty      │ etty-server        │ HttpHandle
   manager at Microsoft
 [[}]]
 
-[[{spring,01_PM.TODO]]
-•  Spring SecurityContext* [[{]]
+[[{spring,101.securityContext,01_PM.TODO]]
+•  Spring SecurityContext*
 https://www.javacodegeeks.com/spring-interview-questions-and-answers.html
 https://www.javacodegeeks.com/java-interview-questions.html
 https://www.javacodegeeks.com/2014/11/multithreading-concurrency-interview-questions-answers.html
@@ -1749,6 +1758,7 @@ https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boo
             It’s also known as a processor.
   Consumer. A consumer is a function with input but no output.
             It’s also known as a 'subscriber' or 'sink'
+[[}]]
 
 • "The Netflix Domain Graph Service framework - OSS GraphQL for Spring Boot by Paul Bakker"
   https://youtu.be/WfK44fDuijI
@@ -1770,6 +1780,7 @@ https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boo
 • JAVA, Soft Arch: REST Query Language with Spring Data JPA and Querydsl
   " The Holy Grail - a REST Query Language"
   https://www.baeldung.com/rest-api-search-language-spring-data-querydsl
+
 • Spring GraalVM issues [[{spring,jvm.graalvm,01_PM.backlog]]
 REF:
 @[https://github.com/spring-projects/spring-framework/wiki/GraalVM-native-image-support]
@@ -1782,7 +1793,7 @@ used in the dependency mechanism or Spring factories, see the related issue #
 22968 for more details.
 [[}]]
 
-● JobRunr [[{architecture.batch,02_doc_has.comparative,01_PM.TODO]]
+# JobRunr [[{architecture.batch,02_doc_has.comparative,01_PM.TODO]]
 @[https://www.infoq.com/news/2021/09/jobrunr-4-released/]
 • JobRunr 4.0 Delivers Improved Integration with Spring Starter, Quarkus and Micronaut.
 

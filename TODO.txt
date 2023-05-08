@@ -1,3 +1,26 @@
+## Create zipped summary of java.util.concurrent:  [[{concurrency.101,PM.TODO]]
+
+  - Inmmutable Objects are faster and thread-safe:
+   https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html
+
+  - Concurrency Classes Video
+@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4]
+
+  - java.util.concurrent.locks.ReentrantLock vs synchronized { ... } block
+
+  - example stack trace (extracted from Vert.X):
+    at jdk.internal.misc.Unsafe.park(Native Method)
+    at java.util.concurrent.locks.LockSupport.park
+    at java.util.concurrent.LinkedTransferQueue.awaitMatch
+    at java.util.concurrent.LinkedTransferQueue.xfer
+    at java.util.concurrent.LinkedTransferQueue.take
+    at java.util.concurrent.ThreadPoolExecutor.getTask
+    at java.util.concurrent.ThreadPoolExecutor.runWorker
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run
+[[}]]
+
+
+
 [[{java,01_PM.TODO]]
 
 • [[{]]
@@ -142,7 +165,7 @@ $   $ clean install -P myProfile -DskipTests=true            [[}]]
   https://dzone.com/articles/java-optional-api-evolution?edition=699391
 
 [[{01_PM.TODO]]
-● Secomp JVM Integration
+# Secomp JVM Integration
 @[https://docs.sonarqube.org/latest/requirements/requirements/]
 https://en.wikipedia.org/wiki/Seccomp
 http://people.apache.org/~rmuir/es-coverage/post-query-refactoring/org.elasticsearch.bootstrap/Seccomp.java.html
@@ -170,7 +193,7 @@ CONFIG_SECCOMP=y
 [[}]]
 
 [[{qa.testing.101,01_PM.TODO]]
-● Mockito
+# Mockito
 • Top voted Java testing framework in StackOverflow
 • Top 10 most-widely used Java amongt 30.000 inspected projects.
 [[}]]
@@ -375,7 +398,7 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 • JAVA JDK version, JVM version, javac -source/-target/-release/ ... related info: [[{java,01_PM.TODO}]]
   https://stackoverflow.com/questions/43102787/what-is-the-release-flag-in-the-java-9-compiler
 
-● JVM Journey to Cloud-native [[{cloud.101,01_PM.TODO]]
+# JVM Journey to Cloud-native [[{cloud.101,01_PM.TODO]]
 (by BellSoft)
 • JDK 9 : Compact Strings
           HTTP/2 client
@@ -393,14 +416,14 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 
 [[}]]
 
-● JPA Summary [[{01_PM.TODO]]
+# JPA Summary [[{01_PM.TODO]]
 • Java: Migrating from JPA 2.x to 3.0
   https://thorben-janssen.com/migrating-jpa-2-x-to-3-0/?ck_subscriber_id=935368299
 • https://www.javacodegeeks.com/2015/02/jpa-tutorial.html
 [[}]]
 
 
-● JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
+# JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
 • JDeps: dependency analysis tool for Java bytecode (class files and JARs).
 @[https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/]
 
@@ -425,7 +448,7 @@ $ $ jdeps sh-2.6.3.jar       ←  -verbose:class will list dependencies between 
   [... truncated many more package dependencies ...]
 [[}]]
 
-● GraalVM Summary [[{jvm.graalvm,cloud.k8s,scalability.jvm,01_PM.TODO]]
+# GraalVM Summary [[{jvm.graalvm,cloud.k8s,scalability.jvm,01_PM.TODO]]
 @[http://www.graalvm.org/]
 @[https://technology.amis.nl/2018/11/23/comparing-jvm-performance-zulu-openjdk-openjdk-oracle-jdk-graalvm-ce/]
 @[https://www.reddit.com/r/java/comments/acarqq/graalvm_in_2018/]
@@ -463,7 +486,7 @@ Ex Ussage:
 
 
 
-● Quarkus (GraalVM) Framework [[{jvm.graalvm,cloud.k8s,scalability.jvm,01_PM.TODO]]
+# Quarkus (GraalVM) Framework [[{jvm.graalvm,cloud.k8s,scalability.jvm,01_PM.TODO]]
 @[https://quarkus.io/guides/]
 @[https://quarkus.io/guides/kogito-guide]
 @[https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle]
@@ -497,7 +520,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   }
 [[}]]
 
-● AsyncAPI.org [[{async/reactive.101,standards.openapi,qa.*,01_PM.TODO]]
+# AsyncAPI.org [[{async/reactive.101,standards.openapi,qa.*,01_PM.TODO]]
 @[https://www.asyncapi.org/]
 - Building the future of event-driven architectures.
 - Open source tools to easily build and maintain your event-driven architecture.
@@ -505,7 +528,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   asynchronous APIs.
 [[}]]
 
-● Sign/Verify JARs [[{devops,security.cryptography,01_PM.TODO]]
+# Sign/Verify JARs [[{devops,security.cryptography,01_PM.TODO]]
 @[https://docs.oracle.com/javase/9/tools/jarsigner.htm]
 
 $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to set sign. algorithm
@@ -513,13 +536,13 @@ $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to
 $ $ jarsigner -verify file01.jar           ← Verify jar
 [[}]]
 
-● Guava VisibleForTesting[qa] [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
+# Guava VisibleForTesting[qa] [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
 [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
 REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-method-public-only-for-test-classes]
 @[https://guava.dev/releases/19.0/api/docs/com/google/common/annotations/VisibleForTesting.html]
 [[}]]
 
-● Javalin: Kiss Kotlin/Java web framework [[{01_PM.radar]]
+# Javalin: Kiss Kotlin/Java web framework [[{01_PM.radar]]
 @[https://javalin.io]
 - Inspired by Javascript KOA.js framework
 
@@ -546,7 +569,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 [[}]]
 
 [[{]]scalability.native_code" >
-● JNR(JNI/UNIX friendly)
+# JNR(JNI/UNIX friendly)
 ( used by Netty and others...)
 -@[https://github.com/jnr/jnr-ffi]
    load native libraries without writing JNI code by hand, or using tools such as SWIG.
@@ -564,7 +587,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 [[}]]
 
 
-● JAAS [[{security.aaa,01_PM.TODO]]
+# JAAS [[{security.aaa,01_PM.TODO]]
 @[https://en.wikipedia.org/wiki/Java_Authentication_and_Authorization_Service]
 - In UNIX, by default we authenticate against /etc/passwd, but the
   (P)lugable (A)uthentication (M)odule (PAM), allows to check against other sources.
@@ -572,7 +595,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
   file/ddbb/LDAP/... backends.
 [[}]]
 
-● Eclipse Microprofile [[{standards.jee.microprofile,01_PM.TODO]]
+# Eclipse Microprofile [[{standards.jee.microprofile,01_PM.TODO]]
 @[https://dzone.com/articles/microprofile-5-things-you-need-to-know]
 
 - launched at JavaOne 2016 to address the shortcomings in the Enterprise Java microservices space.
@@ -625,7 +648,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
       that can be leveraged system-wide.
 [[}]]
 
-● JavaPoet [[{java_lang,01_PM.TODO]]
+# JavaPoet [[{java_lang,01_PM.TODO]]
 @[https://github.com/square/javapoet]
 - Library/API for generating .java source files.
 - Useful for things like:
@@ -635,7 +658,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
     keeping a single source of truth for the metadata .
 [[}]]
 
-● R2DBC API [[{async/reactive,persistence.sql,01_PM.TODO]]
+# R2DBC API [[{async/reactive,persistence.sql,01_PM.TODO]]
 @[https://www.infoq.com/news/2018/10/springone-r2dbc]
 • Project initiated by Pivotal to provide an async/reactive alternative to JDBC.
 
@@ -667,7 +690,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
         max-size: 10                             those used for JDBC.
 [[}]]
 
-● Nailgun [[{devops.containarization,scalability.jvm,01_PM.TODO]]
+# Nailgun [[{devops.containarization,scalability.jvm,01_PM.TODO]]
 - Nailgun is a client, protocol, and server for running Java programs
   from the command line without incurring the JVM startup overhead.
 
@@ -677,11 +700,11 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 @[https://github.com/facebook/nailgun]
 [[}]]
 
-● 9 Profiling tools [[{java_lang.profiling,01_PM.TODO]]
+# 9 Profiling tools [[{java_lang.profiling,01_PM.TODO]]
 @[https://blog.idrsolutions.com/2014/06/java-performance-tuning-tools/]
 [[}]]
 
-● A Year with Java 11 in Production!  [[{01_PM.TODO]]
+# A Year with Java 11 in Production!  [[{01_PM.TODO]]
 @[https://www.infoq.com/presentations/java-11-production-story/?itm_source=www.oficina24x7.com]
 Andrzej Grzesik talks about Revolut’s experience in running Java 11
 in production for over a year. He talks about the doubts they had,
@@ -690,7 +713,7 @@ He discusses tools, alternative JVM languages, and some 3rd party
 products.
 [[}]]
 
-● Aviam:Light Weight JVM [[{jvm,01_PM.TODO]]
+# Aviam:Light Weight JVM [[{jvm,01_PM.TODO]]
 https://readytalk.github.io/avian/  ("Embedded java")
 Avian is a lightweight virtual machine and class library designed to
 provide a useful subset of Java’s features, suitable for building
@@ -717,11 +740,11 @@ From Mike's blog: https://blog.plan99.net/kotlin-native-310ffac94af2
   | collector and a JIT compiler.
 [[}]]
 
-● R2DBC [[{persistence.sql,async/reactive,01_PM.radar]]
+# R2DBC [[{persistence.sql,async/reactive,01_PM.radar]]
 https://www.infoq.com/news/2018/10/springone-r2dbc
   Experimental Reactive Relational Database Connectivity Driver, R2DBC, Announced at SpringOne
 [[}]]
-● jEnv [[{devops,01_PM.TODO]]
+# jEnv [[{devops,01_PM.TODO]]
 @[http://www.jenv.be/]
 
  command line tool to help you forget how to set the JAVA_HOME environment variable:
@@ -745,7 +768,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
   $ jenv shell oracle64-1.6.0.39 Configure shell instance version
 [[}]]
 
-● SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,qa,01_PM.TODO]]
+# SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,qa,01_PM.TODO]]
 @[https://smallrye.io/smallrye-mutiny/]
 
 • SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
@@ -762,11 +785,11 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 
 
 
-● Netty [[{async/reactive.io.network,02_doc_has.comparative,01_PM.radar,01_PM.backlog]]
+# Netty [[{async/reactive.io.network,02_doc_has.comparative,01_PM.radar,01_PM.backlog]]
 - One Framework to rule them all by Norman Maurer
 @[https://www.youtube.com/watch?v=DKJ0w30M0vg]
 ──────────────────────────────────────────────
-● Apache MINA:Netty Alt.
+# Apache MINA:Netty Alt.
 • Apache MINA vs Netty: https://www.youtube.com/watch?v=A2pWsxPWJuc
 • network application framework which helps users develop high
   performance and high scalability network applications easily. It provides an
@@ -787,7 +810,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 [[}]]
 
 
-● SwarmCache [[{scalability.distributed,scalability.cache,persistence.jpa,01_PM.low_code,01_PM.TODO]]
+# SwarmCache [[{scalability.distributed,scalability.cache,persistence.jpa,01_PM.low_code,01_PM.TODO]]
 SwarmCache is a simple but effective distributed cache. It uses IP
 multicast to efficiently communicate with any number of hosts on a
 LAN. It is specifically designed for use by clustered,
@@ -801,20 +824,20 @@ Wrappers have been written that allow SwarmCache to be used with the
 Hibernate and JPOX persistence engines.
 [[}]]
 
-● bytes java [[{01_PM.backlog]]
+# bytes java [[{01_PM.backlog]]
 @[https://github.com/patrickfav/bytes-java]
 - utility library that makes it easy to create, parse, transform,
   validate and convert byte arrays in Java
 [[}]]
 
-● 3 NIO ways to read files [[{async/reactive.io,persistence.fs,01_PM.TODO]]
+# 3 NIO ways to read files [[{async/reactive.io,persistence.fs,01_PM.TODO]]
 @[https://howtodoinjava.com/java7/nio/3-ways-to-read-files-using-java-nio/]
 - read small file using ByteBuffer and RandomAccessFile
 - FileChannel and ByteBuffer to read large files
 - Example 3: Reading a file using memory-mapped files in Java
 [[}]]
 
-● JLink [[{devops.containarization,01_PM.TODO]]
+# JLink [[{devops.containarization,01_PM.TODO]]
 @[https://docs.oracle.com/javase/9/tools/jlink.htm]
 - You can use the jlink tool to assemble and optimize a set of modules
   and their dependencies into a custom runtime image
@@ -824,10 +847,10 @@ TODO:
 [[}]]
 
 [[{java_lang.configuration,standards.JSR330,qa,02_doc_has.comparative,Spring,standards.JSR330]]
-● Spring vs Google Guice
+# Spring vs Google Guice
 @[https://www.baeldung.com/guice-spring-dependency-injection]
 ────────────────────────
-● Dependency injection
+# Dependency injection
 @[http://www.theserverside.com/feature/Spring-vs-Guice-The-Clash-of-the-IOC-Containers]
 A: t's important to realize that Dagger was created after Guice, by one
 of Guice's creators ("Crazy Bob" Lee) after his move to Square:
@@ -840,7 +863,7 @@ of Guice's creators ("Crazy Bob" Lee) after his move to Square:
 - Google originally released Dagger 2 publicly in April 2015.
 - Square marked Dagger 1 as deprecated 10 days ago,
   on September 15, 2016.
-● JSR-330: Provider<MyTargetBean>
+# JSR-330: Provider<MyTargetBean>
 @[http://javax-inject.github.io/javax-inject/]
 
 FROM https://github.com/google/guice/wiki/JSR330
@@ -850,7 +873,7 @@ FROM https://github.com/google/guice/wiki/JSR330
   has no analog to Guice's modules.
 [[}]]
 
-● Crypto.API(JCA) [{security.cryptography,security.secret_mng,security.aaa,01_PM.TODO]]
+# Crypto.API(JCA) [{security.cryptography,security.secret_mng,security.aaa,01_PM.TODO]]
   WARN : Prefer a high level cryptographic API like Google Tink
          when possible.
 
@@ -866,7 +889,7 @@ FROM https://github.com/google/guice/wiki/JSR330
   About PCKS#11: @[http:./../General/cryptography_map.html?topics=pkcs]
 [[}]]
 
-● Loading properties [[{java_lang.configuration,01_PM.low_code,01_PM.TODO]]
+# Loading properties [[{java_lang.configuration,01_PM.low_code,01_PM.TODO]]
 NOTE: Probably is better to use ENV.VARs to simplify compatibility
       with container deployments.
 
@@ -881,7 +904,7 @@ is.close();
   https://www.tutorialspoint.com/how-to-read-write-data-from-to-properties-file-in-java
 [[}]]
 
-● XML Stream parsing [[{persistence.xml,01_PM.TODO]]
+# XML Stream parsing [[{persistence.xml,01_PM.TODO]]
 [TODO]: Write summary of best XML libraries.
 @[https://github.com/FasterXML/aalto-xml]
 @[http://www.studytrails.com/java/xml/aalto/java-xml-aalto-stax-async-basic/]
@@ -891,12 +914,12 @@ is.close();
 @[https://gist.github.com/shvalb/38cc8f454ee84a2032d2b341a9b8aeae]
 [[}]]
 
-● CGLIB library [[{JVM.101,01_PM.TODO]]
+# CGLIB library [[{JVM.101,01_PM.TODO]]
 - CGLIB library: Used for bytecode generation/method injection (Used by
   Spring Framework for example).
 [[}]]
 
-● Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,01_PM.TODO]]
+# Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,01_PM.TODO]]
 @[https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html]
 @[https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm]
 @[https://spring.io/guides/gs/async-method/]
@@ -909,7 +932,7 @@ is.close();
 
 [[}]]
 
-● Example JVM config.  [[{jvm,scalability.jvm,01_PM.TODO]]
+# Example JVM config.  [[{jvm,scalability.jvm,01_PM.TODO]]
 Server version:        Apache Tomcat/8.x
 Server built:          unknown
 Server number:         8.0.x
@@ -959,14 +982,14 @@ Command line argument: -Dcatalina.home=...
 Command line argument: -Djava.io.tmpdir=.../temp
 [[}]]
 
-● mvn: Default Wrapper in 3.7 [[{DevOps.maven,01_PM.TODO]]
+# mvn: Default Wrapper in 3.7 [[{DevOps.maven,01_PM.TODO]]
 https://www.infoq.com/news/2020/04/maven-wrapper/
 <hr/>
-● Java on VC.Studio
+# Java on VC.Studio
 https://devblogs.microsoft.com/java/java-on-visual-studio-code-update-february-2020/?WT.mc_id=social-reddit-marouill
 [[}]]
 
-● JHSDB [[{java_lang.debugging,monitoring.forensic,01_PM.TODO]]
+# JHSDB [[{java_lang.debugging,monitoring.forensic,01_PM.TODO]]
 https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
 - You use the jhsdb tool to attach to a Java process or to a core dump
   from a crashed Java Virtual Machine (JVM).
@@ -985,7 +1008,7 @@ https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
   etc.
 [[}]]
 
-● GraalVM Native Image [[{devops.containarization,scalability.jvm.graalvm,cloud.serverless,01_PM.TODO]]
+# GraalVM Native Image [[{devops.containarization,scalability.jvm.graalvm,cloud.serverless,01_PM.TODO]]
 @[https://jamesward.com/2020/05/07/graalvm-native-image-tips-tricks/]
 
 | FROM oracle/graalvm-ce:20.0.0-java11 as builder
@@ -1007,7 +1030,7 @@ https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
   - In your Dockerfile download the musl bundle for GraalVM:
 
 | RUN curl -L -o musl.tar.gz \
-|     https://github.com/gradinac/musl-bundle-example/releases/download/v1.0/musl.tar.gz ⅋⅋ \
+|     https://github.com/gradinac/musl-bundle-example/releases/download/v1.0/musl.tar.gz && \
 |     tar -xvzf musl.tar.gz
 
   And then add a native-image parameter that points to the extracted location of the bundle, like:
@@ -1051,15 +1074,15 @@ https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
       - tell native-image about those configs, like:
         -H:ReflectionConfigurationFiles=src/graal/reflect-config.json
 
-   - For Quarkus ⅋ Micronaut see their docs (Quarkus / Micronaut) for details on
+   - For Quarkus & Micronaut see their docs (Quarkus / Micronaut) for details on
      how to add your own reflection config files.
 [[}]]
 
-● Async Servlets 3.0+: [[{async/reactive.servlets,standards.jee.servlets,01_PM.TODO]]
+# Async Servlets 3.0+: [[{async/reactive.servlets,standards.jee.servlets,01_PM.TODO]]
 https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processing-support-in-servlet-3-0.html
 [[}]]
 
-● Real-World Java 9 [[{async/reactive.101,java_lang.flow_api,java_lang.101,01_PM.TODO]]
+# Real-World Java 9 [[{async/reactive.101,java_lang.flow_api,java_lang.101,01_PM.TODO]]
 @[https://www.infoq.com/presentations/java9-flow-stream-api/?utm_source=oficina24x7.com]
 
 • Real-World Java 9:
@@ -1071,7 +1094,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
   changes to deprecation.
 [[}]]
 
-● Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,cloud.k8s]]
+# Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,cloud.k8s]]
 @[https://developers.redhat.com/blog/2020/07/27/deploy-your-java-web-application-into-the-cloud-using-eclipse-jkube/]
 
 • JKube Maven  converts war (dependent of a container) into cloud-native app.
@@ -1146,7 +1169,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
 [[}]]
 
 
-● Conclave [[{security.secret_mng,01_PM.TODO]]
+# Conclave [[{security.secret_mng,01_PM.TODO]]
 https://medium.com/corda/conclave-beta-3-graalvm-mail-more-5038bd6d50da
 Today we’re announcing a new beta release of Conclave, a platform
 that makes it easy to use secure hardware enclaves with Java. You can
@@ -1159,7 +1182,7 @@ use enclaves to:
 - Upgrade privacy on distributed ledger platforms like Corda.
 [[}]]
 
-● Checkpointing outside the JVM [[{scalability.JVM,DevOps,01_PM.TODO]] #[jvm_app_checkpoint]
+# Checkpointing outside the JVM [[{scalability.JVM,DevOps,01_PM.TODO]] #[jvm_app_checkpoint]
 @[https://developers.redhat.com/blog/2020/10/15/checkpointing-java-from-outside-of-java/]
 When OpenJDK‘s Java virtual machine (JVM) runs a Java application,
 it loads a dozen or so classes before it starts the main class.
@@ -1185,7 +1208,7 @@ it loads a dozen or so classes before it starts the main class.
                                          $    -d -vvv -o restore.log
 [[}]]
 
-● JfrUnit [[{qa.testing,scalability.profiling,01_PM.TODO]]
+# JfrUnit [[{qa.testing,scalability.profiling,01_PM.TODO]]
 @[https://github.com/moditect/jfrunit]
 - JUnit extension for asserting JDK Flight Recorder events
   emitted by an application identifying performance regressions
@@ -1203,7 +1226,7 @@ it loads a dozen or so classes before it starts the main class.
   before they manifest as performance regressions in production.
 [[}]]
 
-● Jrpip: Low code RMI [[{architecture.distributed,01_PM.low_code,01_PM.TODO]] #[jrpip]
+# Jrpip: Low code RMI [[{architecture.distributed,01_PM.low_code,01_PM.TODO]] #[jrpip]
   Let developers concentrate on logic vs network plumbing and TCP errors.
 - Jrpip mplements remote interface method invocation which allows different
   Java processes to interact with one another.
@@ -1219,7 +1242,7 @@ it loads a dozen or so classes before it starts the main class.
   @[../WebTechnologies/map.html?topics=grpc&showSearchMenu=false]
 [[}]]
 
-● Tablasco [[{qa.testing.data,architecture.batch,01_PM.low_code,01_PM.TODO]]
+# Tablasco [[{qa.testing.data,architecture.batch,01_PM.low_code,01_PM.TODO]]
 @[https://github.com/goldmansachs/tablasco]
 - (By Goldman Sasch) JUnit rule that adds table verification to unit
   tests. For software products that produce large amounts of data, this
@@ -1237,7 +1260,7 @@ it loads a dozen or so classes before it starts the main class.
 
 
 
-● SMTP: Sending mail [[{messaging.mail.smtp,security.notifications]]
+# SMTP: Sending mail [[{messaging.mail.smtp,security.notifications]]
 - Based on AWS guide @[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-using-smtp-java.html]
   but applies to any standard SMTP e-mail server.
 
@@ -1316,7 +1339,7 @@ it loads a dozen or so classes before it starts the main class.
         SMTP username credential is 20-chars (letters and numbers)
 [[}]]
 
-● jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,01_PM.TODO]]
+# jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,01_PM.TODO]]
 @[https://github.com/jerolba/jfleet]
 · JFleet is a Java library which persist in database large collections
   of Java POJOs as fast as possible, using the best available technique
@@ -1330,12 +1353,12 @@ it loads a dozen or so classes before it starts the main class.
   tables and columns, JFleet is not an ORM.
 [[}]]
 
-● JVM Anatomy [[{jvm.101,01_PM.TODO]]
+# JVM Anatomy [[{jvm.101,01_PM.TODO]]
 https://shipilev.net/jvm-anatomy-park/
 https://shipilev.net/jvm-anatomy-park/22-safepoint-polls/
 [[}]]
 
-● Java Class Library (JCL, rt.jar) [[{java_lang.101,01_PM.TODO]]
+# Java Class Library (JCL, rt.jar) [[{java_lang.101,01_PM.TODO]]
 rt.jar contains the Java Class Library (JCL)
 https://en.wikipedia.org/wiki/Java_Class_Library
 
@@ -1363,7 +1386,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
   several modules with specified dependencies.
 [[}]]
 
-● Java Threading resources [[{concurrency,01_PM.TODO]]
+# Java Threading resources [[{concurrency,01_PM.TODO]]
 @[https://avaldes.com/?s=java+thread]
 
 - Java Thread, Concurrency and Multithreading Tutorial
@@ -1375,7 +1398,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 - Java Threads Wait, Notify and NotifyAll Example
 [[}]]
 
-● JIMFS [[{async/reactive.io,persistence.fs,01_PM.TODO]]
+# JIMFS [[{async/reactive.io,persistence.fs,01_PM.TODO]]
 @[https://github.com/google/jimfs]
 - Jimfs supports almost all the APIs under java.nio.file:
   - Create/delete/move/Copy  files/dirs.
@@ -1402,7 +1425,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 
 [[}]]
 
-● Java Poet [[{01_PM.backlog]]
+# Java Poet [[{01_PM.backlog]]
 @[https://github.com/square/javapoet]
 • Java API for generating .java source files.
 • useful for:
@@ -1413,12 +1436,12 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 • Avoid boilerplate while also keeping a  single source of truth .
 [[}]]
 
-● Storing HttpSessions to Redis [[{persistence.session,scalability.cache,architecture.distributed]]
+# Storing HttpSessions to Redis [[{persistence.session,scalability.cache,architecture.distributed]]
 @[https://github.com/AmadeusITGroup/HttpSessionReplacer]
 AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
 
-● Dekorate k8s annotations [[{cloud.k8s,01_PM.backlog]]
+# Dekorate k8s annotations [[{cloud.k8s,01_PM.backlog]]
 @[https://developers.redhat.com/blog/2021/03/17/using-dekorate-to-generate-kubernetes-manifests-for-java-applications/]
 • ex:
   JAVA ANOTATION INPUT
@@ -1442,7 +1465,7 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 • Integration with Jib to generate OCI images is also available.
 [[}]]
 
-● Servlet servers Arch [[{01_PM.TODO,standards.jee.servlets]]
+# Servlet servers Arch [[{01_PM.TODO,standards.jee.servlets]]
 embedded servers usually comprise two logical components:
 
 ┌───────────────────────────────────┬────────────────────────────────
@@ -1458,7 +1481,7 @@ embedded servers usually comprise two logical components:
 └───────────────────────────────────┴────────────────────────────────
 [[}]]
 
-● Yourkit profiler [[{java_lang.profiling,01_PM.radar]]
+# Yourkit profiler [[{java_lang.profiling,01_PM.radar]]
 @[https://www.yourkit.com/java/profiler/features/]
 • Yourkit: commercial (non OOSS) profiler with advanced features
 • Tight integration with your IDE
@@ -1534,7 +1557,7 @@ REF: @[http://tribe.ow2.org/]
   cluster communications.
 [[}]]
 
-● OSV.io [[{scalability.unikernel,security,devops,01_PM.backlog]]
+# OSV.io [[{scalability.unikernel,security,devops,01_PM.backlog]]
 - @[http://osv.io/]
   versatile modular unikernel designed to run unmodified Linux
   applications securely on micro-VMs in the cloud. Built from the ground up for
@@ -1542,12 +1565,12 @@ REF: @[http://tribe.ow2.org/]
   with superior performance. (Includes CRaSH shell)
 [[}]]
 
-● Excellent Java Blog (spanish)
+# Excellent Java Blog (spanish)
   @[https://picodotdev.github.io/blog-bitix/tags/java/">Excellent Java Blog (spanish)
 
-● @[https://github.com/akullpp/awesome-java] Awesome Java
+# @[https://github.com/akullpp/awesome-java] Awesome Java
 
-● Amazon CodeGuru [[{qa.testing,cloud.aws,devops,01_PM.backlog]]
+# Amazon CodeGuru [[{qa.testing,cloud.aws,devops,01_PM.backlog]]
 - Powered by IA.
 - CodeGuru consists of two components
 – Amazon CodeGuru Profiler:
@@ -1581,7 +1604,7 @@ JRuby, Jython, Groovy, Kotlin, Scala, and Java.
 Java code stored in GitHub, AWS CodeCommit, or Bitbucket.
 [[}]]
 
-● Java, Soft. Arch: E.C.S. Dominon favors composition over inheritance
+# Java, Soft. Arch: E.C.S. Dominon favors composition over inheritance
 https://www.reddit.com/r/java/comments/z5yj0i/dominion_vs_artemis_the_missing_benchmarks_link/
 Entity Component System (ECS) architecture promotes data-oriented
 programming. It’s all about data (components) andfirst-class
@@ -1592,10 +1615,10 @@ user application, and the entity promotes “composition over
 inheritance” bygrouping a dynamic list of components to define its
 specific features.
 
-● Spring Batch 5.0GA
+# Spring Batch 5.0GA
   https://www.reddit.com/r/java/comments/z3vmb2/spring_batch_50_goes_ga/
 
-● What's New in Spring Framework 6.x
+# What's New in Spring Framework 6.x
  · spring-projects/spring-framework Wiki · GitHub
 https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-6.x/
 Juergen Hoeller edited this page Nov 11, 2022 · 27 revisions s
@@ -1656,15 +1679,15 @@ native image.Integration with HtmlUnit 2.64+ request parameter
 handling.Servlet mocks (MockHttpServletRequest, MockHttpSession) are
 based on Servlet API 6.0 now.
 
-● https://www.reddit.com/r/java/comments/z1s58l/spring_6_migration_guide/
+# https://www.reddit.com/r/java/comments/z1s58l/spring_6_migration_guide/
 
-● Porting Million Lines of Code from Java to Kotlin at Meta
+# Porting Million Lines of Code from Java to Kotlin at Meta
   https://www.infoq.com/news/2022/11/meta-port-java-kotlin/
 
-● Getting Ready for Spring Framework 6 - Spring Framework Guru
+# Getting Ready for Spring Framework 6 - Spring Framework Guru
   https://springframework.guru/getting-ready-for-spring-framework-6/
 
-● BellSoft Introduces Alpaquita Linux
+# BellSoft Introduces Alpaquita Linux
   https://www.infoq.com/news/2022/10/java-news-roundup-sep26-2022/
   BellSoft has introduced Alpaquita Linux, an operating system tailored
   for the Java programming language. Based on Alpine Linux, this new
@@ -1674,7 +1697,7 @@ based on Servlet API 6.0 now.
   advantage of native image technology through the Liberica Native
   Image Kit. InfoQ will follow up with a more detailed news story.
 
-● Project Loom: Revolution in Java Concurrency or Obscure Implementation Detail?
+# Project Loom: Revolution in Java Concurrency or Obscure Implementation Detail?
   https://www.infoq.com/presentations/loom-java-concurrency/
     Project Loom: Revolution in Java Concurrency or Obscure
   Implementation Details Summary Tomasz Nurkiewicz explores what Loom
@@ -1692,7 +1715,7 @@ based on Servlet API 6.0 now.
 
   	Oct 24-28 (In-Person, San Francisco)
 
-● Nurkiewicz: I'd like to talk about Project Loom, a very new and
+# Nurkiewicz: I'd like to talk about Project Loom, a very new and
 exciting initiative that will land eventually in the Java Virtual
 Machine. Most importantly, I would like to briefly explain whether
 it's going to be a revolution in the way we write concurrent
@@ -2251,13 +2274,13 @@ will revolutionize the way we develop software, or at least I hope it
 won't. It will significantly change the way libraries or frameworks
 can be written so that we can take advantage of them.
 
-● Web Tech, sof Arch:  Apache ShenYu: Java Responsive API Gateway Announced as Apache Top-Level Project
+# Web Tech, sof Arch:  Apache ShenYu: Java Responsive API Gateway Announced as Apache Top-Level Project
   https://www.infoq.com/news/2022/09/shenyu-gateway/ 
 
-● JEP 429: Extent-Local Variables to Promote Immutability in Java
+# JEP 429: Extent-Local Variables to Promote Immutability in Java
   https://www.infoq.com/news/2022/09/extent-local-variables-java/
 
-● Announcing Conclave SDK 1.3 and Open Source
+# Announcing Conclave SDK 1.3 and Open Source
   https://www.conclave.net/blog/announcing-conclave-sdk-1-3-and-open-source
 We are pleased to announce the release of version 1.3 of the Conclave
 SDK. This is an important milestone for confidential computing as it
@@ -2321,22 +2344,22 @@ or have suggestions for other improvements, then ping us on Discord
 or GitHub.
 Happy coding!
 
-● spring: https://www.reddit.com/r/java/comments/zlnhbz/just_a_command_line_toolkit_for_developing_spring/
+# spring: https://www.reddit.com/r/java/comments/zlnhbz/just_a_command_line_toolkit_for_developing_spring/
 
-● Ver "Programmer's Guide to JDK Flight Recorder" en YouTubehttps://youtu.be/K1ApBZGiT-Y
+# Ver "Programmer's Guide to JDK Flight Recorder" en YouTubehttps://youtu.be/K1ApBZGiT-Y
 
-● Resilience4j 2.0.0 Delivers Support for JDK 17
+# Resilience4j 2.0.0 Delivers Support for JDK 17
   https://www.infoq.com/news/2022/12/resilience4j-2-0-0/
 
-● Consolidated JDK 19 Release Notes
+# Consolidated JDK 19 Release Notes
   https://www.oracle.com/java/technologies/javase/19all-relnotes.html
 
-● quartz alternatives, batch, schedule task runners "cron".
+# quartz alternatives, batch, schedule task runners "cron".
   https://www.reddit.com/r/java/comments/zariyv/is_quartz_abandoned/See alternatives
 
-● JVM Options Explorer - OpenJDK11 HotSpot 101https://chriswhocodes.com/ 
+# JVM Options Explorer - OpenJDK11 HotSpot 101https://chriswhocodes.com/ 
 
-● https://github.com/ben-manes/caffeine  [[{scalability.cache]]
+# https://github.com/ben-manes/caffeine  [[{scalability.cache]]
   high performance, near optimal caching library.
   LoadingCache<Key, Graph> graphs = Caffeine.newBuilder()
       .maximumSize(10_000)
@@ -2368,7 +2391,183 @@ Happy coding!
   [[}]]
 
 
+# Thorben Janssen  (newsletter)
+  """
+  Domain Driven Design (DDD) adoption has massively grown.
+   One of the reasons is that the concept of "bounded-contexts" fits incredibly
+  well with microservices-design .... You will soon recognize some of the
+  DDD's design principles ovelaping with JPA:
+    Both use entities, identifiers, and value objects.
+  - Do they really mean the same in both contexts?
+  - What about DDD's concept of an aggregate? (1+ entities):
+     This might sound like you shouldn't use JPA if you want to follow DDD
+     design principles. But that's not the case. They actually fit very
+     well together if you follow a few simple rules when implementing your
+     JPA entity mappings.
+  """
 
+# Spring Shell Reference Documentation
+  https://docs.spring.io/spring-shell/docs/3.0.0/docs/index.html
 
+# Eclipse Migration Toolkit for Java (EMT4J) [[{]]]
+  Adoptium has introduced the Eclipse Migration Toolkit for Java
+  (EMT4J), an open source Eclipse project capable of analyzing and
+  upgrading applications from Java 8 to Java 11 and from Java 11 to
+  Java 17. EMT4J will support upgrading to future LTS versions.
 
+  https://www.infoq.com/news/2022/12/eclipse-migration-toolkit-java/
+[[}]]
+
+# Profiler in 240 Lines of Pure Java [[{JAVA_LANG.PROFILING]]
+  https://foojay.io/today/writing-a-profiler-in-240-lines-of-pure-java/
+  JVM safepoint: point in time where the JVM has a known defined
+state, and all threads have stopped. JVM itself needs safepoints to
+do major garbage collections, Class definitions, method
+deoptimizations, and more. Threads are regularly checking whether
+they should get into a safepoint, for example, at method entry, exit,
+or loop backjumps. A profiler that only profiles at a safepoint have
+an inherent bias because it only includes frames from the locations
+inside methods where Threads check for a safepoint. The only
+advantage is that the stack-walking at safepoints is slightly less
+error-prone, as there are fewer mutations of heap and stack.
+Further read: Java Safepoint and Async Profiling by Seetha Wenner,
+the more technical one by JP Bempel, or the classic article
+Safepoints: Meaning, Side Effects and Overheads by Nitsan Wakart. To
+conclude: Safepoint-biased profilers don't give you a holistic view
+of your application, but can still be helpful to analyze major
+performance issues where you look at the bigger picture.This article
+aims to develop a tiny Java profiler in pure Java code that everyone
+can understand. Profilers are not rocket science, and ignoring
+safepoint-bias, we can write a usable profiler that outputs a flame
+graph in just 240 lines of code.You can find the whole project on
+GitHub.
+[[}]]
+------------------------------------------------
+
+# JEP 444: Virtual Threads Arrive in JDK 21 2023-05 [[{scalability.101]]
+  Ushering a New Era of Concurrency
+  https://www.infoq.com/news/2023/04/virtual-threads-arrives-jdk21/ [[scalability,concurrency]]
+
+Virtual Threads, promoted from Candidate to Proposed to Target status for JDK 21.
+
+finalize based on feedback from the previous two rounds of preview:
+JEP 436, Virtual Threads (Second Preview), delivered in JDK 20;
+JEP 425, Virtual Threads (Preview), delivered in JDK 19.
+
+Java now has two types of threads:
+- traditional threads, platform or OS "wrapper" threads
+- virtual threads:  "many" virtual threads per OS thread.
+  OFFERING COMPATIBILITY WITH EXISTING JAVA CODE
+ path to benefit from enhanced performance and resource
+utilization. Consider the following example:try (var executor =
+Executors.newVirtualThreadPerTaskExecutor()) { IntStream.range(0,
+10_000).forEach(i -> { executor.submit(() -> {
+Thread.sleep(Duration.ofSeconds(1)); return i; }); });}The JDK can
+now run up to 10,000 concurrent virtual threads on a small number of
+operating system (OS) threads, as little as one, to execute the
+simple code above that involves sleeping for one second.Virtual
+threads are designed to work with thread-local variables and
+inheritable thread-local variables, just like platform threads.
+However, due to the large number of virtual threads that can be
+created, developers should use thread-local variables with caution.
+To assist with the migration to virtual threads, the JDK provides a
+system property, jdk.traceVirtualThreadLocals, that triggers a stack
+trace when a virtual thread sets the value of any thread-local
+variable.The java.util.concurrent package now includes support for
+virtual threads. The LockSupport API has been updated to gracefully
+park and unpark virtual threads, enabling APIs that use LockSupport,
+such as Locks, Semaphores, and blocking queues, to function
+seamlessly with virtual threads. The
+Executors.newThreadPerTaskExecutor(ThreadFactory) and
+Executors.newVirtualThreadPerTaskExecutor() methods provide an
+ExecutorService that creates a new thread for each task, facilitating
+the migration and interoperability with existing code that uses
+thread pools and ExecutorService.Networking APIs in the java.net and
+java.nio.channels packages now support virtual threads, enhancing
+efficiency in concurrent applications. Blocking operations on a
+virtual thread free up the underlying platform thread, while I/O
+methods in the Socket, ServerSocket and DatagramSocket classes have
+been made interruptible. This update promotes consistent behavior and
+improved performance for Java developers working with concurrent
+applications.The java.io package, which provides APIs for streams of
+bytes and characters, has been updated to avoid pinning when used in
+virtual threads. Pinning in virtual threads refers to a lightweight
+thread being "stuck" to a specific platform thread, limiting
+concurrency and flexibility due to blocking operations.
+BufferedInputStream, BufferedOutputStream, BufferedReader,
+BufferedWriter, PrintStream, and PrintWriter now use an explicit lock
+instead of a monitor when used directly. The stream decoders and
+encoders used by InputStreamReader and OutputStreamWriter now use the
+same lock as their enclosing InputStreamReader or
+OutputStreamWriter.Java Native Interface (JNI) has introduced a new
+function, IsVirtualThread, to test if an object is a virtual thread.
+The JNI specification otherwise remains unchanged.The debugging
+architecture, consisting of the JVM Tool Interface (JVM TI), the Java
+Debug Wire Protocol (JDWP), and the Java Debug Interface (JDI), has
+been updated to support virtual threads. All three interfaces now
+support virtual threads, with new capabilities and methods added to
+handle thread start and end events and bulk suspension and resumption
+of virtual threads.JDK Flight Recorder (JFR) now supports virtual
+threads with new events such as jdk.VirtualThreadStart,
+jdk.VirtualThreadEnd, jdk.VirtualThreadPinned, and
+jdk.VirtualThreadSubmitFailed. These events provide insight into the
+behavior of virtual threads in the application.Java Management
+Extensions (JMX) will continue to support only platform threads
+through the ThreadMXBean interface. A new method in the
+HotSpotDiagnosticsMXBean interface generates the new-style thread
+dump to support virtual threads.While virtual threads bring
+significant performance improvements, developers should be aware of
+compatibility risks due to changes in existing APIs and their
+implementations. Some of these risks include revisions to the
+internal locking protocol in the java.io package and source and
+binary incompatible changes that may impact code that extends the
+Thread class.Virtual threads mark a significant milestone in Java's
+journey to support highly concurrent and scalable applications. With
+a more efficient and lightweight threading model, developers can now
+handle millions of tasks with ease and better utilize system
+resources. Developers can leverage more details on JEP 425, which can
+be found in this InfoQ news story and this JEP Café screen cast by
+José Paumard, Java developer advocate with the Java Platform Group
+at Oracle.
+
+[[}]]
+
+# Billions of Messages Per Minute Over TCP/IP [[{io.serialization,io.scalability,scalability.network,JVM,]]
+  https://www.infoq.com/articles/billions-messages-minute/ 
+  Chronicle Wire library: provides high-performance transformations
+  of state in Java objects between their internal JVM representation
+  and a format that allows that state to be persisted or communicated
+  to another Java process.  
+  It grew from Chronicle Queue project, which offers single digit
+  microsecond latencies for messaging between JVMs on the same machine,
+  or stable latencies of tens of microseconds between machines,
+  as throughput scales to millions of messages per second.
+[[}]]
+
+# Java's Collections Framework Gets a Makeover  [[{data_structures]]
+  https://www.infoq.com/news/2023/03/collections-framework-makeover/
+  New Sequenced Collection Types
+[[}]]
+
+# VertX Mutiny Zero by Julien Ponge
+  Quarkus Insights 120
+  https://www.linkedin.com/feed/update/activity:7038552356413693952
+
+  latest developments around Mutiny, Mutiny Zero and switching from legacy Reactive Streams to JDK Flow.
+  https://www.youtube.com/watch?v=RRs4DJJUSx8
+
+#  gradle 8.0 GA release [[{DEVOPS.GRADLE]]
+- enhancements to Kotlin DSL (alternative to Groovy DSL).
+- upgrades to Kotlin 1.8 and JDK 11.
+- improvements in buildSrc builds;
+- configuration cache: incubating new feature
+- improvements in Java toolchains.
+- Shortly after the GA release, a patch release, Gradle 8.0.1,
+  provides fixes for these issues:
+[[}]]
+
+# WireMock Spring Boot Simplifies WireMock Configuration [[{SPRING.testing]]
+  https://www.infoq.com/news/2023/03/wiremock-spring-boot/
+[[}]]
 [[java,01_PM.TODO}]]
+

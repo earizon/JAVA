@@ -1,4 +1,4 @@
-● https://www.reddit.com/r/java/comments/kgykrq/which_is_best_java_collectoon_vs_eclipse/
+# https://www.reddit.com/r/java/comments/kgykrq/which_is_best_java_collectoon_vs_eclipse/
 
   Which is best? Java Collectoon vs Eclipse Collections, Guava or Apache Collections?
   ...
@@ -7,7 +7,7 @@
   personally avoid it now. Their attitude of breaking APIs is simply not something
   that's fun to deal with especially when you start getting larger projects.
 
-● Guava ListenableFuture [[{async/reactive.101,02_doc_has.comparative,qa]]
+# Guava ListenableFuture [[{async/reactive.101,02_doc_has.comparative,qa]]
 @[https://github.com/google/guava/wiki/ListenableFutureExplained]
 - Concurrency is a hard problem, but it is significantly simplified by
   working with powerful and simple abstractions. To simplify matters,
@@ -20,7 +20,7 @@
   - Providers of utility methods won't need to provide Future and ListenableFuture
       variants of their methods.
 
-● Listenable vs CompletableFutures
+# Listenable vs CompletableFutures
 @[https://stackoverflow.com/questions/38744943/listenablefuture-vs-completablefuture]
           ListenableFuture                           │               CompletableFuture
 ─────────────────────────────────────────────────────┼───────────────────────────────────────────────────

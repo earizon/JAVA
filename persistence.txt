@@ -1,6 +1,6 @@
 JAVA persistence:
 
-● Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,cloud.*,spring.*,persistence.jpa,01_PM.TODO]]
+# Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,cloud.*,spring.*,persistence.jpa,01_PM.TODO]]
 • tool providing version control for database (SQL) schemas
   and automated schema (tables, columns, sequences), data, views, procedures
   and packages evolution.
@@ -41,7 +41,7 @@ JAVA persistence:
     ALTER TABLE table01
       ADD COLUMN column5 VARCHAR(255);
 
-● Obevo: DDBB change manager
+# Obevo: DDBB change manager
 @[https://github.com/goldmansachs/obevo]
 - Obevo: ddbb deployment tool handling enterprise scale schemas and complexity.
 - By Goldman Sachs.
@@ -74,10 +74,10 @@ JAVA persistence:
 • Alternatives to Flyway include LiquidBase, ... [TODO]
 [[}]]
 
-● Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
+# Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
 @[https://www.jooq.org/]
 
-● Vertx+Jooq
+# Vertx+Jooq
 @[https://github.com/jklingsporn/vertx-jooq]
   jOOQ-CodeGenerator to create vertxified DAOs and POJOs.
   Now with JDBC, async and reactive support!
@@ -85,7 +85,7 @@ JAVA persistence:
 
 [[}]]
 
-● Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
+# Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
 @[https://quarkus.io/guides/hibernate-orm-panache-guide]
 
 - Hibernate Gotchas:
@@ -97,7 +97,7 @@ JAVA persistence:
   https://thorben-janssen.com/hibernate-exceptions/
 [[}]]
 
-● speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
+# speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
 @[https://github.com/speedment/speedment]
 - Stream ORM toolkit and runtime.
 - The toolkit analyzes the metadata of an existing SQL database and
@@ -147,7 +147,7 @@ JAVA persistence:
       (`length` > 120)
 [[}]]
 
-● reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
+# reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
 @[https://github.com/goldmansachs/reladomo]
   - Enterprise grade ORM framework featuring:
     - Strongly typed   compile-time  checked query language
@@ -156,7 +156,7 @@ JAVA persistence:
     - Full support for unit-testable code
 [[}]]
 
-● c3p0 [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
+# c3p0 [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
 @[https://www.mchange.com/projects/c3p0/#what_is]
 • c3p0: easy-to-use library for making traditional JDBC drivers
         "enterprise-ready" augmenting them with jdbc3 functionality,
@@ -185,12 +185,12 @@ JAVA persistence:
 [[}]]
 [[$div}]]
 
-● Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
+# Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
 @[https://github.com/xerial/snappy-java]
 - Java port of the snappy @[http://code.google.com/p/snappy/]
 [[}]]
 
-● JCache [[{scalability.cache,01_PM.TODO]]
+# JCache [[{scalability.cache,01_PM.TODO]]
 - Map-Like API optimized for caching.
 - 1.0 drawbacks:
   - No async operations.

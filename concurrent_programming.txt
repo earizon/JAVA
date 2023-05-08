@@ -1,11 +1,11 @@
 Concurrent Programming [[{$ Concurrent Programming]]
 [[{concurrency.101]]
-● External Links
+# External Links
 - Youtube Concurrency Classes:
 @[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4] [  ES lang ]
 [[}]]
 [[{concurrency.101,scalability.101,01_PM.low_code]]
-● 1uSec Thread sync
+# 1uSec Thread sync
 REF:
 @[https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/]
 """
@@ -42,7 +42,7 @@ See also: fast Inter-thread communication:
   Just get POJOs communicating behind plain old Java interfaces.
 [[}]]
 
-● Concurrency Basics [[{concurrency.101]]
+# Concurrency Basics [[{concurrency.101]]
 - Concurrency problems arise from the desire to use CPU resources more efficiently. Non concurrent
   applications (single threaded/single process) are complete Touring machines that can potentially
   solve any problem with enough time and memory. In practice having a CPU assigned to single thread
@@ -86,7 +86,7 @@ See also: fast Inter-thread communication:
     for certain condition) . They are implemented as thread-safe classes
 [[}]]
 [[{]]concurrency.101" >
-● monitors
+# monitors
 - Object providing Mutual exclusion of threads to shared resources
 - simplest form of synchronization:
   alternatives include:
@@ -150,7 +150,7 @@ TODO Concurrent
 [[}]]
 
 [[{]]concurrency.barrier" >
-● CountDownLatch
+# CountDownLatch
 • (java.util.concurrent) Since JDK 1.5
 @[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
 • Object allowing 1+ threads to wait until a
@@ -258,7 +258,7 @@ TODO Concurrent
 @[https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67]
 [[}]]
 
-● Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,02_doc_has.diagram]]
+# Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,02_doc_has.diagram]]
 @[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
 • Basic Thread objects
 
@@ -464,7 +464,7 @@ TODO Concurrent
       @[http://coopsoft.com/ar/CalamityArticle.html]
 [[}]]
 
-● Completable Future [[{async/reactive.101,02_doc_has.diagram]]
+# Completable Future [[{async/reactive.101,02_doc_has.diagram]]
 @[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html]
 • Future:            (Java 5+) Represent an asynchronous computation result.
   CompletableFuture: (Java 8+)
@@ -627,7 +627,7 @@ TODO Concurrent
 [[}]]
 
 
-● DragonWell JDK with Coroutine Support [[{concurrency.*,scalability.jvm,02_doc_has.comparative]]
+# DragonWell JDK with Coroutine Support [[{concurrency.*,scalability.jvm,02_doc_has.comparative]]
 REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
 - AdoptOpenJDK and Alibaba announced that the Dragonwell JDK will be
   built, tested, and distributed using AdoptOpenJDK's infrastructure.
@@ -649,7 +649,7 @@ REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
 • See also reddit thread "Loom vs DragoWell JV:":
 @[https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3]
 <hr/>
-● Loom Project: Ligthweight threads
+# Loom Project: Ligthweight threads
 @[https://developers.redhat.com/blog/2019/06/19/project-loom-lightweight-java-threads/]
 @[https://openjdk.java.net/jeps/353]
 
@@ -701,7 +701,7 @@ Bio
 Ron Pressler is the technical lead for Project Loom, which aims to add delimited
 continuations, fibers and tail-calls to the JVM
 
-● Quasar(Fibers)
+# Quasar(Fibers)
 • fast threads for java and Kotlin
 @[http://docs.paralleluniverse.co/quasar/]
 

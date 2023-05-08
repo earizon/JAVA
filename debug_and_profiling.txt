@@ -1,4 +1,4 @@
-● JVM Troubleshooting and Monitoring [[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
+# JVM Troubleshooting and Monitoring [[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
 
 - jcmd:  (See section)
 - Flight Recorder:
@@ -40,7 +40,7 @@
 [[}]]
 
 
-● 'man 1 jcmd' Summary: [[{101,JVM.monitoring.101,java_lang.debugging]]
+# 'man 1 jcmd' Summary: [[{101,JVM.monitoring.101,java_lang.debugging]]
                         [[java_lang.profiling,monitoring.flight_recorder]]
 - 'jcmd' must run on same machine+user+group on which the JVM is running.
 
@@ -146,7 +146,7 @@
 [[}]]
 
 
-● Flight Recorder [[{monitoring.101,monitoring.flight_recorder,java_lang.profiling,02_doc_has.comparative]]
+# Flight Recorder [[{monitoring.101,monitoring.flight_recorder,java_lang.profiling,02_doc_has.comparative]]
 @[https://www.youtube.com/watch?v=azshjd5Vsv0]
 - Free of use starting with Java 11+ and backported to OpenJDK 8u272+
   @[https://www.infoq.com/news/2019/11/jfr-openjdk-8/]
@@ -219,7 +219,7 @@
 
 [[}]]
 
-● CRaSH shell [[{monitoring.101,java_lang.debugging,01_PM.low_code,01_PM.TODO]]
+# CRaSH shell [[{monitoring.101,java_lang.debugging,01_PM.low_code,01_PM.TODO]]
 • Features:
   ✓ Connect to any JVM running CRaSH through SSH, telnet or web.
   ✓ Monitor and/or use virtual machine resources:
@@ -230,7 +230,7 @@
 
 [[}]]
 
-● Eclipse Mem.Analizer [[{java_lang.profiling01_PM.TODO]]
+# Eclipse Mem.Analizer [[{java_lang.profiling,01_PM.TODO]]
 @[https://www.eclipse.org/mat/]
 """he Eclipse Memory Analyzer is a fast and feature-rich Java heap
   analyzer that helps you find memory leaks and reduce memory consumption.
@@ -249,7 +249,7 @@ It can provide reports and warnings similar to:
   java.util.LinkedList$Entry loaded by 'system class loader'
 [[}]]
 
-● SystemTap+Java [[{jvm.dynamic_instrumentation,java_lang.profiling,01_PM.TODO]]
+# SystemTap+Java [[{jvm.dynamic_instrumentation,java_lang.profiling,01_PM.TODO]]
 @[https://laurent-leturgez.com/2017/12/22/profiling-java-application-with-systemtap/]
 [root@spark ~]# yum install systemtap systemtap-runtime-java
 
@@ -299,7 +299,7 @@ class Example {                                     timespent=0
 }
 [[}]]
 
-● Fast Thread [[{java_lang.debugging,jvm.monitoring.threads,01_PM.radar]]
+# Fast Thread [[{java_lang.debugging,jvm.monitoring.threads,01_PM.radar]]
 @[https://fastthread.io/]
 • Features:
   ✓ Java Thread Dump Analyzer
@@ -311,13 +311,13 @@ class Example {                                     timespent=0
 [[}]]
 
 [[{jvm.memory,jvm.gc,java_lang.debugging,qa,01_PM.low_code,01_PM.TODO]]
-● gceasy.io
+# gceasy.io
 @[https://gceasy.io/]
 • Features:
   ✓ machine learning guided Garbage collection log analysis tool.
-    GCeasy has in-built intelligence to auto-detect problems in the JVM ⅋ Android
+    GCeasy has in-built intelligence to auto-detect problems in the JVM & Android
     GC logs and recommend solutions to it.
-  ✓ Solve Memory ⅋ GC problems in seconds
+  ✓ Solve Memory & GC problems in seconds
   ✓ Get JVM Heap settings recommendations
   ✓ Machine Learning Algorithms
   ✓ Trusted by 4,000+ enterprises
@@ -326,7 +326,7 @@ class Example {                                     timespent=0
   ✓ Made by the developers, for the developers
 [[}]]
 
-● libperfagent (perf agent) [[{java_lang.profiling,concurrency.lock,monitoring.distributed,01_PM.TODO]]
+# libperfagent (perf agent) [[{java_lang.profiling,concurrency.lock,monitoring.distributed,01_PM.TODO]]
 Extracted from:
   "Apache Spark @Scale: A  production use case"
 @[https://engineering.fb.com/core-data/apache-spark-scale-a-60-tb-production-use-case/]
@@ -341,7 +341,7 @@ Extracted from:
     internal metrics collection framework.
 [[}]]
 
-● Uber JVM Profiler: Tracing at scale [[{architecture.distributed,monitoring.distributed,java_lang.profiling,01_PM.TODO]]
+# Uber JVM Profiler: Tracing at scale [[{architecture.distributed,monitoring.distributed,java_lang.profiling,01_PM.TODO]]
 @[https://eng.uber.com/jvm-profiler/]
 Our JVM Profiler supports a variety of use cases, most notably making
 it possible to instrument arbitrary Java code. Using a simple
@@ -385,7 +385,7 @@ could be used for any JVM process as well.
 
 
 
-● JAVA FlameGraph Profiling [[{java_lang.profiling.flamegraph,JVM,java_lang.profiling.101,architecture.real-time]]
+# JAVA FlameGraph Profiling [[{java_lang.profiling.flamegraph,JVM,java_lang.profiling.101,architecture.real-time]]
 
 UPDATE (Aug 2015): See the Java in Flames Netflix Tech Blog post for the latest
 and best method for Java flame graphs, which uses Linux perf_events to show Java
@@ -515,7 +515,7 @@ USSAGE:
   perf_events separately).
 [[java_lang.profiling.flamegraph}]]
 
-● Debugger Architecture [[{java_lang.debugging,01_PM.TODO]]
+# Debugger Architecture [[{java_lang.debugging,01_PM.TODO]]
 https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/jdwp-spec.html
 https://en.wikipedia.org/wiki/Java_Platform_Debugger_Architecture
 https://www.baeldung.com/spring-debugging

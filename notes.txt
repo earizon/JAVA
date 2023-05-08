@@ -15,7 +15,7 @@ This "cheat-sheet with steroids" presents an always-growing set of
 DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 ... as well as author's own experience in different projects.
 
-● External Links [[{]]
+## External Links [[{]]
   @[https://openjdk.java.net/jeps/0] JAVA Enhancements proposals
   @[https://docs.oracle.com/javase/specs/] Lang & VM specs
   @[https://docs.oracle.com/javase/17/docs/api/]
@@ -44,7 +44,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
   ISBN-13: 978-1449358457
 [[}]]
 
-● JAVA LANGUAGE 101 [[{java_lang.101]]
+# JAVA LANGUAGE 101 [[{java_lang.101]]
 
   import static java.lang.System.out;
   public class HelloWorld {
@@ -76,10 +76,11 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
     ...
   }
 
-● JBang: Simplified Java
+## JBang: Simplified Java [[{]]
 @[https://www.youtube.com/watch?v=X4x2jM3Y0uE]
+[[}]]
 
-● String Manipulation  [[{java_lang.strings,java_lang.101,01_PM.WiP]]
+## Strings  [[{java_lang.strings,java_lang.101,PM.WiP]]
   final String
      output1 = String .format ("%s = %d", "joe", 35), ← Format string
      output2 = String .format ("%4d",100);            ←
@@ -134,10 +135,103 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
     for (int i = 0; i < 0 ; i++) { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
 [[java_lang.strings}]]
 
+## forcing String pool reuse [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
+- Strings are immutable.
+- Stored on the heap.
+- Java manages a string pool in memory, reusing strings whenever possible.
+
+String string01 = "297",                                string01 == string02 : true
+       string02 = "297",                                string01 == string03 :   false
+       string03 = new Integer(297).toString(),          string01 == string04 : true
+       string04 = new Integer(297).toString()           string05 == string01 :   false
+                  .intern() ;
+       string05 = new String("297")
+
+ 1:   Pool reuse does not work for dynamically created strings
+*2: If we consider that the computed String will be used quite often,
+    we can force the JVM to add it to the string pool by adding the
+    .intern() method at the end of computed string.
+[[}]]
+
+## Optimization Tips [[{scalability.101,jvm.101,java_lang.101.best_patterns]]
+- To minimize the memory footprint, limit scope-of-variables as much as possible.
+
+- Explicitly refer to null obsolete references making them eligible for GC.
+
+- Avoid finalizers. They slow down the process and they do not guarantee anything.
+  Prefer phantom references for cleanup work.
+
+- Do not use strong references where weak or soft references apply.
+  The most common memory pitfalls are caching scenarios,when data
+  is held in memory even if it might not be needed.
+
+- Explicitly specify heap size for the JVM when running the application:
+  -  allocate a reasonable initial and maximum amount of memory for the heap.
+     Initial heap size -Xms512m   – set initial heap     size to  512 megabytes
+     Maximum heap size -Xmx1024m  – set maximum heap     size to 1024 megabytes
+     Thread stack size -Xss128m   – set thread stack     size to  128 megabytes
+     Young genera.size -Xmn256m   – set young generation size to  256 megabytes
+
+REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_source=www.oficina24x7.com]
+    - Initial Heap Size: -Xms: >= 1/64th of physical memory || reasonable minimum.
+    - Maximum Heap Size: -XmX: <= 1/4 th of physical memory || 1GB.
+                         ^^^^^
+                  - Set -Xms equal to -Xmx to prevent pauses caused by heap expansion
+                  ☞  Setting Xms/Xmx increase GC predictability .
+
+    JVM settings are recommended for:
+    PRODUCTION TIER       REPLICA SERVERS           STANDALONE
+    -server               -server                   -server
+    -Xms24G -Xmx24G        -Xms4G -Xmx4G            -Xms32G -Xmx32G
+    └───────────────────────────┬─────────────────────────────────┘
+                      PRODUCTION/REPLICA/STANDALONE:
+
+                      -XX:PermSize=512m
+                      -XX:+UseG1GC
+                      -XX:MaxGCPauseMillis=200     ← soft goal (JVM) best effort
+                      -XX:ParallelGCThreads=20     ← value depends on hosting hardware
+                      -XX:ConcGCThreads=5          ← value depends on hosting hardware
+                      -XX:InitiatingHeapOccupancyPercent=70 ← Use 0 to force constant
+                                                              GC cycles
+
+       WARN, WARN, WARN:
+       There are 600+ arguments that you can pass to JVM to fine-tune GC and memory
+       If you include other aspects, the number of JVM arguments will easily cross
+       1000+.
+       (Or why Data Scientist end up using Python)
+
+
+- If app OutOfMemoryError-crashes, extra info about memory leak can be obtained through
+    –XX:HeapDumpOnOutOfMemory , creating a heap dump file
+
+- Use   -verbose:gc  to get the garbage collection output.
+
+- Eclipse Memory Analyzer Manual:
+@[https://help.eclipse.org/2019-06/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fwelcome.html&cp=62]
+
+
+  Commom Memory Leaks pitfalls :
+@[http://java.jiderhamn.se/2012/02/26/classloader-leaks-v-common-mistakes-and-known-offenders/]
+- Logging frameworks (Apache Commons Logging/log4j/java.util.logging/...)
+  trigger classloader leaks if   logging framework is supplied outside of
+  the web application, such as within the Application Server.
+  -  Add next cleanup code to ServletContextListener :
+    org.apache.commons.logging.LogFactory.                    // Alt.1
+      release(Thread.currentThread().getContextClassLoader());
+
+    org.apache.commons.logging.LogFactory.release(            // Alt.2
+        this.getClass().getClassLoader()  );
+[[}]]
+
+
+
+
+
 
 [[}]]
 
-● JAVA DONT's #[java_donts] [[{java_lang.101.donts,scalability.101,qa.101,01_PM.WiP]]
+#[java_donts]
+## JAVA DONT's [[{java_lang.101.donts,scalability.101,qa.101,PM.WiP]]
 • Avoid Nulls, prefer final:
   WRONG:
   ========================
@@ -205,8 +299,110 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 
 [[java_lang.101.donts}]]
 
-● What's new [[{01_PM.WHATS_NEW,02_doc_has.ext_resource,async/reactive,java_lang.debugging]]
-● v.17 2021-09-14
+## JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]
+- (compiler) checked vs unchecked (Error, RuntimeException and their subclasses).
+- Checked: All except Error, RuntimeException and their subclasses
+- Error: Exceptional conditions external to the application.
+java.lang.Object
+│
+└─ java.lang.Throwable   ← Only instances of this (sub/)class are thrown
+│                       in JVM, can be thrown in throw statement or can
+│                       be an argument in catch clause.
+│
+├─   java.lang.Exception
+│    │
+│    ├─  java.lang.RuntimeException (non─checked)  ← Most common error raised by
+│    │                                               developer code
+│    │
+│    └─  java.lang.Exception        (checked ─A)   ←  Don't use . checked exceptions end up
+│                                                     being converted to Runtime Excep.
+│                                                     and bloats the code.
+│
+└─   java.lang.Error                (non─checked)  ← serious problems that app code
+                                                    should not try to catch.
+                                                    ThreadDeath error, though a "normal" condition,
+                                                    is also a subclass of Error because most apps
+                                                    should not try to catch it.
+
+- Dump Exception stack trace to STDERR: [[{java_lang.debugging]]
+  StringWriter writer = new StringWriter();
+  PrintWriter printWriter = new PrintWriter( writer );
+  e.printStackTrace( printWriter );
+  printWriter.flush();
+  System.err.println(writer);           [[}]]
+[[java_lang.101.exceptions}]]
+
+## "Optional": Avoid Nulls [[{QA.BILLION_DOLAR_MISTAKE]]
+
+ REF: http://files.zeroturnaround.com/pdf/zt_java8_best_practices.pdf
+import java.util.Optional;
+Optional<Sgtring> optional = Optional.ofNullable(a); // ← Create an optional
+optional.map ( s -> "RebelLabs:" + s);               // ← Process the optional
+optional.flatMap( s -> Optional.ofNullable(s));      // ← map a function that retunrs Optional
+optional.ifPresent(System.out::println);             // ← run if the value is ther
+
+optional.get();                                      // ← Alt 1: get the value or throw an exception
+optional.orElse("Hello world!");                     // ← Alt 2: get the value or default
+
+optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optional if not satisfied
+
+[[}]]
+
+## <<AutoClosable>> (1.7+) [[{jvm.101.autoclosable,IO.101,JVM.GC,qa.101]]
+- The java garbage collector can not automatically clean any other resource
+  appart from memory. All resources related to I/O (virtual/physical devices)
+  must be closed programatically,
+  for example sockets, http connections, database connections, ...
+  since neither the compiler, not the runtime can not take control of
+  external (non-controlled) devices/resources.
+
+  Java 1.7+ includes the interface java.lang.AutoClosable to simplify
+  the resource cleaning.
+
+  When a class representing an external resource implement this
+  interface and is used inside a try-with-resources , its close
+  method will be invoqued automatically (the compiler will add
+  the required code).
+
+  Most core java I/O classes  already implemente this interface.
+
+  Ex:
+  public class MyClassWithExternalResources
+  implements  java.lang.AutoCloseable , ... {
+        private final MyExternalEventListener listener;
+        private final MyIODevice device;
+        private final MyHTTPConnection connection;
+        ...
+        public void close() {
+            listener  .close();
+            device    .close();
+            connection.close();
+        }
+        ...
+    }
+
+    public class SomeLongRunningClass {
+      ...
+      void useManyResourcesManyTimes(String path)  {
+
+        for (int repeat=0; repeat<100; repeat++) {
+          try (MyClassWithExternalResources i =
+                new MyClassWithExternalResources(...))  {
+                ...
+          } catch( ... ) {
+            //
+          }
+
+          // At this point all resouces have been closed.
+          // If a runtime exception exits the function the
+          // resource is also closed.
+        }
+      }
+    }
+  [[jvm.101.autoclosable}]]
+
+## What's new [[{PM.WHATS_NEW,02_doc_has.ext_resource,async/reactive,java_lang.debugging]]
+### v.17 2021-09-14
 - 1st long-term support (LTS) release after JDK 11 (2018).
 - 14 JEPs includes:
   - 409: Sealed Classes
@@ -224,7 +420,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
              final class C extends Root { ... }
          }
 
-  - 412: Foreign Function⅋ Memory API (Incubator)
+  - 412: Foreign Function& Memory API (Incubator)
          API by which Java programs can interoperate with code and
          data outside of the Java runtime. By efficiently invoking foreign
          functions (i.e., code outside the JVM), and by safely accessing
@@ -264,7 +460,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
   - 391: macOS/AArch64 Port
   - 398: Deprecate the Applet API for Removal
 
-● v.15 2020-09-15
+### v.15 2020-09-15
 @[https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features]
 
 -   RECORDS!!!: non-verbose inmutable classes.  [[{java_lang.records}]]
@@ -285,7 +481,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
     Part of Project Panama, trying a better connection with native
     (C/Assembler) code.
 
-● v.14 2020-03-??
+### v.14 2020-03-??
 https://www.infoq.com/news/2019/12/java14-feature-freeze/
  └ More container awareness...
    - NUMA container support added to hotspot (JDK-8198715)
@@ -311,7 +507,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    class unloading, both of which aim to reduce GC pause time by moving
    GC work from the pause to a concurrent phase.
 
-● v 12,13
+### v 12,13
 @[https://www.infoq.com/news/2019/06/java13-feature-freeze/]
 @[https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/]
 @[https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/]
@@ -324,7 +520,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
    - JFR jdk.CPUInformation event epots incorrect info. when running in  [[{devops.containarization]]
      Docker container (JDK-8219999)                                      [[}]]
 
-● v.11(LTS) 2018/09 [[{]]
+### v.11(LTS) 2018/09 [[{]]
 @[https://www.journaldev.com/24601/java-11-features]
 @[https://www.infoq.com/news/2018/09/java11-released]
 - More container awaeness...                                             [[{devops.containarization]]
@@ -364,12 +560,12 @@ New major features:
     - Last-drop latency improvements
     - Last-drop throughput improvements
 
-- Remove the JavaEE and CORBA Modules(JEP 320):
+- Remove the JavaEE and CORBA Modules(JEP 320)
 
 - HTTP/1.1, HTTP/2 and WebSockets Client (JEP 321)  [[{io.http]]
   designed to improve overall performance.          [[}]]
 
-- TLS 1.3                                           [[{SECURITY.CRYPTOGRAPHY}]]
+- TLS 1.3                                           [[{SECURITY.CRYPTOGRAPHY]]
 - ChaCha20,Poly1305 Crypto (JEP 329)
   - implemented in the SunJCE provider.
                                                     [[}]]
@@ -388,7 +584,7 @@ New major features:
 - Deprecate Nashorn JS Engine(JEP 335)
 [[}]]
 
-● v.10 (2018/03)
+### v.10 (2018/03)
 - More container awareness...                                 [[{devops.containarization]]
   - Improve heap memory allocations (JDK-8196595):
     o --XX:InitialRAMPercentage, --X:MaxRAMPercentage and -XX:MinRAMPercentage
@@ -420,7 +616,7 @@ New major features:
     NV-DIMM, specified by the user.
 - Removed Features and Options:
 
-● v.9(2017/09)                                     [[{devops.containarization]]
+### v.9(2017/09)                                     [[{devops.containarization]]
   └ --XX:ParallerGCThreads and --XX:CICompilerCount are set based on
     Containers CPU limits (can be overriden)
     - Calculated from --cpuset-cpus
@@ -492,7 +688,7 @@ New major features:
     superseded in the JVM.
   - jhat tool, obsoleted by superior heap visualizers and analyzers.
 
-● JAVA 8
+### Java 8
   └ 8u131  First version to support Containers
       WARN : Do not use any version below that.
   TODO:
@@ -501,13 +697,12 @@ New major features:
 
   - TLS enh. Backported to 1.8 (HTTP2)
   @[https://www.infoq.com/news/2020/04/tls-alpn-java8/]
-[[01_PM.WHATS_NEW}]]
+[[PM.WHATS_NEW}]]
 
-● JVM internals
-
+# JVM internals
 
 [[{JVM,java_lang.profiling,architecture.real-time]] #[JVM_safepoints]
-● JVM Safepoints
+## JVM Safepoints
 - @[http://psy-lob-saw.blogspot.com/2015/12/safepoints.html]    [TODO]
    - Definition: Mutator threads: threads which manipulate the JVM heap.
      all Java Threads are mutators, Non-Java (native?) threads may also be
@@ -545,7 +740,7 @@ New major features:
           long l = 0;
           for (int i = 0; i < UP ; i++) {     ┐  Result:
             for (int j = 0; j < UP ; j++) {   │
-              if ((j ⅋ 1) == 1) l++;          ├ long-type loops: 'uncounted' code.    safepoints injected at each loop.
+              if ((j & 1) == 1) l++;          ├ long-type loops: 'uncounted' code.    safepoints injected at each loop.
             }                                 │  int-type loops:   'counted' code. No safepoints injected.
           }                                   ┘                  -   (Much) Better performance   BUT ...
           System.out.println("How Odd:" + l);                        other threads forced to suspend at their
@@ -581,43 +776,7 @@ New major features:
         real culprit is the topmost method loop.
 [[}]]
 
-
-[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,01_PM.low_code,01_PM.WiP]] #[micrometer_summary]
-● Micrometer <!-- @ma -->
-- simple facade to instrumentation clients for
-- instrument JVM-based apps without vendor lock-in.
-  (Think SLF4J, but for application metrics! supporting AppOptics,
-   Atlas, Datadog, Dynatrace, Elastic, Ganglia, Graphite,
-   Influx,Instana, JMX (hierarchical mapping), KairosDB, New Relic,
-   Prometheus, SignalFx, Stackdriver, StatsD, Wavefront,)
-
-- Recorded metrics are intended to be used to
-  observe/alert/react to current/recent operational state.
-
-  out-of-the-box instrumentation provided by Micrometer
-  - JVM Metrics on classloaders, memory, garbage collection,
-    threads, etc.
-  - Spring Boot 2.0.0.M5+: Micrometer used as instrumentation library powering
-    the delivery of application metrics from Spring.
-  @[https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-metrics]
-    2 simple steps setup: [low_code]
-    - Declare maven dependency.
-    - Add config. to application.yml
-
-  @[https://micrometer.io/docs/ref/spring/1.5] (legacy support)
-drop─down support for Spring Boot 1.5.x.
-  - Cache instrumentation for most popular caching frameworks.
-  - OkHttpClient Instrumentation
-
-Guides: [TODO]
--@[https://micrometer.io/docs/guide/consoleReporter]
--@[https://micrometer.io/docs/guide/httpSenderResilience4jRetry]
--@[https://micrometer.io/docs/guide/customMeterRegistry]
-[[}]]
-
-
-[[{jvm.101,01_PM.WiP]]
-● Inside the JVM
+## Inside the JVM [[{jvm.101,PM.WiP]]
 - @[https://www.artima.com/insidejvm/ed2/index.html]
 
 - JVM anatomy Park:
@@ -651,84 +810,8 @@ Guides: [TODO]
   CPU and memory.  See also @[#jvm_app_checkpoint]
 [[}]]
 
-[[{jvm,01_PM.WiP]]
-● JVM Implementations
-@[https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html]
-
-In practical terms, there is only one set of source code for the JDK.
-
-- Anyone can take that source code,build and publish it.
-- The certification process ensures that the build is valid.
-- Certification run by the Java Community Process, which provides a
-  Technology Compatibility Kit (TCK, sometimes referred to as the JCK).
-  If build passes the TCK then it is described as "Java SE compatible".
-  Note: Built can NOT be referred to as "Java SE" without paying a commercial
-        license from Oracle.
-        Ex: AdoptOpenJDK passing TCK are "Java SE compatible" (vs "Java SE").
-  -  WARN : certification is currently on a trust-basis: results are
-            not submitted to the JCP/Oracle for checking, neither can
-            be made public.
-
-- Existing builds include:
-  - Oracle Java
-  - OpenJ9      (Eclipse "IBM")
-    └ https://en.wikipedia.org/wiki/OpenJ9
-    └ Pre-built binaries available at AdoptOpenJDK
-    └ Compared to Oracle's HotSpot VM, i touts higher
-      start-up performance and lower memory consumption
-      at a similar overall throughput.
-    └ JIT with all optimization levels.
-  - OpenJDK
-  - GraalVM
-  - Bellsoft Liberica:
-    - $free TCK verified OpenJDK distribution for x86, ARM32 and ARM64.
-  - Azul Systems
-  - Sap Machine
-    JDK for Java 10 and later under the GPL+CE license.
-    They also have a commercial closed-source JVM
-  - Amazon Corretto:
-    zero-cost build of OpenJDK with long-term support that passes the
-    TCK. It is under the standard GPL+CE license of all OpenJDK builds.
-    Amazon will be adding their own patches and running Corretto on AWS
-[[}]]
-[[{jvm.linux]]
-● sysctl/ulimit+JAVA
-• Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
-@[https://docs.sonarqube.org/latest/requirements/requirements/]
-
-  ...  If you're running on Linux, you must ensure that:
-
-  $ $ sysctl vm.max_map_count     ← Ensure it's greater than or equal to 524288
-  $ $ sysctl fs.file-max          ← Ensure it's greater than or equal to 131072
-  $ $ ulimit -n                   ← Ensure at least 131072 file descriptors
-  $ $ ulimit -u                   ← Ensure at least 8192 threads
-    └──────────┬────────────────┘
-     Tune current values like:
-                                            Modify Kernel limits (permanently)
-  + sysctl -w vm.max_map_count=524288     ← by adding those lines to  /etc/sysctl.conf
-  + sysctl -w fs.file-max=131072            (or /etc/sysctl.d/99-sonarqube.conf )
-
-  $ $ ulimit -n 131072                    ← Modify user-limits (temporally)
-  $ $ ulimit -u 8192                        (changes lost at system restart)
-
-                                            Modify user limits (permanently):
-                                            ===================================
-                                            Add next lines to:
-  + sonarqube   -   nofile   131072       ← Alt 1:  /etc/security/limits.conf  (non SystemD)
-  + sonarqube   -   nproc    8192
-
-    [Service]                             ← Alt 2: SystemD unit definition     (SystemD)
-    ...
-  + LimitNOFILE=131072                      .
-  + LimitNPROC=8192
-    ...
-[[}]]
-
-
-● Memory
-[[{jvm.101,scalability.jvm,monitoring.jvm]]
-  ● JVM MEMORY
-(<a href="https://dzone.com/articles/java-memory-management">REF</a>)
+## JVM Memory [[{jvm.101,scalability.jvm,monitoring.jvm]]
+REF: @[https://dzone.com/articles/java-memory-management]
 JAVA MEMORY MODEL:
 
          │    STACK ("SMALL")          │ HEAP  ("HUGE")
@@ -773,26 +856,7 @@ Reference Types regarding how the object on the heap is eligible for garbage col
 └─────────┴───────────────────────────────────────────────────────────────────────────
 [[}]]
 
-● FORCING STRING POOL REUSE [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
-- Strings are immutable.
-- Stored on the heap.
-- Java manages a string pool in memory, reusing strings whenever possible.
-
-String string01 = "297",                                string01 == string02 : true
-       string02 = "297",                                string01 == string03 :   false
-       string03 = new Integer(297).toString(),          string01 == string04 : true
-       string04 = new Integer(297).toString()           string05 == string01 :   false
-                  .intern() ;
-       string05 = new String("297")
-
- 1:   Pool reuse does not work for dynamically created strings
-*2: If we consider that the computed String will be used quite often,
-    we can force the JVM to add it to the string pool by adding the
-    .intern() method at the end of computed string.
-[[}]]
-
-[[{jvm.memory,scalability.cache,scalability.jvm]]
-● "MARK&amp;SWEEP"
+## Mark&Sweep [[{jvm.memory,scalability.cache,scalability.jvm]]
 JVM analyzes the variables from the stack and "marks" all the objects that need to be kept alive.
 Then, all the unused objects are cleaned up.
 
@@ -826,8 +890,8 @@ To optimize even more heap memory actually consists of multiple parts (Java 8+):
   │   pool   │
   └──────────┴─────────────────────────────────────
 [[}]]
-[[{jvm.memory]]
-● GC Types
+
+## GC Types [[{jvm.memory]]
 - default GC type is based on the underlying hardware
 - programmer can choose which one should be used
 
@@ -858,135 +922,119 @@ See also:
 @[https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/sizing.html]
 [[}]]
 
-● Optimization Tips [[{scalability.101,jvm.101,java_lang.101.best_patterns]]
-- To minimize the memory footprint, limit scope-of-variables as much as possible.
+## sysctl/ulimit+JAVA [[{jvm.linux]]
+• Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
+@[https://docs.sonarqube.org/latest/requirements/requirements/]
 
-- Explicitly refer to null obsolete references making them eligible for GC.
+  ...  If you're running on Linux, you must ensure that:
 
-- Avoid finalizers. They slow down the process and they do not guarantee anything.
-  Prefer phantom references for cleanup work.
+  $ $ sysctl vm.max_map_count     ← Ensure it's greater than or equal to 524288
+  $ $ sysctl fs.file-max          ← Ensure it's greater than or equal to 131072
+  $ $ ulimit -n                   ← Ensure at least 131072 file descriptors
+  $ $ ulimit -u                   ← Ensure at least 8192 threads
+    └──────────┬────────────────┘
+     Tune current values like:
+                                            Modify Kernel limits (permanently)
+  + sysctl -w vm.max_map_count=524288     ← by adding those lines to  /etc/sysctl.conf
+  + sysctl -w fs.file-max=131072            (or /etc/sysctl.d/99-sonarqube.conf )
 
-- Do not use strong references where weak or soft references apply.
-  The most common memory pitfalls are caching scenarios,when data
-  is held in memory even if it might not be needed.
+  $ $ ulimit -n 131072                    ← Modify user-limits (temporally)
+  $ $ ulimit -u 8192                        (changes lost at system restart)
 
-- Explicitly specify heap size for the JVM when running the application:
-  -  allocate a reasonable initial and maximum amount of memory for the heap.
-     Initial heap size -Xms512m   – set initial heap     size to  512 megabytes
-     Maximum heap size -Xmx1024m  – set maximum heap     size to 1024 megabytes
-     Thread stack size -Xss128m   – set thread stack     size to  128 megabytes
-     Young genera.size -Xmn256m   – set young generation size to  256 megabytes
+                                            Modify user limits (permanently):
+                                            ===================================
+                                            Add next lines to:
+  + sonarqube   -   nofile   131072       ← Alt 1:  /etc/security/limits.conf  (non SystemD)
+  + sonarqube   -   nproc    8192
 
-REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_source=www.oficina24x7.com]
-    - Initial Heap Size: -Xms: >= 1/64th of physical memory || reasonable minimum.
-    - Maximum Heap Size: -XmX: <= 1/4 th of physical memory || 1GB.
-                         ^^^^^
-                  - Set -Xms equal to -Xmx to prevent pauses caused by heap expansion
-                  ☞  Setting Xms/Xmx increase GC predictability .
-
-    JVM settings are recommended for:
-    PRODUCTION TIER       REPLICA SERVERS           STANDALONE
-    -server               -server                   -server
-    -Xms24G -Xmx24G        -Xms4G -Xmx4G            -Xms32G -Xmx32G
-    └───────────────────────────┬─────────────────────────────────┘
-                      PRODUCTION/REPLICA/STANDALONE:
-
-                      -XX:PermSize=512m
-                      -XX:+UseG1GC
-                      -XX:MaxGCPauseMillis=200     ← soft goal (JVM) best effort
-                      -XX:ParallelGCThreads=20     ← value depends on hosting hardware
-                      -XX:ConcGCThreads=5          ← value depends on hosting hardware
-                      -XX:InitiatingHeapOccupancyPercent=70 ← Use 0 to force constant
-                                                              GC cycles
-
-       WARN, WARN, WARN:
-       There are 600+ arguments that you can pass to JVM to fine-tune GC and memory
-       If you include other aspects, the number of JVM arguments will easily cross
-       1000+.
-       (Or why Data Scientist end up using Python)
-
-
-- If app OutOfMemoryError-crashes, extra info about memory leak can be obtained through
-    –XX:HeapDumpOnOutOfMemory , creating a heap dump file
-
-- Use   -verbose:gc  to get the garbage collection output.
-
-- Eclipse Memory Analyzer Manual:
-@[https://help.eclipse.org/2019-06/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fwelcome.html&cp=62]
-
-
-  Commom Memory Leaks pitfalls :
-@[http://java.jiderhamn.se/2012/02/26/classloader-leaks-v-common-mistakes-and-known-offenders/]
-- Logging frameworks (Apache Commons Logging/log4j/java.util.logging/...)
-  trigger classloader leaks if   logging framework is supplied outside of
-  the web application, such as within the Application Server.
-  -  Add next cleanup code to ServletContextListener :
-    org.apache.commons.logging.LogFactory.                    // Alt.1
-      release(Thread.currentThread().getContextClassLoader());
-
-    org.apache.commons.logging.LogFactory.release(            // Alt.2
-        this.getClass().getClassLoader()  );
+    [Service]                             ← Alt 2: SystemD unit definition     (SystemD)
+    ...
+  + LimitNOFILE=131072                      .
+  + LimitNPROC=8192
+    ...
 [[}]]
 
-● <<AutoClosable>> (1.7+) [[{jvm.101.autoclosable,IO.101,JVM.GC,qa.101]]
-- The java garbage collector can not automatically clean any other resource
-  appart from memory. All resources related to I/O (virtual/physical devices)
-  must be closed programatically,
-  for example sockets, http connections, database connections, ...
-  since neither the compiler, not the runtime can not take control of
-  external (non-controlled) devices/resources.
+# Monitorization
+[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,PM.low_code,PM.WiP]] #[micrometer_summary]
+## Micrometer Metrics [[{]]
+- simple facade to instrumentation clients for
+- instrument JVM-based apps without vendor lock-in.
+  (Think SLF4J, but for application metrics! supporting AppOptics,
+   Atlas, Datadog, Dynatrace, Elastic, Ganglia, Graphite,
+   Influx,Instana, JMX (hierarchical mapping), KairosDB, New Relic,
+   Prometheus, SignalFx, Stackdriver, StatsD, Wavefront,)
 
-  Java 1.7+ includes the interface java.lang.AutoClosable to simplify
-  the resource cleaning.
+- Recorded metrics are intended to be used to
+  observe/alert/react to current/recent operational state.
 
-  When a class representing an external resource implement this
-  interface and is used inside a try-with-resources , its close
-  method will be invoqued automatically (the compiler will add
-  the required code).
+  out-of-the-box instrumentation provided by Micrometer
+  - JVM Metrics on classloaders, memory, garbage collection,
+    threads, etc.
+  - Spring Boot 2.0.0.M5+: Micrometer used as instrumentation library powering
+    the delivery of application metrics from Spring.
+  @[https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-metrics]
+    2 simple steps setup: [low_code]
+    - Declare maven dependency.
+    - Add config. to application.yml
 
-  Most core java I/O classes  already implemente this interface.
+  @[https://micrometer.io/docs/ref/spring/1.5] (legacy support)
+drop─down support for Spring Boot 1.5.x.
+  - Cache instrumentation for most popular caching frameworks.
+  - OkHttpClient Instrumentation
 
-  Ex:
-  public class MyClassWithExternalResources
-  implements  java.lang.AutoCloseable , ... {
-        private final MyExternalEventListener listener;
-        private final MyIODevice device;
-        private final MyHTTPConnection connection;
-        ...
-        public void close() {
-            listener  .close();
-            device    .close();
-            connection.close();
-        }
-        ...
-    }
+Guides: [TODO]
+-@[https://micrometer.io/docs/guide/consoleReporter]
+-@[https://micrometer.io/docs/guide/httpSenderResilience4jRetry]
+-@[https://micrometer.io/docs/guide/customMeterRegistry]
+[[}]]
 
-    public class SomeLongRunningClass {
-      ...
-      void useManyResourcesManyTimes(String path)  {
+[[{jvm,PM.WiP]]
+## JVM Implementations [[{]]
+@[https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html]
 
-        for (int repeat=0; repeat<100; repeat++) {
-          try (MyClassWithExternalResources i =
-                new MyClassWithExternalResources(...))  {
-                ...
-          } catch( ... ) {
-            //
-          }
+In practical terms, there is only one set of source code for the JDK.
 
-          // At this point all resouces have been closed.
-          // If a runtime exception exits the function the
-          // resource is also closed.
-        }
-      }
-    }
-  [[jvm.101.autoclosable}]]
-[[$div}]]
+- Anyone can take that source code,build and publish it.
+- The certification process ensures that the build is valid.
+- Certification run by the Java Community Process, which provides a
+  Technology Compatibility Kit (TCK, sometimes referred to as the JCK).
+  If build passes the TCK then it is described as "Java SE compatible".
+  Note: Built can NOT be referred to as "Java SE" without paying a commercial
+        license from Oracle.
+        Ex: AdoptOpenJDK passing TCK are "Java SE compatible" (vs "Java SE").
+  -  WARN : certification is currently on a trust-basis: results are
+            not submitted to the JCP/Oracle for checking, neither can
+            be made public.
 
-[[$div}]]
+- Existing builds include:
+  - Oracle Java
+  - OpenJ9      (Eclipse "IBM")
+    └ https://en.wikipedia.org/wiki/OpenJ9
+    └ Pre-built binaries available at AdoptOpenJDK
+    └ Compared to Oracle's HotSpot VM, i touts higher
+      start-up performance and lower memory consumption
+      at a similar overall throughput.
+    └ JIT with all optimization levels.
+  - OpenJDK
+  - GraalVM
+  - Bellsoft Liberica:
+    - $free TCK verified OpenJDK distribution for x86, ARM32 and ARM64.
+  - Azul Systems
+  - Sap Machine
+    JDK for Java 10 and later under the GPL+CE license.
+    They also have a commercial closed-source JVM
+  - Amazon Corretto:
+    zero-cost build of OpenJDK with long-term support that passes the
+    TCK. It is under the standard GPL+CE license of all OpenJDK builds.
+    Amazon will be adding their own patches and running Corretto on AWS
+[[}]]
 
-[[{$div]]
-● Java lang. 101 [[{01_PM.TODO]]
-● Jabba JDK Vers. Mng
+
+
+
+
+
+## Jabba JDK Version Mng [[{]]
 @[https://github.com/shyiko/jabba]
 • pain-free JDK installing on Linux x86/x86_64/ARMv7+, macOS, Windows x86_64.
 • Support for:
@@ -1048,11 +1096,10 @@ $ $ sudo update-alternatives --install /usr/bin/java java ${JAVA_HOME%*/}/bin/ja
 $ $ sudo update-alternatives --install /usr/bin/javac javac ${JAVA_HOME%*/}/bin/javac 20000
 • To swith among GLOBAL JDK system-wide:
 $ $ sudo update-alternatives --config java
-
-
 [[}]]
 
-● RECORDS!!!: non-verbose inmutable classes. Java 15+ [[{java_lang.records,java_lang.data_structure]]
+## RECORDS!!! v15+ [[{java_lang.records,java_lang.data_structure]]
+* non-verbose inmutable classes. Java 15+
 
   record Person (String name, int age) { } <·· Alt 1: short writing
 
@@ -1076,10 +1123,9 @@ $ $ sudo update-alternatives --config java
 
 [[}]]
 
+## Read from file [[{java_lang.101,persistence.FS,io.101]]
 
-● Reading from file [[{java_lang.101,persistence.FS,io.101]]
-
-• Reading as lines of text:
+* Reading as lines of text:
   import java.nio.file.Path
   import java.nio.file.Files
 
@@ -1120,7 +1166,7 @@ $ $ sudo update-alternatives --config java
   final String resource =
        Resources.toString(url, Charsets.UTF_8);
 
-● Reading big files:
+# Reading big files:
      try (
   final FileInputStream inputStream = new FileInputStream(path);
   final Scanner sc =                        ← Use Scanner to read line-by-line
@@ -1148,7 +1194,7 @@ while (it.hasNext()) {
 LineIterator.closeQuietly(it);                ← Close resources
    }
 
-● Unix4j
+# Unix4j
 @[https://github.com/tools4j/unix4j]
 """...Working in the finance industry in Melbourne, the authors of
   Unix4j spent a lot of time writing complex text processing
@@ -1183,7 +1229,7 @@ LineIterator.closeQuietly(it);                ← Close resources
   }
 [[}]]
 
-● java.time.* [[{java_lang.101,java_lang.date_time,concurrency]]
+## java.time.* [[{java_lang.101,java_lang.date_time,concurrency]]
 - JDK 1.8+, "deprecating" java.util.(Date|Calendar|TimeZome):
   All the classes are IMMUTABLE and THREAD-SAFE
 
@@ -1340,7 +1386,7 @@ non-Java systems.
   have adopted the LDML to some degree. Microsoft .NET uses LDML for general
   interexchange of locale data, and there are packages available for Node.js
   and Ruby, just to mention a few.
-● TimeUnit
+# TimeUnit
 @[https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html]
 - JDK 1.5+
 - Represents time durations at a given unit of granularity and
@@ -1354,8 +1400,7 @@ Enums: DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
   ...
 [[}]]
 
-
-● JAVA ANNOTATIONS [[{java_lang.101.annotations,qa]]
+## Annotations [[{java_lang.101.annotations,qa]]
 @[http://docs.oracle.com/javase/tutorial/java/annotations/]
  predefined annotation types in java.lang:
 - @Deprecated
@@ -1381,7 +1426,7 @@ DECLARATION(interface is preceded by the @ sign) │ USAGE
                                                  │ public class Generation3List extends Generation2List {
                                                  │     // ...
                                                  │ }
-● EXAMPLES
+# EXAMPLES
 new @Interned MyObject();              ← Class instance creation expression
 
 myString = (@NonNull String) str;      ← Type cast (1.8+)
@@ -1399,8 +1444,7 @@ void myMethod() { ... }
 void myMethod() { ... }
 [[}]]
 
-[[{java_lang.101,qa]]
-● META-ANNOTATTONS
+# Meta-annotattons [[{java_lang.101,qa]]
 (Annotations applying to other annotations)
 
  @Retention
@@ -1434,7 +1478,9 @@ RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
   - ElementType.TYPE (1.8+)
 [[}]]
 
-● SLF4j Logging: https://www.slf4j.org/ #[slf4j_summary] [[{monitoring.logging]]
+#[slf4j_summary]
+## SLF4j Logging  [[{monitoring.logging.slf4j]]
+@[https://www.slf4j.org/]
 Simple Log Facade or abstraction for various logging frameworks
 (e.g. java.util.logging, logback, log4j) allowing the end user
 to plug in the desired logging framework at deployment time.
@@ -1525,9 +1571,11 @@ to plug in the desired logging framework at deployment time.
              "param1", "param2");                           "wrapper" if(log.isDebugEnabled())  avoid
       }                                                     unnecesary string processing (saving can
       ...                                                   be "huge" if log.debug is inside a loop.
-[[}]]
+    }                                                     unnecesary string processing (saving can
+[[monitoring.logging.slf4j}]]
 
-● MDC: "Better Way of Logging" [[{monitoring.101,monitoring.logging,qa.best_patterns,devops,]] #[mdc_summary]
+#[mdc_summary]
+## MDC: "A Better Way of Logging" [[{monitoring.logging.MDC,monitoring.101,qa.best_patterns,devops,]]
 @[https://dzone.com/articles/mdc-better-way-of-logging-1]
   PROBLEM : How do we related logs together originating from a (single user, single data-flow)
             that are processed by different threads, HTTP requests (think of Single Page Apps),
@@ -1577,6 +1625,7 @@ to plug in the desired logging framework at deployment time.
              MDC.put("userId"    , request.getHeader("UserId"   ));
              MDC.put("sessionId ", request.getHeader("SessionId"));
              MDC.put("requestId" , request.getHeader("RequestId"));
+          }
       }
 
       // STEP 2: Change log appender pattern to retrieve variables
@@ -1602,10 +1651,10 @@ to plug in the desired logging framework at deployment time.
       ...          ...          ...  ...                   ...   : ...      :    ...       : ...
       17:53:25,710 http─8080─29 INFO Service2.execute(113) U1002   sessId02 ┘    reqId_2_2 ┘ req OK
       ...
-[[}]]
+[[monitoring.logging.MDC}]]
 
-[[{security.101,01_PM.low_code,spring,security.jvm]] #[security_101]
-● Security 101
+#[security_101]
+## Security 101 [[{security.101,PM.low_code,spring,security.jvm]]
 @[https://snyk.io/blog/10-java-security-best-practices/]
 1. Make code immutable:
    · Tag variables as 'final' by default.
@@ -1683,7 +1732,7 @@ to plug in the desired logging framework at deployment time.
       <!DOCTYPE bar [
            <!ENTITY xxe SYSTEM   "file:///etc/passwd" >] >      ← attack
            <song>
-              <artist>  ⅋xxe; </artist>
+              <artist>  &xxe; </artist>
               ...
            </song>
 
@@ -1760,1200 +1809,14 @@ to plug in the desired logging framework at deployment time.
    java.security.UnresolvedPermission            javax.sound.sampled.AudioPermission [[}]]
 
 11. Centralize logging and monitoring
-[[}]]
-
-● Functional
-[[{java_lang.101,java_lang.functional,01_PM.WiP]]
-● Lambdas
-Sytnax:
-(parameters) -> expression
-(parameters) ->  { statements; }
-
-// takes a Long, returns a String
-Function<Long, String> f = (l) -> l.toString();
-
-// takes nothing, gives you Thread
-Supplier<Thread> s = Thread::currentThread;
-
-//  takes a string as the parameter
-Consumer<String> c = System.out::println;
-
-// use lambdas in streams
-new ArrayList<String>().stream()....
-
-// peek: Debug streams without changes
-peek ( e -> System.out.println(e)). ...
-
-// map: Convert every element into something
-map ( e -> e.hashCode())...
-
-// filter (hc -> (hc % 2) == 0) ...
-
-// collect all values from the stream
-collect(Collectors.toCollection(TreeSet::new))
-
-• TODO: github.com/jOOQ/jOOL, functional extensions to Java 8.
-  • Context: Pains with checked exceptions and lambdas:
-    http://stackoverflow.com/q/18198176/521799
-    http://stackoverflow.com/q/19757300/521799
-    http://stackoverflow.com/q/14039995/521799
-  • Solution: org.jooq.lambda.Unchecked
-
-    Standard Java 8:                 | Using jooq labmda wrapper:     | Even simpler:
-    ================                 | ==========================     | ===================
-    Arrays                           | Arrays                         | Arrays
-    .stream(dir.listFiles())         | .stream(dir.listFiles())       | .stream(dir.listFiles())
-    .forEach(file -> {               | .forEach(                      | .map(Unchecked.function(
-          try {                      |   Unchecked.consumer(file -> { |      File::getCanonicalPath))
-      System.out.println(            |     System.out.println(        | .forEach(System.out::println);
-           file.getCanonicalPath()); |       file.getCanonicalPath());
-          } catch (IOException e) {  |   })
-      throw new RuntimeException(e); | );
-          }
-    });
-[[}]]
-
-[[{java_lang.functional,qa,async/reactive.*,01_PM.WiP]]
-● java.utility.function
-@[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html]
-@[https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html]
-- JDK 1.8+
-- Incomplete but good enough to cover the "shape" of many lambda expressions and
- method references representing abstract concepts like functions, actions, or predicates
-- The @FunctionalInterface is used to capture design intent (not needed by compiler).
-- In documenting functional interfaces, or referring to variables typed as
-  functional interfaces, it is common to refer directly to those abstract concepts,
-  for example using "this function" instead of "the function represented by this object".
-- Each functional interface has a single abstract method, called the functional method for that
-  functional interface, to which the lambda expression's parameter and return types are matched or adapted.
-- Functional interfaces can provide a target type in multiple contexts, such as assignment context, method invocation,
-  or cast context:
-  |Predicate<String> p = String::isEmpty;           // Assignment context
-  |stream.filter(e -> e.getSize() > 10)...          // Method invocation context
-  |stream.map((ToIntFunction) e -> e.getSize())...  // Cast context
-
-● Defined functions in 1.8
-────────────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────
-           Interface Summary                │           Interface Description
-────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────
-                  BiConsumer‹T,U›           │opt. accepting two input arguments and returns no result
-  (|Double|Int|Long)Consumer‹T›             │opt. accepting a single (Object|double|int|long)input argument and returns no result
-Obj(Double|Int|Long)Consumer‹T›             │opt. accepting an object-valued and a (double|int|long)-valued argument, and returns no result
-────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
-        (|Double|Long|Int)Function‹(T,)R›   │func. that accepts an (T|double,long,int) argument and produces a result
-       (|Double|Long)ToIntFunction          │func. that accepts a (T|double|long)argument and produces an int-valued result
-(ToDouble|ToLong|ToInt|)BiFunction‹(T,)U,R› │func. that accepts two arguments and produces an (T,double,long,int) result.
-           To(Double|Long)Function‹T›       │func. that produces a (double|long)-valued result
-(Int|Long|Double)To(Int|Long|Double)Function│func. that accepts a (int|long|double) argument and produces a (int|long|double) result
-────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
- (|Int|Long|Double)UnaryOperator‹T›         │op. on a single (T|int|long|double) operand that produces a result of the same type
-(Double|Long|Int|)BinaryOperator‹T›         │op. upon two (T|int|long|double) operands and producing a result of the same type
-────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
-                BiPredicate‹T,U›            │predicate (boolean-valued function) of two arguments
-(|Int|Long|Double)Predicate‹T›              │predicate (boolean-valued function) of one (T|int|long|double) argument
-────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
-(|Boolean|Int|Long|Double)Supplier(‹T›)     │supplier of (T|Boolean|Int|long|double) results
-────────────────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────
-[[}]]
-[[$div}]]
-
-[[{$div]]
-● Collections 101 [[{java_lang.101,data_structures.101,scalability.101]]
-                  [[02_doc_has.decission_tree,02_doc_has.diagram,qa.data]]
-  COLLECTION DECISSION TREE
-                                  ┌──────────┐
-                                  │  Allows  │
-                    ┌─── YES ─────┤Duplicates├──  NO  ───────┐
-                    │   List to   └──────────┘  Set to       │
-                    │  be selected              be selected  │
-                    │                                        v
-                    v                                    ┌───────────┐☜ order established at
-        ┌─────────────────────┐                          │ Maintains │  write time
-        │  Unknown number     │                          │ INSERTION │
-   ┌─NO─┤of elements will be  ├YES─┐           ┌───YES───┤   ORDER ? ├──NO──┐  order requested
-   │    │added and/or index   │    │           │         └───────────┘      │  at read time
-   │    │based search will not│    │           v                            ↓  ☟
-   │    │be frequent?         │    │       LinkedHashSet            ┌────────────┐
-   │    └─────────────────────┘    │                                │ Mantains   │
-   v                               v                           ┌─NO─┤ READ ORDER ├YES┐
-  ArrayList              LinkedList                            │    │(alpha,...)?│   │
-                                                               │    └────────────┘   │
-                                                               │                     │
-                                                               v                     v
-                                                            HashSet              TreeSet
-
-  • Collection Comparative:
-Standard   non-concurrent  SDK:
-       ┌──────────────────────────────────────────────────────────────────────────────────────────
-       │                                IMPLEMENTATIONS
-       ├──────────────────────────────────────────────────────────────────────────────────────────
-       │ Hash Table        │ Resizable Array   │Balanced Tree │ Linked List │ HashTable+LinkedList
-       │                   │                   │              │             │
-┌──────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
-│<Set> │ HashSet           │                   │  TreeSet     │             │ LinkedHashSet
-│      │                   │                   │              │             │
-├──────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
-│<List>│                   │ ArrayList         │              │ LinkedList  │
-│      │                   │ Vector            │              │ LinkedList  │
-├──────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
-│<Map> │ HashMap,Hashtable │                   │  TreeMap     │             │ LinkedHashMap
-└──────┴───────────────────┴───────────────────┴──────────────┴─────────────┴─────────────────────
-
-  WARN : There is a huge performance difference LinkedList and ArrayList.
-         - when there is a large number of add/remove operations LinkedList is much faster.
-         - When there is a lot of random access operations ArrayList is much faster.
-
- INTERFACES
-@[http://download.oracle.com/javase/6/docs/api/java/util/HashSet.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/TreeSet.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashSet.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/ArrayList.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/LinkedList.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/HashMap.html]
-@[http://download.oracle.com/javase/6/docs/api/index.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/TreeMap.html]
-@[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashMap.html]
-
-  REF: @[http://files.zeroturnaround.com/pdf/zt_java_collections_cheat_sheet.pdf]
-  ┌─────────────────┬─────────────────────────────────────────────────────────────┐
-  │Collection       │ Thread-safe                ┃ DATA      ┃ OPERATIONS ALLOWED │
-  │                 │ alternative                ┃  PROPER-  ┃────────────────────┤
-  │class            │                            ┃   TIES    ┃Iterat. ┃  ┃Random  │
-  │                 │                            ┃           ┃ Order  ┃  ┃ Access │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┬──┬──┃──┃──┬──┬──┤
-  │HashMap          │ ConcurrentHashMap          ┃  │OK│  │  ┃  │  │  ┃OK┃OK│  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │SortedMap        │ ?                          ┃  │OK│  │  ┃  │  │  ┃? ┃OK│  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │NavigableMap @1  │ ?                          ┃  │OK│  │  ┃  │  │  ┃? ┃OK│  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │HashBiMap(Guava) │ Maps.syncrhonizedBiMap     ┃  │OK│  │  ┃  │  │  ┃OK┃OK│OK│  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │ArrayListMultimap│ Maps.synchronizedMultiMap  ┃  │OK│OK│  ┃  │  │  ┃OK┃OK│  │  │
-  │(Guava)          │ (new ArrayListMultimap())  ┃  │  │  │  ┃  │  │  ┃  ┃  │  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │LinkedHashMap    │ Collections.syncrhonizedMap┃  │OK│  │  ┃OK│  │  ┃OK┃OK│  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │TreeMap          │ ConcurrentSkipListMap      ┃  │OK│  │  ┃  │OK│  ┃OK┃OK│  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │Int2IntMap (Fastutils)                        ┃  │OK│  │OK┃  │  │  ┃OK┃OK│  │OK│
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │ArrayList        │ CopyOnWriteArrayList       ┃OK│  │OK│  ┃OK│  │OK┃  ┃  │  │OK│
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │HashSet          │ Collections.newSetFromMap  ┃OK│  │  │  ┃  │  │  ┃OK┃  │OK│  │
-  │                 │ (new ConcurrentHashMap())  ┃  │  │  │  ┃  │  │  ┃  ┃  │  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │IntArrayList(FastUtils)                       ┃OK│  │OK│OK┃OK│  │OK┃  ┃  │  │OK│
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │PriorityQueue    │ PriorityBlockingQueue      ┃OK│  │OK│  ┃  │OK│  ┃  ┃  │  │  │
-  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
-  │ArrayDeque       │ ArrayBlockingQueue         ┃OK│  │OK│  ┃OK│  │OK┃  ┃  │  │  │
-  └─────────────────┴────────────────────────────┃──┴──┴──┴──┃──┴──┴──┃──┃──┴──┴──┘
-                          Individual elements ·····┘  │  │  │  │  │  │  ^  │  │  └ By Index
-                          Key─value pairs  ···········┘  │  │  │  │  │  │  │  └··· By Value
-                          Duplicate element support ·····┘  │  │  │  │  │  └······ By Key
-                          Primite support ··················┘  │  │  │  │
-                                                       FIFO  ··┘  │  │ Fast
-                                                     Sorted  ·····┘  │'has(el)'
-                                                       LIFO  ········┘
-
-   Collection class │  Random access by idx/key │ Search/Contains │ Instert
-   ─────────────────┼───────────────────────────┼─────────────────┼───────────
-   ArrayList        │  O(1)                     │ O(n)            │ O(n)
-   HashSet          │  O(1)                     │ O(1)            │ O(1)
-   HashMap          │  O(1)                     │ O(1)            │ O(1)
-   TreeMap          │  O(log(n))                │ O(log(n))       │ O(log(n))
-
-@1 NavigableMap: SortedMap with additional methods for finding entries
-                 by their ordered position in the key set.
-                 So potentially this can remove the need for iterating
-                 in the first place - you might be able to find the
-                 specific entry you are after using the higherEntry,
-                 lowerEntry, ceilingEntry, or floorEntry methods. The
-                 descendingMap method even provides an explicit method
-                 of reversing the traversal order.
-
-● GRAPH STRUCTURES  [[{data_structures.graphs]]
-https://guava.dev/releases/20.0/api/docs/com/google/common/graph/package-summary.html
-
-Interface               Description
-Graph<N>                An interface for graph-structured data, whose edges are
-                        anonymous entities with no identity or information of their own.
-MutableGraph<N>         A subinterface of Graph which adds mutation methods.
-MutableNetwork<N,E>     A subinterface of Network which adds mutation methods.
-MutableValueGraph<N,V>  A subinterface of ValueGraph which adds mutation methods.
-Network<N,E>            An interface for graph-structured data, whose edges are unique objects.
-ValueGraph<N,V>         An interface for graph- structured data, whose edges have associated
-                        non-unique values.
-  [[}]]
-[[java_lang.101}]]
-
-
-[[}]]
-
-● Lists [[{data_structures.101,qa]] #[data_structures_101_summary]
- INITIALIZING A LIST
-final List<String> myList =                  ← final forbid re-asigning the list,
-      Arrays.asList("one", "two", "three");     but its content is still mutable
-      myList.add("four");
-
-final List<String> myInmmutableList =        ← inmutable version (thread safe)
-      Collections.unmodifiableList(myList);
-
-
-String[] array01 = ...;
-final      List<String> readOnlyList  ← Inmutable ArrayList (static class inside Arrays),
-       = Arrays.asList(arr);            lacks set(), get(), contains() or "adding" methods
-                                        providing for a read-only view.
-
-final ArrayList<String> mutableList   ← Mutable list.
-       = new ArrayList<String>(
-         Arrays.asList(arr));
-
-● Collection (Lists/Set/...) "Walk-over"
- for ( int idx = 0; idx < collection   .length ; idx++) { ← Alt 1: Java 1.0 for-walk over collection index.
-   type array_element = collection   .get(idx);           ←   WARN:  Very slow for LinkedLists
- }                                                                   (Faster for other List implementations)
-
- for ( Iterator iterator = collection   .iterator() ;     ← Alt 2: for-walk over iterator. Preferred:
-        iterator.hasNext(); ) {                                    safer when removing/modifying the collection
-   type type = (type)   iterator.next() ;                          while iterating over it.
- }
-
- for ( iterable_type iterable_element   :collection ) {   ← Alt 3: Best option when NOT remov./modify. elements
-   ...
- }
-
- collection .forEach ((element) -> {                      ← Alt 4: STREAMS (Java 8+): UNIX pipe like iteration.
-   System.out::println(element)                             Functional approach. In this case we can "shortcut" to:
- });                                                        collection.forEach(System.out::println);
-
-● Maps ("Dictionaries")
-  ######################
-  # INITIALIZING A MAP #
-  ######################
-final Map<String,String> myMap =                          ← Mutable map (WARN: even if 'final' used)
-      new HashMap<String,String>();
-  myMap.put("k1", "k2");
-  ...
-  final Map<String,String> myInmutableMap =               ← Inmutable version of map
-        Collections.unmodifiableMap(temp);
-
-  final HashMap<String,String> data =  HashMapBuilder     ← Java 7+ must have even number of elements
-        .build( "k1","v1", "k2","v2", ...);
-
-  final Map<String, String> inumtableMap01 =              ← Java 9+ must have even number of elements
-        Map.of("k1", "v1", "k2", "v2");
-
-  final Map<String, String> inmutableMap02 =              ← Java 9+ (Safer syntax)
-        Map.ofEntries( entry("k1", "k2"),...);
-
-  final Map<String, String> test =                        ← Guava ImmutableMap
-        ImmutableMap.of("k1","v1", ...);                    works only with up to 5 key/value pairs
-
-  final Map<String, String> test =                        ← Guava ImmutableMap alternative
-        ImmutableMap.<String, String>builder()
-        .put("k1", "v1").put("k2", "v2")
-        ...
-        .build();
-
-  ###########################
-  # WALK-OVER/ITERATE A MAP #
-  ###########################
-
- Map<String, String> map = ...
- for ( Map.pair<String, String>   pair  :
-       map .pairSet() ) {                                 ← Alt 1: pairSet (Java 5+)
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- Iterator<Map.Entry<String, String>> it =                 ← Alt 2: (Java 7?) using iterators
-       map.entrySet .iterator() ;
- while (it.hasNext()) {
-   const Map.Entry<Integer, Integer> pair =  it.next();
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- for ( Map.Entry<Integer, Integer> pair :                 ← Alt 3: USING "for : entrySet"
-          myMap .entrySet() ) {
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- map.forEach((k, v) -> {                                  ← forEach (java 8+)
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- map.entrySet().stream().forEach( (pair) -> {            ← Stream API (1.8+)
- ... pair.getKey() ... pair.getValue() ...                 "Functional" Unix Pipe like style
- });
-
- map.entrySet().stream().                                ← Stream API parallel (1.8+)
- .parallel().forEach( pair -> {                            "Functional" Unix Pipe like style
- ... pair.getKey() ... pair.getValue() ...
- } ) );
-
-  ##############
-  # UPDATE MAP #
-  ##############
-
-Map<String, Double> map01 = new HashMap<>();
-  map01.put("key1", 1);
-  map01.put("key2", 2);
-  map01.put("key3", 3);                    ← Update (Before Java 8). Alt 1: Do not check for key existence.
-  if (map01.containsKey("key3")) {
-    map01.put("key3", 3);                  ← Update (Before Java 8). Alt 2:        check for key existence.
-  }
-
-  Integer oldValue = map01                 ← Java 8+ . Returns nulls if key1 didn't exists
-         .replace("key1", 10);
-  boolean isOK = map01.replace("key1",     ← Java 8+. Safer variant. Update fails if old value
-           1 /*old value*/,                  is null or changed. Most probably false will throw
-          10 /* new value */ );              a RuntimeError.
-
-  map01.getOrDefault("key4", 0));          ← Return default for non-existing key (vs null)    [qa]
-
-  map01.putIfAbsent ("key4", 4));          ← Update only if absent or value null.             [qa]
-
-
-  const BiFunction<Integer, Integer, Integer>
-      sumFun = (x1, x2) -> x1 + x2;
-
-  map01.compute("key1",                         ← Use bifunction to update. NullPointerException
-    (key, currentValue)                           if key doesn't exit.
-        -> sumFun.apply(currentValue, 2));        (alternatively computeIfAbsent / computeIfPresent )
-
-  map01.merge("key1", defaultValue,             ← Update with BiFunction if key exists.
-    (key, currentValue)                           or add defValue to key otherwise.
-        -> sumFun.apply(v, 2));
-
-● java.util.Collections:
-(@[https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html] )
-- Utility class with static methods that operate on or return collections
-
-
-  Collections.EMPTY_SET  ( == Collections.emptySet()         ) See also Collections.singleton(T o)
-  Collections.EMPTY_LIST ( == Collections.emptyList()        ) See also Collections.singletonList(T o)
-  Collections.EMPTY_MAP  ( == Collections.emptyMap()         ) See also Collections.singletonMap(K key, V value)
-                              Collections.emptyEnumeration()
-                              Collections.emptyIterator()
-                              Collections.emptyListIterator()
-
-  boolean      Collections.addAll(Collection c, T... elements)           Adds all elements to collection 'c'
-  Queue        Collections.asLifoQueue(Deque deque)                      deque to Last-In/First-Out "LIFO" Queue view
-  int          Collections.binarySearch(List list, T key)                Searches key in list using binary search.
-  int          Collections.binarySearch(List list, T key, Comparator c)  Searches key in list using binary search + comparator.
-
-  Collection   Collections.checkedCollection(Collection c, Class type)   Returns a dynamically typesafe view of input collection/list/...
-  List         Collections.checkedList(List list, Class type)
-  Map          Collections.checkedMap
-                           (Map m, Class keyType, Class valueType)
-  Set          Collections.checkedSet(Set s, Class type)
-  SortedMap    Collections.checkedSortedMap
-                           (SortedMap m, Class keyType, Class valueType)
-
-
-  SortedSet    Collections.checkedSortedSet(SortedSet s, Class type)
-  void         Collections.copy(List dest, List src)                     Copies src list elements to dest list
-  boolean      Collections.disjoint(Collection c1, Collection c2)        true if c1/c2 have no elements in common.
-
-  Enumeration  Collections.enumeration(Collection c)                     Returns an enumeration over the specified collection.
-
-  void         Collections.fill(List list, T obj)                        Replaces all of the elements of the specified list with the specified element.
-  int          Collections.frequency(Collection c, Object o)             Returns the number of elements in the specified collection equal to the specified object.
-  int          Collections.indexOfSubList(List list, List sublist)       -1 if not found.
-  int          Collections.lastIndexOfSubList(List list, List sublist)   -1 if not found.
-  ArrayList    Collections.list(Enumeration e)                           Enum to array list in the order they are returned by input enum.
-  T            Collections.max/min(Collection coll (, Comparator comp))  max/min element of collection, according to comparator order.(Def to natural ordering)
-  List         Collections.nCopies(int nCopies, T inputObject)
-  Set          Collections.newSetFromMap(Map map)
-  boolean      Collections.replaceAll(List list, T oldVal, T newVal)     ← NOTE: Replaces in list
-  void         Collections.reverse(List list)
-  Comparator   Collections.reverseOrder()                                Return <<Comparable>> Comparator imposing reverse natural ordering.
-  Comparator   Collections.reverseOrder(Comparator cmp)                  Returns               comparator imposing reverse ordering of input comparator.
-  void         Collections.rotate(List list, int distance)               Rotates elements in list.
-  void         Collections.shuffle(List list (, Random rnd) )            Randomly permutes elements using source of randomness (or def. src of randomness).
-  void         Collections.sort(List list (, Comparator c))              Sorts in comparator (def. to natural) order.
-  void         Collections.swap(List list, int pos1, int pos2)           Swap elemnts in pos 1 and 2.
-  Collection   Collections.synchronizedCollection(Collection c)          Returns thread-safe collection       [qa]
-  List         Collections.synchronizedList(List list)                   Returns thread-safe list             [qa]
-  Map          Collections.synchronizedMap(Map m)                        Returns thread-safe map              [qa]
-  Set          Collections.synchronizedSet(Set s)                        Returns thread-safe set              [qa]
-  SortedMap    Collections.synchronizedSortedMap(SortedMap m)            Returns thread-safe sorted map       [qa]
-  SortedSet    Collections.synchronizedSortedSet(SortedSet s)            Returns thread-safe sorted set       [qa]
-  Collection   Collections.unmodifiableCollection(Collection c)          Returns inmutable view               [qa]
-  List         Collections.unmodifiableList(List list)                   Returns inmutable view               [qa]
-  Map          Collections.unmodifiableMap(Map m)                        Returns inmutable view               [qa]
-  Set          Collections.unmodifiableSet(Set s)                        Returns inmutable view               [qa]
-  SortedMap    Collections.unmodifiableSortedMap(SortedMap m)            Returns inmutable view               [qa]
-  SortedSet    Collections.unmodifiableSortedSet(SortedSet s)            Returns inmutable view               [qa]
-
-
-
-• Fastutil @[http://fastutil.di.unimi.it/] [[{data_structures,01_PM.backlog]]
-- Fast and compact type-specific collections for Java
-  Great default choice for collections of primitive types,
-  like int or long. Also handles big collections with more than 2
-  31 elements well.
-
-• Eclipse Collections
-@[https://www.eclipse.org/collections/]
-(Originated from Goldman Sachs gs-collection:
- @[https://github.com/goldmansachs/gs-collections])
-- Features you want with the collections you need
-  Previously known as gs-collections, this library
-  includes almost any collection you might
-  need: primitive type collections, multimaps,
-  bidirectional maps and so on.
-[[}]]
-
-● <<Enumeration>>(1.0) vs <<Iterator>>(1.7) [[{data_structures.101,02_doc_has.comparative]]
-@[https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator]
-- both interfaces will give successive elements
-
-- Iterators allow the caller to remove elements from
-  the underlying collection during the iteration with
-  well-defined semantics.
-  (additional remove method)
-- Iterators Method names have been improved.
-
-- Iterators are fail-fast:
-  - If thread A changes the collection, while
-       thread B is traversing it, the iterator implementation
-       will try to throw a ConcurrentModificationException
-       (best effort since it can not always be guaranteed)
-  - The fail-fast behavior of iterators can be used only to
-    detect bugs sin the best effort doesn't warrant its trigger.
-  - newer 'concurrent' collections will never throw it.
-    Reading thread B will traverse the collection "snapshot" at
-    the start of read.
-
-
-
-- Iterator should be preferred over Enumeration
-  taking the place of Enumeration in collections framework
-
-
-  Enumeration     │ Iterator
-  ────────────────┼────────────
-  hasMoreElement()│ hasNext()
-  nextElement()   │ next()
-                  │ remove() ← optional: not implemented in many classes
-[[}]]
-[[$div}]]
-
-
-● NIO (JDK 1.4+) [[{async/reactive.io]]
-@[http://tutorials.jenkov.com/java-nio/buffers.html]
-- Replaced OLD blocking IO based on [ byte/char, read-or-write streams ]
-┌──────────┐     ┌──────────────┐
-│ CORE NIO │     │ NON─BLOCKING │
-├──────────┴───┐ ├──────────────┴────────────────────────────────┐
-│ ─  CHANNELS  │ │· a thread requests a channel the intention    │
-│  ─ read/write│ │  to read/write data into a buffer:            │
-│ ─  BUFFERS   │ │  · While the channel moves data into/from     │
-│ ─  SELECTORS │ │   the buffer, the thread continues another job│
-└──────────────┘ │  · When data is ready, the thread is notified │
-                 └───────────────────────────────────────────────┘
-Channel  : File,Datagram/UDP,Socket/TCP,ServerSocket,...
-Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
-
-
-┌───────────────┐
-│  NON─CORE NIO │
-├───────────────┴─────────────────────────────────────────────────────┐
-│ ─ components like Pipe and FileLock can be considered               │
-│   "utility classes" supporting the first three ones.                │
-│                                                                     │
-│ ─ "SELECTORS" objects monitor one+ channels for events              │
-│   (connection opened, data arrived, ..):                            │
-│   ─ Thus, a single thread can monitor multiple channels for data.   │
-│     (Very handy if app has many connections/Channels/clients open   │
-│     but with low traffic on each connection.                        │
-│   ─ To use selectors:                                               │
-│     ─ Instantiate the selector                                      │
-│     ─ Register one+ channels with it                                │
-└─────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ BUFFER                                                                                           │
-│  ATTRIBUTES                                              METHODS                                 │
-│          ┌─────────────────┬───────────────────────────┐ ┌─────────────┬───────────────────────┐ │
-│          │ write mode      │  read mode                │ │rewind()     │                       │ │
-│ ┌────────┼─────────────────┴───────────────────────────┤ │             │                       │ │
-│ │capacity│ fixed size of memory block implementing     │ ├─────────────┼───────────────────────│ │
-│ │        │ the buffer                                  │ │clear()      │                       │ │
-│ ├────────┼─────────────────┬───────────────────────────┤ │compact()    │                       │ │
-│ │position│ starts at 0,    │ starts at 0 (after "flip")│ ├─────────────┼───────────────────────│ │
-│ │        │ increase at each│ increase at each          │ │mark()       │"bookmark position"    │ │
-│ ├────────┼─────────────────┼───────────────────────────┤ │reset()      │ and return "bookmark" │ │
-│ │   limit│ element written │ element read              │ ├─────────────┼───────────────────────│ │
-│ │        │ == capacity     │ == last written position  │ │equals()     │using only the         │ │
-│ └────────┴─────────────────┴───────────────────────────┘ │compareTo()  │remaining-to-read bytes│ │
-│                                                          │             │for the computation    │ │
-│                                                          └─────────────┴───────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────────────────────────────────
-│ SEQUENCE TO READ/WRITE DATA                   ┌───────┐
-│try (  /* try-with 1.7+ */                     │SUMMARY│
-│  RandomAccessFile   aFile  =                  ├───────┴──────────────────────────
-│    new RandomAccessFile("nio-data.txt", "rw") │-1 ) Write data into the Buffer
-│) throws IOException {                         │-2 ) Call buffer. flip()
-│  FileChannel   inChannel  =                   │     switch writing/reading mode
-│      aFile .getChannel();                     │-3 ) Read data out of the Buffer
-│                                               │-4a) buffer.clear();  ← alt1: clear all buffer
-│  ByteBuffer   buf =                           │-4b) buffer.compact() ← alt2: clear only data read
-│      ByteBuffer.allocate(48 /*capacity*/);    ├────────────────────────────────────
-│                                               │ channelIn → (data) → buffer
-│                                               │ buffer    → (data) → channelOut
-│  int  bytesRead =                             └────────────────────────────────────
-│         inChannel .read(  buf );  // ←   buf  now
-│                                          in write mode
-│  while  ( bytesRead  != -1)
-│  {
-│      buf . flip ();               // ←   buf  now
-│    while(  buf .hasRemaining()){         in read mode
-│        System.out.print(
-│           (char)   buf .get()     // ← alt.1: read 1 byte
-│        );                                     at a time
-│        // channel2.write(  buf )  // ← alt.2: read data
-│    }                                         in channel2
-│      buf .clear();                // ← make buffer
-│                                        ready-for-writing
-│     bytesRead  =   inChannel      // ←   buf  now
-│                    .read(  buf );        in write mode
-│  }
-│}
-└──────────────────────────────────────────────────────────────────────────────────────────────────
-
-┌────────────────┐
-│ SCATTER-GATHER │
-├────────────────┴─────────────────────────────────┬──────────────────────────────────────────────────┐
-│  scattering channel read                         │ scattering-write to channel                      │
-│ - channel → read to → buffer1, buffer2, ....     │ - buffer1, buffer2, ...→ write to → channel      │
-│ - Ex:                                            │ - ex:                                            │
-│   ByteBuffer header = ByteBuffer.allocate(128);  │   ByteBuffer header = ByteBuffer.allocate(128);  │
-│   ByteBuffer body   = ByteBuffer.allocate(1024); │   ByteBuffer body   = ByteBuffer.allocate(1024); │
-│   ByteBuffer[]   bufferArray  = { header, body };│   ByteBuffer[]   bufferArray  = { header, body };│
-│   channel .read(  bufferArray );                 │   channel .write(  bufferArray );                │
-│            ^^^^                                  │                                                  │
-│ fill up one buffer before moving on to the next  │                                                  │
-│ (not suited for undefined size messages)         │                                                  │
-└──────────────────────────────────────────────────┴──────────────────────────────────────────────────┘
-
-  CHANNEL-TO-CHANNEL
- - If one the the channels is FileChannel :
-   - FileChannel transferTo()/transferFrom()  can be used to move data between channels
-     WARN: Some SocketChannel implementations may transfer only the data the SocketChannel
-     has ready in its internal buffer here and now
-   ┌─────────┐
-   │Examples.│
-   ├─────────┴───────────────────────────────────┬─────────────────────────────────────────────┐
-   │  FileChannelG fromChannel =                 │  FileChannelG fromChannel =                 │
-   │     (new RandomAccessFile("from.txt", "rw"))│     (new RandomAccessFile("from.txt", "rw"))│
-   │     .getChannel(),                          │     .getChannel(),                          │
-   │  FileChannel   toChannel =                  │  FileChannel   toChannel =                  │
-   │     (new RandomAccessFile(  "to.txt", "rw"))│     (new RandomAccessFile(  "to.txt", "rw"))│
-   │     .getChannel();                          │     .getChannel();                          │
-   │  long count    =  fromChannel .size();      │  long count    = ;                          │
-   │  toChannel  .transferFrom (                 │  fromChannel  .transferTo (                 │
-   │       fromChannel ,                         │      0 /*position*/,                        │
-   │       0       , // posit.in dest-file to    │      fromChannel .size() /*count*/,         │
-   │                 // start writing from       │      toChannel );                           │
-   │       maxCount  /* max-bytes to transfer*/  │                                             │
-   │  );                ^^^^^^^^^                │                                             │
-   │                    constrained by data      │                                             │
-   │                    in source                │                                             │
-   └─────────────────────────────────────────────┴─────────────────────────────────────────────┘
-[[}]]
-
-● Async/Reactive Standlib API tree [[{async/reactive.io.network,persistence.fs]]
-JDK 8
-./java/nio/
-           Bits ByteOrder CharBufferSpliterator
-           ByteBufferAs(Char|Double|Float|...)Buffer(B|L|...
-           (|Float|Double|StringChar)Buffer
-           HeapByteBuffer Heap(Byte|Char|...)Buffer(R) HeapCharBuffer
-           (Int|Long|...)Buffer
-           (Mapped|Direct)ByteBuffer(R)
-           Direct(Byte|Char|Double|...)Buffer
-
-./java/nio/channels/
-                    Channel Channels CompletionHandler FileLock MembershipKey Pipe Selector SelectionKey
-                    Asynchronous(|Byte)Channel
-                    AsynchronousChannelGroup
-                    AsynchronousFileChannel
-                    AsynchronousServerSocketChannel
-                    AsynchronousSocketChannel
-                    (Byte|Datagram|File|GatheringByte|Interruptible|Multicast|
-                     Network|ReadableByte|ScatteringByte|SeekableByte|Selectable|
-                     ServerSocket|Socket|WritableByte)Channel
-                   /spi/Abstract(Interruptible|Selectable)Channel
-                        Abstract(SelectionKey|Selector)
-                        (AsynchronousChannel|Selector)Provider
-
-./java/nio/charset/
-                   Charset(|Decoder|Encoder) StandardCharsets
-                   CoderResult CodingErrorAction
-                  /spi/CharsetProvider
-
-./java/nio/file/attribute/AclEntry(|Flag|Permission|Type)
-                          (|AclFile|BasicFile|DosFile|File|
-                            FileOwner|FileStore|PosixFile|
-                            UserDefinedFile)AttributeView
-                          (BasicFile|DosFile|PosixFile)Attributes
-                          FileAttribute FileTime
-                          GroupPrincipal
-
-                          UserPrincipal(LookupService)
-./java/nio/file/
-                AccessMode CopyMoveHelper CopyOption DirectoryStream Files
-                LinkOption LinkPermission Path        PathMatcher        Paths
-                SecureDirectoryStream
-                File(Store|System|Systems|TreeIterator|TreeWalker|VisitOption|Visitor|VisitResult)
-                SimpleFileVisitor
-                OpenOption    Standard(Copy|Open)Option
-                StandardWatchEventKinds
-                StandardWatchEventKinds$StdWatchEventKind
-                TempFileHelper
-                Watchable      Watch(Event|Key|Service)
-                spi/FileSystemProvider
-                    FileTypeDetector
-[[}]]
-
-● SELECTORS [[{async/reactive.io.network]]
-@[https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html]
-
-- A Selector allows a single thread to manage multiple channels
-  (network connections), by examining which ones are ready for
-  connect,accept,read,write
-
-- A channel that "fires an event" is also said to be "ready" for that event.
-
- REGISTERING A SELECTOR                               │ USING SELECTORS
- AND ASSIGNING CHANNELS                               │
-    │  Selector   selectoR  = Selector.open();        │  STEP
-    │  channel.configureBlocking(false);              │  call one of the select() methods
-    │          ^^^^^^^^^^^^^^^^^^^^^^^^               │  (upon registering 1+ channels)
-    │   //     non-blocking-mode required             │  int select(long mSecTimeout) ← block until channel/s ready
-    │   //   WARN:  FileChannel can NOT be switched   │             └────(optional)┘
-    │   //   into NON-blocking mode and so            │  int selectNow()              ← Don't block even if none read
-    │   //   they can NOT be used with selectors.     │  └┬┘
-┌───→  SelectionKey key  = channel.register(          │  indicates how many channels became ready since last select() call.
-│   │      selector ,                                 │
-│   │    SelectionKey.OP_READ |                       │  STEP
-│   │    SelectionKey.OP_WRITE);                      │  examine ready channels returned by select like:
-│   │                 ^^^^^^^                         │  Set<SelectionKey> selectedKeys =
-│   │                 Or-set of interest:             │                      selectoR .  selectedKeys() ;
-│   │                 OP_CONNECT / OP_ACCEPT          │  Iterator<SelectionKey> keyIterator =
-│   │                 OP_READ    / OP_WRITE           │                    selectedKeys.iterator();
-│   │  ^^^^^^^^^^^^^^^^                               │  while(keyIterator.hasNext()) {
-│   │                                                 │      SelectionKey key = keyIterator.next();
-│ ┌─→  key .attach(extraInfoObject);                  │      //  "cast to proper channel"
-│ │ │  Object attachedObj =                           │             if (  key .isAcceptable ()) {
-│ │ │     selectionKey.attachment();                  │        ... connection accepted by ServerSocketChannel
-│ │ │                                                 │      } else if (  key .isConnectable()) {
-│ │ │                                                 │        ... connection established with remote server
-│ │ │ // After selection                              │      } else if (  key .isReadable   ()) {
-│ │ │ // ^^^^^^^^^^^^^^^                              │        ... channel ready for reading
-│ │ │ // explained later                              │      } else if (  key .isWritable   ()) {
-│ │ │                                                 │        ... channel ready for writing
-│ │ │ // Alternative 1:                               │      }
-│ │ │ int   readySet =   key .readyOps();             │      keyIterator.remove();
-│ │ │ boolean isAcceptable  =                         │  }
-│ │ │           readySet  ⅋ SelectionKey.OP_ACCEPT;   │  STEP
-│ │ │ ...                                             │  selector .close()
-│ │ │ // Alternative 2:                               │            ^^^^^
-│ │ │   key .isAcceptable();                          │   must be called after finishing ussage,
-│ │                                                   │   invalidating all SelectionKey instances
-│ └─── (optional) user attached object,               │   registered with this Selector.
-│      handy way to recognize a given                 │   The channels themselves are not closed.
-│      channel, provide extra info
-│      (buffer/s,...)
-│
-└───   key  can be queried like:
-       intO interestSet  =   key .interestOps()*;
-       boolean isInterestedInAccept
-           =   interestSet  ⅋ SelectionKey.OP_ACCEPT;
-
-  NOTE:
-  - A thread blocked by a call to select() can be forced to leave the select() method,
-     even if no channels are yet ready by having a different thread call
-     the   selectoR . wakeup()  method on the Selector which the first thread has
-     called select() on:
-     - The thread waiting inside select() will then return immediately.
-     - If a different thread calls wakeup() and no thread is currently
-       blocked inside select(), the next thread that calls select()
-       will "wake up" immediately.
-[[}]]
-
-● FileChannel [[{async/reactive.io,persistence.FS]]
-- Java NIO FileChannel: channel connected to a file allowing to
-      read data from  and write data to a file.
-- A FileChannel canNOT be set into non-blocking mode:
-  It always runs in blocking mode
-
-- Reading from FileChannel (Writting to buffer):
-  |/* You cannot open a FileChannel directly,
-  | * first you obtain a FileChannel via an (Input|Output)Stream or a RandomAccessFile
-  | */
-  |RandomAccessFile   aFile      = new RandomAccessFile("data/nio-data.txt", "rw");
-  |// Reading from channel
-  |try (  /* try-with 1.7+ */
-  |  RandomAccessFile   aFile  = new RandomAccessFile("data/nio-data.txt", "rw")
-  |) throws IOException {
-  |  FileChannel   inChannel  =   aFile .getChannel();
-  |
-  |  ByteBuffer   buf  = ByteBuffer.allocate(48 /* capacity*/);
-  |
-  |  int  bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
-  |  while ( bytesRead  != -1) {
-  |      buf .flip();                            //   buf  now in read mode
-  |    while(  buf .hasRemaining()){
-  |        // alt. read data directly, 1 byte at a time
-  |        System.out.print((char)   buf .get());
-  |        // alt. read data in channel
-  |        // anotherChannel.write(  buf )
-  |    }
-  |
-  |      buf .clear(); //make buffer ready for writing
-  |     bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
-  |  }
-  |}
-
-- Writing to a FileChannel (reading from buffer)
-  | String newData = "......" + System.currentTimeMillis();
-  | ByteBuffer   buf  = ByteBuffer.allocate(48);
-  |   buf .clear();
-  |   buf .put(newData.getBytes());
-  |   buf .flip(); // change buffer from write to read
-  |  while(  buf .hasRemaining()) {  channelO .write (  buf );  }
-  | channel.close();
-
-
-- FileChannel Position
-  | long pos = fileChannel.position(); // obtain current position
-  | fileChannel.position(pos +123); // change position
-
-   - If you set the position after the end of the file,
-     and try to read from the channel, you will get -1
-   - If you set the position after the end of the file,
-     and write to the channel, the file will be expanded
-     to fit the position and written data. This may result
-     in a "file hole", where the physical file on
-     the disk has gaps in the written data.
-
-- FileChannel Size
-  | long fileSize = fileChannel.size();
-                                ^^^^^^
-                            size of the file
-                            connected to channel
-
-- FileChannel (file) Truncate
-  | fileChannel.truncate(1024 /*length*/);
-
-- FileChannel Force:
-  flushes all unwritten data from the channel and OS cache to the disk
-  | channel.force(true /* flush also file meta-data like permissions....*/);
-[[}]]
-
-● Pipe [[{async/reactive.io,java_lang.functional]]
-- Pipe: one-way data connection between two threads
-  └"=="  source channel   ← One threads writes to sink
-        +  sink channel   ← One threads reads from source
-  Ex:
-    ByteBuffer   buf  = ByteBuffer.allocate(48);
-      buf .clear();
-      buf .put(newData.getBytes());
-
-    // WRITING TO PIPE
-    Pipe pipe = Pipe.open();
-    Pipe.SinkChannel sinkChannel = pipe.sink();
-    String newData = "..." + System.currentTimeMillis();
-      buf .flip();
-    while(  buf .hasRemaining()) { sinkChannel.write(  buf ); }
-
-    // READING FROM A PIPE
-    To read from a Pipe you need to access the source channel. Here is how that is done:
-    Pipe.SourceChannel sourceChannel = pipe.source();
-    int  bytesRead  =   inChannel .read(buf2);
-[[}]]
-
-● SocketChannel [[{async/reactive.io.network]]
-  There are two ways a SocketChannel can be created:
-
-  // Opening a SocketChannel
-  SocketChannel socketChannel = SocketChannel.open();
-  socketChannel.connect(new InetSocketAddress("http://jenkov.com", 80));
-
-  // Reading (writing to buffer)
-  ByteBuffer   buf  = ByteBuffer.allocate(48);
-  int  bytesRead  = socketChannel.read(  buf ); // If -1 is returned, the end-of-stream is reached (connection is closed)
-
-  // Writing to a SocketChannel
-  String newData = "..." + System.currentTimeMillis();
-  ByteBuffer   buf  = ByteBuffer.allocate(48);
-    buf .clear();
-    buf .put(newData.getBytes());
-    buf .flip();
-  while(  buf .hasRemaining()) { channel.write(  buf ); }
-
-  socketChannel.close();
-[[}]]
-
-
-● Non-blocking Mode [[{async/reactive.io.network]]
-- socketChannel .configureBlocking(false) ;
-- Calls to connect(), read() and write() will not block
-- In non-blocking mode connect() calls may return before
-  the connection is established:
-  - To determine whether the connection is established
-    use finishConnect() like this:
-
-  | socketChannel.configureBlocking(false);
-  | socketChannel.connect(
-  |   new InetSocketAddress("http://jenkov.com", 80));
-  |
-  | while(! socketChannel.finishConnect() ){
-  |     //wait, or do something else...
-  | }
-
-NOTE: non-blocking works much better with Selector's
-[[}]]
-
-● ServerSocketChannel [[{async/reactive.io.network]]
-ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-
-serverSocketChannel.socket().bind(new InetSocketAddress(9999));
-serverSocketChannel.configureBlocking(false);
-
-while(true){
-    SocketChannel socketChannel =
-            serverSocketChannel.accept(); // in blocking mode waits until incoming connection arrives
-    if(socketChannel != null /* always false in blocking mode */){
-        //do something with socketChannel...
-    }
-
-    //do something with socketChannel...
-}
-
-serverSocketChannel.close()
-[[}]]
-
-● Datagram Channel [[{async/reactive.io.network]]
-- Since UDP is a connection-less network protocol, you cannot just
-  by default read and write to a DatagramChannel like you do from
-  other channels. Instead you send and receive packets of data
-
-  | DatagramChannel channel = DatagramChannel.open();
-  | channel.socket().bind(new InetSocketAddress(9999));
-  |
-  | ByteBuffer   buf  = ByteBuffer.allocate(48);
-  |   buf .clear();
-  | // WARN: if read data is bigger than buffer size remaining data is discarded silently
-  | channel.receive(  buf );
-  |
-  | // Write to channel
-  | String newData = "..." + System.currentTimeMillis();
-  |   buf .clear();
-  |   buf .put(newData.getBytes());
-  |   buf .flip();
-  |
-  |
-  | // WARN:  No notice is received about packet delivery (UDP does not make any guarantees)
-  | int bytesSent = channel.send(  buf , new InetSocketAddress("jenkov.com", 80));
-  |
-  | // Alternatively you can "Connect" to a Specific Address. Since UDP is connection-less,
-  | // connecting to a remote address just means that the DatagramChannel can only send/receive
-  | // data packets from a given specific address.
-  | channel.connect(new InetSocketAddress("jenkov.com", 80));
-  | int  bytesRead  = channel.read(  buf );
-  | int bytesSent = channel.write(  buf );
-[[}]]
-
-[[{async/reactive.io.network]]
-● NonBlocking Server
-REF:
-- @[http://tutorials.jenkov.com/java-nio/non-blocking-server.html]
-- @[https://github.com/jjenkov/java-nio-server]
-- Non-blocking IO Pipelines:
-read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut
-read-only  pipeline:  channelIn  → selector → component → ... → componentN
-write-only pipeline:                        component → ... → componentN →  channelOut
-Note: It is the component that initiates reading of data from the Channel via the Selector
-read-pipeline read from stream/channelIn and split data into messages like:
-
-Data   → Message → Message
-Stream   Reader    Stream
-
-- A blocking Message Reader/Writer is simpler, since it
-  has never to handle situations where no data was read
-  from the stream, or where only a partial message was
-  read from the stream and message parsing needs to be
-  resumed later.
-- The drawback of blocking is the requirement of separate
-  threads for each parallel stream, which is a problem if the
-  server has thousands of concurrent connections
-- Each thread will take between 320K (32 bit JVM) and
-  1024K (64 bit JVM) memory for its stack
-- Queue messages can be used to reduce the problem. However,
-  this design requires that the inbound client  streams
-  send data reasonably often and input is processed fast.
-   If the inbound client stream may be inactive for longer periods
-  attached to hidden clients, a high number of inactive
-  connections may actually block all the threads in the thread
-  pool.
-  That means that the server becomes slow to respond or even
-  unresponsive.
-- A non-blocking IO pipeline can use a single thread to
-  read messages from multiple non-blocking streams.
-    When in non-blocking mode, a stream may return 0 or more
-  bytes when you attempt to read data from it.
-  When you call select() or selectNow() on the Selector it
-  gives you only the SelectableChannel instances ("connected
-  clients") that actually has data to read.
-
-  Component ──→ STEP 1: select() ──→ Selector ←──┬─→ Channel1
-      ↑                                │         ┼─→ Channel2
-      └───← STEP 2: ready channels ←───┘         └─→ Channel3
-
-
-- Reading Partial Messages: Data sent by "ready" channels can
-  contain fractions/incomplete messages:
-  - The Message Reader looks needs to check if the data block
-    contains at least one full message, adn storing partial ones.
-    (maybe using one Message Reader per Channel to avoid mixing messages)
-  - To store Partial Messages two design should be considered:
-    - copy data as little as possible for better performance
-    - We want full messages to be stored in consecutive byte to
-      make parsing messages easier
-  - Some protocol message formats are encoded using a TLV format
-    (Type, Length, Value).
-    Memory management is much easier since we known immediately
-    how much memory to allocate for the message. No memory is
-    wasted at the end of a buffer that is only partially used.
-  - The fact that TLV encodings makes memory management easier is
-    one of the reasons why HTTP 1.1 is such a terrible protocol.
-    That is one of the problems trying to be fixed in HTTP 2.0 where
-    data is transported in LTV encoded frames.
-  - Writing Partial Messages: channelOut.write(ByteBuffer) in
-    non-blocking mode gives no guarantee about how many of the
-    bytes in the ByteBuffer is being written. The method returns
-    how many bytes were written, so it is possible to keep track
-    of the number of written bytes.
-  - Just like with the Message Reader, a Message Writer is used
-    per channel to handle all the details.
-   (partial writes, message queues, resizable buffers, protocol aware tricks,...)
-
-- All in all a non-blocking server ends up with three "pipelines" it
-  needs to execute regularly:
-  - The read pipeline which checks for new incoming data from
-    the open connections.
-  - The process pipeline which processes any full messages received.
-  - The write pipeline which checks if it can write any outgoing
-    messages to any of the open connections
-[[}]]
-
-● Path (1.7+) [[{java_lang.101,persistence.FS]]
-- Represents a file/directory path in the FS
-- Similar to java.io.File but with some minor differences.
-// Ussage
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-Path path = Paths.get("/var/lib/myAppData/myfile.txt");
-System.out.println("Current dir:"+Paths.get(".").toAbsolutePath());
-[[}]]
-
-[[{]]persistence.FS,async/reactive,java_lang.101" >
-● Files
-- java.nio.file.Files provides several methods for manipulating FS files/directories:
-- uses Path instances:
-
-boolean pathExists =  Files.exists (pathInstance,
-            new LinkOption[]{ LinkOption.NOFOLLOW_LINKS});
-
-Path newDir =  Files.createDirectory (path);
-
- Files.copy (sourcePath, destinationPath);
- Files.copy (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
- Files.move (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
- Files.delete (path);
-
-Files.walkFileTree(Paths.get("data"), new FileVisitor<Path>() {
-  @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-
-  @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-
-  @Override public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-
-  @Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-});
-[[}]]
-
-[[{persistence.fs,async/reactive.io]]
-● Asyncrhonous FileChannel 1.7+
-read/write data from/to files asynchronously
-
-Path path = Paths.get("data/test.xml");
-AsynchronousFileChannel fileChannel =
-    AsynchronousFileChannel.open(path, StandardOpenOption.READ);
-
-// Reading Data, Alt 1: Via a Future
-  Future<Integer> operation = fileChannel.read(/*ByteBuffeR*/buffer, 0 /* start position to read from */);
-  while(!operation.isDone());  // WARN: not a very efficient use of the CPU
-  buffer.flip();
-  byte[] data = new byte[buffer.limit()];
-  buffer.get(data);
-  System.out.println(new String(data));
-  buffer.clear();
-
-// Reading Data Alt 2: Via a CompletionHandler
-fileChannel.read(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
-    @Override
-    public void completed(Integer numBytesRead, ByteBuffer attachment) {
-        // NOTE: attachment is a reference to the third parameter passed to .read read()
-        System.out.println("numBytesRead = " + numBytesRead);
-        attachment.flip();
-        byte[] data = new byte[attachment.limit()];
-        attachment.get(data);
-        System.out.println(new String(data));
-        attachment.clear();
-    }
-
-    @Override
-    public void failed(Throwable exc, ByteBuffer attachment) { ...  }
-});
-
-// Writing data:
-AsynchronousFileChannel fileChannel =
-    AsynchronousFileChannel.open(path, StandardOpenOption.WRITE);
-
-// Writing Data: Alt 1: Via a Future
-  ...
-  Future<Integer> operation = fileChannel.write(buffer, position);
-  buffer.clear();
-  while(!operation.isDone());
-
-// Writing Data: Alt 2: Via CompletionHandler
-...
-  fileChannel.write(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
-
-      @Override public void completed(Integer result, ByteBuffer attachment) { /* ... */ }
-      @Override public void failed   (Throwable exc , ByteBuffer attachment) { /* ... */ }
-  });
-[[}]]
-
-● java.net.http.HTTPClient [[{io.net.http,async/reactive.io.network,01_PM.low_code,02_doc_has.comparative,qa]]
-API REF: @[https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html]
-JEP: @[https://openjdk.java.net/jeps/321]
-
-TODO: HTTPClient Quick intro:
-    @[https://openjdk.java.net/groups/net/httpclient/intro.html]
-
-- Example JShell script for GET request:
-  import java.io.PrintWriter;
-  import java.net.http.HttpClient
-  import java.net.http.HttpRequest
-  import java.net.http.HttpResponse
-  import java.net.http.HttpResponse.BodyHandlers
-  HttpClient client = HttpClient.newHttpClient();
-  var BASE_URL="https://earizon.github.io/"
-  var URL01=BASE_URL + "/txt_world_domination/index.html"
-  HttpRequest request = HttpRequest.newBuilder(
-    URI.create(URL01)).GET().build()
-  HttpResponse<String> response =
-    client.send(request, BodyHandlers.ofString());
-  System.out.println(response.body())
-  /exit
-
-
-
-● OkHTTP [[{io.HTTP.OkHTTP]]
--   OkHTTP vs java.net.http.HTTPClient
-From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
-   OkHTTP PROs over                     OkHTTP CONs over
-   java.net.http.HTTPClient             java.net.http.HTTPClient
-   -------------------------------      -------------------------------------------
- - built-in response cache.           - timeout like configuration can not be
- - HTTP 2.0 web sockets support.        modified after singleton connection.
- - easier to use/better defaults.     - Requires (small) extra non-JDK dependencies
- - used by 1+ billion Android devices   (okIO and okHTTP itself) in non-Android
- - Better cookie/headers/call model.    deployments
- - Retrofit compatibility
- - HTTP 1.1 Connection pooling and HTTP/2 support.
- - Transparent GZIP up/downloads.
- - silently recover from common connection problems.
-   (alternate IP addresses if available,...)
- - synch or async+callback API.
-
-@[https://square.github.io/okhttp/]
-
-  DAILY USSAGE  @[https://square.github.io/okhttp/recipes/]
-
-  import java.io.IOException;
-  import okhttp3.OkHttpClient;
-  import okhttp3.Request;
-  import okhttp3.Response;
-  import okhttp3.MediaType;                         // ← For POST
-  import okhttp3.RequestBody;                       // ← For POST
-  ...
-  OkHttpClient client = new OkHttpClient();
-  Request request = new Request.Builder()
-      .url("http://bla.ble.com/a/b?key=param")
-      .build();
-  try (
-    Response res =
-       client.newCall(request).execute()            // ← Exec. (GET) Request
-  ) {
-    System.out.println(res.body().string());
-  }
-
-
-  final String MediaType =  "application/json; charset=utf-8";
-  final String jsonBody = "{...}";
-  RequestBody body = RequestBody.create(jsonBody,   //  ← POST: prepare body rquest
-           MediaType.get(MediaType));
-  Request request = new Request.Builder()
-      .url("http://bla.ble.com/")
-      .post(body)                                   //  ← POST: prepare body rquest
-      .build();
-  try (
-    Response res =
-       client.newCall(request).execute()
-  ) {
-    return res.body().string();
-  }
-
-- Ex: Balancing connections with OKHttp:
-  https://medium.com/wandera-engineering/kubernetes-network-load-balancing-using-okhttp-client-54a2db8fc668
-
-[[io.HTTP.OkHTTP}]]
-
-● okIO [[{async/reactive.io.network,qa]]
-● complements java.nio
-@[https://github.com/square/okio]
-- makes it much easier to access, store, and process your data.
-- It started as a component of OkHttp, the capable HTTP client
-  included in Android. It's well-exercised and ready to solve new problems.
-[[}]]
-
-
-● Labmdas Intro [[{java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
-• Java 8+.
-• simplifies development of non-blocking style APIs
+[[security.101}]]
+
+# Functional Programming
+[[{java_lang.101,java_lang.functional,PM.WiP]]
+## Lambdas 1.8+ [[{java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
+* simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
-• Context:
+### Context:
   The conventional computing model of a Touring machine takes for granted
   that data is already available to be processed.
   In the Internet era, data is arriving at random and we don't want to block
@@ -3003,9 +1866,56 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
   on the same process (a Unix pipeline requires the help of the underlying
   OS to work), and the type of input/output data can be any sort of Java
   object (not just file text).
+
+### Sytnax:
+(parameters) -> expression
+(parameters) ->  { statements; }
+
+// takes a Long, returns a String
+Function<Long, String> f = (l) -> l.toString();
+
+// takes nothing, gives you Thread
+Supplier<Thread> s = Thread::currentThread;
+
+//  takes a string as the parameter
+Consumer<String> c = System.out::println;
+
+// use lambdas in streams
+new ArrayList<String>().stream()....
+
+// peek: Debug streams without changes
+peek ( e -> System.out.println(e)). ...
+
+// map: Convert every element into something
+map ( e -> e.hashCode())...
+
+// filter (hc -> (hc % 2) == 0) ...
+
+// collect all values from the stream
+collect(Collectors.toCollection(TreeSet::new))
+
+• TODO: github.com/jOOQ/jOOL, functional extensions to Java 8.
+  • Context: Pains with checked exceptions and lambdas:
+    http://stackoverflow.com/q/18198176/521799
+    http://stackoverflow.com/q/19757300/521799
+    http://stackoverflow.com/q/14039995/521799
+  • Solution: org.jooq.lambda.Unchecked
+
+    Standard Java 8:                 | Using jooq labmda wrapper:     | Even simpler:
+    ================                 | ==========================     | ===================
+    Arrays                           | Arrays                         | Arrays
+    .stream(dir.listFiles())         | .stream(dir.listFiles())       | .stream(dir.listFiles())
+    .forEach(file -> {               | .forEach(                      | .map(Unchecked.function(
+          try {                      |   Unchecked.consumer(file -> { |      File::getCanonicalPath))
+      System.out.println(            |     System.out.println(        | .forEach(System.out::println);
+           file.getCanonicalPath()); |       file.getCanonicalPath());
+          } catch (IOException e) {  |   })
+      throw new RuntimeException(e); | );
+          }
+    });
 [[java_lang.functional.lambdas}]]
 
-● java.util.concurrent.Flow(1.9+) [[{async/reactive.io,async/reactive.101,01_PM.TODO]]
+## java.util.concurrent.Flow(1.9+) [[{async/reactive.io,async/reactive.101,PM.TODO]]
 @[https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html]
 - JDK 1.9+
 - Reactive Streams was adopted by the JDK in the form of the java.util.concurrent.Flow API.
@@ -3020,7 +1930,7 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
 - (See also <a href="http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php">What can Reactive Streams offer to EE4J</a>)
 [[}]]
 
-● RxJava [[{async/reactive.rxjava,qa]]]] #[rxjava_summary]
+# RxJava [[{async/reactive.rxjava,qa]]]] #[rxjava_summary]
 @[https://github.com/ReactiveX/RxJava]
 
 ReactiveX provides a set of very-well thought-out cross-language abstraction to
@@ -3209,7 +2119,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     Scheduler "==" Thread
 
 
-● External links:
+# External links:
 - Rx Workshop: Introduction
  @[https://channel9.msdn.com/Series/Rx-Workshop/Rx-Workshop-Introduction]
 - Introduction to Rx: IObservable
@@ -3225,7 +2135,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
 - Turning a callback into an Rx Observable by @afterecho
  @[https://afterecho.uk/blog/turning-a-callback-into-an-rx-observable.html]
 
-● Ops.classification 1
+# Ops.classification 1
  Operators creating new Observables
 @[http://reactivex.io/documentation/operators.html#creating]
     Create     create Observable from scratch programmatically
@@ -3376,7 +2286,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
  Operators to Convert Observables
     To        convert an Observable into another object or data structure
 
-● Ops.classification 2
+# Ops.classification 2
 - Basic Operators:
   - Suppressing operators:
     - filter, take, skip, takeWhile/skipWhile, distinct, distinctUntilChanged
@@ -3430,7 +2340,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 @[http://reactivex.io/documentation/implement-operator.html]
 
 • 5 Not So Obvious Things About RxJava
-[[{async/reactive.rxjava,qa,01_PM.TODO]]
+[[{async/reactive.rxjava,qa,PM.TODO]]
 @[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc] [[}]]
 
 - Error control [qa]
@@ -3441,8 +2351,1146 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 
 [[async/reactive.rxjava}]]
 
-● JavaLite: lightweight async.job processing [[{async/reactive.javalite]]
-                   [[01_PM.low_code,messaging.jms,messaging.activemq]]
+
+
+## java.utility.function [[{java_lang.functional,qa,async/reactive.*,PM.WiP]]
+@[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html]
+@[https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html]
+- JDK 1.8+
+- Incomplete but good enough to cover the "shape" of many lambda expressions and
+ method references representing abstract concepts like functions, actions, or predicates
+- The @FunctionalInterface is used to capture design intent (not needed by compiler).
+- In documenting functional interfaces, or referring to variables typed as
+  functional interfaces, it is common to refer directly to those abstract concepts,
+  for example using "this function" instead of "the function represented by this object".
+- Each functional interface has a single abstract method, called the functional method for that
+  functional interface, to which the lambda expression's parameter and return types are matched or adapted.
+- Functional interfaces can provide a target type in multiple contexts, such as assignment context, method invocation,
+  or cast context:
+  |Predicate<String> p = String::isEmpty;           // Assignment context
+  |stream.filter(e -> e.getSize() > 10)...          // Method invocation context
+  |stream.map((ToIntFunction) e -> e.getSize())...  // Cast context
+
+### Defined functions in 1.8
+────────────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────
+           Interface Summary                │           Interface Description
+────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────
+                  BiConsumer‹T,U›           │opt. accepting two input arguments and returns no result
+  (|Double|Int|Long)Consumer‹T›             │opt. accepting a single (Object|double|int|long)input argument and returns no result
+Obj(Double|Int|Long)Consumer‹T›             │opt. accepting an object-valued and a (double|int|long)-valued argument, and returns no result
+────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
+        (|Double|Long|Int)Function‹(T,)R›   │func. that accepts an (T|double,long,int) argument and produces a result
+       (|Double|Long)ToIntFunction          │func. that accepts a (T|double|long)argument and produces an int-valued result
+(ToDouble|ToLong|ToInt|)BiFunction‹(T,)U,R› │func. that accepts two arguments and produces an (T,double,long,int) result.
+           To(Double|Long)Function‹T›       │func. that produces a (double|long)-valued result
+(Int|Long|Double)To(Int|Long|Double)Function│func. that accepts a (int|long|double) argument and produces a (int|long|double) result
+────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
+ (|Int|Long|Double)UnaryOperator‹T›         │op. on a single (T|int|long|double) operand that produces a result of the same type
+(Double|Long|Int|)BinaryOperator‹T›         │op. upon two (T|int|long|double) operands and producing a result of the same type
+────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
+                BiPredicate‹T,U›            │predicate (boolean-valued function) of two arguments
+(|Int|Long|Double)Predicate‹T›              │predicate (boolean-valued function) of one (T|int|long|double) argument
+────────────────────────────────────────────│────────────────────────────────────────────────────────────────────────────────
+(|Boolean|Int|Long|Double)Supplier(‹T›)     │supplier of (T|Boolean|Int|long|double) results
+────────────────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────
+[[java_lang.functional}]]
+
+
+# Collections [[{]]
+## Collections 101 [[{data_structures.101,java_lang.101,scalability.101]]
+                  [[02_doc_has.decission_tree,02_doc_has.diagram,qa.data]]
+  COLLECTION DECISSION TREE
+                                  ┌──────────┐
+                                  │  Allows  │
+                    ┌─── YES ─────┤Duplicates├──  NO  ───────┐
+                    │   List to   └──────────┘  Set to       │
+                    │  be selected              be selected  │
+                    │                                        v
+                    v                                    ┌───────────┐☜ order established at
+        ┌─────────────────────┐                          │ Maintains │  write time
+        │  Unknown number     │                          │ INSERTION │
+   ┌─NO─┤of elements will be  ├YES─┐           ┌───YES───┤   ORDER ? ├──NO──┐  order requested
+   │    │added and/or index   │    │           │         └───────────┘      │  at read time
+   │    │based search will not│    │           v                            ↓  ☟
+   │    │be frequent?         │    │       LinkedHashSet            ┌────────────┐
+   │    └─────────────────────┘    │                                │ Mantains   │
+   v                               v                           ┌─NO─┤ READ ORDER ├YES┐
+  ArrayList              LinkedList                            │    │(alpha,...)?│   │
+                                                               │    └────────────┘   │
+                                                               │                     │
+                                                               v                     v
+                                                            HashSet              TreeSet
+
+  • Collection Comparative:
+Standard   non-concurrent  SDK:
+       ┌──────────────────────────────────────────────────────────────────────────────────────────
+       │                                IMPLEMENTATIONS
+       ├──────────────────────────────────────────────────────────────────────────────────────────
+       │ Hash Table        │ Resizable Array   │Balanced Tree │ Linked List │ HashTable+LinkedList
+       │                   │                   │              │             │
+┌──────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
+│<Set> │ HashSet           │                   │  TreeSet     │             │ LinkedHashSet
+│      │                   │                   │              │             │
+├──────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
+│<List>│                   │ ArrayList         │              │ LinkedList  │
+│      │                   │ Vector            │              │ LinkedList  │
+├──────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
+│<Map> │ HashMap,Hashtable │                   │  TreeMap     │             │ LinkedHashMap
+└──────┴───────────────────┴───────────────────┴──────────────┴─────────────┴─────────────────────
+
+  WARN : There is a huge performance difference LinkedList and ArrayList.
+         - when there is a large number of add/remove operations LinkedList is much faster.
+         - When there is a lot of random access operations ArrayList is much faster.
+
+ INTERFACES
+@[http://download.oracle.com/javase/6/docs/api/java/util/HashSet.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/TreeSet.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashSet.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/ArrayList.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/LinkedList.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/HashMap.html]
+@[http://download.oracle.com/javase/6/docs/api/index.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/TreeMap.html]
+@[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashMap.html]
+
+  REF: @[http://files.zeroturnaround.com/pdf/zt_java_collections_cheat_sheet.pdf]
+  ┌─────────────────┬─────────────────────────────────────────────────────────────┐
+  │Collection       │ Thread-safe                ┃ DATA      ┃ OPERATIONS ALLOWED │
+  │                 │ alternative                ┃  PROPER-  ┃────────────────────┤
+  │class            │                            ┃   TIES    ┃Iterat. ┃  ┃Random  │
+  │                 │                            ┃           ┃ Order  ┃  ┃ Access │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┬──┬──┃──┃──┬──┬──┤
+  │HashMap          │ ConcurrentHashMap          ┃  │OK│  │  ┃  │  │  ┃OK┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │SortedMap        │ ?                          ┃  │OK│  │  ┃  │  │  ┃? ┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │NavigableMap @1  │ ?                          ┃  │OK│  │  ┃  │  │  ┃? ┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │HashBiMap(Guava) │ Maps.syncrhonizedBiMap     ┃  │OK│  │  ┃  │  │  ┃OK┃OK│OK│  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │ArrayListMultimap│ Maps.synchronizedMultiMap  ┃  │OK│OK│  ┃  │  │  ┃OK┃OK│  │  │
+  │(Guava)          │ (new ArrayListMultimap())  ┃  │  │  │  ┃  │  │  ┃  ┃  │  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │LinkedHashMap    │ Collections.syncrhonizedMap┃  │OK│  │  ┃OK│  │  ┃OK┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │TreeMap          │ ConcurrentSkipListMap      ┃  │OK│  │  ┃  │OK│  ┃OK┃OK│  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │Int2IntMap (Fastutils)                        ┃  │OK│  │OK┃  │  │  ┃OK┃OK│  │OK│
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │ArrayList        │ CopyOnWriteArrayList       ┃OK│  │OK│  ┃OK│  │OK┃  ┃  │  │OK│
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │HashSet          │ Collections.newSetFromMap  ┃OK│  │  │  ┃  │  │  ┃OK┃  │OK│  │
+  │                 │ (new ConcurrentHashMap())  ┃  │  │  │  ┃  │  │  ┃  ┃  │  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │IntArrayList(FastUtils)                       ┃OK│  │OK│OK┃OK│  │OK┃  ┃  │  │OK│
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │PriorityQueue    │ PriorityBlockingQueue      ┃OK│  │OK│  ┃  │OK│  ┃  ┃  │  │  │
+  ┼─────────────────┼────────────────────────────┃──┼──┼──┼──┃──┼──┼──┃──┃──┼──┼──┤
+  │ArrayDeque       │ ArrayBlockingQueue         ┃OK│  │OK│  ┃OK│  │OK┃  ┃  │  │  │
+  └─────────────────┴────────────────────────────┃──┴──┴──┴──┃──┴──┴──┃──┃──┴──┴──┘
+                          Individual elements ·····┘  │  │  │  │  │  │  ^  │  │  └ By Index
+                          Key─value pairs  ···········┘  │  │  │  │  │  │  │  └··· By Value
+                          Duplicate element support ·····┘  │  │  │  │  │  └······ By Key
+                          Primite support ··················┘  │  │  │  │
+                                                       FIFO  ··┘  │  │ Fast
+                                                     Sorted  ·····┘  │'has(el)'
+                                                       LIFO  ········┘
+
+   Collection class │  Random access by idx/key │ Search/Contains │ Instert
+   ─────────────────┼───────────────────────────┼─────────────────┼───────────
+   ArrayList        │  O(1)                     │ O(n)            │ O(n)
+   HashSet          │  O(1)                     │ O(1)            │ O(1)
+   HashMap          │  O(1)                     │ O(1)            │ O(1)
+   TreeMap          │  O(log(n))                │ O(log(n))       │ O(log(n))
+
+@1 NavigableMap: SortedMap with additional methods for finding entries
+                 by their ordered position in the key set.
+                 So potentially this can remove the need for iterating
+                 in the first place - you might be able to find the
+                 specific entry you are after using the higherEntry,
+                 lowerEntry, ceilingEntry, or floorEntry methods. The
+                 descendingMap method even provides an explicit method
+                 of reversing the traversal order.
+
+## GRAPH STRUCTURES  [[{data_structures.graphs]]
+https://guava.dev/releases/20.0/api/docs/com/google/common/graph/package-summary.html
+
+Interface               Description
+Graph<N>                An interface for graph-structured data, whose edges are
+                        anonymous entities with no identity or information of their own.
+MutableGraph<N>         A subinterface of Graph which adds mutation methods.
+MutableNetwork<N,E>     A subinterface of Network which adds mutation methods.
+MutableValueGraph<N,V>  A subinterface of ValueGraph which adds mutation methods.
+Network<N,E>            An interface for graph-structured data, whose edges are unique objects.
+ValueGraph<N,V>         An interface for graph- structured data, whose edges have associated
+                        non-unique values.
+  [[}]]
+
+[[data_structures.101}]]
+
+## Lists [[{data_structures.101,qa]]
+ INITIALIZING A LIST
+final List<String> myList =                  ← final forbid re-asigning the list,
+      Arrays.asList("one", "two", "three");     but its content is still mutable
+      myList.add("four");
+
+final List<String> myInmmutableList =        ← inmutable version (thread safe)
+      Collections.unmodifiableList(myList);
+
+
+String[] array01 = ...;
+final      List<String> readOnlyList  ← Inmutable ArrayList (static class inside Arrays),
+       = Arrays.asList(arr);            lacks set(), get(), contains() or "adding" methods
+                                        providing for a read-only view.
+
+final ArrayList<String> mutableList   ← Mutable list.
+       = new ArrayList<String>(
+         Arrays.asList(arr));
+
+## Collection (Lists/Set/...) "Walk-over"
+ for ( int idx = 0; idx < collection   .length ; idx++) { ← Alt 1: Java 1.0 for-walk over collection index.
+   type array_element = collection   .get(idx);           ←   WARN:  Very slow for LinkedLists
+ }                                                                   (Faster for other List implementations)
+
+ for ( Iterator iterator = collection   .iterator() ;     ← Alt 2: for-walk over iterator. Preferred:
+        iterator.hasNext(); ) {                                    safer when removing/modifying the collection
+   type type = (type)   iterator.next() ;                          while iterating over it.
+ }
+
+ for ( iterable_type iterable_element   :collection ) {   ← Alt 3: Best option when NOT remov./modify. elements
+   ...
+ }
+
+ collection .forEach ((element) -> {                      ← Alt 4: STREAMS (Java 8+): UNIX pipe like iteration.
+   System.out::println(element)                             Functional approach. In this case we can "shortcut" to:
+ });                                                        collection.forEach(System.out::println);
+
+## Maps ("Dictionaries")
+
+                                                          INITIALIZING A MAP
+
+final Map<String,String> myMap =                          ← Mutable map (WARN: even if 'final' used)
+      new HashMap<String,String>();
+  myMap.put("k1", "k2");
+  ...
+  final Map<String,String> myInmutableMap =               ← Inmutable version of map
+        Collections.unmodifiableMap(temp);
+
+  final HashMap<String,String> data =  HashMapBuilder     ← Java 7+ must have even number of elements
+        .build( "k1","v1", "k2","v2", ...);
+
+  final Map<String, String> inumtableMap01 =              ← Java 9+ must have even number of elements
+        Map.of("k1", "v1", "k2", "v2");
+
+  final Map<String, String> inmutableMap02 =              ← Java 9+ (Safer syntax)
+        Map.ofEntries( entry("k1", "k2"),...);
+
+  final Map<String, String> test =                        ← Guava ImmutableMap
+        ImmutableMap.of("k1","v1", ...);                    works only with up to 5 key/value pairs
+
+  final Map<String, String> test =                        ← Guava ImmutableMap alternative
+        ImmutableMap.<String, String>builder()
+        .put("k1", "v1").put("k2", "v2")
+        ...
+        .build();
+
+  ###########################
+  # WALK-OVER/ITERATE A MAP #
+  ###########################
+
+ Map<String, String> map = ...
+ for ( Map.pair<String, String>   pair  :
+       map .pairSet() ) {                                 ← Alt 1: pairSet (Java 5+)
+  ... pair.getKey() ... pair.getValue() ...
+ }
+
+ Iterator<Map.Entry<String, String>> it =                 ← Alt 2: (Java 7?) using iterators
+       map.entrySet .iterator() ;
+ while (it.hasNext()) {
+   const Map.Entry<Integer, Integer> pair =  it.next();
+  ... pair.getKey() ... pair.getValue() ...
+ }
+
+ for ( Map.Entry<Integer, Integer> pair :                 ← Alt 3: USING "for : entrySet"
+          myMap .entrySet() ) {
+  ... pair.getKey() ... pair.getValue() ...
+ }
+
+ map.forEach((k, v) -> {                                  ← forEach (java 8+)
+  ... pair.getKey() ... pair.getValue() ...
+ }
+
+ map.entrySet().stream().forEach( (pair) -> {            ← Stream API (1.8+)
+ ... pair.getKey() ... pair.getValue() ...                 "Functional" Unix Pipe like style
+ });
+
+ map.entrySet().stream().                                ← Stream API parallel (1.8+)
+ .parallel().forEach( pair -> {                            "Functional" Unix Pipe like style
+ ... pair.getKey() ... pair.getValue() ...
+ } ) );
+
+  ##############
+  # UPDATE MAP #
+  ##############
+
+Map<String, Double> map01 = new HashMap<>();
+  map01.put("key1", 1);
+  map01.put("key2", 2);
+  map01.put("key3", 3);                    ← Update (Before Java 8). Alt 1: Do not check for key existence.
+  if (map01.containsKey("key3")) {
+    map01.put("key3", 3);                  ← Update (Before Java 8). Alt 2:        check for key existence.
+  }
+
+  Integer oldValue = map01                 ← Java 8+ . Returns nulls if key1 didn't exists
+         .replace("key1", 10);
+  boolean isOK = map01.replace("key1",     ← Java 8+. Safer variant. Update fails if old value
+           1 /*old value*/,                  is null or changed. Most probably false will throw
+          10 /* new value */ );              a RuntimeError.
+
+  map01.getOrDefault("key4", 0));          ← Return default for non-existing key (vs null)    [qa]
+
+  map01.putIfAbsent ("key4", 4));          ← Update only if absent or value null.             [qa]
+
+
+  const BiFunction<Integer, Integer, Integer>
+      sumFun = (x1, x2) -> x1 + x2;
+
+  map01.compute("key1",                         ← Use bifunction to update. NullPointerException
+    (key, currentValue)                           if key doesn't exit.
+        -> sumFun.apply(currentValue, 2));        (alternatively computeIfAbsent / computeIfPresent )
+
+  map01.merge("key1", defaultValue,             ← Update with BiFunction if key exists.
+    (key, currentValue)                           or add defValue to key otherwise.
+        -> sumFun.apply(v, 2));
+
+## java.util.Collections
+(@[https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html] )
+- Utility class with static methods that operate on or return collections
+
+
+  Collections.EMPTY_SET  ( == Collections.emptySet()         ) See also Collections.singleton(T o)
+  Collections.EMPTY_LIST ( == Collections.emptyList()        ) See also Collections.singletonList(T o)
+  Collections.EMPTY_MAP  ( == Collections.emptyMap()         ) See also Collections.singletonMap(K key, V value)
+                              Collections.emptyEnumeration()
+                              Collections.emptyIterator()
+                              Collections.emptyListIterator()
+
+  boolean      Collections.addAll(Collection c, T... elements)           Adds all elements to collection 'c'
+  Queue        Collections.asLifoQueue(Deque deque)                      deque to Last-In/First-Out "LIFO" Queue view
+  int          Collections.binarySearch(List list, T key)                Searches key in list using binary search.
+  int          Collections.binarySearch(List list, T key, Comparator c)  Searches key in list using binary search + comparator.
+
+  Collection   Collections.checkedCollection(Collection c, Class type)   Returns a dynamically typesafe view of input collection/list/...
+  List         Collections.checkedList(List list, Class type)
+  Map          Collections.checkedMap
+                           (Map m, Class keyType, Class valueType)
+  Set          Collections.checkedSet(Set s, Class type)
+  SortedMap    Collections.checkedSortedMap
+                           (SortedMap m, Class keyType, Class valueType)
+
+
+  SortedSet    Collections.checkedSortedSet(SortedSet s, Class type)
+  void         Collections.copy(List dest, List src)                     Copies src list elements to dest list
+  boolean      Collections.disjoint(Collection c1, Collection c2)        true if c1/c2 have no elements in common.
+
+  Enumeration  Collections.enumeration(Collection c)                     Returns an enumeration over the specified collection.
+
+  void         Collections.fill(List list, T obj)                        Replaces all of the elements of the specified list with the specified element.
+  int          Collections.frequency(Collection c, Object o)             Returns the number of elements in the specified collection equal to the specified object.
+  int          Collections.indexOfSubList(List list, List sublist)       -1 if not found.
+  int          Collections.lastIndexOfSubList(List list, List sublist)   -1 if not found.
+  ArrayList    Collections.list(Enumeration e)                           Enum to array list in the order they are returned by input enum.
+  T            Collections.max/min(Collection coll (, Comparator comp))  max/min element of collection, according to comparator order.(Def to natural ordering)
+  List         Collections.nCopies(int nCopies, T inputObject)
+  Set          Collections.newSetFromMap(Map map)
+  boolean      Collections.replaceAll(List list, T oldVal, T newVal)     ← NOTE: Replaces in list
+  void         Collections.reverse(List list)
+  Comparator   Collections.reverseOrder()                                Return <<Comparable>> Comparator imposing reverse natural ordering.
+  Comparator   Collections.reverseOrder(Comparator cmp)                  Returns               comparator imposing reverse ordering of input comparator.
+  void         Collections.rotate(List list, int distance)               Rotates elements in list.
+  void         Collections.shuffle(List list (, Random rnd) )            Randomly permutes elements using source of randomness (or def. src of randomness).
+  void         Collections.sort(List list (, Comparator c))              Sorts in comparator (def. to natural) order.
+  void         Collections.swap(List list, int pos1, int pos2)           Swap elemnts in pos 1 and 2.
+  Collection   Collections.synchronizedCollection(Collection c)          Returns thread-safe collection       [qa]
+  List         Collections.synchronizedList(List list)                   Returns thread-safe list             [qa]
+  Map          Collections.synchronizedMap(Map m)                        Returns thread-safe map              [qa]
+  Set          Collections.synchronizedSet(Set s)                        Returns thread-safe set              [qa]
+  SortedMap    Collections.synchronizedSortedMap(SortedMap m)            Returns thread-safe sorted map       [qa]
+  SortedSet    Collections.synchronizedSortedSet(SortedSet s)            Returns thread-safe sorted set       [qa]
+  Collection   Collections.unmodifiableCollection(Collection c)          Returns inmutable view               [qa]
+  List         Collections.unmodifiableList(List list)                   Returns inmutable view               [qa]
+  Map          Collections.unmodifiableMap(Map m)                        Returns inmutable view               [qa]
+  Set          Collections.unmodifiableSet(Set s)                        Returns inmutable view               [qa]
+  SortedMap    Collections.unmodifiableSortedMap(SortedMap m)            Returns inmutable view               [qa]
+  SortedSet    Collections.unmodifiableSortedSet(SortedSet s)            Returns inmutable view               [qa]
+
+
+
+• Fastutil @[http://fastutil.di.unimi.it/] [[{data_structures,PM.backlog]]
+- Fast and compact type-specific collections for Java
+  Great default choice for collections of primitive types,
+  like int or long. Also handles big collections with more than 2
+  31 elements well.
+
+• Eclipse Collections
+@[https://www.eclipse.org/collections/]
+(Originated from Goldman Sachs gs-collection:
+ @[https://github.com/goldmansachs/gs-collections])
+- Features you want with the collections you need
+  Previously known as gs-collections, this library
+  includes almost any collection you might
+  need: primitive type collections, multimaps,
+  bidirectional maps and so on.
+[[}]]
+
+## <<Enumeration>>(1.0) vs <<Iterator>>(1.7) [[{data_structures.101,02_doc_has.comparative]]
+@[https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator]
+- both interfaces will give successive elements
+
+- Iterators allow the caller to remove elements from
+  the underlying collection during the iteration with
+  well-defined semantics.
+  (additional remove method)
+- Iterators Method names have been improved.
+
+- Iterators are fail-fast:
+  - If thread A changes the collection, while
+       thread B is traversing it, the iterator implementation
+       will try to throw a ConcurrentModificationException
+       (best effort since it can not always be guaranteed)
+  - The fail-fast behavior of iterators can be used only to
+    detect bugs sin the best effort doesn't warrant its trigger.
+  - newer 'concurrent' collections will never throw it.
+    Reading thread B will traverse the collection "snapshot" at
+    the start of read.
+
+
+
+- Iterator should be preferred over Enumeration
+  taking the place of Enumeration in collections framework
+
+
+  Enumeration     │ Iterator
+  ────────────────┼────────────
+  hasMoreElement()│ hasNext()
+  nextElement()   │ next()
+                  │ remove() ← optional: not implemented in many classes
+[[}]]
+[[}]]
+
+
+# INPUT/OUTPUT
+
+## NIO (JDK 1.4+) [[{async/reactive.io]]
+@[http://tutorials.jenkov.com/java-nio/buffers.html]
+- Replaced OLD blocking IO based on [ byte/char, read-or-write streams ]
+┌──────────┐     ┌──────────────┐
+│ CORE NIO │     │ NON─BLOCKING │
+├──────────┴───┐ ├──────────────┴────────────────────────────────┐
+│ ─  CHANNELS  │ │· a thread requests a channel the intention    │
+│  ─ read/write│ │  to read/write data into a buffer:            │
+│ ─  BUFFERS   │ │  · While the channel moves data into/from     │
+│ ─  SELECTORS │ │   the buffer, the thread continues another job│
+└──────────────┘ │  · When data is ready, the thread is notified │
+                 └───────────────────────────────────────────────┘
+Channel  : File,Datagram/UDP,Socket/TCP,ServerSocket,...
+Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
+
+
+┌───────────────┐
+│  NON─CORE NIO │
+├───────────────┴─────────────────────────────────────────────────────┐
+│ ─ components like Pipe and FileLock can be considered               │
+│   "utility classes" supporting the first three ones.                │
+│                                                                     │
+│ ─ "SELECTORS" objects monitor one+ channels for events              │
+│   (connection opened, data arrived, ..):                            │
+│   ─ Thus, a single thread can monitor multiple channels for data.   │
+│     (Very handy if app has many connections/Channels/clients open   │
+│     but with low traffic on each connection.                        │
+│   ─ To use selectors:                                               │
+│     ─ Instantiate the selector                                      │
+│     ─ Register one+ channels with it                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ BUFFER                                                                                           │
+│  ATTRIBUTES                                              METHODS                                 │
+│          ┌─────────────────┬───────────────────────────┐ ┌─────────────┬───────────────────────┐ │
+│          │ write mode      │  read mode                │ │rewind()     │                       │ │
+│ ┌────────┼─────────────────┴───────────────────────────┤ │             │                       │ │
+│ │capacity│ fixed size of memory block implementing     │ ├─────────────┼───────────────────────│ │
+│ │        │ the buffer                                  │ │clear()      │                       │ │
+│ ├────────┼─────────────────┬───────────────────────────┤ │compact()    │                       │ │
+│ │position│ starts at 0,    │ starts at 0 (after "flip")│ ├─────────────┼───────────────────────│ │
+│ │        │ increase at each│ increase at each          │ │mark()       │"bookmark position"    │ │
+│ ├────────┼─────────────────┼───────────────────────────┤ │reset()      │ and return "bookmark" │ │
+│ │   limit│ element written │ element read              │ ├─────────────┼───────────────────────│ │
+│ │        │ == capacity     │ == last written position  │ │equals()     │using only the         │ │
+│ └────────┴─────────────────┴───────────────────────────┘ │compareTo()  │remaining-to-read bytes│ │
+│                                                          │             │for the computation    │ │
+│                                                          └─────────────┴───────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────────
+│ SEQUENCE TO READ/WRITE DATA                   ┌───────┐
+│try (  /* try-with 1.7+ */                     │SUMMARY│
+│  RandomAccessFile   aFile  =                  ├───────┴──────────────────────────
+│    new RandomAccessFile("nio-data.txt", "rw") │-1 ) Write data into the Buffer
+│) throws IOException {                         │-2 ) Call buffer. flip()
+│  FileChannel   inChannel  =                   │     switch writing/reading mode
+│      aFile .getChannel();                     │-3 ) Read data out of the Buffer
+│                                               │-4a) buffer.clear();  ← alt1: clear all buffer
+│  ByteBuffer   buf =                           │-4b) buffer.compact() ← alt2: clear only data read
+│      ByteBuffer.allocate(48 /*capacity*/);    ├────────────────────────────────────
+│                                               │ channelIn → (data) → buffer
+│                                               │ buffer    → (data) → channelOut
+│  int  bytesRead =                             └────────────────────────────────────
+│         inChannel .read(  buf );  // ←   buf  now
+│                                          in write mode
+│  while  ( bytesRead  != -1)
+│  {
+│      buf . flip ();               // ←   buf  now
+│    while(  buf .hasRemaining()){         in read mode
+│        System.out.print(
+│           (char)   buf .get()     // ← alt.1: read 1 byte
+│        );                                     at a time
+│        // channel2.write(  buf )  // ← alt.2: read data
+│    }                                         in channel2
+│      buf .clear();                // ← make buffer
+│                                        ready-for-writing
+│     bytesRead  =   inChannel      // ←   buf  now
+│                    .read(  buf );        in write mode
+│  }
+│}
+└──────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌────────────────┐
+│ SCATTER-GATHER │
+├────────────────┴─────────────────────────────────┬──────────────────────────────────────────────────┐
+│  scattering channel read                         │ scattering-write to channel                      │
+│ - channel → read to → buffer1, buffer2, ....     │ - buffer1, buffer2, ...→ write to → channel      │
+│ - Ex:                                            │ - ex:                                            │
+│   ByteBuffer header = ByteBuffer.allocate(128);  │   ByteBuffer header = ByteBuffer.allocate(128);  │
+│   ByteBuffer body   = ByteBuffer.allocate(1024); │   ByteBuffer body   = ByteBuffer.allocate(1024); │
+│   ByteBuffer[]   bufferArray  = { header, body };│   ByteBuffer[]   bufferArray  = { header, body };│
+│   channel .read(  bufferArray );                 │   channel .write(  bufferArray );                │
+│            ^^^^                                  │                                                  │
+│ fill up one buffer before moving on to the next  │                                                  │
+│ (not suited for undefined size messages)         │                                                  │
+└──────────────────────────────────────────────────┴──────────────────────────────────────────────────┘
+
+  CHANNEL-TO-CHANNEL
+ - If one the the channels is FileChannel :
+   - FileChannel transferTo()/transferFrom()  can be used to move data between channels
+     WARN: Some SocketChannel implementations may transfer only the data the SocketChannel
+     has ready in its internal buffer here and now
+   ┌─────────┐
+   │Examples.│
+   ├─────────┴───────────────────────────────────┬─────────────────────────────────────────────┐
+   │  FileChannelG fromChannel =                 │  FileChannelG fromChannel =                 │
+   │     (new RandomAccessFile("from.txt", "rw"))│     (new RandomAccessFile("from.txt", "rw"))│
+   │     .getChannel(),                          │     .getChannel(),                          │
+   │  FileChannel   toChannel =                  │  FileChannel   toChannel =                  │
+   │     (new RandomAccessFile(  "to.txt", "rw"))│     (new RandomAccessFile(  "to.txt", "rw"))│
+   │     .getChannel();                          │     .getChannel();                          │
+   │  long count    =  fromChannel .size();      │  long count    = ;                          │
+   │  toChannel  .transferFrom (                 │  fromChannel  .transferTo (                 │
+   │       fromChannel ,                         │      0 /*position*/,                        │
+   │       0       , // posit.in dest-file to    │      fromChannel .size() /*count*/,         │
+   │                 // start writing from       │      toChannel );                           │
+   │       maxCount  /* max-bytes to transfer*/  │                                             │
+   │  );                ^^^^^^^^^                │                                             │
+   │                    constrained by data      │                                             │
+   │                    in source                │                                             │
+   └─────────────────────────────────────────────┴─────────────────────────────────────────────┘
+[[}]]
+
+## Async/Reactive Standlib API tree [[{async/reactive.io.network,persistence.fs]]
+JDK 8
+./java/nio/
+           Bits ByteOrder CharBufferSpliterator
+           ByteBufferAs(Char|Double|Float|...)Buffer(B|L|...
+           (|Float|Double|StringChar)Buffer
+           HeapByteBuffer Heap(Byte|Char|...)Buffer(R) HeapCharBuffer
+           (Int|Long|...)Buffer
+           (Mapped|Direct)ByteBuffer(R)
+           Direct(Byte|Char|Double|...)Buffer
+
+./java/nio/channels/
+                    Channel Channels CompletionHandler FileLock MembershipKey Pipe Selector SelectionKey
+                    Asynchronous(|Byte)Channel
+                    AsynchronousChannelGroup
+                    AsynchronousFileChannel
+                    AsynchronousServerSocketChannel
+                    AsynchronousSocketChannel
+                    (Byte|Datagram|File|GatheringByte|Interruptible|Multicast|
+                     Network|ReadableByte|ScatteringByte|SeekableByte|Selectable|
+                     ServerSocket|Socket|WritableByte)Channel
+                   /spi/Abstract(Interruptible|Selectable)Channel
+                        Abstract(SelectionKey|Selector)
+                        (AsynchronousChannel|Selector)Provider
+
+./java/nio/charset/
+                   Charset(|Decoder|Encoder) StandardCharsets
+                   CoderResult CodingErrorAction
+                  /spi/CharsetProvider
+
+./java/nio/file/attribute/AclEntry(|Flag|Permission|Type)
+                          (|AclFile|BasicFile|DosFile|File|
+                            FileOwner|FileStore|PosixFile|
+                            UserDefinedFile)AttributeView
+                          (BasicFile|DosFile|PosixFile)Attributes
+                          FileAttribute FileTime
+                          GroupPrincipal
+
+                          UserPrincipal(LookupService)
+./java/nio/file/
+                AccessMode CopyMoveHelper CopyOption DirectoryStream Files
+                LinkOption LinkPermission Path        PathMatcher        Paths
+                SecureDirectoryStream
+                File(Store|System|Systems|TreeIterator|TreeWalker|VisitOption|Visitor|VisitResult)
+                SimpleFileVisitor
+                OpenOption    Standard(Copy|Open)Option
+                StandardWatchEventKinds
+                StandardWatchEventKinds$StdWatchEventKind
+                TempFileHelper
+                Watchable      Watch(Event|Key|Service)
+                spi/FileSystemProvider
+                    FileTypeDetector
+[[}]]
+
+## SELECTORS [[{async/reactive.io.network]]
+@[https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html]
+
+- A Selector allows a single thread to manage multiple channels
+  (network connections), by examining which ones are ready for
+  connect,accept,read,write
+
+- A channel that "fires an event" is also said to be "ready" for that event.
+
+ REGISTERING A SELECTOR                               │ USING SELECTORS
+ AND ASSIGNING CHANNELS                               │
+    │  Selector   selectoR  = Selector.open();        │  STEP
+    │  channel.configureBlocking(false);              │  call one of the select() methods
+    │          ^^^^^^^^^^^^^^^^^^^^^^^^               │  (upon registering 1+ channels)
+    │   //     non-blocking-mode required             │  int select(long mSecTimeout) ← block until channel/s ready
+    │   //   WARN:  FileChannel can NOT be switched   │             └────(optional)┘
+    │   //   into NON-blocking mode and so            │  int selectNow()              ← Don't block even if none read
+    │   //   they can NOT be used with selectors.     │  └┬┘
+┌───→  SelectionKey key  = channel.register(          │  indicates how many channels became ready since last select() call.
+│   │      selector ,                                 │
+│   │    SelectionKey.OP_READ |                       │  STEP
+│   │    SelectionKey.OP_WRITE);                      │  examine ready channels returned by select like:
+│   │                 ^^^^^^^                         │  Set<SelectionKey> selectedKeys =
+│   │                 Or-set of interest:             │                      selectoR .  selectedKeys() ;
+│   │                 OP_CONNECT / OP_ACCEPT          │  Iterator<SelectionKey> keyIterator =
+│   │                 OP_READ    / OP_WRITE           │                    selectedKeys.iterator();
+│   │  ^^^^^^^^^^^^^^^^                               │  while(keyIterator.hasNext()) {
+│   │                                                 │      SelectionKey key = keyIterator.next();
+│ ┌─→  key .attach(extraInfoObject);                  │      //  "cast to proper channel"
+│ │ │  Object attachedObj =                           │             if (  key .isAcceptable ()) {
+│ │ │     selectionKey.attachment();                  │        ... connection accepted by ServerSocketChannel
+│ │ │                                                 │      } else if (  key .isConnectable()) {
+│ │ │                                                 │        ... connection established with remote server
+│ │ │ // After selection                              │      } else if (  key .isReadable   ()) {
+│ │ │ // ^^^^^^^^^^^^^^^                              │        ... channel ready for reading
+│ │ │ // explained later                              │      } else if (  key .isWritable   ()) {
+│ │ │                                                 │        ... channel ready for writing
+│ │ │ // Alternative 1:                               │      }
+│ │ │ int   readySet =   key .readyOps();             │      keyIterator.remove();
+│ │ │ boolean isAcceptable  =                         │  }
+│ │ │           readySet  & SelectionKey.OP_ACCEPT;   │  STEP
+│ │ │ ...                                             │  selector .close()
+│ │ │ // Alternative 2:                               │            ^^^^^
+│ │ │   key .isAcceptable();                          │   must be called after finishing ussage,
+│ │                                                   │   invalidating all SelectionKey instances
+│ └─── (optional) user attached object,               │   registered with this Selector.
+│      handy way to recognize a given                 │   The channels themselves are not closed.
+│      channel, provide extra info
+│      (buffer/s,...)
+│
+└───   key  can be queried like:
+       intO interestSet  =   key .interestOps()*;
+       boolean isInterestedInAccept
+           =   interestSet  & SelectionKey.OP_ACCEPT;
+
+  NOTE:
+  - A thread blocked by a call to select() can be forced to leave the select() method,
+     even if no channels are yet ready by having a different thread call
+     the   selectoR . wakeup()  method on the Selector which the first thread has
+     called select() on:
+     - The thread waiting inside select() will then return immediately.
+     - If a different thread calls wakeup() and no thread is currently
+       blocked inside select(), the next thread that calls select()
+       will "wake up" immediately.
+[[}]]
+
+## FileChannel [[{async/reactive.io,persistence.FS]]
+- Java NIO FileChannel: channel connected to a file allowing to
+      read data from  and write data to a file.
+- A FileChannel canNOT be set into non-blocking mode:
+  It always runs in blocking mode
+
+- Reading from FileChannel (Writting to buffer):
+  |/* You cannot open a FileChannel directly,
+  | * first you obtain a FileChannel via an (Input|Output)Stream or a RandomAccessFile
+  | */
+  |RandomAccessFile   aFile      = new RandomAccessFile("data/nio-data.txt", "rw");
+  |// Reading from channel
+  |try (  /* try-with 1.7+ */
+  |  RandomAccessFile   aFile  = new RandomAccessFile("data/nio-data.txt", "rw")
+  |) throws IOException {
+  |  FileChannel   inChannel  =   aFile .getChannel();
+  |
+  |  ByteBuffer   buf  = ByteBuffer.allocate(48 /* capacity*/);
+  |
+  |  int  bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
+  |  while ( bytesRead  != -1) {
+  |      buf .flip();                            //   buf  now in read mode
+  |    while(  buf .hasRemaining()){
+  |        // alt. read data directly, 1 byte at a time
+  |        System.out.print((char)   buf .get());
+  |        // alt. read data in channel
+  |        // anotherChannel.write(  buf )
+  |    }
+  |
+  |      buf .clear(); //make buffer ready for writing
+  |     bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
+  |  }
+  |}
+
+- Writing to a FileChannel (reading from buffer)
+  | String newData = "......" + System.currentTimeMillis();
+  | ByteBuffer   buf  = ByteBuffer.allocate(48);
+  |   buf .clear();
+  |   buf .put(newData.getBytes());
+  |   buf .flip(); // change buffer from write to read
+  |  while(  buf .hasRemaining()) {  channelO .write (  buf );  }
+  | channel.close();
+
+
+- FileChannel Position
+  | long pos = fileChannel.position(); // obtain current position
+  | fileChannel.position(pos +123); // change position
+
+   - If you set the position after the end of the file,
+     and try to read from the channel, you will get -1
+   - If you set the position after the end of the file,
+     and write to the channel, the file will be expanded
+     to fit the position and written data. This may result
+     in a "file hole", where the physical file on
+     the disk has gaps in the written data.
+
+- FileChannel Size
+  | long fileSize = fileChannel.size();
+                                ^^^^^^
+                            size of the file
+                            connected to channel
+
+- FileChannel (file) Truncate
+  | fileChannel.truncate(1024 /*length*/);
+
+- FileChannel Force:
+  flushes all unwritten data from the channel and OS cache to the disk
+  | channel.force(true /* flush also file meta-data like permissions....*/);
+[[}]]
+
+## Pipe [[{async/reactive.io,java_lang.functional]]
+- Pipe: one-way data connection between two threads
+  └"=="  source channel   ← One threads writes to sink
+        +  sink channel   ← One threads reads from source
+  Ex:
+    ByteBuffer   buf  = ByteBuffer.allocate(48);
+      buf .clear();
+      buf .put(newData.getBytes());
+
+    // WRITING TO PIPE
+    Pipe pipe = Pipe.open();
+    Pipe.SinkChannel sinkChannel = pipe.sink();
+    String newData = "..." + System.currentTimeMillis();
+      buf .flip();
+    while(  buf .hasRemaining()) { sinkChannel.write(  buf ); }
+
+    // READING FROM A PIPE
+    To read from a Pipe you need to access the source channel. Here is how that is done:
+    Pipe.SourceChannel sourceChannel = pipe.source();
+    int  bytesRead  =   inChannel .read(buf2);
+[[}]]
+
+## SocketChannel [[{async/reactive.io.network]]
+  There are two ways a SocketChannel can be created:
+
+  // Opening a SocketChannel
+  SocketChannel socketChannel = SocketChannel.open();
+  socketChannel.connect(new InetSocketAddress("http://jenkov.com", 80));
+
+  // Reading (writing to buffer)
+  ByteBuffer   buf  = ByteBuffer.allocate(48);
+  int  bytesRead  = socketChannel.read(  buf ); // If -1 is returned, the end-of-stream is reached (connection is closed)
+
+  // Writing to a SocketChannel
+  String newData = "..." + System.currentTimeMillis();
+  ByteBuffer   buf  = ByteBuffer.allocate(48);
+    buf .clear();
+    buf .put(newData.getBytes());
+    buf .flip();
+  while(  buf .hasRemaining()) { channel.write(  buf ); }
+
+  socketChannel.close();
+[[}]]
+
+
+## Non-blocking Mode [[{async/reactive.io.network]]
+- socketChannel .configureBlocking(false) ;
+- Calls to connect(), read() and write() will not block
+- In non-blocking mode connect() calls may return before
+  the connection is established:
+  - To determine whether the connection is established
+    use finishConnect() like this:
+
+  | socketChannel.configureBlocking(false);
+  | socketChannel.connect(
+  |   new InetSocketAddress("http://jenkov.com", 80));
+  |
+  | while(! socketChannel.finishConnect() ){
+  |     //wait, or do something else...
+  | }
+
+NOTE: non-blocking works much better with Selector's
+[[}]]
+
+## ServerSocketChannel [[{async/reactive.io.network]]
+ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+
+serverSocketChannel.socket().bind(new InetSocketAddress(9999));
+serverSocketChannel.configureBlocking(false);
+
+while(true){
+    SocketChannel socketChannel =
+            serverSocketChannel.accept(); // in blocking mode waits until incoming connection arrives
+    if(socketChannel != null /* always false in blocking mode */){
+        //do something with socketChannel...
+    }
+
+    //do something with socketChannel...
+}
+
+serverSocketChannel.close()
+[[}]]
+
+## Datagram Channel [[{async/reactive.io.network]]
+- Since UDP is a connection-less network protocol, you cannot just
+  by default read and write to a DatagramChannel like you do from
+  other channels. Instead you send and receive packets of data
+
+  | DatagramChannel channel = DatagramChannel.open();
+  | channel.socket().bind(new InetSocketAddress(9999));
+  |
+  | ByteBuffer   buf  = ByteBuffer.allocate(48);
+  |   buf .clear();
+  | // WARN: if read data is bigger than buffer size remaining data is discarded silently
+  | channel.receive(  buf );
+  |
+  | // Write to channel
+  | String newData = "..." + System.currentTimeMillis();
+  |   buf .clear();
+  |   buf .put(newData.getBytes());
+  |   buf .flip();
+  |
+  |
+  | // WARN:  No notice is received about packet delivery (UDP does not make any guarantees)
+  | int bytesSent = channel.send(  buf , new InetSocketAddress("jenkov.com", 80));
+  |
+  | // Alternatively you can "Connect" to a Specific Address. Since UDP is connection-less,
+  | // connecting to a remote address just means that the DatagramChannel can only send/receive
+  | // data packets from a given specific address.
+  | channel.connect(new InetSocketAddress("jenkov.com", 80));
+  | int  bytesRead  = channel.read(  buf );
+  | int bytesSent = channel.write(  buf );
+[[}]]
+
+## NonBlocking Server Example [[{async/reactive.io.network]]
+REF:
+- @[http://tutorials.jenkov.com/java-nio/non-blocking-server.html]
+- @[https://github.com/jjenkov/java-nio-server]
+- Non-blocking IO Pipelines:
+read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut
+read-only  pipeline:  channelIn  → selector → component → ... → componentN
+write-only pipeline:                        component → ... → componentN →  channelOut
+Note: It is the component that initiates reading of data from the Channel via the Selector
+read-pipeline read from stream/channelIn and split data into messages like:
+
+Data   → Message → Message
+Stream   Reader    Stream
+
+- A blocking Message Reader/Writer is simpler, since it
+  has never to handle situations where no data was read
+  from the stream, or where only a partial message was
+  read from the stream and message parsing needs to be
+  resumed later.
+- The drawback of blocking is the requirement of separate
+  threads for each parallel stream, which is a problem if the
+  server has thousands of concurrent connections
+- Each thread will take between 320K (32 bit JVM) and
+  1024K (64 bit JVM) memory for its stack
+- Queue messages can be used to reduce the problem. However,
+  this design requires that the inbound client  streams
+  send data reasonably often and input is processed fast.
+   If the inbound client stream may be inactive for longer periods
+  attached to hidden clients, a high number of inactive
+  connections may actually block all the threads in the thread
+  pool.
+  That means that the server becomes slow to respond or even
+  unresponsive.
+- A non-blocking IO pipeline can use a single thread to
+  read messages from multiple non-blocking streams.
+    When in non-blocking mode, a stream may return 0 or more
+  bytes when you attempt to read data from it.
+  When you call select() or selectNow() on the Selector it
+  gives you only the SelectableChannel instances ("connected
+  clients") that actually has data to read.
+
+  Component ──→ STEP 1: select() ──→ Selector ←──┬─→ Channel1
+      ↑                                │         ┼─→ Channel2
+      └───← STEP 2: ready channels ←───┘         └─→ Channel3
+
+
+- Reading Partial Messages: Data sent by "ready" channels can
+  contain fractions/incomplete messages:
+  - The Message Reader looks needs to check if the data block
+    contains at least one full message, adn storing partial ones.
+    (maybe using one Message Reader per Channel to avoid mixing messages)
+  - To store Partial Messages two design should be considered:
+    - copy data as little as possible for better performance
+    - We want full messages to be stored in consecutive byte to
+      make parsing messages easier
+  - Some protocol message formats are encoded using a TLV format
+    (Type, Length, Value).
+    Memory management is much easier since we known immediately
+    how much memory to allocate for the message. No memory is
+    wasted at the end of a buffer that is only partially used.
+  - The fact that TLV encodings makes memory management easier is
+    one of the reasons why HTTP 1.1 is such a terrible protocol.
+    That is one of the problems trying to be fixed in HTTP 2.0 where
+    data is transported in LTV encoded frames.
+  - Writing Partial Messages: channelOut.write(ByteBuffer) in
+    non-blocking mode gives no guarantee about how many of the
+    bytes in the ByteBuffer is being written. The method returns
+    how many bytes were written, so it is possible to keep track
+    of the number of written bytes.
+  - Just like with the Message Reader, a Message Writer is used
+    per channel to handle all the details.
+   (partial writes, message queues, resizable buffers, protocol aware tricks,...)
+
+- All in all a non-blocking server ends up with three "pipelines" it
+  needs to execute regularly:
+  - The read pipeline which checks for new incoming data from
+    the open connections.
+  - The process pipeline which processes any full messages received.
+  - The write pipeline which checks if it can write any outgoing
+    messages to any of the open connections
+[[}]]
+
+## Path (1.7+) [[{java_lang.101,persistence.FS]]
+- Represents a file/directory path in the FS
+- Similar to java.io.File but with some minor differences.
+// Ussage
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+Path path = Paths.get("/var/lib/myAppData/myfile.txt");
+System.out.println("Current dir:"+Paths.get(".").toAbsolutePath());
+[[}]]
+
+[[{]]persistence.FS,async/reactive,java_lang.101" >
+
+## Files [[{]]
+- java.nio.file.Files provides several methods for manipulating FS files/directories:
+- uses Path instances:
+
+boolean pathExists =  Files.exists (pathInstance,
+            new LinkOption[]{ LinkOption.NOFOLLOW_LINKS});
+
+Path newDir =  Files.createDirectory (path);
+
+ Files.copy (sourcePath, destinationPath);
+ Files.copy (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+ Files.move (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+ Files.delete (path);
+
+Files.walkFileTree(Paths.get("data"), new FileVisitor<Path>() {
+  @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+  }
+
+  @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+  }
+
+  @Override public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+  }
+
+  @Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+  }
+});
+[[}]]
+
+## Asyncrhonous FileChannel 1.7+ [[{persistence.fs,async/reactive.io]]
+read/write data from/to files asynchronously
+
+Path path = Paths.get("data/test.xml");
+AsynchronousFileChannel fileChannel =
+    AsynchronousFileChannel.open(path, StandardOpenOption.READ);
+
+// Reading Data, Alt 1: Via a Future
+  Future<Integer> operation = fileChannel.read(/*ByteBuffeR*/buffer, 0 /* start position to read from */);
+  while(!operation.isDone());  // WARN: not a very efficient use of the CPU
+  buffer.flip();
+  byte[] data = new byte[buffer.limit()];
+  buffer.get(data);
+  System.out.println(new String(data));
+  buffer.clear();
+
+// Reading Data Alt 2: Via a CompletionHandler
+fileChannel.read(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
+    @Override
+    public void completed(Integer numBytesRead, ByteBuffer attachment) {
+        // NOTE: attachment is a reference to the third parameter passed to .read read()
+        System.out.println("numBytesRead = " + numBytesRead);
+        attachment.flip();
+        byte[] data = new byte[attachment.limit()];
+        attachment.get(data);
+        System.out.println(new String(data));
+        attachment.clear();
+    }
+
+    @Override
+    public void failed(Throwable exc, ByteBuffer attachment) { ...  }
+});
+
+// Writing data:
+AsynchronousFileChannel fileChannel =
+    AsynchronousFileChannel.open(path, StandardOpenOption.WRITE);
+
+// Writing Data: Alt 1: Via a Future
+  ...
+  Future<Integer> operation = fileChannel.write(buffer, position);
+  buffer.clear();
+  while(!operation.isDone());
+
+// Writing Data: Alt 2: Via CompletionHandler
+...
+  fileChannel.write(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
+
+      @Override public void completed(Integer result, ByteBuffer attachment) { /* ... */ }
+      @Override public void failed   (Throwable exc , ByteBuffer attachment) { /* ... */ }
+  });
+[[}]]
+
+## java.net.http.HTTPClient [[{io.net.http,async/reactive.io.network,PM.low_code,02_doc_has.comparative,qa]]
+API REF: @[https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html]
+JEP: @[https://openjdk.java.net/jeps/321]
+
+TODO: HTTPClient Quick intro:
+    @[https://openjdk.java.net/groups/net/httpclient/intro.html]
+
+- Example JShell script for GET request:
+  import java.io.PrintWriter;
+  import java.net.http.HttpClient
+  import java.net.http.HttpRequest
+  import java.net.http.HttpResponse
+  import java.net.http.HttpResponse.BodyHandlers
+  HttpClient client = HttpClient.newHttpClient();
+  var BASE_URL="https://earizon.github.io/"
+  var URL01=BASE_URL + "/txt_world_domination/index.html"
+  HttpRequest request = HttpRequest.newBuilder(
+    URI.create(URL01)).GET().build()
+  HttpResponse<String> response =
+    client.send(request, BodyHandlers.ofString());
+  System.out.println(response.body())
+  /exit
+[[}]]
+
+
+## OkHTTP [[{io.HTTP.OkHTTP]]
+-   OkHTTP vs java.net.http.HTTPClient
+From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
+   OkHTTP PROs over                     OkHTTP CONs over
+   java.net.http.HTTPClient             java.net.http.HTTPClient
+   -------------------------------      -------------------------------------------
+ - built-in response cache.           - timeout like configuration can not be
+ - HTTP 2.0 web sockets support.        modified after singleton connection.
+ - easier to use/better defaults.     - Requires (small) extra non-JDK dependencies
+ - used by 1+ billion Android devices   (okIO and okHTTP itself) in non-Android
+ - Better cookie/headers/call model.    deployments
+ - Retrofit compatibility
+ - HTTP 1.1 Connection pooling and HTTP/2 support.
+ - Transparent GZIP up/downloads.
+ - silently recover from common connection problems.
+   (alternate IP addresses if available,...)
+ - synch or async+callback API.
+
+@[https://square.github.io/okhttp/]
+
+  DAILY USSAGE  @[https://square.github.io/okhttp/recipes/]
+
+  import java.io.IOException;
+  import okhttp3.OkHttpClient;
+  import okhttp3.Request;
+  import okhttp3.Response;
+  import okhttp3.MediaType;                         // ← For POST
+  import okhttp3.RequestBody;                       // ← For POST
+  ...
+  OkHttpClient client = new OkHttpClient();
+  Request request = new Request.Builder()
+      .url("http://bla.ble.com/a/b?key=param")
+      .build();
+  try (
+    Response res =
+       client.newCall(request).execute()            // ← Exec. (GET) Request
+  ) {
+    System.out.println(res.body().string());
+  }
+
+
+  final String MediaType =  "application/json; charset=utf-8";
+  final String jsonBody = "{...}";
+  RequestBody body = RequestBody.create(jsonBody,   //  ← POST: prepare body rquest
+           MediaType.get(MediaType));
+  Request request = new Request.Builder()
+      .url("http://bla.ble.com/")
+      .post(body)                                   //  ← POST: prepare body rquest
+      .build();
+  try (
+    Response res =
+       client.newCall(request).execute()
+  ) {
+    return res.body().string();
+  }
+
+- Ex: Balancing connections with OKHttp:
+  https://medium.com/wandera-engineering/kubernetes-network-load-balancing-using-okhttp-client-54a2db8fc668
+
+[[io.HTTP.OkHTTP}]]
+
+## okIO [[{async/reactive.io.network,qa]]
+* complements java.nio
+@[https://github.com/square/okio]
+- makes it much easier to access, store, and process your data.
+- It started as a component of OkHttp, the capable HTTP client
+  included in Android. It's well-exercised and ready to solve new problems.
+[[}]]
+
+
+# Non-Classified
+
+## JavaLite: lightweight async.job processing [[{async/reactive.javalite]]
+                   [[PM.low_code,messaging.jms,messaging.activemq]]
                    [[architecture.batch,architecture.distributed]]
 - Use Cases:
   - website that needs to run batch process in background
@@ -3545,9 +3593,10 @@ Specialty Observables that have more precisely-controlled subscription dynamics
   Queue to DDBBs.
 [[async/reactive.javalite}]]
 
-● FileQueue #[fileQueue_summary] [[{async/reactive.FileQueue]]
-                                 [[01_PM.low_code,messaging.jms]]
-                                 [[messaging.activemq,scalability.101]]
+#[fileQueue_summary]
+## FileQueue  [[{async/reactive.FileQueue]]
+              [[PM.low_code,messaging.jms]]
+              [[messaging.activemq,scalability.101]]
 @[https://github.com/stimulussoft/filequeue]
 - KISS alternative using MVStore
 @[http://www.h2database.com/html/mvstore.html]
@@ -3646,56 +3695,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 [[async/reactive.FileQueue}]]
 
 
-● JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]
-- (compiler) checked vs unchecked (Error, RuntimeException and their subclasses).
-- Checked: All except Error, RuntimeException and their subclasses
-- Error: Exceptional conditions external to the application.
-java.lang.Object
-│
-└─ java.lang.Throwable   ← Only instances of this (sub/)class are thrown
-│                       in JVM, can be thrown in throw statement or can
-│                       be an argument in catch clause.
-│
-├─   java.lang.Exception
-│    │
-│    ├─  java.lang.RuntimeException (non─checked)  ← Most common error raised by
-│    │                                               developer code
-│    │
-│    └─  java.lang.Exception        (checked ─A)   ←  Don't use . checked exceptions end up
-│                                                     being converted to Runtime Excep.
-│                                                     and bloats the code.
-│
-└─   java.lang.Error                (non─checked)  ← serious problems that app code
-                                                    should not try to catch.
-                                                    ThreadDeath error, though a "normal" condition,
-                                                    is also a subclass of Error because most apps
-                                                    should not try to catch it.
-
-- Dump Exception stack trace to STDERR: [[{java_lang.debugging]]
-  StringWriter writer = new StringWriter();
-  PrintWriter printWriter = new PrintWriter( writer );
-  e.printStackTrace( printWriter );
-  printWriter.flush();
-  System.err.println(writer);           [[}]]
-[[java_lang.101.exceptions}]]
-
-● "Optional": Avoid Nulls [[{QA.BILLION_DOLAR_MISTAKE]]
-
- REF: http://files.zeroturnaround.com/pdf/zt_java8_best_practices.pdf
-import java.util.Optional;
-Optional<Sgtring> optional = Optional.ofNullable(a); // ← Create an optional
-optional.map ( s -> "RebelLabs:" + s);               // ← Process the optional
-optional.flatMap( s -> Optional.ofNullable(s));      // ← map a function that retunrs Optional
-optional.ifPresent(System.out::println);             // ← run if the value is ther
-
-optional.get();                                      // ← Alt 1: get the value or throw an exception
-optional.orElse("Hello world!");                     // ← Alt 2: get the value or default
-
-optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optional if not satisfied
-
-[[}]]
-
-● FailSafe [[{enterprise_patterns,qa.error_control,architecture.distributed,01_PM.WiP]]
+## FailSafe [[{enterprise_patterns,qa.error_control,architecture.distributed,PM.WiP]]
 
 @[https://github.com/failsafe-lib/failsafe]
 • Fault tolerance and resilience patterns for the JVM
@@ -3721,7 +3721,7 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
   · Extension Points
 [[enterprise_patterns}]]
 
-● JDepend [[{qa.reporting,qa.versioning,security.auditing]]
+## JDepend (QA) [[{qa.reporting,qa.versioning,security.auditing]]
 @[https://github.com/clarkware/jdepend]
 @[https://htmlpreview.github.io/?https://github.com/clarkware/jdepend/blob/master/docs/JDepend.html]
 - JDepend traverses Java class and source file directories and
@@ -3730,8 +3730,8 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
   to effectively manage and control package dependencies.
 [[}]]
 
-● JSON-P /JSR-374 [[{persistence.JSON,security.TLS/X509,security.aaa]]
-- TODO: Patterns of JSON Matching:
+## JSON-P /JSR-374 [[{persistence.JSON,security.TLS/X509,security.aaa]]
+- TODO: Patterns of JSON Matching
   Streaming based, binding based, expression based.
 @[https://dzone.com/articles/patterns-of-reading-json?edition=598293]
 - REF:JSON processing public review
@@ -3747,8 +3747,9 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
     - JSON Merge Patch
     - Query and transformation operations
   - Designed to parse/generate/query standard JSON documents.
-─────────────────────────────────────────────────────────────
-● JSON-B / JSR-367
+[[}]]
+
+## JSON-B / JSR-367 [[{]]
   @[https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/]
 - B stands for Ojbect binding
   - Standard binding layer for converting
@@ -3871,7 +3872,8 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
   }
 [[}]]
 
-●  Java Platform Module System (JPMS) (1.9+) <!-- @ma --> [[{java_lang.101]]
+## JPMS Modules (1.9+) [[{java_lang.modules,java_lang.101]]
+* JPMS == Java Platform Module System
 Related:
 - JEP 200: THE MODULAR JDK
 - JEP 201: MODULAR SOURCE CODE
@@ -3946,19 +3948,17 @@ $ $ cat module-info.java
        often forgotten). So, in Java 9 they made a single --release flag
        which is a replacement for three flags: -source, -target and
        -bootclasspath.                                                        [[}]]
+[[java_lang.modules}]]
+
+## Collectors 1.8+ [[{java_lang.101,JAVA_LANG.FUNCTIONAL,PM.TODO]]
+
 [[}]]
 
-
-NON-Classified/TODO [[{01_PM.TODO]]
-
-• java_lang.101,java_lang.functional:  [[{JAVA_LANG.FUNCTIONAL]]
-  Collectors (1.8+)
-[[}]]
-
-• Modern functional programming in Java:  [[{JAVA_LANG.FUNCTIONAL.01_PM.TODO.NOW]]
+## Modern functional programming [[{JAVA_LANG.FUNCTIONAL.PM.TODO.NOW]]
 @[https://dzone.com/articles/introduction-to-pragmatic-functional-java]
+[[}]]
 
-• Monads in Java [[{java_lang.functional,java_lang.101,01_PM.TODO]]
+## Monads in Java [[{java_lang.functional,java_lang.101,PM.TODO]]
 @[https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394]
 - two of the most commonly known Java 8 features are monad
   implementations, namely Stream and Optional
@@ -3968,18 +3968,15 @@ NON-Classified/TODO [[{01_PM.TODO]]
   input to the operation at the next step.
 [[}]]
 
-
-[[}]]
-
-• Resilience4j [[{architecture.distributed,JAVA_LANG.FUNCTIONAL,qa.error_control,01_PM.TODO]]
-- higher-order functions (decorators) to enhance any functional interface,
+## Resilience4j [[{architecture.distributed,java_lang.functional,qa.error_control,PM.TODO]]
+* higher-order functions (decorators) to enhance any functional interface,
   lambda expression or method reference with a Circuit Breaker, Rate
   Limiter, Retry or Bulkhead.
-• more than one decorator on any functional interface, lambda or method ref
+* more than one decorator on any functional interface, lambda or method ref
   can be stacked.
 [[}]]
 
-• SummaryStatistics(1.8+) [[{java_lang.functional,01_PM.TODO]]
+## SummaryStatistics(1.8+) [[{java_lang.functional,PM.TODO]]
 - Three of the new classes introduced in JDK 8 are
   DoubleSummaryStatistics, IntSummaryStatistics,
   andLongSummaryStatistics of the java.util package. These classes make
@@ -3992,28 +3989,7 @@ NON-Classified/TODO [[{01_PM.TODO]]
   such as count, min, max, sum, and average."
 [[}]]
 
-• Create zipped summary of java.util.concurrent:  [[{concurrency.101,01_PM.TODO]]
-
-  - Inmmutable Objects are faster and thread-safe:
-   https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html
-
-  - Concurrency Classes Video
-@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4]
-
-  - java.util.concurrent.locks.ReentrantLock vs synchronized { ... } block
-
-  - example stack trace (extracted from Vert.X):
-    at jdk.internal.misc.Unsafe.park(Native Method)
-    at java.util.concurrent.locks.LockSupport.park
-    at java.util.concurrent.LinkedTransferQueue.awaitMatch
-    at java.util.concurrent.LinkedTransferQueue.xfer
-    at java.util.concurrent.LinkedTransferQueue.take
-    at java.util.concurrent.ThreadPoolExecutor.getTask
-    at java.util.concurrent.ThreadPoolExecutor.runWorker
-    at java.util.concurrent.ThreadPoolExecutor$Worker.run
-[[}]]
-
-• BascomTask Lib: Complement to 'CompletableFutures' [[{async/reactive.101,01_PM.TODO.NOW]]
+## BascomTask Lib: 'CompletableFutures' Complement  [[{async/reactive.101,PM.TODO.NOW]]
   https://dzone.com/articles/lightweight-parallel-tasks-in-java-microservices
   - lightweight task-orchestration library providing frictionless thread-level
     parallelization.
@@ -4025,7 +4001,7 @@ NON-Classified/TODO [[{01_PM.TODO]]
   and freely integrates with them.
 [[}]]
 
-• Amdahl's law [[{concurrency.101,01_PM.TODO]]
+## Amdahl's law [[{concurrency.101,PM.TODO]]
 - Amdahl's law provides a formula to compute the theoretical maximum
   speed up by providing multiple processors to an application like:
   S(n) = 1 / (B + (1-B)/n)  : n == number-of-processors
@@ -4035,7 +4011,7 @@ NON-Classified/TODO [[{01_PM.TODO]]
                                  fraction of non-paralellizable code
 [[}]]
 
-● Sub-processes [[{concurrency.101,01_PM.TODO,01_PM.low_cost]]
+## Sub-processes [[{concurrency.101,PM.TODO,PM.low_cost]]
 - Concurrency can be greately simplified by using OS processes
   (vs in-process threads).  This automatically avoid many/most of the problems
   with thread concurrency.
@@ -4048,14 +4024,14 @@ NON-Classified/TODO [[{01_PM.TODO]]
   https://www.baeldung.com/java-curl
 [[}]]
 
-● jLine [[{java_lang.repl,java_lang.101,01_PM.low_code,01_PM.TODO]]
+## jLine [[{java_lang.repl,java_lang.101,PM.low_code,PM.TODO]]
 jLine: GNU/readline alike library for JAVA:
 @[https://github.com/jline/jline3]
 - Builtin support for console variables, scripts, custom pipes, widgets and object printing.
 - Autosuggestions
 - Language REPL Support
-──────────────────────────────────────────────
-● PicoCli
+
+## PicoCli UX Cli apps [[{]]
 @[https://github.com/remkop/picocli]
 @[https://picocli.info/]
   Picocli is a one-file framework for creating Java user-friendly
@@ -4066,20 +4042,20 @@ jLine: GNU/readline alike library for JAVA:
   colors and styles to contrast important elements and reduce the
   cognitive load on the user.
   - 1 source file so apps can include as source and avoid adding a dependency!!!
-──────────────────────────────────────────────
-● Clig.Dev
-@[https://clig.dev/]
-· Command Line Interface Guidelines
-  · An open-source guide to help you write better command-line
-    programs, taking traditional UNIX principles and updating them for
-    the modern day.
-    · ...
-    · Use a command-line argument parsing library where you can. Either
-       your language’s built-in one, or a good third-party one. They will
-       normally handle arguments, flag parsing, help text, and even spelling
-       suggestions in a sensible way.
 
-· Note: Alternatives in other languajes:
+
+### Clig.Dev: Command Line Interface Guidelines [[{]]
+@[https://clig.dev/]
+* An open-source guide to help you write better command-line
+  programs, taking traditional UNIX principles and updating them for
+  the modern day.
+  · ...
+  · Use a command-line argument parsing library where you can. Either
+     your language’s built-in one, or a good third-party one. They will
+     normally handle arguments, flag parsing, help text, and even spelling
+     suggestions in a sensible way.
+
+* Note: Alternatives in other languajes:
   · Go: Cobra, cli
   · Node: oclif
   · Python: Click, Typer
@@ -4087,6 +4063,7 @@ jLine: GNU/readline alike library for JAVA:
   · Rust: clap, structopt
   · PHP: console
 [[}]]
+[[}]]
 
-[[01_PM.TODO}]]
+[[PM.TODO}]]
 

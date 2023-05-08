@@ -1,4 +1,4 @@
-●  Apropos:
+#  Apropos:
 - Visit next Web site for a great experience:
   https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/gradle.txt
 
@@ -11,7 +11,7 @@
 
 [[{devops.gradle]]
 
-● Gradle Summary [[{devops.gradle.101,devops.gradle.troubleshooting]]
+# Gradle Summary [[{devops.gradle.101,devops.gradle.troubleshooting]]
   • TLDR
 
                            ● SETUP TASKS
@@ -42,7 +42,7 @@
     $ tasks                  <- show tasks runnable from root project 'JAVA'.
 
 
-● GRADLE CORE MODEL  [[{gradle.101.core_model]]                    [[{02_doc_has.diagram.UML.ER]]
+# GRADLE CORE MODEL  [[{gradle.101.core_model]]                    [[{02_doc_has.diagram.UML.ER]]
                                                       ┌>1┃Plugin┃ packaging way to distribute
                                                       v           standard,community&custom tasks.
   ┃ Settings        ┃                                 1
@@ -106,7 +106,7 @@
  │ (REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html)
  └───────────────────────────────────────────────┘              [[02_doc_has.diagram.UML.ER}]]
 
-● GRADLE CORE MODEL CUSTOMIZATION:
+# GRADLE CORE MODEL CUSTOMIZATION:
   - Custom properties can be added to projects and tasks.
 
   - Custom models to represent  concepts (other than tasks, files and dependencies)
@@ -210,7 +210,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
 
 [[devops.gradle.101}]]
 
-● Configuring projects with "gradle.properties" [[{gradle.properties]]
+# Configuring projects with "gradle.properties" [[{gradle.properties]]
   REF: https://dev.to/jmfayard/configuring-gradle-with-gradle-properties-211k
 
   NOTE: 'gradle.propeties' is NOT created by default during '$ gradle init ...'
@@ -286,7 +286,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
    ....
   [[gradle.properties}]]
 
-● Example Multi-module Deployer: [[{gradle.multimodule,02_doc_has.code_snippet]]
+# Example Multi-module Deployer: [[{gradle.multimodule,02_doc_has.code_snippet]]
 @[https://github.com/FlamingTuri/multi-module-deployer]
   - library built to speed up deployment of microservice based applications.
   - build and run each application module.
@@ -352,7 +352,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
 @[https://www.infoq.com/news/2020/01/gradle-releases-version-6/]
 [[}]]
 
-● Building Java & JVM projects [[{gradle.java_projects]]
+# Building Java & JVM projects [[{gradle.java_projects]]
 
   JAVA LIBRARY PLUGIN:
 
@@ -507,7 +507,7 @@ compile the consumer and have task to create the POM file.
 
 [[gradle.java_projects}]]
 
-● TODO/Non-classified [[{01_PM.TODO]]
+# TODO/Non-classified [[{01_PM.TODO]]
 • CUSTOMIZING THE WRAPPER
   The built-in wrapper task exposes numerous options to customize the runtime behavior.
   -   build.gradle.kts:
@@ -568,7 +568,7 @@ compile the consumer and have task to create the POM file.
   https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:maven_local
 [[devops.gradle}]]
 
-● Dependencies among (multimodule) Subprojects
+# Dependencies among (multimodule) Subprojects
   https://docs.gradle.org/current/userguide/declaring_dependencies_between_subprojects.html
 
   • buildSrc/

@@ -1,4 +1,4 @@
-●  Apropos:
+#  Apropos:
 - Visit next Web site for a great experience:
   https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/vertx.txt
 
@@ -24,7 +24,7 @@
   Many others :@[https://github.com/eclipse-vertx/vert.x/graphs/contributors]
 [[}]]
 
-● Vert.X Summary [[{vertx.101,async/reactive.*,02_doc_has.diagram]]
+# Vert.X Summary [[{vertx.101,async/reactive.*,02_doc_has.diagram]]
 REF:
 - Vert.X guide for java devs @[https://github.com/vert-x3/vertx-guide-for-java-devs]
 - VertX maven starter        @[https://github.com/vert-x3/vertx-maven-starter]
@@ -50,7 +50,7 @@ REF:
   templating, upload, vertxbus
 - Web/ JDBC server examples @[https://github.com/vert-x3/vertx-examples/blob/master/web-examples/src/main/java/io/vertx/example/web/jdbc/Server.java]
 
-● verticle
+# verticle
 REF: @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/README.adoc]
 - reusable unit  of   deployment
                       ^^^^^^^^^^
@@ -120,7 +120,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 }
 
-● VertX Event Bus [[{vertx.event_bus]]
+# VertX Event Bus [[{vertx.event_bus]]
 - main tool for communication between verticles using  messages
   and one of:
   - point-to-point messaging
@@ -147,7 +147,7 @@ public class MainVerticle extends AbstractVerticle {
                     or exposed over general-purpose
                     messaging bridges (AMQP, Stomp,...)
                   - Support cluster support sending
-                    messages to verticles deployed⅋running
+                    messages to verticles deployed&running
                     in different application nodes
                   - a   SockJS  bridge allows web applications
                     to seamlessly communicate over the event bus
@@ -176,7 +176,7 @@ lots of concurrent networked requests.
 [[}]]
 
 
-● Testing [[{vertx.testing,qa.testing]]
+# Testing [[{vertx.testing,qa.testing]]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/README.adoc]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/http/SampleHttpServerTest.java]
 
@@ -266,7 +266,7 @@ lots of concurrent networked requests.
   }
 [[vertx.testing}]]
 
-● Reusable Verticles [[{vertx.101]]
+# Reusable Verticles [[{vertx.101]]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc]
 
 - resulting verticles will not have direct references to each other
@@ -306,7 +306,7 @@ lots of concurrent networked requests.
   }
 [[}]]
 
-● Create HttpServer [[{vertx.101]]
+# Create HttpServer [[{vertx.101]]
 REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
 
    import io.vertx.ext.web.handler.BodyHandler;
@@ -351,7 +351,7 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
 [[}]]
 
 
-● Maven Bootstrap  [[{vertx.101,devops]]
+# Maven Bootstrap  [[{vertx.101,devops]]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1]
 
@@ -426,7 +426,7 @@ Non-Classified / TODO [[{01_PM.TODO]]
   """
   There are many features and modules that we haven’t covered in this guide, such as:
     - Clustering using Hazelcast, Infinispan, Apache Ignite or Zookeeper,
-    - Exposing⅋consuming over HTTP/2, possibly (but not necessarily) with gRPC
+    - Exposing&consuming over HTTP/2, possibly (but not necessarily) with gRPC
     - Using NoSQL databases such as MongoDB or Redis.
     - Sending emails over SMTP.
     - Messaging with AMQP, Stomp, Kafka, MQTT or RabbitMQ.
@@ -444,12 +444,12 @@ Non-Classified / TODO [[{01_PM.TODO]]
 
 • https://github.com/vert-x3/vertx-4-migration-guide
 
-● Vert.x 3.9 Fluent API Query [[{vertx,01_PM.TODO]]
+# Vert.x 3.9 Fluent API Query [[{vertx,01_PM.TODO]]
 https://developers.redhat.com/blog/2020/05/25/red-hat-build-of-eclipse-vert-x-3-9-brings-fluent-api-query/
 Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
 [[}]]
 
-● OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
+# OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
                                [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
 @[https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx]
 - "Contract Driven Development" (or API Design First approach) is a methodology
@@ -485,7 +485,7 @@ assistance of tooling. GCToolKit has been helpful in making this
 easier. [[}]]
 
 
-● Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO.NOW]]
+# Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO.NOW]]
 • Reactive isn't Complicated with Vert.x and the new Mutiny APIs
 @[https://www.youtube.com/watch?v=3tdU5WRvuuo]
 [[}]]
