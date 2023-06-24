@@ -1,4 +1,4 @@
-Cost of software failures [[{qa.billion_dolar_mistake]]
+# Cost of software failures [[{qa.billion_dolar_mistake]]
 $312 billion per year: global cost of software bug (2013)
 $300 billion dealing with the Y2K problem
 
@@ -10,8 +10,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 2011: Software caused 25% of all medical device recalls.
 [[}]]
 
-# Checker framework (Java 8+) #[code_analysis_tools_summary]
-           [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
+# Checker framework (Java 8+) [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
  fix errors at compile time  (vs later on at execution/runtime)
 @[https://github.com/typetools/checker-framework]
 @[https://checkerframework.org/manual/]
@@ -39,157 +38,170 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │+@NotNull 2017│3    │ 6     │  1     │ 925+8  │  │Downside      │ user burden      │ missed bugs         │
   └──────────────┴─────┴───────┴────────┴────────┘  └──────────────┴──────────────────┴─────────────────────┘
 
-  PROBLEM:                                           │  SOLUTION:
-   STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH      │  Java 8+ allows to compile programs
-   - Next example compile, but fail at runtime:      │  using   "PLUGGABLE TYPE SYSTEMs" ,
-     Ex.1:                                           │  allowing to apply stricter checks
-       System.console().readLine(); ←  NullPointer   │  than default ones in compiler like
-     Ex.2:                                           │  Ex:
-       Collections.emptyList()                       │  $ javac  -processor NullnessChecker  MyFile.java
-               .add("one"); ←  Unsupported Operation │
-     Ex.3:                                           │   PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
-       Date key1 = new Date();                       │           (1)           No errors (2)
-       myMap.put(key1, "now");                       │    Source ───→ Compiler ────┬───→ Executable
-       myMap.get(key1);    ←  returns "now"          │      ^            │         │(2)       ^
-       key1.setSeconds(0); ←  Mutate key             │      │            v         v          │
-       myMap.get(key1);    ←  returns null           │      │         Standard    Optional    │ Guaranteed
-                                                     │      │         Compiler    Type     ───┘ Behaviour
-                                                     │      │         Errors      Checker
-                                                     │      │                      │
-                                                     │      │                      v
-                                                     │      └────────────────── Warnings :
-                                                     │
-                                                     │     (2) plugable type system allows generation
-                                                     │         of executable to allow CI continue the
-                                                     │         pipeline with further tests (functional
-                                                     │         testing, configuration testing, ...)
+  PROBLEM: STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH
+   - Next examples compile, but fail at runtime:
+     System.console().readLine()       ; <·· Ex.1 NullPointer
 
-  #################################
-• # Checker Framework Instalation #
-  #################################
-<!-- { -->
-(See new releases/versions at
-  @[https://search.maven.org/search?q=g:org.checkerframework])
+     Collections.emptyList().add("one"); <·· Ex.2 Unsupported Operation
 
-  STEP 01:                            │  STEP 02:
-──────────────────────────────────────┼────────────────────────────────────────────────────
-  Add next pom.xml dependencies like: │  tweak  maven-compiler-plugin  to use
-  <dependency>                        │  Checker Framework as a pluggable Type System:
-      <groupId>                       │  <plugin>
-        org.checkerframework          │    <artifactId> maven-compiler-plugin </artifactId>
-      </groupId>                      │    <version>3.6.1</version>
-      <artifactId>                    │    <configuration>
-        checker-qual                  │      <source>1.8</source>
-      </artifactId>                   │      <target>1.8</target>
-      <version>2.11.0</version>       │      <compilerArguments>
-  </dependency>                       │        <Xmaxerrs>10000</Xmaxerrs>
-  <dependency>                        │        <Xmaxwarns>10000</Xmaxwarns>
-      <groupId>                       │      </compilerArguments>
-        org.checkerframework          │      <annotationProcessors>  ← "==" javac -processor ...
-      </groupId>                      │        <annotationProcessor>
-      <artifactId>                    │      org.checkerframework.checker.nullness.NullnessChecker
-        checker<                      │         </annotationProcessor>
-      /artifactId>                    │         <annotationProcessor>
-      <version>2.11.0</version>       │      org.checkerframework.checker.interning.InterningChecker
-  </dependency>                       │         </annotationProcessor>
-  <dependency>                        │         <annotationProcessor>
-      <groupId>                       │      org.checkerframework.checker.fenum.FenumChecker
-        org.checkerframework          │         </annotationProcessor>
-      </groupId>                      │         <annotationProcessor>
-      <artifactId>                    │      org.checkerframework.checker.formatter.FormatterChecker
-        jdk8                          │         </annotationProcessor>
-      </artifactId>                   │      </annotationProcessors>
-      <version>2.11.0</version>       │      <compilerArgs>
-  </dependency>                       │        <arg>-AprintErrorStack</arg>
-                                      │        <arg>-Awarns</arg>
-                                      │      </compilerArgs>
-                                      │    </configuration>
-                                      │  </plugin>
-
-( STEP 03:  Manually add extended type annotations to your java code)
-<!-- } -->
+     Date key1 = new Date();             <·· Ex.3
+     myMap.put(key1, "now");
+     myMap.get(key1);                        <··  returns "now"
+     key1.setSeconds(0);                     <··  Mutate key
+     myMap.get(key1);                        <··  returns null
 
 
-  ###########
-• # Ussage  #
-  ###########
-<!-- { -->
+  SOLUTION:
+   Java 8+ allows to compile programs using "PLUGGABLE TYPE SYSTEMs" ,
+   allowing to apply stricter checks than default ones in compiler like
+   Ex:
+   $ javac  -processor NullnessChecker  MyFile.java
+
+    PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
+            (1)           No errors ²
+     Source ···> Compiler ·(No error ·····┬···> Executable
+       ^            │       detected      ·²         ^
+       ·            v                     v          ·
+       ·         Standard               Optional     · Guaranteed
+       ·         Compiler               Type      ···┘ Behaviour
+       ·         Errors                 Checker
+       ·                                  ·
+       ·                                  v
+       └·················· Warnings ······┘
+
+       ² plugable type system allows generation
+         of executable to allow CI continue the
+         pipeline with further tests (functional
+         testing, configuration testing, ...)
+
+## Checker Framework Instalation [[{]]
+
+0. Check new releases/versions at
+  @[https://search.maven.org/search?q=g:org.checkerframework]
+
+1. Add next pom.xml dependencies like:
+   <dependency>
+       <groupId>org.checkerframework</groupId>
+       <artifactId>checker-qual</artifactId>
+       <version>2.11.0</version>
+   </dependency>
+   <dependency>
+       <groupId>org.checkerframework</groupId>
+       <artifactId>checker</artifactId>
+       <version>2.11.0</version>
+   </dependency>
+   <dependency>
+       <groupId>org.checkerframework</groupId>
+       <artifactId>jdk8</artifactId>
+       <version>2.11.0</version>
+   </dependency>
+
+
+ 2. tweak maven-compiler-plugin to use Checker Framework
+    as a pluggable Type System:
+    <plugin>
+      <artifactId> maven-compiler-plugin </artifactId>
+      <version>3.6.1</version>
+      <configuration>
+        <source>1.8</source>
+        <target>1.8</target>
+        <compilerArguments>
+          <Xmaxerrs>10000</Xmaxerrs>
+          <Xmaxwarns>10000</Xmaxwarns>
+        </compilerArguments>
+        <annotationProcessors>                            <······ "==" javac -processor ...
+          <annotationProcessor>
+             org.checkerframework.checker.nullness.NullnessChecker
+           </annotationProcessor>
+           <annotationProcessor>
+             org.checkerframework.checker.interning.InterningChecker
+           </annotationProcessor>
+           <annotationProcessor>
+             org.checkerframework.checker.fenum.FenumChecker
+           </annotationProcessor>
+           <annotationProcessor>
+             org.checkerframework.checker.formatter.FormatterChecker
+           </annotationProcessor>
+        </annotationProcessors>
+        <compilerArgs>
+          <arg>-AprintErrorStack</arg>
+          <arg>-Awarns</arg>
+        </compilerArgs>
+      </configuration>
+    </plugin>
+
+3.  Manually add extended type annotations in real Java code
+[[}]]
+
+## Ussage [[{]]
 -   Avoiding Nulls
 
-  CHECKS  ON TYPES                               │ CHECKS ON FUNCTION DECLARATION
-                                                 │                   ┌────┬────┬───────────────────────────┐
-                                                 │                   │FUNC│FUNC│DESCRIPTION                │
-  private static int func1                       │                   │PRE─│POST│                           │
-    ( @NonNull  String[] args)                   │                   │COND│COND│                           │
-  {                                              │ ┌─────────────────┼────┼────┼───────────────────────────┤
-      return args.length;                        │ │@RequiresNonNull │X   │    │variables are expected  to │
-  }                                              │ │                 │    │    │be non─null when invoked.  │
-                                                 │ ├─────────────────┼────┼────┼───────────────────────────┤
-  public static void main                        │ │@EnsuresNonNull  │    │X   │variables are guaranteed to│
-    ( @Nullable  String[] args) {                │ │                 │    │    │be non─null on return.     │
-      ...                                        │ ├─────────────────┼────┼────┼───────────────────────────┤
-      func1(args);                               │ │@EnsuresNonNullIf│    │X   │variables are guaranteed to│
-  }         ^^^^                                 │ │                 │    │    │benon─null on ret.true/fals│
-      [WARNING] ... [argument.type.incompatible] │ └─────────────────┴────┴────┴───────────────────────────┘
-       incompatible types in argument.           │
-        found    : null                          │
-        required : @Initialized @NonNull ...     │
+  CHECKS  ON TYPES
 
--   Convert String constants into Safe Enum with Fenum
-                                                (Fake enum)
-  static final @Fenum("country") String ITALY = "IT";
-  static final @Fenum("country") String US = "US";
-  ...
-  static final @Fenum("planet") String MARS = "Mars";
-  static final @Fenum("planet") String EARTH = "Earth";
+
+  private static int func1 (
+     @RequiresNonNull  String[] args   <·· func. preconditions.
+  ) {
+      @EnsuresNonNull final result;    <·· func. post-condition. variable is guaranteed to be non─null on return.
+      result = args.length;                Also: @EnsuresNonNullIf: variables is guaranteed to be non─null on ret.true/false
+      return result;
+  }
+
+  public static void main
+    ( @Nullable  String[] args) {
+      ...
+      func1(args);  //                 <·· [WARNING] ... [argument.type.incompatible]
+  }                                        incompatible types in argument.
+                                           found    : null
+                                           required : @Initialized @NonNull ...
+
+  static final
+     @Fenum("country") String ITALY = "IT",   <·· Safe Enum with Fenum (Fake enum)
+     @Fenum("country") String US    = "US",
+     ...
+     @Fenum("planet" ) String MARS   = "Mars",
+     @Fenum("planet" ) String EARTH   = "Earth";
   ...
 
-  void function1(@Fenum("planet") String inputPlanet){
+  void function1(                      <·· Function expected "planet" string
+    @Fenum("planet") String inputPlanet){
       System.out.println("Hello " + planet);
   }
 
   public static void main(String[] args) {
-      obj.greetPlanets(US);   ←----  [WARNING] ...
-  }                                   incompatible types in argument.
-                                       found   : @Fenum("country") String
-                                       required: @Fenum("planet") String
-
--   Regular Expressions
-  @Regex(1) private static String FIND_NUMBERS = "\\d*";
-  ^^^^^^^^^                                      ^^^^^^
-  Force String variable                       [WARNING] ...
-  to store a regex with                       incompatible types in assignment.
-  at least one matching                         found   : @Regex String
-  group                                         required: @Regex(1) String
+      obj.greetPlanets(US);            <·· [WARNING] ... incompatible types in argument.
+  }                                         found   : @Fenum("country") String
+                                            required: @Fenum("planet")  String
 
 
+  @Regex(1) static                     <·· Force regext string with at least one matching group
+      String FIND_NUMBERS = "\\d*";        <·· [WARNING] ... incompatible types in assignment.
+                                               found   : @Regex String
+                                               required: @Regex(1) String
 
--   Validating tainted (non-trusted) input
-
-   @Untainted
-   String validate (String sqlInput) {
-      // Do any suitable checks, throw on error
-      @SuppressWarnings("tainting")      ← "swear" that developer got sure
-      @Untainted String result = ...;       of input correctness
+   @Untainted String                   <·· Validating tainted (non-trusted) input
+   validate (String sqlInput) {
+      // ... Do any suitable checks
+      //     OR THROW ON ERROR
+      @SuppressWarnings("tainting")        <·· "swear" that developer got sure
+      @Untainted String result = ...;           of input correctness
       return result;
   }
 
-  void execSQL( @Untainted  String sqlInput) {
+  void execSQL(@Untainted  String sqlInput) {
       ...
   }
 
   public static void main(String[] args) {
-      obj.execSQL(arg[0]);             ← warning at compile time
-      obj.execSQL(validate(arg[0]));   ← "OK". validate un-tain the input
+      obj.execSQL(arg[0]);                 <··  warning at compile time
+      obj.execSQL(validate(arg[0]));       <·· "OK". validate un-tain the input
   }
 
--   Mark as Immutable
-  @Immutable Date date = new Date();
-  date.setSeconds(0);   ←   compile-time error
-<!-- } -->
+  @Immutable Date date = new Date();       <·· Mark as real immutable (vs weak "final")
+  date.setSeconds(0);                      <·· compile-time error
+[[}]]
 
-- Avoiding (certain) concurrency errors
-<!-- { -->
+## Avoiding (certain) concurrency errors [[{]]
   Lock Checker enforces a locking discipline:
   "which locks must be held when a given operation occurs"
 
@@ -231,7 +243,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │ @EnsuresLockHeldIf │(default if no @LockingFree│@MayReleaseLocks│  │
   │                    │@SideEffectFree│@Pure used).                   │
   └────────────────────┴───────────────────────────────────────────────┘
-<!-- } -->
+[[}]]
 
 -  Format String Checker
   - prevents use of incorrect format strings in System.out.printf,....
@@ -320,12 +332,12 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 <hr/>
 # SpotBugs
 @[https://github.com/spotbugs/spotbugs/issues]
-• OOSS static analysis tool for java code bugs.
-• Well maintained (as of 2021-12-21)
-• "spiritual successor of FindBugs"
-• SpotBugs checks for more than 400 bug patterns.
-• Works from GUI+cli, maven/gradle/eclipse integration.
-• Plugin extension support (just download plugin jar and
+* OOSS static analysis tool for java code bugs.
+* Well maintained (as of 2021-12-21)
+* "spiritual successor of FindBugs"
+* SpotBugs checks for more than 400 bug patterns.
+* Works from GUI+cli, maven/gradle/eclipse integration.
+* Plugin extension support (just download plugin jar and
   it will be detected and included):
   • fb-contrib:
   • Security Audits for Java Web applications:
@@ -333,7 +345,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
     It can detect 141 different vulnerability types with
     over 823 unique API signatures.
 
-• Running SpotBugs.
+## Running SpotBugs [[{]]
   · Presetup. Compile java code to classes or jars.
     SpotBugs runs against compiles class files, using source code
     as a reference when displaying output.
@@ -477,181 +489,146 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │
   │ </FindBugsFilter>
   └────────────────────────────────────────────
+[[}]]
 
 
-
-• See examples at:
+## SpotBug examples:
 @[https://spotbugs.readthedocs.io/en/latest/filter.html]
 
 
-<hr/>
-
 # Lint4j
 @[http://www.jutils.com/]
-•  WARN : Not maintained any more.
-• Lint4j ("Lint for Java") is a static Java source and byte code
+*  WARN : Not maintained any more.
+* Lint4j ("Lint for Java") is a static Java source and byte code
   analyzer that detects locking and threading issues, performance and
   scalability problems, and checks complex contracts such as Java
   serialization by performing type, data flow, and lock graph analysis.
 
-• Ussage @[http://www.jutils.com/uguide.html]
-$ $ lint4j \
-$    -sourcepath src/main \             ← analyze source
-$    -classpath lib/bcel.jar:... \
-$    -exclude "packagename"   \         ← package or package-prefix
-$    "com.jutils.lint4j.*"
-$
-$ $ lint4j -sourcepath .../log4j.jar    ← analyze binary
-$     "org.apache.*"
-$
-$ $ lint4j  \
-$    -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
-$    org.apache.log4j \
-$    org.apache.log4j.spi
-$
-$ $ lint4j \
-$   -sourcepath com/.../ClassN.java \
-$               com/.../CalssJ.java
+* Ussage @[http://www.jutils.com/uguide.html]
+  $ $ lint4j \
+  $    -sourcepath src/main \             ← analyze source
+  $    -classpath lib/bcel.jar:... \
+  $    -exclude "packagename"   \         ← package or package-prefix
+  $    "com.jutils.lint4j.*"
+  $
+  $ $ lint4j -sourcepath .../log4j.jar    ← analyze binary
+  $     "org.apache.*"
+  $
+  $ $ lint4j  \
+  $    -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
+  $    org.apache.log4j \
+  $    org.apache.log4j.spi
+  $
+  $ $ lint4j \
+  $   -sourcepath com/.../ClassN.java \
+  $               com/.../CalssJ.java
 
 [[qa.101.checker_fw}]]
 
 
-# SonarQube #[sonarqube_summary] [[{qa.101.snarqube,01_PM.low_code,]]
-                                   [[concurrency.101,JAVA_LANG.DEBUGGING]]
-                                   [[scalability.profiling,01_PM.WiP]]
-
-• SonarQube empowers all developers to write cleaner and safer code.
-• Comunity with 200K+ dev. teams.
-• Easely integrates with CI/CD pipelines.
+# SonarQube [[{qa.101.snarqube,01_PM.low_code,]]
+            [[concurrency.101,JAVA_LANG.DEBUGGING]]
+            [[scalability.profiling,01_PM.WiP]]
+* SonarQube empowers all developers to write cleaner and safer code.
+* Comunity with 200K+ dev. teams.
+* Easely integrates with CI/CD pipelines.
   Jenkins, GitHub Actions, Bitbucket Pipelines, GitLab CI, Azure Pipelines, ...
 
-• A simple client/server working enviroment can be setup in minutes like:
+* A simple client/server working enviroment can be setup in minutes like:
 
-  ┌── SERVER SIDE: ────────────────────────────────
-  │
-  │• LAUNCH SERVER INSTANCE
-  │  ======================
-  │$ $ docker run -d --name sonarqube               \
-  │$   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
-  │$   -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
-  │$   -p 9000:9000 sonarqube:latest
-  │
-  │• Create a new project through the web console
-  │  and annotate the 40-random-chars TOKEN.
-  │  (Needed by client-side sonar-scanner).
-  └─────────────────────────────────────────────────
+## Running SonarQube:
 
-  ┌─ CLIENT SIDE: ──────────────────────────────────
-  │
-  │• 1) PROJECT_SRC_ROOT
-  │  ┌ └ sonar-project.properties ─┐
-  │  │sonar.projectKey=my:project  ← Required
-  │  │                             │
-  │  │#sonar.projectName=...       ← def:project key
-  │  │#sonar.projectVersion=1.0    ← def:'not provided'
-  │  │sonar.sources=src/java/      ← relative to
-  │  │                             │ sonar-project.properties
-  │  │#sonar.sourceEncoding=UTF-8  │
-  │  │sonar.java.binaries=./build/ ← compiled *class dir.
-  │  │sonar.java.libraries=...     ← ex: /lib/*.jar,./plugins/lib/*jar
-  │  └─────────────────────────────┘
-  │
-  │• 2) launch client scanner like
-  │  2.alt1) using mvn plugin:
-  │    $ $ mvn clean verify sonar:sonar \
-  │    $     -Dsonar.projectKey=test2 \
-  │    $     -Dsonar.host.url=http://...:9000 \
-  │    $     -Dsonar.login=$PROJECT_TOKEN
-  │
-  │  2.alt2) using docker
-  │    $  $ docker run \
-  │    $    --rm \
-  │    $    -e SONAR_HOST_URL="http:...:9000" \
-  │    $    -e SONAR_LOGIN="$PROJECT_TOKEN" \
-  │    $    -v "${YOUR_REPO}:/usr/src" \
-  │    $    sonarsource/sonar-scanner-cli
-  └─────────────────────────────────────────────────
+ 1. Launch SonarQube Server:
+    ```
+    $ docker run -d --name sonarqube               \
+      -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
+      -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
+      -p 9000:9000 sonarqube:latest
+    ```
 
-• See original source for more info about
-   SonarScanner Troubleshooting recipes, advanced docker config,
-   running, caching scanner files ,  usng self-signed certs:
-@[https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/]
+ 2. Create a new project through the web console
+    and annotate the 40-random-chars TOKEN.
+    (Needed by client-side sonar-scanner).
+
+ 3. "CLIENT SIDE"
+    * Setup `${PROJECT_SRC_ROOT}/sonar-project.properties`
+      ```
+      ┌─ sonar-project.properties ──
+      │sonar.projectKey=my:project  ← Required
+      │
+      │#sonar.projectName=...       ← def:project key
+      │#sonar.projectVersion=1.0    ← def:'not provided'
+      │sonar.sources=src/java/      ← relative to
+      │                               sonar-project.properties
+      │#sonar.sourceEncoding=UTF-8
+      │sonar.java.binaries=./build/ ← compiled *class dir.
+      │sonar.java.libraries=...     ← ex: /lib/*.jar,./plugins/lib/*jar
+      └─────────────────────────────
+      ```
+
+    * launch client scanner like:
+       ```
+       $ mvn clean verify sonar:sonar \        <· alt1) using mvn plugin
+           -Dsonar.projectKey=test2 \
+           -Dsonar.host.url=http://...:9000 \
+           -Dsonar.login=$PROJECT_TOKEN
+
+       $ docker run \                          <· alt2) using docker
+         --rm \
+         -e SONAR_HOST_URL="http:...:9000" \
+         -e SONAR_LOGIN="$PROJECT_TOKEN" \
+         -v "${YOUR_REPO}:/usr/src" \
+         sonarsource/sonar-scanner-cli
+
+
+* See original source for more info about SonarScanner Troubleshooting
+  recipes, advanced docker config, running, caching scanner files,
+  usng self-signed certs:
+  @[https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/]
   *1: not needed if the associated project is already linked to a
       git repository on the server side.
 
-• alternatives to SonarQube include:
-  - Facebook Infer @[http://fbinfer.com/]
-    (Static analysis Java/C/...)
-  - Scrutinizer:
-  - StopBugs:
-  - Eclipse Static Code Analasys:
-    Eclipse → Properties → Java → Compiler → Errors/Warnings → Null analysis:
-      Null pointer access
-      Potential null pointer access
-      Redundant null check:
-        x Include 'assert' in null analysis
-        x Enable annotation-based null analysis
-          Violation of null specification
-          Conflict between null annotations an null inference
-          Unchecked conversion from non-annotated type to @NonNull type
-          Problems detected by pessimistic analysis fro free type variables
-          Unsafe "@Nonnull" interpretation of the free type variable from library
-          Redundant null anotation:
-          "@NonNull" parametere not annotated in overriding method
-          Missing "@NonNullByDefault" annotation on package
-          x Use default annotations for null specifications (configure)
-          x Inherit null annotations
-          x Enable syntatic null analisys for fields
-      x Treat above errors like fatal compile erros (make compiled code not executable)
 [[qa.101.snarqube}]]
 
 
 # JavaDoc [[{qa.101.javadoc,qa.documentation]]
------------------------+-------------------------------------+-------------------------+-------   Example
-Tag& Parameter         | Usage                               | Applies to              | Since    /**
------------------------+-------------------------------------+-------------------------+-------    * Short one line description.
-@authorJohn Smith      | Describes an author.                | Class, Interface, Enum  |           * <p>
------------------------+-------------------------------------+-------------------------+-------    * Longer description. ...
-@versionversion        | Provides software version entry.    | Class, Interface, Enum  |           * ...here.
-                       | Max one per Class or Interface.     |                         |           * <p>
------------------------+-------------------------------------+-------------------------+-------    * And even more explanations to follow
-@sincesince-text       | Describes when this functionality   | Class, Interface, Enum, |           * in consecutive paragraphs
-                       | has first existed.                  | Field, Method           |           *
------------------------+-------------------------------------+-------------------------+-------    * @author John Bla
-@seereference          | Provides a link to other element    | Class, Interface, Enum, |           * @param  variable Description ....
-                       | of documentation.                   | Field, Method           |           * @return Description ....
------------------------+-------------------------------------+-------------------------+-------    */
-@paramname descrip     | Describes a method parameter.       | Method                  |          public int methodName (...) {
------------------------+-------------------------------------+-------------------------+-------       // method body with a return statement
-@return description    | Describes the return value.         | Method                  |          }
------------------------+-------------------------------------+-------------------------+-------
-@exceptionclass desc   | Describes an exception that may     | Method                  |
------------------------+-------------------------------------+-------------------------+-------
-@throwsclass desc      | be thrown from this method.         |                         |
------------------------+-------------------------------------+-------------------------+-------
-@deprecated descr      | Describes an outdated method.       | Class, Interface, Enum, |
-                       |                                     | Field, Method           |
------------------------+-------------------------------------+-------------------------+-------
-{@inheritDoc}          | Copies the description from the     | Overriding Method       | 1.4.0
-                       | overridden method.                  |                         |
------------------------+-------------------------------------+-------------------------+-------
-{@linkreference}       | Link to other symbol.               | Class, Interface, Enum, |
-                       |                                     | Field, Method           |
------------------------+-------------------------------------+-------------------------+-------
-{@value#STATIC_FIELD}  | Return the value of static field.   | Static Field            | 1.4.0
------------------------+-------------------------------------+-------------------------+-------
-{@codeliteral}         | Formats literal text in the code    | Class, Interface, Enum, | 1.5.0
-                       | font. It is equivalent to           | Field, Method           |
-                       | {@literal}                          | Class, Interface, Enum, | 1.5.0
------------------------+-------------------------------------+-------------------------+-------
-{@literalliteral}      | Denotes literal text. The enclosed  | Field, Method           |
-                       | text is interpreted as not          |                         |
-                       | containing HTML markup or nested    |                         |
-                       | javadoc tags.                       |                         |
------------------------+-------------------------------------+-------------------------+-------
+
+
+
+   Example
+   /**
+    * Short one line description.
+    * <p>
+    * Longer description. ...
+    * ...here.
+    * <p>
+    * And even more explanations to follow
+    * in consecutive paragraphs
+    *                                           Applies to:
+    * @author John Bla                          Class, Interface, Enum
+    * @param  varname Description ....                                         Method
+    * @return description                                                      Method
+    * @version  1.2.3                           Class, Interface, Enum (Max: 1 per Class|Interface)
+    * @since  1.1.1                             Class, Interface, Enum, Field, Method
+    * @seereference  link_to_another_element    Class, Interface, Enum, Field, Method
+    * @exceptionclass desc                                                     Method
+    * @throwsclass desc                                                        Method
+    * @deprecated description_of_outdated Elem. Class, Interface, Enum, Field, Method
+    * {@inheritDoc}     Copies desc. from parent
+    * {@linkreference}  Link to other symbol    Class, Interface, Enum, Field, Method
+    * {@value#STATIC_FIELD}  Return the value of static field.                         Static Field
+    * {@codeliteral}    (Formats literal text   Class, Interface, Enum, Field, Method
+    *                  in the code font. It is
+    *                  equivalent to  {@literal}
+    * {@literalliteral} Denotes literal text.                           Field, Method
+    *                   The enclosed text is interpreted as not
+    *                   containing HTML markup or nested javadoc tags.
+    *
+    */
+   public int methodName (...) {
+       // method body with a return statement
+   }
 [[}]]
-
-
 
 
 # Junit [[{101.qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
@@ -738,16 +715,16 @@ Tag& Parameter         | Usage                               | Applies to       
    }
   }
 
-• Testsuites: run tests in multiple test classes and/or different packages.
+## Testsuites: run tests in multiple test classes and/or different packages.
   @RunWith(JUnitPlatform.class)
   @SelectPackages("com.myComp.junit5.package01")
   public class JUnit5TestSuiteExample
   { }
 
-• See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
+* See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
 [[}]]
 
-• AssertJ (Fluent Assertions) is composed of several modules:  [[{01_PM.TODO]]
+## AssertJ (Fluent Assertions) is composed of several modules:  [[{01_PM.TODO]]
   - core      module: assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
   - Guava     module: assertions for Guava types (Multimap, Optional...)
   - Joda Time module: assertions for Joda Time types (DateTime, LocalDateTime)
@@ -813,7 +790,7 @@ Tag& Parameter         | Usage                               | Applies to       
 [[}]]
 
 # Property Testing [[{qa.testing.property]]
-• A property testing is just something like:
+* A property testing is just something like:
 
   for all (x, y, ...)
   such as precondition(x, y, ...) holds
@@ -825,12 +802,12 @@ Tag& Parameter         | Usage                               | Applies to       
   just have to check for useful characteristics that must be
   seen in the output.
 
-• Property based testing has become quite famous in the functional
+* Property based testing has become quite famous in the functional
   world. Mainly introduced by QuickCheck framework in Haskell, it
   suggests another way to test software. IT TARGETS ALL THE SCOPE
   COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
 
-• Available automated test technics:
+* Available automated test technics:
  @[https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237]
 
           △ • Random
@@ -847,7 +824,7 @@ Tag& Parameter         | Usage                               | Applies to       
             Low  ← Feature compliance →    High
 
 
-• Extracted from @[https://en.wikipedia.org/wiki/QuickCheck].
+* Extracted from @[https://en.wikipedia.org/wiki/QuickCheck].
   List of Java libs for property testing :
   "FunctionalJava's QuickCheck module". FunctionalJava.  2015-08-14
   "Quickcheck for Java". Quickcheck.dev.java.net.        2011-12-09
@@ -858,7 +835,7 @@ Tag& Parameter         | Usage                               | Applies to       
   "jetCheck prop.-based tests    Java 8" (JetBrains)     2018-07-10
 
 
-• e.g. test using 'jqwik':
+* e.g. test using 'jqwik':
   """ fizzBuzz() must return "Fizz"
       for every divisible-by-3 input """
   →  PRECONDITION: Consider inputs in [1 ... 100] divisible by 3
@@ -945,60 +922,833 @@ Tag& Parameter         | Usage                               | Applies to       
   }
 [[}]]
 
-# JBehave [[{qa.testing.bdd,01_PM.TODO]]
-• testing framework for Behaviour-Driven Development (BDD).
-• BDD is an evolution of test-driven development (TDD) and acceptance-test
-  driven design, and is intended to make these practices more
-  accessible and intuitive to newcomers and experts alike. It shifts
-  the vocabulary from being test-based to behaviour-based, and
-  positions itself as a design philosophy.
-
-• How-to-Summary:
-  1) Write story
-    Scenario: A trader is alerted of status
-    Given a stock and a threshold of 15.0
-    When stock is traded at 5.0
-    Then the alert status should be OFF
-    When stock is traded at 16.0
-    Then the alert status should be ON
-
-  2) Map to java
-
-  3) Configure Stories
-
-  4) Run Stories
+# Behavior Driven Development (BDD)
+## BDD KEYPOINTS [[{]]
+  C&P&Summarized from "The Cucumber For Java Book" (by Seb Rose, Matt Wynne and Aslak Hellesøy)
+* Help developers, project managers, product owners and testers
+  develop functional-test scripts:
+  BDD might just seem like a testing tool, but at its heart it’s really a
+  collaboration tool. If you make a genuine effort to write features that work as
+  documentation for the NONTECHNICAL STAKEHOLDERS on your team, you’ll find
+  you are forced to talk with them about details that you might never have
+  otherwise made the time to talk about. Those conversations reveal insights
+  about their understanding of the problem, insights that will help you build
+  a much better solution than you would have otherwise. This is Cucumber’s
+  big secret: the tests and documentation are just a happy side effect; the real
+  value lies in the knowledge you discover during those conversations.
+* For a suite of automated tests to be useful, the team must have
+  absolute trust in it. When even just a single test is compromising that trust,
+  it has a corrosive effect on how everyone feels about the whole test suite.
+* The ubiquitous language your team uses will be driven by the domain you’re
+  working in. If you’re building a system for live-music fans, your ubiquitous
+  language will include words like concert, performance, artist, and venue. If
+  you’re building a catalog of TV shows, you’ll have words like broadcaster,
+  genre, duration, and transmission date in your ubiquitous language.
+  The point is for everyone on the team to use the same words, everywhere. It’s
+  not OK to have a database table called tbl_Performer if the rows in that table
+  represent things that most of the team refers to as artists. Wherever you see
+  schism like this, stop, decide which is the right word to use, make the
+  appropriate correction, and then stick with it.
+  We talk about developing a ubiquitous language because it’s an ongoing
+  process. That development takes work. It takes effort to really listen to one
+  another and agree on the words you’ll use, and it takes discipline to stick to
+  those commitments.
 [[}]]
 
-# BDD Serenity Testing [[{qa.testing.bdd,qa.documentation,01_PM.TODO]]
+# Cucumber BDD [[{]]
+* Multilanguage (Java, Ruby, Go, Python,...)
+
+* Cucumber test flow:
+  ```
+         Project                              1. Describe behaviour
+           │                                  2. Write step definition
+           v                                  3. Run and fail
+        Features      ····┐                   4. Write code to make step pass
+           │              │                   5. Run and pass
+           v              │  Business
+       Scenarios          │  Facing
+           │              │
+           v              │
+         Steps        ····┘
+           │
+           v
+      Step Definitions  ··┐
+           │              │
+           v              │  Technology
+       Support Code       │  Facing
+           │              │
+           v              │
+      Automation Library··┘
+           │
+           v
+      Testing Enviroment  <·· Infra/DevOps
+  ```
+
+## Cucumber JAVA + Maven Setup:
+
+  ```
+  <dependency>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-java</artifactId>
+    <version>1.0.2</version>
+    <scope>test</scope>
+  </dependency>
+
+  <dependency>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-junit</artifactId>
+    <version>1.0.2</version>
+    <scope>test</scope>
+  </dependency>
+  ```
+
+## Ussage from command line:
+   $ java -cp "jars/*" cucumber.api.cli.Main --help
+
+   Example shell script to launch cucumber tests:
+   javac -cp "jars/*" \
+      step_definitions/CheckoutSteps.java <··· compile Steps definitions
+   java -cp "jars/*:." \
+      cucumber.api.cli.Main \             <··· Cucumber CLI interface
+      -p pretty \                         <··· use pretty formatter plugin (or -p progress ..)
+      --snippets camelcase \
+      -g step_definitions \               <··· Where to look for Step definitions
+      --strict                            <··· Returns -1 if there are undef.|pending steps.
+      features/                           <··· Path to *.feature files
+
+--------------------------------------------------------
+
+# Features KEYPOINT:
+# When writing Cucumber features, make readability your main goal.
+# Otherwise, a reader can easily feel more like they’re reading a computer pro-
+# gram than a specification document, which is something we want you to try
+# to avoid at all costs. After all, if your features aren’t easy for nonprogrammers
+# to read, you might as well just be writing your tests in plain old code.
+# Each `Feature` is tested in one or more `Scenario`s (`Scenario Outline`s)
+
+Feature: The user must be able to checkout provided
+  he has control of a credit card
+  # `Background` avoid repetitive code to all scenarios
+  # Don't use it to set up complicated state unless that
+  # state is something the reader actually needs to know.
+  Background:
+    Given I have been issued a new card
+    And I insert the card, entering the correct PIN
+    And I choose "Change PIN" from the menu
+
+
+  # Each scenario is a single concrete example. (isolate test)
+  # Each feature typically has somewhere between five and twenty scenarios,
+  # each describing different examples of how that feature should behave in dif-
+  # ferent circumstances.
+  # Each scenario must be executed **independently** of any other scenario,
+  # that is, they must NOT share state.
+  # Each scenario has one or more steps (`Given`, `When`, `Then`, ...)
+  Scenario
+    Given the price of a "banana" is 40c
+    But the price of 10 "banana" is 300c
+    When I checkout 1 "banana"
+    Then the total price should be 40
+    And I should receive a ticket
+
+  Scenario:
+    Given these Users:
+      | name       | date of birth   | action    |
+      | Michael    | August 29, 1858 | died      |
+      | John       | October 9, 1943 | married   |
+      | Emma       | July    7, 2021 | played    |
+    When the user x
+    Then their marital status should look like:
+      | Michael    | Deceased        |
+      | John       | Married         |
+      | Emma       | Unmarried       |
+
+
+  # Scenario Outline is used when several scenarios
+  # follow exactly the same "pattern" of steps with
+  # just different input values. Placeholders <...>
+  # indicate where we want real values to be replaced.
+  # @tags allows to organize scenarios in cross-cutting
+  # (multidimensional) concerns. This help in:
+  # * Documentation
+  # * Filtering: Cucumbers Hooks executions can be
+  #              conditioned to the existence of a given
+  #              tag for a given Scenario.
+
+  @shopping  @UI  @error_management
+  Scenario Outline: Checkout bananas
+    Given the price of a "banana" is 40c
+    But the price of 10 "banana" is 300c
+    When I checkout <count> "banana"
+    Then the total price should be <total>
+    And I should receive a ticket that looks like
+      """
+         Ticket XXXX-XX-XX
+
+         concept                  | quantity
+         bananas                  | ...
+      """
+
+    # `Examples` provid the table input to the Scenario Outline
+    # See also:
+    # https://github.com/cucumber/cucumber-jvm/tree/main/datatable
+    Examples: Succesul checkout
+      | count | total |
+      | 1     |  40   |
+      | 2     |  80   |
+      | 30    |  300  |
+    Examples: Attempt to buy too many bananas
+      The system doesn't allow to buy more than 100 per person
+      | count | total                |
+      | 1000  | see an error message |
+      | 2000  | see an error message |
+      | 3000  | see an error message |
+
+
+  NOTE: `Given`, `When`, `Then`, `And`, `But` are actually ALIASES to
+        `StepDefAnnotation`. The distintion is made just for human readability.
+
+
+## Tabulated test data [[{]]
+   ```
+   ┌─ BoardSteps ─────────────────────────────────────┐ ┌─ board.feature ──────────────────────────┐
+   │ package tic_tac_toe;                             │ │ Feature:                                 │
+   │                                                  │ │   Scenario:                              │
+   │ import cucumber.api.java.en.*;                   │ │                                          │
+   │ import cucumber.api.PendingException;            │ │                                          │
+   │ import cucumber.api.DataTable;                   │ │                                          │
+   │                                                  │ │                                          │
+   │ // Managing tests with tables:                   │ │                                          │
+   │ public class BoardSteps {                        │ │                                          │
+   │                                                  │ │                                          │
+   │   @Given("^a board like this:$")                 │ │     Given a board like this:             │
+┌··>   public void aBoardLikeThis(DataTable arg1)     │ │     |   | 1 | 2 | 3 |                    │
+·  │  throws Throwable {                              │ │     | 1 |   |   |   |                    │
+·  │     // Mark as pending!!!                        │ │     | 2 |   |   |   |                    │
+·  │     throw new PendingException();                │ │     | 3 |   |   |   |                    │
+·  │   }                                              │ │                                          │
+·  │                                                  │ │                                          │
+·  │   @When("^X plays in row (\\d+), column (\\d+)$")│ │    When X plays in row 2, column 1       │
+·  │   public void                                    │ │                                          │
+·  │     playerXPlaysInRowColumn(int arg1, int arg2)  │ │                                          │
+·  │   throws Throwable {                             │ │                                          │
+·  │     throw new PendingException();                │ │                                          │
+·  │   }                                              │ │                                          │
+·  │                                                  │ │                                          │
+·  │   @Then("^the board should look like this:$")    │ │    Then the board should look like this: │
+·  │   public void                                    │ │     |   | 1 | 2 | 3 |                    │
+├··>      theBoardShouldLookLikeThis(DataTable arg1)  │ │     | 1 |   |   |   |                    │
+·  │   throws Throwable {                             │ │     | 2 | x |   |   |                    │
+·  │     throw new PendingException();                │ │     | 3 |   |   |   |                    │
+·  │   }                                              │ └──────────────────────────────────────────┘
+·  │ }                                                │
+·  └──────────────────────────────────────────────────┘
+└·· For automatic transformation, change DataTable to one of
+    List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
+    E,K,V must be a scalar (String, Integer, Date, enum etc)
+   ```
+[[}]]
+
+## Step Definition Code Snippets
+  ```
+  assertEquals(total, checkout.total()); // Launch AssertionError if false
+  throw new PendingException(); // mark test as pending ("half way" done)
+
+  Cucumber Hooks examples:
+  package hooks;
+  import cucumber.api.Scenario;
+
+  public class SomeTestHooks {
+   //                        /--------v-··· optional: Selectively run the hook
+   @cucumber.api.java.Before("@webTest")  // If Scenario is tagged with tag.
+   public void resetBeforeCallingScenario() {
+     // let's reset to stable state "anything"
+     ...
+   }
+
+   @cucumber.api.java.After
+   public void afterRunningScenario(Scenario scenario) {
+   System.out.println("... " + scenario.getStatus());
+   }
+  }
+  ```
+
+[[}]]
+
+# BDD Serenity Testing [[{qa.testing.bdd.serenity,qa.documentation,01_PM.TODO]]
 @[https://serenity-bdd.github.io/theserenitybook/latest/index.html]
 
-- Serenity BDD is an open source library that aims to make the idea of living
-  documentation a reality.
+* Serenity BDD provides strong support for different
+  types of automated acceptance testing, including:
+- Web testing with Selenium.
+- REST API testing with RestAssured.
+- Highly readable, maintainable and scalable automated
+  testing with the Screenplay pattern.
+- BDD-style executable specifications with Cucumber
 
-- write cleaner and more maintainable automated acceptance and
-  regression tests faster. Serenity also uses the test results to
-  produce illustrated, narrative reports that document and describe
-  what your application does and how it works. Serenity tells you not
-  only what tests have been executed, but more importantly, what
-  requirements have been tested.
+* Serenity reports also include how tests were tested,
+  including step-by-step details and optional screenshots,
+  to truly document what your application does.
+   It not documents what tests have been executed, but
+  WHAT REQUIREMENTS HAVE BEEN TESTED.
 
-- One key advantage of using Serenity BDD is that you do not have to invest time
-  in building and maintaining your own automation framework.
+* It can also integrate with requirements stored in an
+  external source (JIRA or any other test cases management
+  tool), or just use a simple directory-based approach.
 
-- Serenity BDD provides strong support for different types of automated acceptance testing, including:
-  - Rich built-in support for web testing with Selenium.
+* Serenity BDD automated acceptance testing libraries
+  includ:
   - REST API testing with RestAssured.
-  - Highly readable, maintainable and scalable automated testing with the
-    Screenplay pattern.
+  - Highly readable, maintainable and scalable automated
+    testing with the Screenplay pattern.
+  - Rich built-in support for web testing with Selenium.
+  - Cucumber or JBehave for BDD.
 
-- The aim of Serenity is to make it easy to quickly write well-structured,
-  maintainable automated acceptance criteria, using your favourite BDD or
-  conventional testing library. You can work with Behaviour-Driven-Development
-  tools like Cucumber or JBehave, or simply use JUnit. You can integrate with
-  requirements stored in an external source (such as JIRA or any other test cases
-  management tool), or just use a simple directory-based approach to organise
-  your requirements.
+
+## Screenplay Pattern [[{]]
+https://serenity-bdd.github.io/docs/tutorials/screenplay
+* write readable test automation modeled around the user.
+* built on good software engineering principles such as:
+  * Single Responsibility Principle.
+  * Open-Closed Principle
+  * effective use of Layers of Abstraction.
+
+ ┌·performs··>|tasks|¹    ¹Task       : action/s to perform some goal.
+ ·              ◇         ²Interaction: action    with the App.(UI,...)
+ ·              ·
+ ·           made up of
+ ·              ·
+ ├·performs··>|interac-|····· interact with ······┐
+ ·            |tions  ²|··enable·┐                ·
+ ·                               v                v
+|Actor|·······has·········>|Abilities|··invoke··>Tested
+ ·                              ^                test
+ ·                              ·
+ ·                ┌······enable·┘
+ └·· answers·┐    ·
+             v    ·
+         |Questions|
+          about the system
+
+* Example:
+  ```
+
+  ┌───┬─·····················  Screenplay test: User-centric model:
+  ·   ·                        "everything" starts
+  ·   ·                        with the actor, interacting with the app
+  wendy                        to perform tasks and achieve their goals.
+  .attemptsTo(            <··  takes a list of actions ("performables") that
+                               the actor needs to perform. They divide into:
+                               Interactions: when interacting directly with
+                                    the app. (Click button, Open URL, ...)
+
+    Navigate.toTheHomePage(),    <·· Interaction: action with the App.
+    Search.byKeyword("Everest"), <·· Task: action to perform some goal.
+    Ensure
+    .that(DisplayedArticle.firstHeading())
+    .isEqualTo("Mount Everest")
+  );
+  ```
+
+Quick start: clone one of the starter projects.
+
+https://github.com/serenity-bdd/serenity-cucumber-starter
+https://github.com/serenity-bdd/serenity-junit-starter
+https://github.com/serenity-bdd/serenity-junit-screenplay-starter
+https://github.com/serenity-bdd/docs-starter-tutorial
+https://github.com/serenity-bdd/serenity-rest-starter
+https://github.com/serenity-bdd/serenity-jbehave-starter
+https://github.com/serenity-bdd/serenity-cucumber4-starter
+https://github.com/serenity-bdd/bdd-starter
+>https://github.com/serenity-bdd/serenity-cucumber5-starter
+
+Ex: Serenity Screenplay and JUnit 5.
+
+We will use some simple conventions to organise our test classes, based on the standard Maven project structure you can see here:
+
+
+ ┌────────────┬─··········  standard maven convention for JAVA tests
+ src/test/java/todomvc/features   <·· test clases
+ src/test/java/todomvc/screenplay <·· Screenplay classes, designed to be highly modular and reusable,
+                                      and often appear in many tests, so it makes sense to keep them
+                                      separate from the tests themselves.
+
+ src/test/resources/serenity.conf <·· JUnit test results are based on the package structure
+                                      set here the root package for tests.
+ + serenity.test.root = todomvc.features
+
+### Writing an scenario
+
+* Creating the test case:
+   Test: add a 'to do' item (say, "Buy some milk") to an empty list.
+
+  src/test/java/todomvc/features
+
+  package todomvc.features;
+  import net.serenitybdd.junit5.SerenityJUnit5Extension;
+  import net.serenitybdd.screenplay.Actor;
+  import net.serenitybdd.screenplay.actions.Enter;
+  import net.serenitybdd.screenplay.actions.Open;
+  import net.serenitybdd.screenplay.annotations.CastMember;
+  import net.serenitybdd.screenplay.questions.Text;
+  import org.junit.jupiter.api.DisplayName;
+  import org.junit.jupiter.api.Test;
+  import org.junit.jupiter.api.extension.ExtendWith;
+  import org.openqa.selenium.Keys;
+  import static org.assertj.core.api.Assertions.assertThat;
+
+  @ExtendWith(SerenityJUnit5Extension.class)
+  class AddNewTodos {
+    @CastMember(name = "Toby")  <·· declare and instantiate new actor "Toby"
+    Actor toby;                     for our test and assign a webdriver instance
+                                    that he can use to interact with our app
+    @Test                           performing tasks and interactions
+    @DisplayName("Add todo item to empty list")
+    void addToEmptyList() {
+        toby.attemptsTo(
+          Open.url("https://..."),               <·· Interaction 1
+          Enter.theValue("Buy some milk")        <·· Interaction 2
+               .into(".new-todo")
+          .thenHit(Keys.RETURN)                  <·· Interaction 3
+        );
+        var todos = toby.asksFor(
+          Text                          <·· Question: class that knows how to
+            .ofEach(".todo-list label")     retrieve a specific piece of info.
+        );                                  about the state of the application.
+    }
+  }
+
+  $ mvn clean verify  # Generate test reports
+
+$ mvn verify...
+[INFO] -----------------------------------------
+[INFO]  SERENITY TESTS: SUCCESS
+[INFO] -----------------------------------------
+[INFO] | Test cases executed    | 1
+[INFO] | Tests executed         | 1
+[INFO] | Tests passed           | 1
+[INFO] | ...
+...
+[INFO] SERENITY REPORTS
+[INFO]   - Full Report: file:.../index.html
+[INFO] ...
+[INFO] BUILD SUCCESS
 [[}]]
+
+## Rest Testing:  [[{]]
+* TIGHT INTEGRATION WITH REST ASSURED !!!
+  https://serenity-bdd.github.io/docs/tutorials/rest
+
+* PRESETUP:
+ $ editor pom.xml
+   <dependencies>
+     ...
+ +   <dependency>
+ +     <groupId>net.serenity-bdd</groupId>
+ +     <artifactId>serenity-rest-assured</artifactId>
+ +     <version>${serenity.version}</version>
+ +     <scope>test</scope>
+ +   </dependency>
+     ...
+   <dependencies>
+   ...
+ - <reports>single-page-html</reports>      <·· by deleting this line detailed report is generated.
+   src/main/java/starter                    <·· empty. Just testing public Pet Store API
+   src/test/java/starter                    <·· test class/es + helpers
+   src/test/java/starter/petstore/resources <·· re-use (from the template) the contents already there
+
+
+  package starter.petstore;
+  import io.cucumber.java.en.Given;
+  import io.cucumber.java.en.Then;
+  import io.cucumber.java.en.When;
+  import io.restassured.http.ContentType;
+  import io.restassured.mapper.ObjectMapperType;
+  import net.serenitybdd.core.steps.UIInteractions;
+  import org.hamcrest.Matchers;
+  import static net.serenitybdd.rest.SerenityRest.*;
+  public class PetApiActions extends UIInteractions { // <·· Action class (small & reusable)
+
+    @Given("Kitty is available in the pet store")     // <·· Arrange (POST) new pet
+      public Long givenKittyIsAvailableInPetStore() {
+        Pet pet = new Pet("Kitty", "available");
+        Long newId = given()
+          .baseUri("https://petstore.swagger.io")     // <·· config reused in following tests
+          .basePath("/v2/pet")                        // <·· config reused in following tests
+          .body(pet, ObjectMapperType.GSON)
+          .accept(ContentType.JSON)
+          .contentType(ContentType.JSON)
+          .post().getBody().as(Pet.class, ObjectMapperType.GSON)
+          .getId();
+        return newId;                                 // <·· Used as input in next step
+      }
+
+                                           //  ┌─┬─ It will take the value of param (Long) id
+      @When("I ask for a pet using Kitty's ID: {0}")  // <·· Act on the API
+      public void whenIAskForAPetWithId(Long id) {
+        when().get("/" + id);
+      }
+      @Then("I get Kitty as result")                  // <·· Assert. Check API returned JSON.
+      public void thenISeeKittyAsResult() {
+        then()
+        .body("name", Matchers.equalTo("Kitty"));
+      }
+  }
+
+  ──────────────────────────────────────────────────────
+  package starter.petstore;
+  import net.serenitybdd.junit5.SerenityJUnit5Extension;
+  import org.junit.jupiter.api.Test;                  // <··· WARN: Don't mix with org.junit.Test
+  import org.junit.jupiter.api.extension.ExtendWith;  //            (JUnit4)
+  @ExtendWith(SerenityJUnit5Extension.class)          // <··· Don't forget
+  public class WhenFetchingAlreadyAvailablePet {      // <··· test class
+            // └──┴─····· `When` prefix is one of the ways to make sure the method
+            //            is recognized as a test to be run in the Maven build process.
+            //            See pom.xml (maven-failsafe-plugin) for more details on this.
+    Long newPetId = null;
+    PetApiActions petApi;
+    @Test
+    public void fetchAlreadyAvailablePet() {         // ┌─ BDD ──────────────────────────────────┐
+      newPetId = petApi                              // │ Given Kitty is available in pet store  │
+                 .givenKittyIsAvailableInPetStore(); // │   When I ask for a pet using Kitty's ID│
+      petApi.whenIAskForAPetWithId(newPetId);        // │   Then I get Kitty as result           │
+    }                                                // └────────────────────────────────────────┘
+    public void fetchAlreadyAvailablePet() {
+      petApi.thenISeeKittyAsResult();
+    }
+  }
+
+  $ mvn clean verify # Execute tests  # Report generated in target/site/serenity/index.html
+  [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0,
+
+  ...
+[[}]]
+
+## Cucumber + screenplay [[{]]
+  https://serenity-bdd.github.io/docs/tutorials/cucumber-screenplay
+
+  Use Gherkin language in `.feature` file for the well-known TodoMVC project
+  Create living documentation that also serves as a test report and a progress report
+
+  src/main/java/starter
+  src/test/java/starter/helpers
+  src/test/resources/features/*.feature      <··· Executable *.feature specification file
+  src/test/java/starter/stepdefinitions      <··· "glue" code implementing steps mentioned in *.feature files.
+
+  ┌─ add_new_todo.feature ─────────────────────────────────────────────┐
+  │ Feature: Add new item to TODO list                                 │
+  │ Scenario: Add buying milk to the list                              │
+  │              Given Rama is looking at his TODO list                │
+  │              When he adds "Buy some milk" to the list              │
+  │              Then he sees "Buy some milk" as item in the TODO list │
+  └────────────────────────────────────────────────────────────────────┘
+
+  package starter.helpers;
+  import net.serenitybdd.core.pages.PageObject;
+  import net.serenitybdd.screenplay.targets.Target;
+  import net.thucydides.core.annotations.DefaultUrl;
+  @DefaultUrl("https://todomvc.com/examples/angularjs/#/")
+  public class TodoListPage extends PageObject {  // <·· PageObject: (Screenplay pattern) helper class
+                                                  //      containing all the information needed to use
+                                                  //      a given web page
+    public static Target ITEM_NAME_FIELD =
+      Target.the("item name field").locatedBy(".new-todo");
+    public static Target ITEMS_LIST =
+      Target.the(" item list").locatedBy(".todo-list li");
+  }
+
+  package starter.helpers;
+  import net.serenitybdd.screenplay.Performable;
+  import net.serenitybdd.screenplay.Task;
+  import net.serenitybdd.screenplay.actions.Open;
+  public class NavigateTo {
+    public static Performable theTodoListPage() {
+      return Task.where(
+        "{0} opens the Todo list page",
+          Open.browserOn().the(TodoListPage.class));
+      }
+  }
+
+  ────────────────────────────────────────────────────────────────────────────────────
+  package starter.helpers;
+  import net.serenitybdd.screenplay.Performable;
+  import net.serenitybdd.screenplay.Task;
+  import net.serenitybdd.screenplay.actions.Enter;
+  import org.openqa.selenium.Keys;
+  public class AddAnItem {                      // <·· (Screenplay pattern) Utility class
+                                                //     explaining the steps needed to add
+                                                //     an item to the list.
+    public static Performable withName(String itemName){
+      return Task.where(
+        "{0} adds an item with name "+itemName,
+             Enter.theValue(itemName)
+                  .into(TodoListPage.ITEM_NAME_FIELD)
+                  .thenHit(Keys.ENTER)
+        );
+      }
+  }
+
+  ───────────────────────────────────────────────────────────────────────────────────────────
+  package starter.stepdefinitions;
+  import io.cucumber.java.en.Given;
+  import io.cucumber.java.en.Then;
+  import io.cucumber.java.en.When;
+  import net.serenitybdd.screenplay.Actor;
+  import net.serenitybdd.screenplay.ensure.Ensure;
+  import starter.helpers.AddAnItem;
+  import starter.helpers.NavigateTo;
+  import starter.helpers.TodoListPage;
+  import io.cucumber.java.PendingException;
+
+  public class AddItemStepDefinitions {               // <·· translate *feature into code
+                                                      //     It looks like "spoken" English.
+                                                      //     (pleasant side-effect of using Screenplay pattern)
+      @Given("{actor} is looking at his TODO list")
+      public void actor_is_looking_at_his_todo_list(Actor actor) {
+          // throw new PendingException("Not Implemented");          // <·· Throw to mark test as peding (to fulfill)
+          actor.wasAbleTo(NavigateTo.theTodoListPage());
+      }
+      @When("{actor} adds {string} to the list")
+      public void he_adds_to_the_list(Actor actor, String itemName) {
+         actor.attemptsTo(AddAnItem.withName(itemName));
+      }
+      @Then("{actor} sees {string} as item in the TODO list")
+      public void he_sees_as_an_item_in_the_todo_list(Actor actor, String expectedItemName) {
+          actor.attemptsTo(Ensure.that(TodoListPage.ITEMS_LIST).hasText(expectedItemName));
+      }
+  }
+
+     $ mvn clean verify   # Run tests.
+     [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.42 s - in starter.CucumberTestSuite
+     ...
+[[}]]
+
+## 1/2-way integration with JIRA [[{]]
+https://serenity-bdd.github.io/docs/reporting/integrating_with_jira
+
+### One way integration with JIRA
+
+* ... JIRA commonly store requirements as story cards grouped into epics.
+  placed into sprints for project planning
+  ┌─ JIRA Story card: ──────────────────────────────────────────────────────┐
+  │ Flying High / FH-17                                                     │
+  │ "Calculating status based on points"                                    │
+  │ │Edit││Comment│  │Assign││More v│  │Start Progress││Resolve││Close│ ... │
+  │ Details ─────────────────────────────────────────────────────────────── │
+  │ Type:         Story             Status:  OPEN                           │
+  │ Priority:     Major             Resolution: Unresolved                  │
+  │ Affect Ver/s: None              Fix Version/s:  None                    │
+  │ Labels:       None                                                      │
+  │ Epic Link:    "Earning Points"                                          │
+  │ Acceptance:   * New members should start with Bronze status             │
+  │   Criteria    * Memebers should get status updates based on             │
+  │                 status points earned.                                   │
+  │ Description ─────────────────────────────────────────────────────────── │
+  │ As a Frequent Flyer member                                              │
+  │ I want my status to be upgraded as soon as I earn enough points         │
+  │ So that I can benefit from my igher status sooner                       │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  ┌─ KEYPOINT  ──────────────────────────────────────────────────────────────
+  │ acceptance criteria can be built into more detailed scenarios, based on
+  │ concrete examples. We can then automate these scenarios using a BDD
+  │ tool like JBehave.
+  └──────────────────────────────────────────────────────────────────────────
+
+  Acceptance criteria as seen by JBehave scenario:
+  │ Frequent Flyer status is calculated based on points
+┌·> Meta:@issue #FH-17
+· │ Scenario: New members should start out as Bronze members
+· │ Given Jill Smith is not a Frequent Flyer member
+· │ When she registers on the Frequent Flyer program
+· │ Then she should have a status of Bronze
+· │
+· │ Scenario: Members should get status updates based on status points earned
+· │ Given a member has a status of <initialStatus>
+· │ And he has <initialStatusPoints> status points
+· │ When he earns <extraPoints> extra status points
+· │ Then he should have a status of <finalStatus>
+· │
+· │ Examples:
+· │ | initialStatus| initialStatusPoints|extraPoints|finalStatus|notes                |
+· │ | Bronze       | 0                  |300        |Silver     |300 points for Silver|
+· │ | Silver       | 0                  |700        |Gold       |700 points for Gold  |
+· │ | Gold         | 0                  |1500       |Platinum   |1500 points for Plat.|
+·
+└─ @issue associate JBehave-stories|JUnit-tests to JIRA card
+          creating  HTML links to JIRA task.
+
+   JIRA setup:
+   serenity.properties
+ + jira.url=https://srv1.atlassian.netjira.project=FHjira.username=$user.password=$pass
+
+   (props. can also be set in graddle.settings or maven pom.xml)
+
+* Automatically feedback JIRA about tests results:
+
+   pom.xml:
+  │<dependencies>
+  │    ...
+ +│    <dependency>
+ +│        <groupId>net.serenity.plugins.jira</groupId>
+ +│        <artifactId>serenity-jira-requirements-provider</artifactId>
+ +│        <version>xxx</version>
+ +│    </dependency></dependencies>
+  │</dependencies>
+  │...
+  │<build>
+  │    ...
+  │    <plugins>
+  │        ...
+  │        <plugin>
+  │            <groupId>net.serenity.maven.plugins</groupId>
+  │            <artifactId>maven-serenity-plugin</artifactId>
+  │            <version>xxx</version>
+  │            <executions>
+ +│                <execution>
+ +│                    <id>serenity-reports</id>
+ +│                    <phase>post-integration-test</phase>
+ +│                    <goals>
+ +│                        <goal>aggregate</goal>
+ +│                    </goals>
+ +│                </execution>
+  │            </executions>
+  │            <dependencies>
+ +│                <dependency>
+ +│                    <groupId>net.serenity.plugins.jira</groupId>
+ +│                    <artifactId>serenity-jira-requirements-provider</artifactId>
+ +│                    <version>xxx</version>
+ +│                </dependency>
+  │            </dependencies>
+  │        </plugin>
+  │    </plugins>
+  │</build>
+
+   serenity.properties
+  │...
+ +│jira.custom.field.1=Acceptance Criteria     <··· add to report output
+
+   Now, when running the tests,  Serenity will query JIRA to determine
+   the epics and stories that you have defined and list them on the
+   Requirements page of the output report.
+
+   |Overall Test Result|   |Requirements|  |Releases|  ....
+
+    Requirements Overview
+    Requirement Type  |   Total  | Pass   | Fail  | Pending   | Ignored | Untested
+    Epics                   7  ...
+    Stories                15  ...
+    Acceptance Criteria   100  ...  (tests)
+
+
+### Two way integration with JIRA
+
+* Simplest way:
+   ┌─ serenity.properties  ────
+   │ ...
+  +│ serenity.public.url=https://.../serenity/report <·· tell Serenity where reports live
+   │ ...                                                 Serenity will then insert a link
+   │                                                     into the JIRA issue card
+  +│ serenity.jira.workflow.active=true
+                                   └┬─┘
+     (Optional) Update JIRA issue states (deactivated by default)
+     default JIRA workflow: open or in progress issues associated with
+     successful tests will be resolved, and closed or resolved issues
+     associated with failing tests will be reopened.
+
+
+    NOTE: to skip updates to JIRA (for example, testing in local -vs QA enviroment)
+     serenity.skip.jira.updates=true
+
+  Customized JIRA workflows:  (Groovy DSL)
+
+   + serenity.jira.workflow=my-workflow.groovy
+   ┌────────────────┬─·····─┴────────────────┘
+   my-workflow.groovy
+   when 'Open'       , {    'success' should: 'Resolve Issue'}
+   when 'Reopened'   , {    'success' should: 'Resolve Issue'}
+   when 'Resolved'   , {    'failure' should: 'Reopen Issue'}
+   when 'In Progress', {    'success' should: ['Stop Progress','Resolve Issue']}
+   when 'Closed'     , {    'failure' should: 'Reopen Issue'}
+
+
+### RELEASE MANAGEMENT
+In JIRA, project releases are commonly organised into versions:
+
+   PROJECT XXXX
+     Key: FH Lead: ...
+
+     |Overview| |Administration|
+      ^^^^^^^^
+      Summary    ┌─────────────────────────────────────────────────────────────
+      Issues     │ VERSIONS
+      Agile      │ Name           Start Date     Release Date    Description
+      Change Log │ ──────────────────────────────────────────────────────────
+      Reports    │ Release 2.0
+      Versions  ─┤ Iteration 1.3
+      Calendar   │ ...
+                 │ Release 1.0
+                   └─────┬──────┘
+                  - To JIRA they all are flat versions.
+                  - Serenity use a hierarchical structure based on naming convention:
+                    "release"  : 1st level
+                    "iteration": 2nd level
+                    (or "sprint")
+                   - Use next config. property to customize the behaviour. Ex:
+                     serenity.release.types=milestone, release, version
+[[}]]
+
+## TODO:
+  https://serenity-bdd.github.io/docs/reporting/the_serenity_reports
+  Serenity reports aim not only to report test results, but also
+  to document how features are tested, and what the application does.
+
+  https://serenity-bdd.github.io/docs/reporting/living_documentation !!!
+  - BDD Tests as Living documentation describing the software
+
+  https://serenity-bdd.github.io/docs/reporting/filtering_reports
+  https://serenity-bdd.github.io/docs/reporting/additional_reports
+  - e-mail reports!
+  - Single page react app reports.
+
+  https://serenity-bdd.github.io/docs/reporting/reports_custom_info
+  Custom fields can be included in the reports, using values that are
+  either taken from the environment variables or passed into the build
+  via system properties. This can be useful if you want to include the
+  product or build version, the environment the tests were run on, or
+  the test run date.
+
+  https://serenity-bdd.github.io/docs/cloud/selenium-grid
+  execute WebDriver scripts on remote parallel machines (virtual or real)
+  by routing commands sent by the client to remote browser instances.
+
+
+  https://serenity-bdd.github.io/docs/cloud/lambdatest
+  LambdaTest is a cloud platform for test execution and test
+  orchestration. With LambdaTest, Serenity users can extend their
+  automation test coverage of their web and mobile apps on 3000+ real
+  devices, browsers, and operating systems.
+
+  https://serenity-bdd.github.io/docs/cloud/browserstack
+  online platform that allows you to run cross-browser tests in parallel at scale.
+
+  https://serenity-bdd.github.io/docs/cloud/saucelabs
+  seamless integration with the SauceLabs online test automation platform.
+  "Test on thousands of device, browser, and OS configurations – anywhere, any time"
+
+  https://serenity-bdd.github.io/docs/cloud/bitbar
+  seamless integration with the BitBar online test automation platform
+  web, native, or hybrid, securely test your app across real environments
+
+  https://serenity-bdd.github.io/docs/mobile/appium
+  running tests on mobile devices/emulators
+
+  https://serenity-bdd.github.io/docs/reference/serenity-properties
+  Serenity configuration options.
+
+
+
+[[qa.testing.bdd.serenity}]]
 
 [[{async/reactive.testing,qa.testing.async/reactive,01_PM.TODO]]
 # Awaitility(Async->Sync) Tests
@@ -1166,3 +1916,29 @@ Tag& Parameter         | Usage                               | Applies to       
   }
 [[}]]
 
+# TODO:
+## Facebook Infer
+    @[http://fbinfer.com/] (Static analysis Java/C/...)
+## Scrutinizer
+## StopBugs
+## Eclipse Static Code Analasys [[{]]
+    Eclipse → Properties → Java → Compiler → Errors/Warnings → Null analysis:
+    * Null pointer access
+    * Potential null pointer access
+    * Redundant null check:
+        - Include 'assert' in null analysis
+        - Enable annotation-based null analysis
+        - Violation of null specification
+        - Conflict between null annotations an null inference
+        - Unchecked conversion from non-annotated type to @NonNull type
+        - Problems detected by pessimistic analysis fro free type variables
+        - Unsafe "@Nonnull" interpretation of the free type variable from library
+        - Redundant null anotation:
+        - "@NonNull" parametere not annotated in overriding method
+        - Missing "@NonNullByDefault" annotation on package
+          - Use default annotations for null specifications (configure)
+          - Inherit null annotations
+          - Enable syntatic null analisys for fields
+        - Treat above errors like fatal compile erros
+          (make compiled code not executable)
+[[}]]
