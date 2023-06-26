@@ -23,7 +23,7 @@
 
 [[{java,01_PM.TODO]]
 
-• [[{]]
+## [[{]]
   @[https://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/]
   @[https://www.programcreek.com/2015/12/top-10-java-utility-classes/]      @ma
   @[https://www.programcreek.com/2013/09/top-9-questions-for-java-map/]
@@ -36,10 +36,10 @@
 [[}]]
 
 
-• https://blog.frankel.ch/jvm-security/4/ [[{jvm,security}]]
+## https://blog.frankel.ch/jvm-security/4/ [[{jvm,security}]]
 
 
-• SPARTA (anti-malware)
+## SPARTA (anti-malware)
   - Aimed at preventing malware from appearing in an app store.
   - provides an information-flow type-checker customized to Android
     but can also be applied to other domains.
@@ -47,16 +47,16 @@
     The paper "Collaborative verification of information flow for a
     high-assurance app store" appeared in CCS 2014.
 
-• Java 9 to 13 in a Nutshell!!!: @ma
+## Java 9 to 13 in a Nutshell!!!: @ma
   https://bentolor.github.io/java9to13/#/_preview_features_preview_12
 
-• Guava Collections [[{data_structures,qa.data]]
+## Guava Collections [[{data_structures,qa.data]]
 - Widely used Google Core Libraries for Java 6+.
   with as advanced collection types
   https://www.baeldung.com/guava-sets?
 [[}]]
 ######################################################
-• Is Java 17 a Glass Half Full?
+## Is Java 17 a Glass Half Full?
   https://www.infoq.com/news/2021/07/java-17-glass/
 
   Overall, the features present in Java 17 are broadly following the
@@ -75,10 +75,10 @@
   builds upon algebraic data types is only present as a Preview feature
   in Java 17 (and only in a fairly rudimentary form at that).
 
-• Architecture of a Geospatial Application with Java
+## Architecture of a Geospatial Application with Java
   https://www.baeldung.com/java-geospatial-applications
 
-• Eclipse Memory Analyzer Open Source Project
+## Eclipse Memory Analyzer Open Source Project
   https://www.eclipse.org/mat/
   - fast and feature-rich Java heap analyzer that helps you find
     memory leaks and reduce memory consumption.
@@ -88,15 +88,15 @@
     collecting objects, run a report to automatically extract leak
     suspects.
 
-• Java 17, the Next Long-Term Support Release, is Now Available
+## Java 17, the Next Long-Term Support Release, is Now Available
   https://www.infoq.com/news/2021/09/java17-released/
 
-• JDK Mission Control 8.1.0 Released!
+## JDK Mission Control 8.1.0 Released!
   https://foojay.io/today/jdk-mission-control-8-1-0-released/
 
-• https://github.com/topics/snippets-collection
+## https://github.com/topics/snippets-collection
 
-• Scala 3 Overhauls Language for Better Developer Experience
+## Scala 3 Overhauls Language for Better Developer Experience
   https://www.infoq.com/news/2021/06/scala-3-overhaul/
 
  1) Another significant difference between ReentrantLock and the
@@ -122,25 +122,25 @@ called lockInterruptibly(), which can be used to interrupt thread
 when it is waiting for lock. Similarly, tryLock() with timeout can be
 used to timeout if the lock is not available in certain time period. [[}]]
 
-• JAVA DONT's:
+## JAVA DONT's:
   https://dzone.com/articles/we-should-write-java-code-differently?edition=598293#
 
-• Complete how to write files in Guava
+## Complete how to write files in Guava
 
-• aborted compilation of a multi-module (like AbsisParentPom)  [[{maven]]
+## aborted compilation of a multi-module (like AbsisParentPom)  [[{maven]]
   can be restarted (from the last failed module) with '--resume-from' option like:
 $ $ mvn --resume-from=com.myCompany.myModule:MyArtifact \
 $   $ clean install -P myProfile -DskipTests=true            [[}]]
 
 
-• Java Erasure
+## Java Erasure
   Type Erasure is a technique employed the Java compiler to support the use of Generics.
 @[https://developer.ibm.com/recipes/tutorials/java-language-type-erasure/]
 
-• High Perf Persistence
+## High Perf Persistence
   https://www.reddit.com/r/linux/comments/ajkfs0/github_trimstraythepracticallinuxhardeningguide/
 
-• Kryo serialization lib [[{]]
+## Kryo serialization lib [[{]]
   - Object graph serialization library:
    @[https://github.com/EsotericSoftware/kryo]
     Kryo is a fast and efficient binary object graph serialization
@@ -153,7 +153,7 @@ $   $ clean install -P myProfile -DskipTests=true            [[}]]
     This is direct copying from object to object, not object to bytes to
     object.  [[}]]
 
-• java_lang.101,qa.billion_dolar_mistake:
+## java_lang.101,qa.billion_dolar_mistake:
   Optional (1.8+)
 
   Optional<Integer> highestNumber
@@ -194,44 +194,44 @@ CONFIG_SECCOMP=y
 
 [[{qa.testing.101,01_PM.TODO]]
 # Mockito
-• Top voted Java testing framework in StackOverflow
-• Top 10 most-widely used Java amongt 30.000 inspected projects.
+## Top voted Java testing framework in StackOverflow
+## Top 10 most-widely used Java amongt 30.000 inspected projects.
 [[}]]
 
-• Clean JSON Notes.
-• @[https://www.baeldung.com/java-json-binding-api]
+## Clean JSON Notes.
+## @[https://www.baeldung.com/java-json-binding-api]
 
-• Compact monitoring notes: jcmd, Visual Recorder,  CRaSH shell
+## Compact monitoring notes: jcmd, Visual Recorder,  CRaSH shell
   Eclipse Mem.Analizer
 
-• https://eclipse-ee4j.github.io/jakartaee-tutorial/ @ma
+## https://eclipse-ee4j.github.io/jakartaee-tutorial/ @ma
   https://www.uml-diagrams.org/java-ejb-uml-profile-diagram-example.html
   https://www.uml-diagrams.org/java-ejb-state-machine-diagram-example.html
 
-• https://www.uml-diagrms.org/java-7-api-uml-package-diagram-example.html
+## https://www.uml-diagrms.org/java-7-api-uml-package-diagram-example.html
   https://www.uml-diagrams.org/examples/java-servlet-25-api-package-diagram-example.html
   https://www.uml-diagrams.org/examples/java-servlet-30-api-package-diagram-example.html
   https://www.uml-diagrams.org/java-thread-uml-state-machine-diagram-example.html
 
-• https://www.uml-diagrams.org/tomcat-server-uml-composite-structure-diagram-example.html
+## https://www.uml-diagrams.org/tomcat-server-uml-composite-structure-diagram-example.html
   https://www.uml-diagrams.org/web-application-clusters-uml-deployment-diagram-example.html
 
 
-• https://github.com/google/re2j
+## https://github.com/google/re2j
   linear time regular expression matching in Java
   If you use regular expression patterns with a high degree of
   alternation, your code may run faster with RE2/J. In the worst case,
   the java.util.regex matcher may run forever, or exceed the available
   stack space and fail; this will never happen with RE2/J.
 
-• weekly Inside Java Newscast:
+## weekly Inside Java Newscast:
   https://www.youtube.com/playlist?list=PLX8CzqL3ArzX8ZzPNjBgji7rznFFiOr58
 
-• Who-is-Who:
+## Who-is-Who:
   https://nipafx.dev/nicolai-parlog/
   Java developer advocate at Oracle
 
-• plans for Java in 2022.
+## plans for Java in 2022.
   https://www.youtube.com/watch?v=4Y3LijiBxRA
   focus on the four main Java projects:
   · https://openjdk.java.net/projects/amber
@@ -245,10 +245,10 @@ CONFIG_SECCOMP=y
     · Enhanced volatiles
     · and possibly othe related topics, such as reified generics
 
-• https://openjdk.java.net/jeps/0
+## https://openjdk.java.net/jeps/0
 
 
-• Testing add notes:    @ma
+## Testing add notes:    @ma
   • mockito,
     https://github.com/mockito/mockito/wiki/Features-And-Motivations
     "...Mockito has very slim API, almost no time is needed to start mocking.
@@ -256,45 +256,45 @@ CONFIG_SECCOMP=y
       mocks. Just remember that stubbing goes before execution,
       verifications of interactions go afterwards... "
 
-• Add notes on JUnit parameterized tests.
+## Add notes on JUnit parameterized tests.
   https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests
 
-• Apple has open-sourced GCGC, a tool for Java Garbage Collector (GC)
+## Apple has open-sourced GCGC, a tool for Java Garbage Collector (GC)
   logs visualization based on Python 3 and pandas.
   https://www.infoq.com/news/2022/01/apple-gcgc-java/
   https://github.com/apple/GCGC
 
-• GCGC uses a Jupyter notebook to analyze and visualize GC log files. A
+## GCGC uses a Jupyter notebook to analyze and visualize GC log files. A
   notebook is provided for the analysis and it generates plots and
   tables from collected GC information.
 
-• https://theboreddev.com/understanding-java-streams @ma?
+## https://theboreddev.com/understanding-java-streams @ma?
 
-• Data Oriented Programming in Java
+## Data Oriented Programming in Java
    https://www.infoq.com/articles/data-oriented-programming-java/
 
-• cache2k - Java Caching –https://cache2k.org/
+## cache2k - Java Caching –https://cache2k.org/
 
-• Java 18
+## Java 18
   https://www.infoq.com/news/2022/03/java18-released/
-• Failsafe 3.2 Released with New Resilience Policies
+## Failsafe 3.2 Released with New Resilience Policies
   https://www.infoq.com/news/2022/02/failsafe-resilience-3/
 
-• 101: Six Features From Java 12 to 17 to Get Excited About!
+## 101: Six Features From Java 12 to 17 to Get Excited About!
   https://www.infoq.com/articles/six-features-jdk12-to-jdk17/
 
-• log4j, Log4Shell: A new fix, details of active attacks, and risk mitigation recommendations
+## log4j, Log4Shell: A new fix, details of active attacks, and risk mitigation recommendations
   https://www.helpnetsecurity.com/2021/12/15/log4shell-mitigation/
 
-• E-book Collection Page | Red Hat DeveloperLot of books about quarkus!!!
+## E-book Collection Page | Red Hat DeveloperLot of books about quarkus!!!
   https://developers.redhat.com/e-books
-• Introducing the KivaKit Framework
+## Introducing the KivaKit Framework
   https://www.infoq.com/articles/introducing-kivakit/
 
-• concurrency, 101? Measuring ForkJoinPool Parallelism
+## concurrency, 101? Measuring ForkJoinPool Parallelism
   https://www.javaspecialists.eu/archive/Issue297-Measuring-ForkJoinPool-Parallelism.html
 
-• Why SOLID principles are still the foundation for modern software architecture [[{]]
+## Why SOLID principles are still the foundation for modern software architecture [[{]]
 https://stackoverflow.blog/2021/11/01/why-solid-principles-are-still-the-foundation-for-modern-software-architecture/ 
   - Single responsibility principle Original definition: “There should
     never be more than one reason for a class to change.”If you write a
@@ -337,10 +337,10 @@ https://stackoverflow.blog/2021/11/01/why-solid-principles-are-still-the-foundat
     causing breakages elsewhere accidentally.
 [[}]]
 
-• persistence: No More MultipleBagFetchException Thanks to Multiset Nested Collections SQL and jOOQ.
+## persistence: No More MultipleBagFetchException Thanks to Multiset Nested Collections SQL and jOOQ.
   https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/
 ______________________________
-• Troubleshooting Java Applications with Eclipse Jifa [[{]]
+## Troubleshooting Java Applications with Eclipse Jifa [[{]]
   https://www.infoq.com/news/2022/02/eclipse-jifa/ 
 The analytic engine currently has two parts: the Heap Dump Analysis
 service based on Eclipse Memory Analyzer (MAT) and the GC Log
@@ -361,7 +361,7 @@ apps comes in tiny packages
 https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214
 [[}]]
 
-• Azul Launches Java Cloud Compiler
+## Azul Launches Java Cloud Compiler
   https://www.infoq.com/news/2022/02/azul-cloud-compiler/ 
   Azul Intelligence Cloud introduces a third option that bridges the
   benefits of JIT (peak performance) with the benefits of AOT (fast
@@ -378,53 +378,53 @@ https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214
 https://www.baeldung.com/java-weekly-425
 
 
-• Java, quarkus + neo4j,...:
+## Java, quarkus + neo4j,...:
   https://www.infoq.com/news/2021/10/java-news-roundup-oct04-2021/
 
-• Security: Detect and block Log4j exploitation attempts with CrowdSec
+## Security: Detect and block Log4j exploitation attempts with CrowdSec
   The OOSS & collaborative IPS
 https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 
-• https://github.com/JakeWharton/RxRelay
+## https://github.com/JakeWharton/RxRelay
   Subjects and Relays allow to bridge non-Rx APIs into Rx easily, and without
   the worry of accidentally triggering a terminal state.
 
-• JAVA Example Architecute:
+## JAVA Example Architecute:
   In the case of Java, we may add new libraries (with all its
   transitive dependencies) for each of the “microservicilitities”,
   such as Resiliency4J for resiliency, Jaeger for tracing, or
   Micrometer for monitoring.
 
-• JAVA JDK version, JVM version, javac -source/-target/-release/ ... related info: [[{java,01_PM.TODO}]]
+## JAVA JDK version, JVM version, javac -source/-target/-release/ ... related info: [[{java,01_PM.TODO}]]
   https://stackoverflow.com/questions/43102787/what-is-the-release-flag-in-the-java-9-compiler
 
 # JVM Journey to Cloud-native [[{cloud.101,01_PM.TODO]]
 (by BellSoft)
-• JDK 9 : Compact Strings
+## JDK 9 : Compact Strings
           HTTP/2 client
-• JDK 10: Docker awareness
-• JDK 11: ZGC
-• JDK 12: Return unused memory
+## JDK 10: Docker awareness
+## JDK 11: ZGC
+## JDK 12: Return unused memory
           Shenandoah GC
-• JDK 13: Uncommit unused memory for ZGC
-• JDK 14: JFR Event Streaming
-• JDK 15: Reimplement Datagram Socker API
+## JDK 13: Uncommit unused memory for ZGC
+## JDK 14: JFR Event Streaming
+## JDK 15: Reimplement Datagram Socker API
           Hidden Classes
 
-• JDK 16: Elastic metaspace
+## JDK 16: Elastic metaspace
           Alpine Linux port
 
 [[}]]
 
 # JPA Summary [[{01_PM.TODO]]
-• Java: Migrating from JPA 2.x to 3.0
+## Java: Migrating from JPA 2.x to 3.0
   https://thorben-janssen.com/migrating-jpa-2-x-to-3-0/?ck_subscriber_id=935368299
-• https://www.javacodegeeks.com/2015/02/jpa-tutorial.html
+## https://www.javacodegeeks.com/2015/02/jpa-tutorial.html
 [[}]]
 
 
 # JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
-• JDeps: dependency analysis tool for Java bytecode (class files and JARs).
+## JDeps: dependency analysis tool for Java bytecode (class files and JARs).
 @[https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/]
 
 $ $ jdeps sh-2.6.3.jar       ←  -verbose:class will list dependencies between classes
@@ -660,7 +660,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 
 # R2DBC API [[{async/reactive,persistence.sql,01_PM.TODO]]
 @[https://www.infoq.com/news/2018/10/springone-r2dbc]
-• Project initiated by Pivotal to provide an async/reactive alternative to JDBC.
+## Project initiated by Pivotal to provide an async/reactive alternative to JDBC.
 
   WARN : Since Spring Data R2dbc evolved very quickly, thre are plenty
          of breaking changes introduced since Spring 5.2 and Spring
@@ -771,8 +771,8 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 # SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,qa,01_PM.TODO]]
 @[https://smallrye.io/smallrye-mutiny/]
 
-• SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
-• Mutiny is designed after having experienced many issues with other
+## SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
+## Mutiny is designed after having experienced many issues with other
   Reactive programming libraries and having seen many developers lost
   in an endless sequence of flatMap. Mutiny takes a different approach.
   First, Mutiny does not provide as many operators as the other famous
@@ -790,18 +790,18 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 @[https://www.youtube.com/watch?v=DKJ0w30M0vg]
 ──────────────────────────────────────────────
 # Apache MINA:Netty Alt.
-• Apache MINA vs Netty: https://www.youtube.com/watch?v=A2pWsxPWJuc
-• network application framework which helps users develop high
+## Apache MINA vs Netty: https://www.youtube.com/watch?v=A2pWsxPWJuc
+## network application framework which helps users develop high
   performance and high scalability network applications easily. It provides an
   abstract event-driven asynchronous API over various transports such as TCP/IP
   and UDP/IP via Java NIO.
 
-• Apache MINA is often called:
+## Apache MINA is often called:
   - NIO framework library
   - client server framework library, or
   - a networking socket library
 
-• Apache MINA comes with many subprojects :
+## Apache MINA comes with many subprojects :
   - Asyncweb : An HTTP server build on top of MINA asynchronous framework
   - FtpServer : A FTP server
   - SSHd : A Java library supporting the SSH protocol
@@ -923,7 +923,7 @@ is.close();
 @[https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html]
 @[https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm]
 @[https://spring.io/guides/gs/async-method/]
-• Q:"Why Reactor when there's already RxJava2?"
+## Q:"Why Reactor when there's already RxJava2?"
    - RxJava2 is java 6 while for Reactor the Spring team decided to go all in
      and focus only on Java 8. This means that you can make use of all the new
      and fancy Java 8 features.
@@ -1085,7 +1085,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
 # Real-World Java 9 [[{async/reactive.101,java_lang.flow_api,java_lang.101,01_PM.TODO]]
 @[https://www.infoq.com/presentations/java9-flow-stream-api/?utm_source=oficina24x7.com]
 
-• Real-World Java 9:
+## Real-World Java 9:
   Trisha Gee shows via live coding how we can use the new Flow API to
   utilize Reactive Programming, how the improvements to the Streams API
   make it easier to control real-time streaming data and how the
@@ -1097,7 +1097,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
 # Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,cloud.k8s]]
 @[https://developers.redhat.com/blog/2020/07/27/deploy-your-java-web-application-into-the-cloud-using-eclipse-jkube/]
 
-• JKube Maven  converts war (dependent of a container) into cloud-native app.
+## JKube Maven  converts war (dependent of a container) into cloud-native app.
 
   - pom.xml:
     <!-- ... -->
@@ -1139,7 +1139,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
       </plugins>
     </build>
 
-• example project contains three Java classes:
+## example project contains three Java classes:
   └ ExampleInitializer: replaces standard WEB-INF/web.xml
     registering Spring's DispatcherServlet directly.
 
@@ -1427,13 +1427,13 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 
 # Java Poet [[{01_PM.backlog]]
 @[https://github.com/square/javapoet]
-• Java API for generating .java source files.
-• useful for:
+## Java API for generating .java source files.
+## useful for:
   - transpiling: Custom language to java.
   - annotation processing
   - interacting with metadata files (database schemas, protocol formats,...).
 
-• Avoid boilerplate while also keeping a  single source of truth .
+## Avoid boilerplate while also keeping a  single source of truth .
 [[}]]
 
 # Storing HttpSessions to Redis [[{persistence.session,scalability.cache,architecture.distributed]]
@@ -1443,7 +1443,7 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 
 # Dekorate k8s annotations [[{cloud.k8s,01_PM.backlog]]
 @[https://developers.redhat.com/blog/2021/03/17/using-dekorate-to-generate-kubernetes-manifests-for-java-applications/]
-• ex:
+## ex:
   JAVA ANOTATION INPUT
   ====================
   @KubernetesApplication(
@@ -1462,7 +1462,7 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
   $ $ kubectl apply -f kubernetes.yml -n demo
   · target/classes/META-INF/dekorate/kubernetes.json
 
-• Integration with Jib to generate OCI images is also available.
+## Integration with Jib to generate OCI images is also available.
 [[}]]
 
 # Servlet servers Arch [[{01_PM.TODO,standards.jee.servlets]]
@@ -1483,52 +1483,52 @@ embedded servers usually comprise two logical components:
 
 # Yourkit profiler [[{java_lang.profiling,01_PM.radar]]
 @[https://www.yourkit.com/java/profiler/features/]
-• Yourkit: commercial (non OOSS) profiler with advanced features
-• Tight integration with your IDE
-• "Smart what if"  allows to evaluate performance gains of supposed optimizations
+## Yourkit: commercial (non OOSS) profiler with advanced features
+## Tight integration with your IDE
+## "Smart what if"  allows to evaluate performance gains of supposed optimizations
   without re-profiling the application.
-• CPU call tree
-• Flame graphs
-• Database queries and web requests:
+## CPU call tree
+## Flame graphs
+## Database queries and web requests:
   - display slow SQL queries and web requests.
   (support for MongoDB, Cassandra, HBase,...)
 
-• Memory profiling: object heap, traversing of object graph.
+## Memory profiling: object heap, traversing of object graph.
   The Profiler chooses the best way to show you a content of a HashMap, String, ... ).
   For each object you can see how much memory it retains, and what happens when
   particular reference in object graph does not exist.
   This saves time, and lets you estimate the expected memory leak fix without changing the code.
 
-• Memory profiling:
+## Memory profiling:
 
-• 40+ comprehensive inspections are waiting to make your code faster and more efficient.
+## 40+ comprehensive inspections are waiting to make your code faster and more efficient.
 
-• Profiler knows a lot about typical issues in Java applications and automatically finds them.
+## Profiler knows a lot about typical issues in Java applications and automatically finds them.
 
-• Report inefficient collections and I/O operations.
+## Report inefficient collections and I/O operations.
 
-• Find/Resolve thread synchronization issues.
+## Find/Resolve thread synchronization issues.
   It is possible to combine thread states with HTTP requests and SQL queries to get
   the full picture how the requests are processed by your applications.
 
-• Exception profiling: Massive exception throwing is a common but often hidden
+## Exception profiling: Massive exception throwing is a common but often hidden
   performance problem.
 
-• Deobfuscate the code on the fly restoring original class, method and field names of
+## Deobfuscate the code on the fly restoring original class, method and field names of
   applications obfuscated with ProGuard, yGuard, Zelix KlassMaster, Allatori, and other
   popular Java obfuscators.
 
-• control profiling overhead up to production profiling.
+## control profiling overhead up to production profiling.
 
-• Extensible API to create custom probes.
+## Extensible API to create custom probes.
 
-• Command line support. (UI free).
+## Command line support. (UI free).
 
-• free licenses for non-commercial open source projects.
+## free licenses for non-commercial open source projects.
   Special offers for educational and scientific organizations.
 [[}]]
 
-• LMAX Disruptor: High Perf Inter-Thread Messaging Library [[{concurrency,01_PM.radar]]
+## LMAX Disruptor: High Perf Inter-Thread Messaging Library [[{concurrency,01_PM.radar]]
 @[https://lmax-exchange.github.io/disruptor/]
 
 See also:
@@ -1539,14 +1539,14 @@ LMAX Exchange Getting Up To 50% Improvement in Latency From Azul's Zing JVM
 Interesting points about GC tunning.
 [[}]]
 
-• Tribe: reliable multicast [[{java_lang.io.multicast,architecture.distributed,scalability.distributed]]
+## Tribe: reliable multicast [[{java_lang.io.multicast,architecture.distributed,scalability.distributed]]
                             [[doc_has.comparative,qa,01_PM.low_code,01_PM.radar]]
 REF: @[http://tribe.ow2.org/]
 - Unlike JGroups, Tribe only targets reliable multicast
  (no probabilistic delivery) and is optimized for cluster
  communications.
 
-• JGroups multicast
+## JGroups multicast
 @[http://www.jgroups.org/]
 - toolkit for reliable multicast communication.
 - point-to-point FIFO communication channels (basically TCP)

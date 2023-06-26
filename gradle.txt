@@ -117,7 +117,7 @@
     Logic must be delegated to plugins and custom models  [[{qa.BEST_PATTERN]]
     (vs build scripts)                                    [[}]]
 
-• Project Coordinates: Help to univocally identify a project and its versions.
+## Project Coordinates: Help to univocally identify a project and its versions.
   'group   :module     :version' <- gradle terminology [[{02_doc_has.comparative]]
   'groupId :artifactId :version' <- maven  terminology [[}]]
 
@@ -263,7 +263,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
     │ }
     └───────────────────────────
 
-• 'gradle.properties' to customize Gradle build-runtime settings:
+## 'gradle.properties' to customize Gradle build-runtime settings:
 
    org.gradle.caching=true                    [[{gradle.performance]]
    org.gradle.parallel=true                   [[}]]
@@ -279,7 +279,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
                       -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
    https://docs.gradle.org/current/userguide/build_environment.html#sec:configuring_jvm_memory
 
-• 'gradle.properties' to customize the Gradle Project object itself:
+* 'gradle.properties' to customize the Gradle Project object itself:
 
    org.gradle.project.rootProject=....
    org.gradle.project.settingsDir=....
@@ -347,7 +347,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   }
 [[gradle.multimodule}]]
 
-• What's New [[{01_PM.WHATS_NEW]]
+## What's New [[{01_PM.WHATS_NEW]]
 - Gradle v6:
 @[https://www.infoq.com/news/2020/01/gradle-releases-version-6/]
 [[}]]
@@ -428,7 +428,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
      set called main, which is used for the project's production code.
 
 
-• Customizing default source-sets (Not recomended except for compatibility
+## Customizing default source-sets (Not recomended except for compatibility
   with old projects). At build.gradle added something like:
   sourceSets {
       main { java { srcDirs = ['src'] } } <··· Alt 1: Complete override defaults
@@ -437,7 +437,7 @@ REF: @[https://docs.gradle.org/current/userguide/gradle_wrapper.html]
   }                                            - setting a property   replaces values.
                                                - corresponding method appends values.
 
-• Changing compiler options
+## Changing compiler options
 compileJava {
     options.incremental = true   <··· incremental compilation
     options.fork = true          <··· use new JVM process for compiler
@@ -446,12 +446,12 @@ compileJava {
 }                                     location for annotation processors used by compiler ...
                                       compiler can find .
 
-• when should you define a custom source set?
+## when should you define a custom source set?
   - source need to be compiled with a unique classpath
   - Generate classes handled differently from the main/test ones
   - Form a natural part of the project
 
-• Java properties files and reproducible builds
+## Java properties files and reproducible builds
   WriteProperties TASK:
   - fixes well-known problem:
     - Properties.store() -standard Java API-
@@ -459,7 +459,7 @@ compileJava {
       of incremental builds.
   - WriteProperties fix the problem.
 
-• Reusing shared Manifests:
+## Reusing shared Manifests:
   (merging manifests into a single new one is also possible)
   ext.sharedManifest = manifest {              <···· Create standalone (shared) Manifest
       attributes("Implementation-Title": "Gradle",
@@ -472,7 +472,7 @@ compileJava {
   }
 
 
-• ex: use Asciidoc  in Javadoc comments.   [[{qa.documentation.asciidoc]]
+## ex: use Asciidoc  in Javadoc comments.   [[{qa.documentation.asciidoc]]
   NOTE: This configuration is optional (but elegant)
   · configurations { asciidoclet }
   · dependencies {
@@ -494,13 +494,13 @@ compileJava {
 
   [[}]]
 
-• The Java Library Plugin (on top of Java Plugin) allows gradle to
+## The Java Library Plugin (on top of Java Plugin) allows gradle to
 distinguish between two different types of dependencies: those
 requiring the library at compile and those that are also required to
 compile the consumer and have task to create the POM file.
 
 
-• War Plugin (on top of Java Plugin) adds an extra packaging step to:
+## War Plugin (on top of Java Plugin) adds an extra packaging step to:
   - Copies static resources from src/main/webapp into root of WAR
   - Copies the compiled production classes into a WEB-INF/classes
   - Copies lib.dependencies into WEB-INF/lib subdirectory
@@ -508,7 +508,7 @@ compile the consumer and have task to create the POM file.
 [[gradle.java_projects}]]
 
 # TODO/Non-classified [[{01_PM.TODO]]
-• CUSTOMIZING THE WRAPPER
+## CUSTOMIZING THE WRAPPER
   The built-in wrapper task exposes numerous options to customize the runtime behavior.
   -   build.gradle.kts:
       build.tasks.wrapper {
@@ -526,7 +526,7 @@ compile the consumer and have task to create the POM file.
     @gradle/wrapper/gradle-wrapper.properties:
     distributionSha256Sum=371cb9fbebbe9880d147f59bab36d61eee122854ef8c9ee1ecf12b82368bcf10
 
-• https://scans.gradle.com/ [[{troubleshooting]]
+## https://scans.gradle.com/ [[{troubleshooting]]
    Build Scan™: shareable record of a build providing insights into
    what happened and why. You can create a Build Scan at
    scans.gradle.com for the Gradle and Maven build tools for free.
@@ -536,28 +536,30 @@ compile the consumer and have task to create the POM file.
    link, printed at the end of the build. You can delete the
    Build Scan when you are finished. [[}]]
 
-• Groovy DSL:
-• https://dev.to/jmfayard/how-kotlin-makes-editing-your-gradle-build-less-frustrating-232l
-• Kotlin DSL:
+## Groovy DSL:
+  https://dev.to/jmfayard/how-kotlin-makes-editing-your-gradle-build-less-frustrating-232l
+## Kotlin DSL:
 
-• https://docs.gradle.org/current/userguide/core_dependency_management.html#dependency_management_in_gradle
+## dependency_management_in_gradle
+https://docs.gradle.org/current/userguide/core_dependency_management.html#dependency_management_in_gradle
 [[01_PM.TODO}]]
 
-• https://docs.gradle.org/current/userguide/java_testing.html#java_testing
+## java_testing
+https://docs.gradle.org/current/userguide/java_testing.html#java_testing
 
-
-• https://kotlinlang.org/docs/ksp-overview.html
+## Kotlin Symbol Processing (KSP) API
+  https://kotlinlang.org/docs/ksp-overview.html
   Kotlin Symbol Processing (KSP) API allows to create
   lightweight compiler plugins.
   Compared to kapt, annotation processors run up to x2 times faster.
 
-• JAVA PLUGIN Tasks: ???
+## JAVA PLUGIN Tasks: ???
   Kotlin PLUGIN Tasks ???
   assemble, check, build, jar, javadoc, clean ,...
   Gradle command to list available plugins???
   Gradle command to list tasks in a plugin???
 
-• Further reading:
+* Further reading:
   https://docs.gradle.org/current/userguide/building_java_projects.html
   https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
   https://docs.gradle.org/current/userguide/dynamic_versions.html#sub:declaring_dependency_with_changing_version

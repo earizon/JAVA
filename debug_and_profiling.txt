@@ -25,22 +25,21 @@
   AppDynamics, Dynatrace, ...
 [[}]]
 
-• Debug remote (container) JVM [[{java_lang.debugging,devops.containarization,jvm.monitoring,monitoring.jvm]]
-• STEP 1: inject next ENV.VAR into app JVM:
+## Debug remote (container) JVM [[{java_lang.debugging,devops.containarization,monitoring]]
+1. inject next ENV.VAR into app JVM:
   JAVA_TOOL_OPTIONS=""
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS}-agentlib:jdwp=transport=dt_socket"
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},server=y"
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},suspend=n"
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},address=*:8001"
                                       ┌──┬──────────┴──┘
-• STEP 2: Export debuggin port (e.g.: 8001)
+          Export debuggin port (e.g.: 8001)
 
-• STEP 3: In JAVA IDE configure debugger to attach to remote machine
+1. In JAVA IDE configure debugger to attach to remote machine
   (e.g., in IntelliJ , add remote debugger in Run/Debug Configurations)
 [[}]]
 
-
-# 'man 1 jcmd' Summary: [[{101,JVM.monitoring.101,java_lang.debugging]]
+## 'man 1 jcmd' Summary: [[{101,monitoring.101,java_lang.debugging]]
                         [[java_lang.profiling,monitoring.flight_recorder]]
 - 'jcmd' must run on same machine+user+group on which the JVM is running.
 
@@ -220,7 +219,7 @@
 [[}]]
 
 # CRaSH shell [[{monitoring.101,java_lang.debugging,01_PM.low_code,01_PM.TODO]]
-• Features:
+* Features:
   ✓ Connect to any JVM running CRaSH through SSH, telnet or web.
   ✓ Monitor and/or use virtual machine resources:
     JMX, database access, threads, memory usage, ...
@@ -299,9 +298,9 @@ class Example {                                     timespent=0
 }
 [[}]]
 
-# Fast Thread [[{java_lang.debugging,jvm.monitoring.threads,01_PM.radar]]
+# Fast Thread [[{java_lang.debugging,monitoring.threads,01_PM.radar]]
 @[https://fastthread.io/]
-• Features:
+* Features:
   ✓ Java Thread Dump Analyzer
   ✓ Troubleshoot JVM crashes, slowdowns, memory leaks, freezes, CPU Spikes
   ✓ Instant RCA (don`t wait for Vendors)
@@ -313,7 +312,7 @@ class Example {                                     timespent=0
 [[{jvm.memory,jvm.gc,java_lang.debugging,qa,01_PM.low_code,01_PM.TODO]]
 # gceasy.io
 @[https://gceasy.io/]
-• Features:
+* Features:
   ✓ machine learning guided Garbage collection log analysis tool.
     GCeasy has in-built intelligence to auto-detect problems in the JVM & Android
     GC logs and recommend solutions to it.

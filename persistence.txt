@@ -1,29 +1,29 @@
 JAVA persistence:
 
 # Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,cloud.*,spring.*,persistence.jpa,01_PM.TODO]]
-• tool providing version control for database (SQL) schemas
+* tool providing version control for database (SQL) schemas
   and automated schema (tables, columns, sequences), data, views, procedures
   and packages evolution.
-• Single source of truth for DDBB versioning.
-• highly reliable
-• Supports for many different SQL databases, including        [cloud]
+* Single source of truth for DDBB versioning.
+* highly reliable
+* Supports for many different SQL databases, including        [cloud]
   cloud ones (Amazon RDS, Azure Database, Google Cloud SQL).
 
   ##########
   # HOW-TO #
   ##########
-• PRESETUP: The target database to manage and user with update privileges be created first,
+* PRESETUP: The target database to manage and user with update privileges be created first,
             "outside" of flyway.
 
-• Database changee are called   Migrations . They can be:
+* Database changee are called   Migrations . They can be:
   · Versioned  migrations: identified by a version number, applied in order exactly once.
                            An optional revert migration version can be provided to roolback
                            changes in case of error.
   · Repeatable migrations:
 
-• Flyway used an internal flyway_schema_history ddbb to keep track of migrations applied .
+* Flyway used an internal flyway_schema_history ddbb to keep track of migrations applied .
 
-• SQL and JAVA  migrations in src/main/resources/db/migration/ are automatically      [spring]
+* SQL and JAVA  migrations in src/main/resources/db/migration/ are automatically      [spring]
   applied in Spring Boot when  'org.flywaydb:flyway-core' compile dependency is
   detected.
   src/main/resources/db/migration/
@@ -71,11 +71,12 @@ JAVA persistence:
     Supported platforms: DB2, H2, HSQLDB, Microsoft SQL Server, MongoDB,
     Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
   """
-• Alternatives to Flyway include LiquidBase, ... [TODO]
+* Alternatives to Flyway include LiquidBase, ... [TODO]
 [[}]]
 
 # Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
 @[https://www.jooq.org/]
+* WARN: Free for OOSS databases, requires licence for Oracle and others.
 
 # Vertx+Jooq
 @[https://github.com/jklingsporn/vertx-jooq]
@@ -84,6 +85,51 @@ JAVA persistence:
 @[https://github.com/jklingsporn/vertx-jooq]
 
 [[}]]
+
+# MyBatis: [[{]]
+C&P https://www.infoq.com/articles/SQL-relevance-NoSQL/
+
+SQL is everywhere in data processing, ... Humble detected an increasing discomfort
+with “classic” ORMs such as Hibernate. These tools have solved two problems:
+* The repetitiveness of CRUD
+* Caching and thus speeding up disk access
+
+Intelligent caching can be quite hard, even with Hibernate,  ...
+JPA’s caching mechanism is only possible because the ORM strategy has
+been deeply integrated with JPQL. Short of native querying, it is hard
+to bypass the essential mechanisms used for caching.
+
+Memory is getting cheaper ... What if data is no longer accessed from disk
+(milliseconds), but from memory (nanoseconds) instead?
+Will we still need complicated and complex second level caches, when the
+database already “cached” all relevant data in memory?
+
+Not only are databases capable of keeping live online transactional
+data in memory all the time, they have already been doing some
+sophisticated caching for quite a while now. Just consider Oracle’s
+cursor cache, query result cache, and scalar subquery cache.
+
+...an increasing use of more SQL-centric alternatives such as
+MyBatis or jOOQ (both being “post-JPA” frameworks) indicates a
+certain need to get closer to SQL again.
+ ANSI-SQL standard is continually evolving ... things which are
+very hard to get through the JCP and into next generations of JPA.
+....In all my conference talks about jOOQ, I have been asking the
+audience about their happiness with CriteriaQuery. The answer was
+always unanimously hostile.
+
+Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
+* jOOQ is an internal domain-specific language modelling SQL through a Java fluent API.
+* MyBatis is an XML-based SQL templating and mapping engine where
+  dynamic SQL can be created through an XML-DSL.
+
+...  MyBatis’ current success is mostly based on it having provided
+  a viable alternative to JPA in a time when JPA was still a
+  controversial standard, and when JPA had to prove that it is better
+  than JDO, which solves very similar problems.
+
+[[}]]
+
 
 # Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
 @[https://quarkus.io/guides/hibernate-orm-panache-guide]
@@ -147,7 +193,38 @@ JAVA persistence:
       (`length` > 120)
 [[}]]
 
-# reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
+# Other ORM/DSL SQL frameworks
+## Excluded ORM Framework Comparative [[{]]
+https://dzone.com/articles/best-java-orm-frameworks-for-postgresql
+
+.... The following frameworks have been excluded from the test due to lack
+of support of one or more of the required features or because of
+other problems. That isn't to say anything negative about
+them—they're certainly promising—but they didn't suit my needs
+for one or more reasons.
+
+* Exposed is the ORM for Kotlin implemented by JetBrains. I've tried
+  to use it in Jav,a but it was really hard, almost impossible. For
+  Scala developers, this may be a good option.
+* Reladomo is an enterprise ORM, but it does not support UDTs or other PostgreSQL advanced features.
+* Speedment does not support transactions in its current stable version.
+
+[[}]]
+## frameworks no longer developed or maintained: [[{]]
+* ActiveJPA seems like it never reached stable release, with the last commits from 2014.
+* Apache Torque had its last commit in 2013.
+* Carbonado is an inactive project.
+* Fjorm's last commit is two years old.
+* Hydrate's last version is from 2006.
+* IBM PureQuery's last version is from 2009.
+* JDO Instruments doesn't even have a working homepage.
+* ORMLite's last version is from 2013.
+* QuickDB ORM is available only in Google Archive, with its last commit being from 2010.
+* Speedo's last commit is from 2005.
+* TJDO Project's last commit is from 2008.
+[[}]]
+
+## reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
 @[https://github.com/goldmansachs/reladomo]
   - Enterprise grade ORM framework featuring:
     - Strongly typed   compile-time  checked query language
@@ -156,33 +233,6 @@ JAVA persistence:
     - Full support for unit-testable code
 [[}]]
 
-# c3p0 [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
-@[https://www.mchange.com/projects/c3p0/#what_is]
-• c3p0: easy-to-use library for making traditional JDBC drivers
-        "enterprise-ready" augmenting them with jdbc3 functionality,
-        , optional jdbc2 extensions and jdbc4 (v 0.9.5+).
-• It provides for:
-  - A class which adapt traditional DriverManager-based JDBC drivers to the
-    newer javax.sql.DataSource scheme for acquiring database Connections.
-  - Transparent pooling of Connection and PreparedStatements behind DataSources
-    which can "wrap" around traditional drivers or arbitrary unpooled DataSources.
-• The library tries hard to get the details right:
-  - c3p0 DataSources are both Referenceable and Serializable, and are thus
-    suitable for binding to a wide-variety of JNDI-based naming services.
-  - Statement and ResultSets are carefully cleaned up when pooled Connections
-    and Statements are checked in, to prevent resource- exhaustion when clients use
-    the lazy but common resource-management strategy of only cleaning up their
-    Connections. (Don't be naughty.)
-  - The library adopts the approach defined by the JDBC 2 and 3 specification
-    (even where these conflict with the library author's preferences). DataSources
-    are written in the JavaBean style, offering all the required and most of the
-    optional properties (as well as some non-standard ones), and no-arg
-    constructors. All JDBC-defined internal interfaces are implemented
-    (ConnectionPoolDataSource, PooledConnection, ConnectionEvent-generating
-    Connections, etc.) You can mix c3p0 classes with compliant third-party
-    implementations (although not all c3p0 features will work with external
-    implementations of ConnectionPoolDataSource).
-[[}]]
 [[$div}]]
 
 # Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
@@ -197,4 +247,26 @@ JAVA persistence:
 - Implemented by Hazelcast and others
 [[}]]
 
+# Other related projects:
+## c3p0 (abandoned) [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
+@[https://www.mchange.com/projects/c3p0/#what_is]
+* c3p0: easy-to-use library for making traditional JDBC drivers
+        "enterprise-ready" augmenting them with jdbc3 functionality,
+        , optional jdbc2 extensions and jdbc4 (v 0.9.5+).
+* It provides for:
+  - A class which adapt traditional DriverManager-based JDBC drivers to the
+    newer javax.sql.DataSource scheme for acquiring database Connections.
+  - Transparent pooling of Connection and PreparedStatements behind DataSources
+    which can "wrap" around traditional drivers or arbitrary unpooled DataSources.
+* The library tries hard to get the details right:
+  - The library adopts the approach defined by the JDBC 2 and 3 specification
+    (even where these conflict with the library author's preferences). DataSources
+    are written in the JavaBean style, offering all the required and most of the
+    optional properties (as well as some non-standard ones), and no-arg
+    constructors. All JDBC-defined internal interfaces are implemented
+    (ConnectionPoolDataSource, PooledConnection, ConnectionEvent-generating
+    Connections, etc.) You can mix c3p0 classes with compliant third-party
+    implementations (although not all c3p0 features will work with external
+    implementations of ConnectionPoolDataSource).
+[[}]]
 

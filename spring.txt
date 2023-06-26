@@ -416,7 +416,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
 
  *   : @Transactional (optional) attributes can be:
   ┌────────────────────────────────────────────────────────────────────────────────────┐
-  │ • rollbackFor,         : By default rollback on RuntimeException|Error.            │
+  │ * rollbackFor,         : By default rollback on RuntimeException|Error.            │
   │   rollbackForClassName   To rollback also on CheckedExceptions do something like   │
   │                         @Transactional (                                           │
   │                            ...                                                     │
@@ -424,19 +424,19 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   │                                     rollbackFor={ FileNotFoundException.class,... }│
   │                          )                                                         │
   │                                                                                    │
-  │ • noRollbackFor,       : Skip rollback / ignore exceptions indicated               │
+  │ * noRollbackFor,       : Skip rollback / ignore exceptions indicated               │
   │   noRollbackForClassName                                                           │
   │                                                                                    │
-  │ • readOnly             : true | *false . true triggers (Spring TX manager)         │
+  │ * readOnly             : true | *false . true triggers (Spring TX manager)         │
   │                          optimizations  [peformance]                               │
-  │ • timeout              : defaults to underlying ddbb timeout.                      │
-  │ • ...                                                                              │
+  │ * timeout              : defaults to underlying ddbb timeout.                      │
+  │ * ...                                                                              │
   │                                                                                    │
   │                                                                                    │
   │                                                                                    │
-  │ • isolation            : Defaults to default of underlaying database:              │
+  │ * isolation            : Defaults to default of underlaying database:              │
   │                                                                                    │
-  │   • Common problems in (physically) distributed databases and/or central           │
+  │   * Common problems in (physically) distributed databases and/or central           │
   │     databases with parallel updates / reads by different clients where we          │
   │     can NOT warrant that lecture of state by a client will see the latest          │
   │     update by a parallel update TX.                                                │
@@ -466,7 +466,7 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
   │     e.g: @Transactional (isolation=Isolation.READ_COMMITTED)                       │
   │                                                                                    │
   │                                                                                    │
-  │ • propagation: define how (java) business methods should place in the TX.          │
+  │ * propagation: define how (java) business methods should place in the TX.          │
   │   · REQUIRED      : Reuse existing TX or create new. (Used for "inner" methods)    │
   │   · REQUIRES_NEW  : Always create new.                                             │
   │                     rollbacks will not be propagated to any calling methods with   │
@@ -1182,15 +1182,15 @@ TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specificat
 [[configuration}]]
 
 # Spring Cloud Configuration [[{spring.cloud,cloud,architecture.distributed.service_discovery]]
-• CONTEXT:
+## CONTEXT:
   2+ APIs running independently have been developed.
 
   We want to BOOTSTRAP NEXT THREE MICRO-SERVICES :
 
-  • Configuration Server : centralizes micro-services configuration.
+  * Configuration Server : centralizes micro-services configuration.
                            (Sort of "etcd" for Spring)
-  • Discovery Server     : allow apps to find each other
-  • Gateway Server       : reverse proxy encapsulating all decoupled
+  * Discovery Server     : allow apps to find each other
+  * Gateway Server       : reverse proxy encapsulating all decoupled
                            micro-services in a single port.
 
   ###############################
@@ -1729,15 +1729,15 @@ Jetty           │ org.eclipse.jetty      │ etty-server        │ HttpHandle
 
 # JHipster [[{spring.101,01_PM.low_code,architecture.frontend]]
 @[https://www.jhipster.tech/]
-• JHipster is a development platform to generate, develop and deploy
+* JHipster is a development platform to generate, develop and deploy
   Spring Boot + Angular / React / Vue Web applications and Spring
   microservices.
-• Created by Julien Dubois, currently (2021-06) Java Developer Advocacy
+* Created by Julien Dubois, currently (2021-06) Java Developer Advocacy
   manager at Microsoft
 [[}]]
 
 [[{spring,101.securityContext,01_PM.TODO]]
-•  Spring SecurityContext*
+##  Spring SecurityContext*
 https://www.javacodegeeks.com/spring-interview-questions-and-answers.html
 https://www.javacodegeeks.com/java-interview-questions.html
 https://www.javacodegeeks.com/2014/11/multithreading-concurrency-interview-questions-answers.html
@@ -1746,11 +1746,11 @@ https://www.javacodegeeks.com/spring-batch-tutorial.html
 https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boot,cli:
 [[}]]
 
-• https://spring.io/tools/ (Integration with Visual Studio Code, Eclipse, Theia IDE)
+## https://spring.io/tools/ (Integration with Visual Studio Code, Eclipse, Theia IDE)
 
-• https://hantsy.github.io/spring-r2dbc-sample/auditing.html
+## https://hantsy.github.io/spring-r2dbc-sample/auditing.html
 
-• Spring Cloud Function promotes the implementation of business [[{]]
+## Spring Cloud Function promotes the implementation of business [[{]]
   logic via functions based on the standard interfaces introduced by Java   :
   Supplier: A supplier is a function with only output, no input.
             It’s also known as a 'producer', 'publisher' or 'source'.
@@ -1760,28 +1760,28 @@ https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boo
             It’s also known as a 'subscriber' or 'sink'
 [[}]]
 
-• "The Netflix Domain Graph Service framework - OSS GraphQL for Spring Boot by Paul Bakker"
+## "The Netflix Domain Graph Service framework - OSS GraphQL for Spring Boot by Paul Bakker"
   https://youtu.be/WfK44fDuijI
 
-• VMware Overhauls Spring 6 & Spring Boot 3 for Another Decade  [[{01_PM.TODO.now]]
+* VMware Overhauls Spring 6 & Spring Boot 3 for Another Decade  [[{01_PM.TODO.now]]
   https://www.infoq.com/news/2021/09/spring-6-spring-boot-3-overhaul/ [[}]]
 
-• Java: Spring Boot 2.7.0 Released With Support for GraphQL, Podman and Cache2k
+* Java: Spring Boot 2.7.0 Released With Support for GraphQL, Podman and Cache2k
   https://www.infoq.com/news/2022/06/spring-boot-2-7/
-• Java: Spring Boot 2.6 Improves Docker Images and Metrics, Version 2.4 Is EOL
+* Java: Spring Boot 2.6 Improves Docker Images and Metrics, Version 2.4 Is EOL
   https://www.infoq.com/news/2021/12/spring-boot-2-6/
-• Extending Swagger and Spring Doc Open API
+* Extending Swagger and Spring Doc Open API
   https://dzone.com/articles/extending-swagger-and-spring-doc-open-api?edition=699391 
-• Spring for GraphQL Version 1.0 Released
+* Spring for GraphQL Version 1.0 Released
   https://www.infoq.com/news/2022/06/spring-graphql/ 
   Still in its infancy, Spring for GraphQL will most likely evolve with
   new features and bug fixes, and could become an alternative to the
   popular DGS framework, developed at Netflix in the last three years.
-• JAVA, Soft Arch: REST Query Language with Spring Data JPA and Querydsl
+* JAVA, Soft Arch: REST Query Language with Spring Data JPA and Querydsl
   " The Holy Grail - a REST Query Language"
   https://www.baeldung.com/rest-api-search-language-spring-data-querydsl
 
-• Spring GraalVM issues [[{spring,jvm.graalvm,01_PM.backlog]]
+* Spring GraalVM issues [[{spring,jvm.graalvm,01_PM.backlog]]
 REF:
 @[https://github.com/spring-projects/spring-framework/wiki/GraalVM-native-image-support]
 Working toward GraalVM native image support without requiring additional
@@ -1795,9 +1795,9 @@ used in the dependency mechanism or Spring factories, see the related issue #
 
 # JobRunr [[{architecture.batch,02_doc_has.comparative,01_PM.TODO]]
 @[https://www.infoq.com/news/2021/09/jobrunr-4-released/]
-• JobRunr 4.0 Delivers Improved Integration with Spring Starter, Quarkus and Micronaut.
+* JobRunr 4.0 Delivers Improved Integration with Spring Starter, Quarkus and Micronaut.
 
-• Spring Batch or Quartz frameworks force to implement custom interfaces and
+* Spring Batch or Quartz frameworks force to implement custom interfaces and
   they add a lot of overhead whereas I just want to run some long-running
   tasks in the background. JobRunr solves all of this by just
   accepting any Java 8 lambda, analyzing it and storing the job
@@ -1805,17 +1805,17 @@ used in the dependency mechanism or Spring factories, see the related issue #
   to be executed as soon as possible, somewhere in the future or in a
   recurring manner using Cron expressions.
 
-• Dehuysser: I would like to highlight three things:
-  • JobRunr does some magic with ASM (which is also used by Spring,
+* Dehuysser: I would like to highlight three things:
+  * JobRunr does some magic with ASM (which is also used by Spring,
     Hibernate and a lot of other frameworks) to analyze the job lambda.
     By using ASM, I really learned a lot about the JVM bytecode, which is
     not as difficult as I imagined.
-  • As JobRunr performs bytecode analysis, it also participates in
+  * As JobRunr performs bytecode analysis, it also participates in
     the Oracle Quality Outreach program. This means JobRunr is tested
     against upcoming releases of the JVM. This helps me to make sure that
     it will continue working on newer Java releases and also helps the
     Java community as bugs in the JVM itself are caught earlier.
-  • For users that need support or extra features, there is also JobRunr Pro.
+  * For users that need support or extra features, there is also JobRunr Pro.
     Adding extra features like queues with different priorities (high priority
     jobs get processed before low priority jobs), job chaining, atomic batches
     and a better dashboard which adds search capabilities.

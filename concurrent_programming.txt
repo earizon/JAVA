@@ -151,12 +151,12 @@ TODO Concurrent
 
 [[{]]concurrency.barrier" >
 # CountDownLatch
-• (java.util.concurrent) Since JDK 1.5
+* (java.util.concurrent) Since JDK 1.5
 @[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
-• Object allowing 1+ threads to wait until a
+* Object allowing 1+ threads to wait until a
   1+ operations are completed in other threads.
 
-• example ussages:
+* example ussages:
   - on/off latch or gate:
     When initialized to "one", parallel processing threads will
     invoke "await" and standby waiting for a "control" thread to
@@ -260,7 +260,7 @@ TODO Concurrent
 
 # Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,02_doc_has.diagram]]
 @[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
-• Basic Thread objects
+* Basic Thread objects
 
    Java 1.0+           Java 1.5+
   ┌────────────┐       (java.util.concurrent)
@@ -280,7 +280,7 @@ TODO Concurrent
   └────────────┘
 
 
-• Executor interface ( Java 1.5+):
+* Executor interface ( Java 1.5+):
   REF: https://www.uml-diagrams.org/java-7-concurrent-uml-class-diagram-example.html
 
   *0: Executors : Utility Factory + utility methods for Executor,(Scheduled)ExecutorService,
@@ -466,7 +466,7 @@ TODO Concurrent
 
 # Completable Future [[{async/reactive.101,02_doc_has.diagram]]
 @[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html]
-• Future:            (Java 5+) Represent an asynchronous computation result.
+## Future:            (Java 5+) Represent an asynchronous computation result.
   CompletableFuture: (Java 8+)
   · Extends Future with methods to combine and handle errors
   · Extends the CompletionStage interface
@@ -474,7 +474,7 @@ TODO Concurrent
       can be combined with other steps.
   · About 50 different methods for composing/combining/executing async computations.
 
-•       ┌ LOCAL SYSTEM (Under Control) ─────────────────────────┐
+##       ┌ LOCAL SYSTEM (Under Control) ─────────────────────────┐
         │               ┌·······(RPE Loop)··················┐   │
         │               ↓                                   │   │
         │    Input    Parse    Create      Parse  Create  → ... │
@@ -495,13 +495,13 @@ TODO Concurrent
                            │REMOTE SYSTEM        │
                            │(Out of control)     │
                            └─────────────────────┘
-• A Future that may be explicitly completed (setting its value and status),
+## A Future that may be explicitly completed (setting its value and status),
   and may be used as a CompletionStage, supporting dependent functions and
   actions that trigger upon its completion.
-• When two or more threads attempt to complete, completeExceptionally, or
+## When two or more threads attempt to complete, completeExceptionally, or
   cancel a CompletableFuture, only one of them succeeds.
 
-•  Barriers  (  allOf ):
+##  Barriers  (  allOf ):
    CompletableFuture<Void>[] future_list = new CompletableFuture[list.size()];
   int idx=0;
   log.info("Connecting plugins ...");
@@ -513,7 +513,7 @@ TODO Concurrent
   }
   return CompletableFuture.  allOf (future_list);
 
-• Example: Using CompletableFuture as a Simple Future (no-arg constructor)
+## Example: Using CompletableFuture as a Simple Future (no-arg constructor)
   create CompletableFuture instance,
   launch some computation in another thread,
   returns Future immediately.
@@ -538,7 +538,7 @@ TODO Concurrent
                                               (ExecutionException|InterruptedException)
   assertEquals("Hello", result);              until second threads "completes" the future.
 
-• Ex: CompletableFuture with Encapsulated Computation Logic <!-- @ma -->
+## Ex: CompletableFuture with Encapsulated Computation Logic <!-- @ma -->
    (runAsync -<<Runnable>>-, supplyAsync -<<Supplier>>-)
    <<Supplier>>: generic functional interface with single method
                  (zero arguments, returns value)
@@ -550,26 +550,26 @@ TODO Concurrent
      s -> System.out.println("Computation returned: " + s)).
   .thenRun(/* Runnable lambda*/ () -> System.out.println("Computation finished."));
 
-• Combining Futures (monadic design pattern in functional languages)
+## Combining Futures (monadic design pattern in functional languages)
   CompletableFuture<String> completableFuture
     = CompletableFuture.supplyAsync(() -> "Hello")
       .thenCompose(
             s -> CompletableFuture.supplyAsync(() -> s + " World"));
   assertEquals("Hello World", completableFuture.get());
 
-• Ex: Execute two independent Futures and do something with their results:
+## Ex: Execute two independent Futures and do something with their results:
   CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
       .thenCombine(CompletableFuture.supplyAsync(
         () -> " World"), (s1, s2) -> s1 + s2));
 
   assertEquals("Hello World", future.get());
 
-• Ex: Execute two independent Futures and do nothing with result:
+## Ex: Execute two independent Futures and do nothing with result:
   CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
     .thenAcceptBoth(CompletableFuture.supplyAsync(
        () -> " World"), (s1, s2) -> log(s1 + s2));
 
-• Ex: Running Multiple Futures in Parallel:
+## Ex: Running Multiple Futures in Parallel:
    -  wait for all to execute and process combined results
 
   CompletableFuture<String> future1
@@ -592,7 +592,7 @@ TODO Concurrent
     .collect(Collectors.joining(" "));
   assertEquals("Hello Beautiful World", combined);
 
-• Handling Errors: <!-- @ma -->
+## Handling Errors: <!-- @ma -->
 
   We can NOT try-catch.
 
@@ -612,7 +612,7 @@ TODO Concurrent
   ...
   completableFuture.get();                          ← ExecutionException
 
-• Async Methods
+## Async Methods
   - methods without Async-postfix run next execution blocking current thread.
   - async* without the Executor argument runs a step using the common
     fork/join pool implementation.
@@ -646,7 +646,7 @@ REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
   side,   CPU intensive applications will probably not benefit from
   coroutines.
 
-• See also reddit thread "Loom vs DragoWell JV:":
+* See also reddit thread "Loom vs DragoWell JV:":
 @[https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3]
 <hr/>
 # Loom Project: Ligthweight threads
@@ -702,7 +702,7 @@ Ron Pressler is the technical lead for Project Loom, which aims to add delimited
 continuations, fibers and tail-calls to the JVM
 
 # Quasar(Fibers)
-• fast threads for java and Kotlin
+* fast threads for java and Kotlin
 @[http://docs.paralleluniverse.co/quasar/]
 
 NOTE: To be superseded by Prj. Loom?

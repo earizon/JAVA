@@ -12,7 +12,7 @@
 [[{DEVOPS.MAVEN]]
 
 # Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,DevOps.maven.troubleshooting,_PM.WiP]] #[mvn_summary]
-• External Links
+## External Links
   - PUBLIC REPOSITORY:      @[https://mvnrepository.com/]
   - Artifact Search Engine: @[http://search.maven.org/]
   - Online doc from Maven : @[https://www.mvndoc.com]
@@ -20,14 +20,14 @@
     - full index   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index-all.html]
     - by package   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index.html]
 
-• maven lifecycle : execute a set of goals IN ORDER:
+## maven lifecycle : execute a set of goals IN ORDER:
     mvn   package   ┌ resources:resources     ←··· goal: unit of work. plugins implementing differet goals
           └──┬──┘   │ compiler:compile             accept parametrization customizing its run-time behavior:
              └──────┤ resources:testResources
                     │ compiler:testCompile
                     └ surefire:test jar:jar
 
-• mvn Usssage :
+## mvn Usssage :
   All mvn commands take the pom.xml project definition as input.
   First time mvn is executed will be slow, since lot of libraries must be downloaded.
 
@@ -99,14 +99,14 @@ $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.artifactId   ← Art
 $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.groupId      ← Extract Group ID
 $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Extract Version
 
-• Adding local jar dependency  (vs. maven central repository)
+## Adding local jar dependency  (vs. maven central repository)
     WARN : discouraged, but sometimes needed
   <dependency>
     <groupId>   ...  <artifactId>...  <version>...<scope>...
     <systemPath>/home/project/lib/myjar.jar</systemPath>
   </dependency>
 
-• GENERATE FAT JAR (jar with all dependencies included)
+## GENERATE FAT JAR (jar with all dependencies included)
 
 
   ...
@@ -144,7 +144,7 @@ $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Ext
           ...
   </profiles>
 
-• SNAPSHOT VERSIONING  (Future version)
+## SNAPSHOT VERSIONING  (Future version)
 A:☞A snapshot version is one that has not been released (  future release ).
    The idea is that  before  a "1.0" release is done, there exists
    a 1.0O -SNAPSHOT . That version is what might become 1.0. It's
@@ -179,19 +179,19 @@ A:☞A snapshot version is one that has not been released (  future release ).
 
 Utilities to clean, organize, and restructure Maven POMs.                   [qa]
 
-• POM Cleaner :
+## POM Cleaner :
   "Cleans up" single POM, normale plugin and dependency specifications,
   CONVERT HARDCODED VERSIONS TO PROPERTIES,
   CONSITENTLY ORDER TOP-LEVEL ELEMENTS  (with pretty-printing output).
 
-• VERSION UPDATER:
+## VERSION UPDATER:
   Updates the version for a set of POMs to a specified|next-sequential version.
 
-• Dependency Check:
+## Dependency Check:
   - find dependencies that are specified but unused.
   - find dependencies used but unspecified (TRANSITIVE DEPENDENCIES THAT SHOULD BE DIRECT).
 
-• MVND(aemon)                                                [performance][TODO]
+## MVND(aemon)                                                [performance][TODO]
 @[https://www.infoq.com/news/2020/12/mvnd-mavens-speed-daemon/]
 - Study driven by Gradle shows Maven as being
   up to 100 times slower than gradle builds .
@@ -314,7 +314,7 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
   </dependencyManagement>
 
 
-• best practice: Try to avoid using parent inherited properties in children.
+* best practice: Try to avoid using parent inherited properties in children.
                  Modifyint the parent can break children.
 
 *1: best-practice: use this section to define all dependency versions,
@@ -347,7 +347,7 @@ $     -Dincludes="org.checkerframework:*"
 $ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
 $     -Dincludes="com.google.guava:*"
 
-• Prefer ${project.artifactId} vs ${artifactId} or ${pom.artifactId}
+* Prefer ${project.artifactId} vs ${artifactId} or ${pom.artifactId}
   following XML document structure.
 
 - Use the dependency plugin to check your project for both unnecessary
@@ -411,12 +411,12 @@ $ $ mvn dependency:tree -Dscope=compile
   → ...
 
 # Publishing to Maven Central [[{DevOps.maven,devops]] #[mvn_pub2central]
-• External references:
+* External references:
   · @[https://www.apache.org/dev/publishing-maven-artifacts.html]
   · @[http://maven.apache.org/repository/guide-central-repository-upload.html]
   · @[/General/cryptography_map.html?id=pgp_summary]
 
-• Requirements @[http://central.sonatype.org/pages/requirements.html]
+* Requirements @[http://central.sonatype.org/pages/requirements.html]
   Prepare pom.xml properly:
   <?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -463,7 +463,7 @@ $ $ mvn dependency:tree -Dscope=compile
         <pluginRepositories> and instead publish any required
         components to the Central Repository """
 
-• required files:
+* required files:
 $ $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc         *2
 $ $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc         *2
 $ $  cat artifact01-1.4.7-sources.jar *1 | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc *2
@@ -474,10 +474,10 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
                                       *1: required except for pom (vs jar) packages      │
                                       *2: Verify sign. like $ $ gpg2 --verify ...asc ────┘
 
-• Build tool integration @[http://pgp.mit.edu]  [TODO]
+## Build tool integration @[http://pgp.mit.edu]  [TODO]
   @[http://central.sonatype.org/pages/working-with-pgp-signatures.html#using-build-tools-for-signing]
 
-• PUBLISH BEST PATTERNS
+## PUBLISH BEST PATTERNS
   • Use approved repository hosting location:
   @[http://www.apache.org/]           (for all Apache projects)
   @[http://www.fusesource.org/forge/] (focused on FUSE related projects)
@@ -492,7 +492,7 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
     · Open an account as explained at
     @[http://central.sonatype.org/pages/ossrh-guide.html]
 
-• POST-NAMESPACE REGISTRATION:
+## POST-NAMESPACE REGISTRATION:
   e-mail received after Namespace correct registration
   ┌──────────────────────────────────────────────────────────────────┐
   │ https://issues.sonatype.org/browse/OSSRH-39644?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
@@ -513,7 +513,7 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
   │  your first release, thanks                                      │
   └──────────────────────────────────────────────────────────────────┘
 
-• pre-deployment Tests:
+## pre-deployment Tests:
   ✓ Verify that all pom.xml files have an SCM definition.
   ✓ Diff original 'pom.xml' with 'pom.xml.tag' to check if license,...
     or any other info has been removed. This has been known
@@ -537,7 +537,7 @@ $ mvn release:perform    ← Stage release for a vote. release will
 
 # OWASP (maven) Plugin [[{security.101.owasp,devops.maven,01_PM.TODO]]
 @[https://maven.apache.org/plugins/]
-• OWASP Dependency-Check identifies project dependencies and checks
+* OWASP Dependency-Check identifies project dependencies and checks
   if there are any known, publicly disclosed, vulnerabilities.
 @[https://www.owasp.org/index.php/OWASP_Dependency_Check]
 [[}]]

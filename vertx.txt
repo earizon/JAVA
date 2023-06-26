@@ -11,7 +11,7 @@
 
 
 [[{vertx]]
-• VertX: Who-is-Who
+## VertX: Who-is-Who
   (Forcibly incomplete but still quite pertinent list of core developers and companies)
   Tim Fox     :  Initiated VertX in 2012
   Julien Viet :  Project lead (as of 2020), RedHat, Marseille
@@ -156,7 +156,7 @@ public class MainVerticle extends AbstractVerticle {
                     any verticle would do.
 [[vertx.event_bus}]]
 
-• VertX Event-Loop to threading configuration:  [[{vertx.101]]
+## VertX Event-Loop to threading configuration:  [[{vertx.101]]
 
 By default Vert.x attaches CPU-core-thread 1<-->2 event loops
 VertX Threading Strategies:
@@ -169,10 +169,10 @@ round-robin fashion which is very useful for maximizing CPU usage with
 lots of concurrent networked requests.
 [[}]]
 
-• HTTPS AAA:
+## HTTPS AAA:
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
 
-• VertX 4.0 What's New
+## VertX 4.0 What's New
 [[}]]
 
 
@@ -398,20 +398,20 @@ $ java -jar target/project01-SNAPSHOT-fat.jar
 [[}]]
 
 Non-Classified / TODO [[{01_PM.TODO]]
-• RxJava Integration: [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend]]
+## RxJava Integration: [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend]]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
   Refactoring some code to use reactive programming with the
   popular RxJava library and its Vert.x integration.
  [[}]
 
-• Vertx+k8s:
+## Vertx+k8s:
 @[http://escoffier.me/vertx-kubernetes/]
-• SockJS:
+## SockJS:
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc]
   - Event-bus bridge allowing web apps to seamlessly communicate over
   - event bus from JavaScript running in the browser by receiving and publishing
   - messsages just like any verticle would do
-• Angular Client:
+## Angular Client:
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-9/README.adoc]
 
  TODO:
@@ -438,11 +438,11 @@ Non-Classified / TODO [[{01_PM.TODO]]
     - Exposing metrics and health checks.
   """
 
-• What's new Vert.X 4.0: (2020-12-09):
+## What's new Vert.X 4.0: (2020-12-09):
 @[https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes]
 
 
-• https://github.com/vert-x3/vertx-4-migration-guide
+## https://github.com/vert-x3/vertx-4-migration-guide
 
 # Vert.x 3.9 Fluent API Query [[{vertx,01_PM.TODO]]
 https://developers.redhat.com/blog/2020/05/25/red-hat-build-of-eclipse-vert-x-3-9-brings-fluent-api-query/
@@ -458,7 +458,7 @@ Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
   phases where possible.
 [[}]]
 
-• Microsoft Open-Sources GCToolkit to Tap into JVM GC Logs  [[{]]
+## Microsoft Open-Sources GCToolkit to Tap into JVM GC Logs  [[{]]
   https://www.infoq.com/news/2021/09/msft-opensourced-gctoolkit/
 
 Besides the API, there are two other modules: the parser and the
@@ -486,13 +486,13 @@ easier. [[}]]
 
 
 # Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO.NOW]]
-• Reactive isn't Complicated with Vert.x and the new Mutiny APIs
+## Reactive isn't Complicated with Vert.x and the new Mutiny APIs
 @[https://www.youtube.com/watch?v=3tdU5WRvuuo]
 [[}]]
 
-• @[https://quarkus.io/guides/using-vertx.html]
+## @[https://quarkus.io/guides/using-vertx.html]
 
-• Reactive Spring with Vert.x
+## Reactive Spring with Vert.x
 @[https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/]
 - Reactive Spring Boot programming with Vert.x
   The latest bundle of Red Hat supported Spring Boot starters was recently

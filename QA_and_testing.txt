@@ -1767,23 +1767,503 @@ In JIRA, project releases are commonly organised into versions:
   }
 [[}]]
 
-# RESTAssured: REST API testing [[{qa.testing.REST_API,persistence.json]]
- FULL JOURNEY == Simulate full (REST) API in expected order
-└ Pre-Setup:
+# RESTAssured: REST API Full Journey testing [[{qa.testing.REST_API,persistence.json]]
+
+*
+
+## Maven setup
+
+  ```
+  <properties>
+    <restassured.ver>5.2.0</restassured.ver>
+  </properties>
+  ...
   <dependency>
       <groupId>io.rest-assured</groupId>
-      <artifactId>scala-support</artifactId>
-      <version>3.0.6</version>
+      <artifactId>json-schema-validator</artifactId>
+      <version>${restassured.ver}</version>
       <scope>test</scope>
   </dependency>
   <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>json-schema-validator</artifactId>
-      <version>3.0.6</version>
-      <scope>test</scope>
+      <version>${restassured.ver}</version>
   </dependency>
 
-└ Ussage Example:
+## REST Assured summary
+* Gherkins standard BDD syntax "GIVEN > WHEN > THEN "
+  replaces RestAssured 1.0 syntax `given()...expect()... when()`
+  (still supported for compatibility)
+
+  given().param("x", "y")....
+   when().get("/lotto").
+   then().statusCode(400).
+    and().body("lotto.lottoId", equalTo(6));
+    └───┴─ syntactic sugar. Not really needed.
+
+import from io.restassured.RestAssured.*                   // Static imports, recomended
+import from io.restassured.matcher.RestAssuredMatchers.*
+import from org.hamcrest.Matchers.*                   // equalTo, hasItems
+
+import from io.restassured.module.jsv.JsonSchemaValidator.* // Json Schema validation Support !!!
+                                                            // See original link to configure options
+import from io.restassured.module.mockmvc.RestAssuredMockMvc.* // spring-mock-mvc unit test support
+
+
+                given().
+                        param("key1", "val1"). // <·· set request params. REST Assured will
+                        param("key2", "val2").        automatically try  query|form format
+                        param("key3").         // <·· no value
+                        param("list1", "val1", "val2").
+                        param("list1", "val1", "val2").
+                        cookie("favourite", "Red", "Green"). // <·· Use new Cookie.Builder for details.
+                        header("MyHeader", "Something").
+                        contentType("application/json").   // or ContentType.TEXT or
+                                                           // noContentType() (for no contentType at all)
+                        request().body("some body").       // Works for POST, PUT and DELETE requests
+                                       ^^^^^^^^^^^         // request() is optional. It makes it more explicit
+                        //         or  new byte[]{42,1,..}
+                  ····  pathParam("pathKey1", "23").
+                  ·     // queryParam("queryParamName", "value2"). <·· explicit query or post
+              ┌───┴────┐// formParam("formParamName", "value1").
+   > GET /AAA/{pathKey1}
+                 when().
+                        get("/AAA/{pathKey1}").
+                 then().
+                        assertThat().                      // Syntax Sugar. Not really needed.
+                        body( // match against JSON-schema
+                          matchesJsonSchemaInClasspath("myschema.json")).
+                        body(equalTo("{...}")). // <·· Full body/content matching
+                        body("key1.%s[%d]", withArgs(key2, index2), equalTo(...)) // path arguments
+                        and().cookie("cookieName", "cookieValue" /*or containsString("cookieValue1")*/ ).
+                        and().statusCode(200).
+                        and().statusLine("something" /* or containsString("some") */).
+                        and().contentType(ContentType.JSON).
+                        and().header("headerName", "headerValue").
+                        and().header("Content-Length",
+                                      Integer::parseInt,   // <·· Use mapping function
+                                      lessThan(1000));
+
+   Ex: JSON Response like:           JSON assert:
+   < {                               ...assertThat()....
+   <   "lotto":{
+   <    "lottoId":5,                 and().body("lotto.lottoId", equalTo(5));
+   <    "winning-numbers":[2,45,34],
+   <    "winners":[{
+   <      "winnerId":[23,54],        and().body("lotto.winners.winnerId", hasItems(23, 54));
+   <      "numbers":[2,45,34]                                └── Groovy's GPath ───┘
+   <    },{                                                      Not to be confused with Jayway's
+   <      "winnerId":54,                                        JsonPath syntax
+   <      "numbers":[52,3,12]
+   <    }]
+   <   }
+   <   "price":12.12                 and().body("price", is(12.12f))
+   < }                                                   └────┬───┘
+                                                     or  is(new BigDecimal(12.12)
+                                             NOTE: to convert to BigDecimal:
+                                                given().config(
+                                                  RestAssured.config().jsonConfig(
+                                                   jsonConfig().numberReturnType(BIG_DECIMAL)))
+                                             NOTE: is(12.12) fails (double, expected float)
+## Recipes:
+* Validating JSON root documents with "$":
+   tested body JSON:     RESTAssured test:
+   [1, 2, 3]             body("$", hasItems(1, 2, 3));
+
+  > POST /greetXML                      given().parameters(
+  > firstName=John                        "firstName", "John",
+  > lastName=Doe                          "lastName", "Doe").when().post("/greetXML").
+                                          then().
+  < <greeting>                            assertThat().body(matchesXsd(xsd).
+  <    <firstName>John</firstName>        body("greeting.firstName", equalTo("John")).
+  <    <lastName>Doe</lastName>           body("greeting.lastName", equalTo("Doe"));
+  < </greeting>                           └──────────────────┬────────────────────┘
+                                 or  body(hasXPath("/greeting/lastName", containsString("Do"))
+                                 or       hasXPath("/greeting/firstName[text()='John']"));
+
+## Default values [[{]]
+RestAssured.baseURI = "http://myhost.org";  // defaults to http://localhost
+RestAssured.port = 80;                      // defaults to 8080
+RestAssured.basePath = "/resource";         // get("/hello") => GET /resource/hello
+RestAssured.authentication = basic(...);
+RestAssured.rootPath = "x.y.z";             // body("x.y.z.keyX",..) => body("keyX",..)
+
+RestAssured.filters(..);               // List of default filters
+RestAssured.requestSpecification = ..  // Default request specification
+RestAssured.responseSpecification = .. // Default response specification
+RestAssured.urlEncodingEnabled = ..    // should URL encode the parameters? def: true
+RestAssured.defaultParser = ..         // default parser for response bodies
+                                          if no registered parser can handle data
+                                          of the response content-type
+RestAssured.registerParser(..)         // Specify a parser for given content-type
+RestAssured.unregisterParser(..)       // Unregister a parser for the given content-type
+
+RestAssured.reset();                   // Reset baseURI, basePath, port, root path, Auth.Scheme
+                                          and url encoding to defaults
+RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+[[}]]
+
+## Complex parsing and validation:  [[{]]
+*  (where REST Assured really starts to shine!)
+
+    POST /shopping
+
+    <shopping>
+  ··> <category type="grocery">
+  ·     <item>Cream</item>
+  ·     <item>Coffee</item>
+  ·   </category>
+  ·   <category type="supplies">
+  ·     ...
+  ·   </category>
+  ·     ...
+  · </shopping>
+  ·
+  · given().get(..).when().
+  └ body(
+    "shopping.category.find { it.@type == 'grocery' }.item", hasItems("Cream", "Coffee"));
+     └──────┬────────┘
+      Depth-first·> **.find
+      shorcut in XML   └┬─┘ └────────────┬──────────┘
+      document          ·      Groovy Closure
+                        ·
+    ┌─·················─┘
+    find:    finds first item  matching a closure predicate
+    findAll: finds all   items matching a closure predicate
+    collect: collect the return value of calling a closure on each item in a collection
+    sum:     Sum all the items in the collection
+    max/min: returns the max/min values of the collection
+
+    Alternatively. Do not validate to Hamcrest. Keep processing manually
+    String response = get("/shopping").asString(); // Get response body as String
+    List<String> groceries = get("/shopping")
+                             .path("shopping.category.find { it.@type == 'groceries' }.item");
+
+    POST /store                      when().get("/store").then()
+    {
+     "store":{                       .body(
+      "book":[                          "store.book.findAll { it.price < 10 }.title",
+         {"price":8.95, ... },          hasItems("title1", "title2"));
+         {"price":8.99, ... },       Or ...
+         ...                         final List<String> bookTitles =
+                                     from(response).getList( // "from":JsonPath static import
+      ]                               "store.book.findAll { it.price < 10 }.title");
+     }
+    }
+
+  when().get("/...").then().body(
+   "store.book.author.collect { it.length() }.sum()", // Check: length sum of all-author-names > 50
+   greaterThan(50));
+  or ...
+   body("store.book.author*.length().sum()", greaterThan(50))
+                          ^ └──────^·····┐
+    ┌─···················─┘              ·
+   `*.`: Groovy spread operator, call function for
+         each element in list returning new list with
+         lengths results (sort of map)
+
+  or:
+  String response = get("/store").asString(); // get response as string
+  int sumOfAllAuthorLengths = from(response)
+      .getInt("store.book.author*.length().sum()");
+  assertThat(sumOfAllAuthorLengths, is(53));
+[[}]]
+
+## Deserialization with Generics 3.3+ [[{]]
+   [                                    final List<
+     {                                   Map<String /* key: id, name, price, tags, ...*/, Object>
+       "id": 2,                         > products = get("/products").as(new TypeRef<List<Map<String, Object>>>() {});
+       "name": "An ice sculpture",
+       "price": 12.50,                  assertThat(products, hasSize(2));
+       "tags": ["cold", "ice"],         assertThat(products.get(0).get("id"   ), equalTo(2));
+       "dimensions": { ... },           assertThat(products.get(0).get("name" ), equalTo("An ice sculpture"));
+     },                                 assertThat(products.get(0).get("price"), equalTo(12.5));
+     {
+       "id": 3,                         assertThat(products.get(1).get("id"   ), equalTo(3));
+       "name": "A blue mouse",          assertThat(products.get(1).get("name" ), equalTo("A blue mouse"));
+       "price": 25.50,                  assertThat(products.get(1).get("price"), equalTo(25.5));```
+       ...
+     }
+   ]
+[[}]]
+
+### GETTING RESPONSE DATA
+  with (InputStream stream = get("/lotto").asInputStream()) { // Alt 1:
+    ...
+  }
+  byte[] byteArray = get("/lotto").asByteArray(); // Alt 2
+  String json = get("/lotto").asString(); // Alt 3
+
+### Validate response, then extract data:
+
+  final String nextTitleLink =
+    given().param("param_name", "param_value").  ┐
+    when().get("/title").                        ├ validate response
+    then().contentType(JSON).                    │
+           body("title", equalTo("My Title")).   ┘
+    extract().path("links.next.href");           ├ <· extract object from json tree
+
+    Alternatively, get all response:
+    final Response fullRes = ...
+       extract().response();
+    final String
+      s1 = fullRes.path("links.next.href"),
+      s2 = fullRes.header("headerName");
+    final Headers             allHeaders = response.getHeaders();
+    final List<String>       sAllHeaders = response.getHeaders().getValues();
+    final Map<String, String> allCookies = response.getCookies();
+    final List<String>        sAllCokies = response.getCookies().getValues();
+    final String              statusLine = response.getStatusLine();
+    final int statusCode                 = response.getStatusCode();
+    final ??? detailedCookie             = response.getDetailedCookie("cookie1"); // path, expiry date, ...
+
+# Recipe: ReposnoseAware>Matcher:
+
+  > GET /some-id
+  < { "userId" : "some-id", "href" : ".../some-id" }
+                 └───────┴─········· must be equal ·······─┴───────┘
+
+  Test like:
+  ....body("href", response -> equalTo(".../" + response.path("userId"));
+
+## predefined matchers:
+   get("/x").then().body("href", endsWithPath("userId"));
+                   .body("href", and(                           // <·· composing ResponseAwareMatchers
+                                  startsWith("..."),
+                                  endsWithPath("userId")  ));
+
+## Measuring response time: (v 2.8+)
+  * Added support to measure and test response time. Examples:
+    long timeInMs = get("/lotto").time()
+    long timeInSc = get("/lotto").timeIn(TimeUnit.SECONDS);
+    when().get("/lotto").then().time(lessThan(2000L)); // Milliseconds
+    when().get("/lotto").then().time(lessThan(2L), TimeUnit.SECONDS);
+
+    WARN: time measurement should be performed when the JVM is hot!
+
+## OAuth 1/2 Authentication [[{]]
+### Presetup (OAuth 1 and OAuth 2 when supplying token as query parameter):
+   $ editor pom.xml
+     ...
+   + <dependency>
+   +   <groupId>com.github.scribejava</groupId>
+   +   <artifactId>scribejava-apis</artifactId>
+   +   <version>2.5.3</version>
+   +   <scope>test</scope>
+   + </dependency>
+
+
+   given().auth().oauth(..          )... // OAuth 1
+   given().auth().oauth2(accessToken)...            // OAuth 2. Put OAuth2 accessToken in a header.
+   given().auth().preemptive().oauth2(accessToken). // OAuth 2. explicit alternative
+   given().auth().oauth2(accessToken,               // OAuth 2. with token in query param (requirest Scribe)
+                        OAuthSignature.QUERY_STRING).
+[[}]]
+
+## Other Authentication Schemas
+  given().auth().form("John", "Doe").              // Form auth
+  given().auth().digest("username", "password").   // Digest auth.
+  given().auth().basic ("username", "password").   // Basic preemptive | Challenged Alt 1.
+   when().get(...)....
+  RestAssured.authentication =                     // Basic preemptive | Challenged Alt 2.
+                 basic ("username", "password");
+
+
+## Cross-site Request Forgery Support (CSRF)
+* Today it's common for the server to supply a CSRF token with
+  the response in order to avoid these kinds of attacks.
+* REST Assured has support for automatically parsing and supplying the CSRF token to the server.
+  In order for this to work REST Assured must make an additional request and parse (parts) of the website.
+
+* REST Assured supports two ways of providing CSRF tokens to the server:
+1. submitting the CSRF token in a form
+
+  <form action="/users" method="POST">
+    <input type="hidden" name="_csrf"                <·· CSRF token that "we" want to "forward"
+      value="8adf2ea1-b246-40aa-8e13-a85fb7914341"/>     in new request
+    ...
+  </form>
+
+  // RestAssuredConfig.config()
+  //    .csrfConfig(csrfConfig().with()
+  //       .csrfInputFieldName("_mycsrf"));  // <·· change default "_csrf" name
+  given(). csrf("/users/form", "_csrf")          // <·· Exec. GET request to /users, expecting
+          formParam("firstName", "John")         //     as result a form as response with input field `_csrf`
+          formParam("lastName", "Doe")
+   when().post("/users").
+   then().statusCode(200);
+
+2. submitting the CSRF token as a header.
+
+   > GET /LOGIN
+
+   < <head>
+   <   <meta name="_csrf_header"
+   <      content="ab8722b1-1f23-4dcf-bf63-fb8b94be4107"/>
+   <   ...
+   < </head>
+
+  // RestAssuredConfig.config()
+  //    .csrfConfig(csrfConfig().with()
+  //       .csrfMetaTagName("_my_csrf_header") // <·· Change default "_csrf_header" name
+  //       .csrfHeaderName("MyHeader"));       // <·· Change default "X-CSRF-TOKEN" name
+     RestAssuredConfig.config().
+   given().csrf("/login").  // fetch _csrf_header token to be included next as X-CSRF-TOKEN in POST
+    when().post("/pageRequiringCSRF").
+    then()....
+
+   RestAssuredConfig.config()
+     .csrfConfig(csrfConfig().with()
+
+## Object Mapping
+* Jackson/2 for JSON, Gson, Johnzon for classpath and Jakarta EE or JAXB for XML
+  // Refer to original doc.
+
+## Specification Re-use
+* Use RequestSpecBuilder and/or ResponseSpecBuilder.
+
+
+  final RequestSpecBuilder builder = new RequestSpecBuilder();
+  builder.addParam("parameter1", "parameterValue");
+  builder.addHeader("header1", "headerValue");
+  RequestSpecification requestSpec = builder.build();
+  //          ┌────────┴─────────┘
+  // Querying it later on
+  // QueryableRequestSpecification queryable = SpecificationQuerier.query(requestSpec);
+  // String headerValue = queryable.getHeaders().getValue("header");
+  // String param = queryable.getFormParams().get("someparam");
+
+
+  final ResponseSpecBuilder builder = new ResponseSpecBuilder();
+  builder.expectStatusCode(200);
+  builder.expectBody("x.y.size()", is(2));
+  ResponseSpecification responseSpec = builder.build();
+
+  given().spec(requestSpec).                     // <·· RESUE REQUEST SPEC !!
+          param("parameter2", "paramValue").     // <·· extend it
+   when().get("/something").
+   then().spec(responseSpec).                    // <·· REUSE RESPONSE SPEC !!
+          body("x.y.z", equalTo("something"));   // <·· Extend it
+
+
+## Filters: inspect&alter requests and responses.  [[{]]
+
+* Filters can be used to implement custom authentication schemes,
+  session management, logging etc.
+
+   import io.restassured.filter.Filter
+   io.restassured.filter.OrderedFilter // v 3.0.2+
+   given().filter(new MyFilter()). ..
+
+   // NOTE: sometimes is useful to change the response. Do it like:
+   final Response newResponse = new ResponseBuilder().
+         clone(originalResponse).setBody("Something").build();
+
+### ready to use filters
+* io.restassured.filter.log.RequestLoggingFilter : print request spec details.
+  given().log().XXX().    // v1.5+
+                └─┴─··· all │ params │ body │ headers │ cookies │ method │path
+                        WARN: underlying HTTP Builder & HTTP Client can add extra
+                        info (HEADERs, ...) not logged.
+          log().ifValidationFails().
+          get().
+   then().log().XXX()                        // alt 1: log all responses
+   then().log().ifError().                   // alt 2: log only on errors
+   then().log().ifStatusCodeIsEqualTo(302).  // alt 3
+   then().log().ifStatusCodeMatches(matcher).// alt 4
+   then().log().ifValidationFails().
+          onFailMessage("messageXXX").       // to be displayed on failure 4.5.0+
+   ...
+          └─┴─········· all | statusLine | headers | cookies
+
+
+
+* io.restassured.filter.log.ResponseLoggingFilter: print response details if matching
+                                                   a given status code.
+* io.restassured.filter.log.ErrorLoggingFilter   : print response body if error raised
+                                                   [400... 599]
+[[}]]
+
+
+## Session Support
+given().sessionId("1234").            // Alt 1
+given().cookie("JSESSIONID", "1234"). // Alt 2
+RestAssured.sessionId = "1234";       // Alt 3
+RequestSpecBuilder reqSpec =
+   new RequestSpecBuilder()...        // Alt 4. Reusable spec
+       setSessionId("value1").build();
+SessionFilter sessionFilter =         // Alt 5. Session Filter v2.0.0+
+             new SessionFilter();
+given().filter(sessionFilter)....
+
+RestAssured.config = RestAssured.config().
+   sessionConfig(
+    new SessionConfig()
+      .sessionIdName("phpsessionid")); // Change JSESSIONID ··> phpsessionid
+
+String sessionId = get("/").sessionId(); // Retrieve in response
+
+Session Filter
+
+## SSL for non-standard certificates or PKI setups.  [[{]]
+
+* Relaxed verification setup:
+   SSLPeerUnverifiedException
+      given().relaxedHTTPSValidation()      // SSL
+      given().relaxedHTTPSValidation("TLS") // TLS
+
+   RestAssured.useRelaxedHTTPSValidation();
+
+* Custom PKI (Certificate chains):
+
+  given().keystore("/pathToJksInClassPath", pass). ..   // alt 1
+  RestAssured.keystore("/pathToJksInClassPath", pass);  // alt 2
+  RestAssured.trustStore(keystore);                           // alt 3. An keystore is already loaded
+
+* SSL invalid hostname error "relaxing":
+  RestAssured.config().sslConfig(sslConfig().allowAllHostnames());
+
+[[}]]
+
+## Disable URL Encoding
+   Use case: URL already encoded
+String response = given().urlEncodingEnabled(false)
+                   then().get("/v1/search?jql=project%20=%20BAM%20AND%20issuetype%20=%20Bug");
+
+## Proxy Configuration
+  given().proxy("localhost", 8888).  // Setup HTTP Proxy 2.3.2+
+  given().proxy(host("localhost").withScheme("https")). // Setup HTTPs proxy 2.3.2+
+  given().proxy(auth("username", "password")).when() .. // Setup HTTP proxy with preemptive basic auth.
+
+  RestAssured.proxy("localhost", 8888);     // Config HTTP proxy globally
+  RequestSpecification reqSpec = new        // Config HTTP proxy in reusable request spec.
+     RequestSpecBuilder().setProxy("localhost").build();
+
+## Redirect DSL
+
+   given().redirects().max(12).and().redirects().follow(true).when(). ..
+
+## Connection Config
+
+   RestAssured.config = RestAssured.config().connectionConfig(
+     connectionConfig().closeIdleConnectionsAfterEachResponse());
+
+## FailureConfig 3.3.0+ (log, notify failures)
+   It allows to get callbacks when validations fails.
+  e.g.: get email in case of failure:
+  final ResponseValidationFailureListener emailOnFailure =
+    (reqSpec, respSpec, resp) -> emailService.sendEmail(...);
+  given().
+    config(RestAssured.config().failureConfig(
+       failureConfig().with().failureListeners(emailOnFailure)))....
+
+
+  ```
+
+## FULL JOURNEY Example
+  (WARN: Some code can be outdated)
+
+  ```java
   package com.mycompany.myproject.mymodule;
 
   import static junit.framework.TestCase.assertTrue;
@@ -1814,106 +2294,191 @@ In JIRA, project releases are commonly organised into versions:
 
   public class FullJourneyTest {
 
-      // Custom regex matcher for RestAssured Framework
-      public static classB RegexMatcher extends BaseMatcher<Object> {
-          private final String regex;
-          public   RegexMatcher (String regex){ this.regex = regex; }
-          @Override public boolean matches (Object o){ return ((String)o).matches(regex); }
-          @Override public void describeTo (Description description){
-              description.appendText("matches regex=");
+    public static class RegexMatcher
+    extends BaseMatcher<Object> {                        // <··· PRESETUP: CREATE CUSTOM REGEX MATCHER
+      private final String regex;
+      public RegexMatcher (String regex){
+        this.regex = regex;
+      }
+
+      @Override
+      public boolean matches (Object o){
+        return ((String)o).matches(regex);
+      }
+
+      @Override
+      public void describeTo(Description desc){
+        desc.appendText("matches regex="+this.regex);
+      }
+    }
+
+    public static classG Base64Matcher                     // <···· PRESETUP: CREATE CUSTOM Base64Matched
+    extends BaseMatcher<Object> {
+
+      public Base64Matcher(){}
+      @Override
+      public boolean matches (Object o){
+        try {
+          Base64.getDecoder().decode((String)o);
+          return true;
+        }catch (Exception e){
+          return false;
+        }
+      }
+
+      @Override
+      public void describeTo (Description description){
+        description.appendText("can be parsed as Base64");
+      }
+    }
+
+    private static final String
+      AUTH_HEADER_VALUE = "Bearer " + ServerConfig.apiKey;  // <·· PRESETUP: An API KEY is available for tests
+
+    protected static
+    RequestSpecification setupCommonHeaders() {             // <·· utility class. Setup headers.
+      return given()
+            .header("Authorization", AUTH_HEADER_VALUE)
+            .header("Accept"       , "application/json")
+            .header("content-type" , "application/json;charset=utf-8")
+      .log().all();
+    }
+
+    private final String
+      NAME="COMMUNITY_1", SYMBOL="SY1";
+
+    private Response response;
+
+    @BeforeClass
+    public static void setup() {                           // <·· PRESETUP: Setup test URL... before each test
+      RestAssured.port   = ServerConfig.serverPort;        //     Setup RestAssured config.
+      RestAssured.basePath = "/";
+      RestAssured.baseURI  = "http://localhost";
+
+      HttpClientConfig clientConfig =
+	RestAssured.config().getHttpClientConfig();
+      clientConfig = clientConfig.
+        httpClientFactory(
+        new HttpClientConfig.HttpClientFactory() {
+          @Override
+          public HttpClient createHttpClient() {
+            HttpClient rv =  new SystemDefaultHttpClient();
+            HttpParams httpParams = rv.getParams();
+            HttpConnectionParams                           // <·· Wait 5s max for a connection
+		.setConnectionTimeout(httpParams, 5 * 1000);
+            HttpConnectionParams                           // <·· Set Default session Tiemout: 60s
+                .setSoTimeout(httpParams, 60 * 1000);
+            return rv;
           }
-          public staticB RegexMatcher  matches(String regex){ return newB RegexMatcher (regex); }
-      }
+        });
 
-       public static classG Base64Matcher extends BaseMatcher<Object> {
-          public Base64Matcher(){}
-          @Override public boolean matches (Object o){
-              try {
-                  Base64.getDecoder().decode((String)o);
-                  return true;
-              }catch (Exception e){
-                  return false;
-              }
-          }
+      clientConfig = clientConfig                          // <·· This is necessary to ensure that client is reused
+                     .reuseHttpClientInstance();
+      RestAssured.config = RestAssured
+                             .config()
+                             .httpClient(clientConfig);
+    }
 
-          @Override public void describeTo (Description description){
-              description.appendText("can be parsed as Base64");
-          }
+    @Test
+    public void A010_PutNewCommunityAndNewUserForPendingToMineCommunity() {
+      String jsonBody1 = String.format("""
+        {
+          "name"  : "%s",
+          "symbol": "%s",
+        }
+        """, NAME, SYMBOL) ;
+      response = setupCommonHeaders().body(jsonBody1)
+                 .when().post("/Route/To/REST/API/01") ;
+      System.out.println(response.body().prettyPrint());
+      response.then()
+        .statusCode(HttpStatus.ACCEPTED_202)
+        .body("size()", is(5)                      )
+        .body("id"    , not(isEmptyString())       )
+        .body("pubkey", not(isEmptyString())       ) //  get sure it's not empty
+        .body("pubkey", new RegexMatcher("^{65}$") ) // and get sure that it matches Regex
+        .body("pubkey", new Base64Matcher()        ) // and get sure it is Bas64 encoded
+        .body("name"  , equalTo(NAME)              )
+        .body("symbol", equalTo(SYMBOL)            )
+      ;
+      String NEW_ID = response.getBody().jsonPath().get("id") ;
 
-          public static Base64Matcher isBase64Encoded(){
-              return new Base64Matcher();
-          }
-      }
-      private static final String AUTH_HEADER_VALUE = "Bearer " + ServerConfig.apiKey;
-
-      protected static RequestSpecification setupCommonHeaders() {
-          return given().header("Authorization", AUTH_HEADER_VALUE)
-                        .header("Accept"       , "application/json")
-                        .header("content-type" , "application/json;charset=utf-8")
-          .log().all();
-      }
-
-
-      final String
-          NAME="COMMUNITY_1", SYMBOL="SY1";
-
-      Response response;
-      @BeforeClass
-      public static void setup() {
-          RestAssured.port     = ServerConfig.serverPort;
-          RestAssured.basePath = "/";
-          RestAssured.baseURI  = "http://localhost";
-
-          HttpClientConfig clientConfig = RestAssured.config().getHttpClientConfig();
-          clientConfig = clientConfig.httpClientFactory(new HttpClientConfig.HttpClientFactory() {
-              @Override
-              public HttpClient createHttpClient() {
-                  HttpClient rv =  new SystemDefaultHttpClient();
-                  HttpParams httpParams = rv.getParams();
-                  //  Wait 5s max for a connection
-                  HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
-                  // Default session is 60s
-                  HttpConnectionParams.setSoTimeout(httpParams, 60 * 1000);
-                  return rv;
-              }
-          });
-          // This is necessary to ensure, that the client is reused.
-          clientConfig = clientConfig.reuseHttpClientInstance();
-          RestAssured.config = RestAssured.config().httpClient(clientConfig);
-      }
-
-      @Test
-      public void A010_PutNewCommunityAndNewUserForPendingToMineCommunity() {
-          String jsonBody =
-              "{ " +
-                  " \"name\": \""+NAME+"\", " +
-                  " \"symbol\": \"" + SYMBOL + "\","
-              "}";
-          response = setupCommonHeaders().body(jsonBody).when(). post("/Route/To/REST/API/01") ;
-          System.out.println(response.body().prettyPrint());
-          response.then()
-              /*  get sure JSON serializer do not include extra (maybe sensitive) infO  */
-              .body("size()",   is(5)                           )
-              .body("id"    ,   not(isEmptyString())            )
-              .body("pubkey",   not(isEmptyString())            )
-              .body("pubkey",   RegexMatcher   .matches("^{65}$") )
-              .body("pubkey",   Base64Matcher.isBase64Encoded() )
-              .body("name"  ,   equalTo(NAME)                   )
-              .body("symbol",   equalTo(SYMBOL)                 )
-              .statusCode(HttpStatus.ACCEPTED_202);
-          String   NEW_ID = response.getBody().jsonPath().get("id") ;
-
-          // Next related test to execute synchronously after fetching NEW_ID
-          String jsonBody =
-              "{ " +
-                  B*" \"FK_ID\": \""+NEW_ID+"\", " +*
-                  ...
-              "}";
-
-          response = setupCommonHeaders().body(jsonBody).when(). post("/Route/To/REST/API/02") ;
-          ...
-      }
+      // Next related test to execute synchronously after fetching NEW_ID
+      final String jsonBody2 = String.format("""
+        {
+          "FK_ID": "%s",
+         ...
+        }""", NEW_ID);
+      response = setupCommonHeaders().body(jsonBody2)
+         .when(). post("/Route/To/REST/API/02") ;
+      ...
+    }
   }
+  ```
+
+## What's new
+
+* 5.2
+  * Much improved Cross-site request forgery support. Example  [[{security]]
+    given().csrf("/users").                // <·· make a GET request to /users
+                                           //     to fetch page containing the  CSRF token.
+                                           //     Rest Assured will then automatically try to
+                                           //     find the input field that contains the CSRF token
+            formParm("firstName", "John").
+            when().post("/users").         // <·· and include it in the POST to /users.
+            then().statusCode(200);
+
+                                                               [[security}]]
+* 5.0
+  * Use Groovy 4.0 under the hood.
+* 4.5
+  * Introduced rest-assured bom project for maven.
+  * Add onFailMessage to more easily  distinguish between failed tests
+    when().get().then()
+      .onFailMessage("Some specific message")
+      .statusCode(200);
+
+* 4.2
+  * Allows to blacklist displaying headers in request|response log.
+    given().config(config().logConfig(logConfig().blacklistHeader("Accept"))). ..
+
+* 4.0
+  * Allows to specify multi-expectation body with arguments. Examples:
+    when().get("/jsonStore").
+    then()
+    .rootPath("store.book.find { it.author == '%s' }")
+    .body(
+      "price", withArgs("Nigel Rees"  ), is(8.95f),
+      "price", withArgs("Evelyn Waugh"), is(12.99f)
+    );
+* 3.2
+  * New Spring Web Test Client module to test Spring Reactive Web stack components.
+    for example, Spring (Webflux) Controllers.
+  * OSGi support.
+* 3.1
+  * Allow querying (extracting values out of) a request specification without
+    using a filter by using `io.restassured.specification.SpecificationQuerier`. For example:
+    ```
+    RequestSpecification spec = ...
+    QueryableRequestSpecification queryable = SpecificationQuerier.query(spec);
+    String headerValue = queryable.getHeaders().getValue("header");
+    String param = queryable.getFormParams().get("someparam");
+    ```
+  * Lot's of improvements to filters (FilterableRequestSpecification). Example:
+    * FilterableRequestSpecification#path: change request-path from a filter
+    * FilterableRequestSpecification#removeQueryParam to remove parameters.
+    * Get undefined path parameter placeholders
+    * ...
+  * Automatically adds supports for spring rest docs path parameter documentation
+    if spring-restdocs-mockmvc is in classpath.
+
+* 3.1
+  * Allow a mapping function when validating headers. Example:
+    when().get("/something").then()
+      .header(
+          "Content-Length",
+          Integer::parseInt,  // <··· Map Header to Integer
+          lessThan(1000) );   // <··· Then check that is is smaller than 1000
+
 [[}]]
 
 # TODO:

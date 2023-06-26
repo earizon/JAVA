@@ -34,7 +34,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
 -@[https://java-source.net/] Production-ready software developed with Java,
    from DDBBs, caches, servers, ...
 
-• Bibliography
+## Bibliography
 - Effective Java 3rd Edition, Joshua Bloch
   ISBN-10: 0134685997
   ISBN-13: 978-0134685991
@@ -127,7 +127,7 @@ DZone/InfoQ/Redhat Developrs/Medium/bealdun/ articles, github code,
       .map(i -> i.toString())
       .collect( Collectors.joining(", ") );
 
-• StringBuffer/StringBuilder: Much faster when concatenating strings at runtime.
+## StringBuffer/StringBuilder: Much faster when concatenating strings at runtime.
   (See also java.io.StringWriter: 'character stream' collecting output to StringBuffer).
   - StringBuffer   is thread-safe.
   - StringBuilder  is faster. (when thread-safety is not needed)
@@ -232,7 +232,7 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
 
 #[java_donts]
 ## JAVA DONT's [[{java_lang.101.donts,scalability.101,qa.101,PM.WiP]]
-• Avoid Nulls, prefer final:
+•## Avoid Nulls, prefer final:
   WRONG:
   ========================
   SomeClass instance = null;
@@ -266,7 +266,7 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
   @[https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html]
    (A final variable is the simplest example of an immutable object)
 
-• Catch blocks must rethrow if the exception can not be fixed on the catch block.
+* Catch blocks must rethrow if the exception can not be fixed on the catch block.
   HINT: 99% of times it can NOT be fixed on the catch block.
 
   WRONG                        RIGHT
@@ -281,19 +281,19 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
   final user) will be notified. In the "wrong" code the code is just hidden.  This will
   trigger undefined behaviour, null pointers, nightmares and developer's non-paid extra hours.
 
-• Avoid Strings as much as possible. You are converting an strongly typed
+* Avoid Strings as much as possible. You are converting an strongly typed
   language in a weak runtime one.
   If forced to use strings, try to protect them with (Checkers framework) @Fenum("country")
   @[#checker_framework_summary]
 
-• Avoid huge interfaces. Prefer small, decoupled ones, with few exposed methods
+* Avoid huge interfaces. Prefer small, decoupled ones, with few exposed methods
   decoupled interfaces related to security from storage from cache from ...
 
-• Avoid interfaces that will ever be implemented by a single class, specially if such
+* Avoid interfaces that will ever be implemented by a single class, specially if such
   class is a data-like one with all inmutable (final) fields. Data classes can be
   considered interfaces on themself since they indicate the contract for the data.
 
-• Avoid checked exceptions. It was an error in the initial design of the Java language.
+* Avoid checked exceptions. It was an error in the initial design of the Java language.
   Each time a checked exception is found convert to a runtime (subclass) exception.
   More info at: @[https://phauer.com/2015/checked-exceptions-are-evil/]
 
@@ -400,6 +400,23 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
       }
     }
   [[jvm.101.autoclosable}]]
+
+## Unix4j [[{java_lang.functional]]
+@[https://github.com/tools4j/unix4j]
+"""...Working in the finance industry in Melbourne, the authors of
+  Unix4j spent a lot of time writing complex text processing
+  applications in bash. Frustrated with the inherent limitations of the
+  bash language; lack of language support, IDEs, test frameworks etc,
+  the authors decided to try and bring the convenience of some of the
+  Unix commands into the Java language.
+  You may notice that the implemented commands are more bent towards
+  text processing rather than OS and file manipulation. This is
+  intended as we see text processing to be the real benefit of Unix4j.
+  Not to say that this will always be the case.
+"""
+  Allows for things like:
+  - Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
+[[}]]
 
 ## What's new [[{PM.WHATS_NEW,02_doc_has.ext_resource,async/reactive,java_lang.debugging]]
 ### v.17 2021-09-14
@@ -525,7 +542,7 @@ https://www.infoq.com/news/2019/12/java14-feature-freeze/
 @[https://www.infoq.com/news/2018/09/java11-released]
 - More container awaeness...                                             [[{devops.containarization]]
   - Remove -XX:+UnlockExperimentalVMOptions, -XX:+UseGroupMemoryLimitFoHeap (JDK-8194086)
-  - jcmd -l and jps commands do not list JVMs in Docker containers (JDK-8193710)
+  - jcmd -l & jps: do not list JVMs in Docker containers (JDK-8193710)
   - Container Metrics (-XshowSettings:system) (JDK-8204107)
   - Update CPU count algorithm when both cpu shares and quotas are used (JDK-8197867)
     --XX:+PrefectContainerQuotaForCPUCount                              [[}]]
@@ -923,7 +940,7 @@ See also:
 [[}]]
 
 ## sysctl/ulimit+JAVA [[{jvm.linux]]
-• Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
+* Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
 @[https://docs.sonarqube.org/latest/requirements/requirements/]
 
   ...  If you're running on Linux, you must ensure that:
@@ -954,9 +971,9 @@ See also:
     ...
 [[}]]
 
-# Monitorization
-[[{jvm.monitoring.micrometer,architecture.distributed,monitoring.distributed,PM.low_code,PM.WiP]] #[micrometer_summary]
-## Micrometer Metrics [[{]]
+# Monitorization [[{monitoring]]
+#[micrometer_summary]
+## Micrometer Metrics [[{monitoring.micrometer,architecture.distributed,monitoring.distributed,PM.low_code,PM.WiP]]
 - simple facade to instrumentation clients for
 - instrument JVM-based apps without vendor lock-in.
   (Think SLF4J, but for application metrics! supporting AppOptics,
@@ -988,8 +1005,7 @@ Guides: [TODO]
 -@[https://micrometer.io/docs/guide/customMeterRegistry]
 [[}]]
 
-[[{jvm,PM.WiP]]
-## JVM Implementations [[{]]
+## JVM Implementations [[{jvm,PM.WiP]]
 @[https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html]
 
 In practical terms, there is only one set of source code for the JDK.
@@ -1036,8 +1052,8 @@ In practical terms, there is only one set of source code for the JDK.
 
 ## Jabba JDK Version Mng [[{]]
 @[https://github.com/shyiko/jabba]
-• pain-free JDK installing on Linux x86/x86_64/ARMv7+, macOS, Windows x86_64.
-• Support for:
+* pain-free JDK installing on Linux x86/x86_64/ARMv7+, macOS, Windows x86_64.
+* Support for:
   · Oracle JDK (latest-version only)
   · Oracle Server JRE (latest-version only),
   · Adopt OpenJDK (jabba >=0.8.0 is required)
@@ -1052,7 +1068,7 @@ In practical terms, there is only one set of source code for the JDK.
   · Liberica JDK
   · Amazon Corretto
 
-• INSTALL/UPGRADE:
+* INSTALL/UPGRADE:
 $ $ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash
 $ $. ~/.jabba/jabba.sh
 
@@ -1061,7 +1077,7 @@ $ $. ~/.jabba/jabba.sh
  + export JABBA_VERSION=...
  + [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
 
-• USAGE
+* USAGE
 $ $ jabba ls-remote                   ←  list available JDK's
 $ $ jabba ls-remote zulu@~1.8.60      ← Narrow results
 $ $ jabba ls-remote --latest=minor\   ← semver allowed
@@ -1091,12 +1107,15 @@ $ $ jabba uninstall zulu@1.6.77               ← uninstall JDK
 $ $ jabba link system@1.8.72 \                ← link system JDK
 $   /usr/lib/jvm/jdk1.8.0_72.jdk
 
-• To modify JDK system-wide:
+* To modify JDK system-wide:
 $ $ sudo update-alternatives --install /usr/bin/java java ${JAVA_HOME%*/}/bin/java 20000
 $ $ sudo update-alternatives --install /usr/bin/javac javac ${JAVA_HOME%*/}/bin/javac 20000
-• To swith among GLOBAL JDK system-wide:
+* To swith among GLOBAL JDK system-wide:
 $ $ sudo update-alternatives --config java
 [[}]]
+
+
+[[monitoring}]]
 
 ## RECORDS!!! v15+ [[{java_lang.records,java_lang.data_structure]]
 * non-verbose inmutable classes. Java 15+
@@ -1125,7 +1144,7 @@ $ $ sudo update-alternatives --config java
 
 ## Read from file [[{java_lang.101,persistence.FS,io.101]]
 
-* Reading as lines of text:
+## Reading as lines of text:
   import java.nio.file.Path
   import java.nio.file.Files
 
@@ -1148,7 +1167,7 @@ $ $ sudo update-alternatives --config java
         CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
   reader.close();                              // ←   WARN:  Don't forget to close
 
-• Read file as bytes:
+## Read file as bytes:
   final File file = new File("input.raw");
   final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
         = Files.asByteSource(file).
@@ -1194,24 +1213,8 @@ while (it.hasNext()) {
 LineIterator.closeQuietly(it);                ← Close resources
    }
 
-# Unix4j
-@[https://github.com/tools4j/unix4j]
-"""...Working in the finance industry in Melbourne, the authors of
-  Unix4j spent a lot of time writing complex text processing
-  applications in bash. Frustrated with the inherent limitations of the
-  bash language; lack of language support, IDEs, test frameworks etc,
-  the authors decided to try and bring the convenience of some of the
-  Unix commands into the Java language.
-  You may notice that the implemented commands are more bent towards
-  text processing rather than OS and file manipulation. This is
-  intended as we see text processing to be the real benefit of Unix4j.
-  Not to say that this will always be the case.
-"""
-  Allows for things like:
-  - Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
 
-
-- java.nio.files.Files.lines: (Java 8+)
+## java.nio.files.Files.lines: (Java 8+)
   private static String readLineByLine(String filePath)
   {
       final StringBuilder contentBuilder = new StringBuilder();
@@ -1894,7 +1897,7 @@ map ( e -> e.hashCode())...
 // collect all values from the stream
 collect(Collectors.toCollection(TreeSet::new))
 
-• TODO: github.com/jOOQ/jOOL, functional extensions to Java 8.
+## TODO: github.com/jOOQ/jOOL, functional extensions to Java 8.
   • Context: Pains with checked exceptions and lambdas:
     http://stackoverflow.com/q/18198176/521799
     http://stackoverflow.com/q/19757300/521799
@@ -2336,10 +2339,10 @@ Specialty Observables that have more precisely-controlled subscription dynamics
   - AsyncSubject
   - UnicastSubject
 
-• Custom Ops
+## Custom Ops
 @[http://reactivex.io/documentation/implement-operator.html]
 
-• 5 Not So Obvious Things About RxJava
+## 5 Not So Obvious Things About RxJava
 [[{async/reactive.rxjava,qa,PM.TODO]]
 @[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc] [[}]]
 
@@ -2726,13 +2729,13 @@ Map<String, Double> map01 = new HashMap<>();
 
 
 
-• Fastutil @[http://fastutil.di.unimi.it/] [[{data_structures,PM.backlog]]
+## Fastutil @[http://fastutil.di.unimi.it/] [[{data_structures,PM.backlog]]
 - Fast and compact type-specific collections for Java
   Great default choice for collections of primitive types,
   like int or long. Also handles big collections with more than 2
   31 elements well.
 
-• Eclipse Collections
+## Eclipse Collections
 @[https://www.eclipse.org/collections/]
 (Originated from Goldman Sachs gs-collection:
  @[https://github.com/goldmansachs/gs-collections])
@@ -3489,6 +3492,25 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
 
 # Non-Classified
 
+## Netflix Libraries for microSerives:
+(widely used for example in Spring Framework)
+NOTE: Probably service Mesh solutions (istio, ...)
+are better since they are also cross-platform at the cost
+of some extra infrastructure and network traffic (since
+one or more L7 proxies are involved).
+* Eureka: Service discovery. Components:
+  - service registry
+  - service client
+Services at bootstrap register with the Eureka server
+using the service client. The service client is also
+used by the applications to discover the instances of
+their dependencies.
+
+* Hystrix: library providing fault tolerance
+* Ribbon: Java library for client-side load balancing.
+* Zuul: Application gateway supporting dynamic routing
+  based on service discovery.
+
 ## JavaLite: lightweight async.job processing [[{async/reactive.javalite]]
                    [[PM.low_code,messaging.jms,messaging.activemq]]
                    [[architecture.batch,architecture.distributed]]
@@ -3698,20 +3720,20 @@ From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-o
 ## FailSafe [[{enterprise_patterns,qa.error_control,architecture.distributed,PM.WiP]]
 
 @[https://github.com/failsafe-lib/failsafe]
-• Fault tolerance and resilience patterns for the JVM
-• lightweight, zero-dependency library for handling failures
+## Fault tolerance and resilience patterns for the JVM
+## lightweight, zero-dependency library for handling failures
   in Java 8+.
-• It works by wrapping executable logic with one or more
+## It works by wrapping executable logic with one or more
   resilience policies, which can be combined and composed
   as needed.
-• Current policies include:
+## Current policies include:
   · Retry
   · CircuitBreaker
   · RateLimiter
   · Timeout
   · Fallback.
 
-• Current features include:
+## Current features include:
   · Async Execution
   · Event Listeners
   · Execution Context
