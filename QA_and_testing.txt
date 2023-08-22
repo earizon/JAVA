@@ -1,3 +1,9 @@
+┌────────────────────────────┐
+│ JAVA QA & Testing "Zipped" │
+└────────────────────────────┘
+(This page is an always-work-in-progress.
+ Contribute
+
 # Cost of software failures [[{qa.billion_dolar_mistake]]
 $312 billion per year: global cost of software bug (2013)
 $300 billion dealing with the Y2K problem
@@ -74,7 +80,7 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
          pipeline with further tests (functional
          testing, configuration testing, ...)
 
-## Checker Framework Instalation [[{]]
+## Instalation [[{]]
 
 0. Check new releases/versions at
   @[https://search.maven.org/search?q=g:org.checkerframework]
@@ -492,10 +498,6 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 [[}]]
 
 
-## SpotBug examples:
-@[https://spotbugs.readthedocs.io/en/latest/filter.html]
-
-
 # Lint4j
 @[http://www.jutils.com/]
 *  WARN : Not maintained any more.
@@ -504,27 +506,27 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   scalability problems, and checks complex contracts such as Java
   serialization by performing type, data flow, and lock graph analysis.
 
-* Ussage @[http://www.jutils.com/uguide.html]
-  $ $ lint4j \
-  $    -sourcepath src/main \             ← analyze source
-  $    -classpath lib/bcel.jar:... \
-  $    -exclude "packagename"   \         ← package or package-prefix
-  $    "com.jutils.lint4j.*"
-  $
-  $ $ lint4j -sourcepath .../log4j.jar    ← analyze binary
-  $     "org.apache.*"
-  $
-  $ $ lint4j  \
-  $    -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
-  $    org.apache.log4j \
-  $    org.apache.log4j.spi
-  $
-  $ $ lint4j \
-  $   -sourcepath com/.../ClassN.java \
-  $               com/.../CalssJ.java
+## Ussage
+  @[http://www.jutils.com/uguide.html]
+  $ lint4j \
+     -sourcepath src/main \             ← analyze source
+     -classpath lib/bcel.jar:... \
+     -exclude "packagename"   \         ← package or package-prefix
+     "com.jutils.lint4j.*"
+
+  $ lint4j -sourcepath .../log4j.jar    ← analyze binary
+      "org.apache.*"
+
+  $ lint4j  \
+     -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
+     org.apache.log4j \
+     org.apache.log4j.spi
+
+  $ lint4j \
+    -sourcepath com/.../ClassN.java \
+                com/.../CalssJ.java
 
 [[qa.101.checker_fw}]]
-
 
 # SonarQube [[{qa.101.snarqube,01_PM.low_code,]]
             [[concurrency.101,JAVA_LANG.DEBUGGING]]
@@ -1018,13 +1020,13 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 --------------------------------------------------------
 
-# Features KEYPOINT:
-# When writing Cucumber features, make readability your main goal.
-# Otherwise, a reader can easily feel more like they’re reading a computer pro-
-# gram than a specification document, which is something we want you to try
-# to avoid at all costs. After all, if your features aren’t easy for nonprogrammers
-# to read, you might as well just be writing your tests in plain old code.
-# Each `Feature` is tested in one or more `Scenario`s (`Scenario Outline`s)
+## Features KEYPOINT:
+> When writing Cucumber features, make readability your main goal.
+> Otherwise, a reader can easily feel more like they’re reading a computer pro-
+> gram than a specification document, which is something we want you to try
+> to avoid at all costs. After all, if your features aren’t easy for nonprogrammers
+> to read, you might as well just be writing your tests in plain old code.
+> Each `Feature` is tested in one or more `Scenario`s (`Scenario Outline`s)
 
 Feature: The user must be able to checkout provided
   he has control of a credit card
@@ -2017,11 +2019,11 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     final int statusCode                 = response.getStatusCode();
     final ??? detailedCookie             = response.getDetailedCookie("cookie1"); // path, expiry date, ...
 
-# Recipe: ReposnoseAware>Matcher:
+## Recipe: ReposnoseAware>Matcher:
 
   > GET /some-id
   < { "userId" : "some-id", "href" : ".../some-id" }
-                 └───────┴─········· must be equal ·······─┴───────┘
+                  └─────┴─·· must be == ··┴─────┘
 
   Test like:
   ....body("href", response -> equalTo(".../" + response.path("userId"));
@@ -2506,4 +2508,47 @@ String response = given().urlEncodingEnabled(false)
           - Enable syntatic null analisys for fields
         - Treat above errors like fatal compile erros
           (make compiled code not executable)
+
+## SpotBug examples
+@[https://spotbugs.readthedocs.io/en/latest/filter.html]
+
+# # Mockito [[{qa.testing.101,01_PM.TODO]]
+* Top voted Java testing framework in StackOverflow
+* Top 10 most-widely used Java amongt 30.000 inspected projects.
+[[}]]
+
+## JfrUnit [[{qa.testing,scalability.profiling,01_PM.TODO]]
+@[https://github.com/moditect/jfrunit]
+- JUnit extension for asserting JDK Flight Recorder events
+  emitted by an application identifying performance regressions
+  (e.g. increased latencies, reduced throughput).
+
+- JfrUnit supports assertions not on metrics like latency/throughput
+  themselves, but on indirect metrics which may impact those.
+  - memory allocation,
+  - database IO
+  - number of executed SQL statements
+  - ...
+
+- JfrUnit provide means of identifying and analysizing such issues in
+  a reliable, environment independent way in standard JUnit tests,
+  before they manifest as performance regressions in production.
+[[}]]
+
+## Tablasco [[{qa.testing.data,architecture.batch,01_PM.low_code,01_PM.TODO]]
+@[https://github.com/goldmansachs/tablasco]
+- (By Goldman Sasch) JUnit rule that adds table verification to unit
+  tests. For software products that produce large amounts of data, this
+  tool can help to create automated tests that are both comprehensive
+  and easy to maintain. Users only need to adapt their existing data to
+  a table format that Tablasco understands. “Every test produces a
+  color-coded HTML break report, which helps users quickly identify the
+  issue,” said Barry, a vice president in the Technology Division.
+  Furthermore, Tablasco features automated baseline management,
+  allowing users to easily update the baseline file of a failing test.
+
+- JUnit rule for comparing tables and Spark module for comparing large data sets.
+[[}]]
+
+
 [[}]]

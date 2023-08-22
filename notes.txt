@@ -1,14 +1,6 @@
-Apropos:
-- Visit next Web site for a great experience:
-  https://earizon.github.io/txt_world_domination/viewer.html?payload=../JAVA/notes.txt
-
-- If you want to contribute to great gistory of this
-  document you can take the next flight to:
+## Apropos:
+  Content is versioned in git.  commits, issues and pull-requests welcome!
 @[https://www.github.com/earizon/JAVA]
-  Your commits and pull-request will be immortalized
-  in the Pantheon of the Unicode Gods.
-────────────────────────────────────────────────────────────────────────────────
-
 
 This "cheat-sheet with steroids" presents an always-growing set of
 "TOP Java recipes" well ordered&amp;classified extracted from
@@ -400,6 +392,109 @@ optional.filter( s -> s.startsWith("RebelLabs"));    // ← return empty Optiona
       }
     }
   [[jvm.101.autoclosable}]]
+
+## RECORDS!!! v15+ [[{java_lang.records,java_lang.data_structure]]
+* non-verbose inmutable classes. Java 15+
+
+  record Person (String name, int age) { } <·· Alt 1: short writing
+
+  record Person (String name, int age) {   <·· Alt 2: Validating constructor
+    Person {                                   ←  (optional) constructor: can NOT compute state,
+      if (age < 0)                                                        only validate or throw
+        throw new IllegalArgumentException("Too young");
+    }
+  }
+
+  var john = new Person ("john", 76);
+
+  Basic Rules:
+  - can NOT have any additional (internally computed) private or public instance fields.
+  - can NOT extend classes.
+  - are ALWAYS FINAL (cannot be extended),
+
+  WARN: Until the release of Hibernate 6, records could NOT be mapped to "anything" in JPA/Hibernate.
+        The could only be used as DTO projections in your queries. In Hibernate 6 they CAN'T be used
+        to model entity classes but can be used as embeddables.
+
+[[}]]
+
+## Annotations [[{java_lang.101.annotations,qa]]
+@[http://docs.oracle.com/javase/tutorial/java/annotations/]
+ predefined annotation types in java.lang:
+- @Deprecated
+- @Override
+- @SuppressWarnings
+- @SafeVarargs (SDK 1.? +) applied to a method/constructor,
+                           asserts that the code does not perform
+                           potentially unsafe operations
+                           on its varargs parameter.
+                           removing  related warnings
+
+ Annotation types are a form of interface
+DECLARATION(interface is preceded by the @ sign) │ USAGE
+  @Documented                                    │
+  @interface ClassPreamble {                     │   @ClassPreamble (
+     String   author        ()              ;    │      author         = "John Doe"      ,
+     String   date          ()              ;    │      date           = "3/17/2002"     ,
+     int      currentRev    () default 1    ;    │      currentRev     = 6               ,
+     String   lastModified  () default "N/A";    │      lastModified   = "4/12/2004"     ,
+     String   lastModifiedBy() default "N/A";    │      lastModifiedBy = "Jane Doe"      ,
+     String[] reviewers     ()              ;    │      reviewers      = {"Alice", "Bob"}
+  }                                              │   )
+                                                 │ public class Generation3List extends Generation2List {
+                                                 │     // ...
+                                                 │ }
+### EXAMPLES
+new @Interned MyObject();              ← Class instance creation expression
+
+myString = (@NonNull String) str;      ← Type cast (1.8+)
+
+class UnmodifiableList<T> implements   ← implements clause
+      @Readonly List<@Readonly T>
+      { ... }
+
+void monitorTemperature() throws       ← throws exception declaration
+@Critical TemperatureException { ... }
+
+@SuppressWarnings(value = "unchecked") ← Predefined standard annotations
+void myMethod() { ... }
+@SuppressWarnings({"unchecked", "deprecation"})
+void myMethod() { ... }
+[[}]]
+
+## Meta-annotattons [[{java_lang.101,qa]]
+(Annotations applying to other annotations)
+
+ @Retention
+RetentionPolicy.SOURCE: retained only in source (ignored by the compiler)
+RetentionPolicy.CLASS : retained by compiler    (ignored by the JVM)
+RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
+
+ @Documented                       @Repeatable
+- indicates that whenever the     - (1.8+)
+  specified annotation is used    - targeted annotation can be applied
+  those elements should be          more than once to the same
+  documented using the Javadoc      declaration or type use.
+  tool. (By default, annotations    Ex:
+  are not included in Javadoc.)     @Author(name = "Jane Doe")
+                                    @Author(name = "John Smith")
+                                    class MyClass { ... }
+
+
+ @Target                            @Inherited
+ (field,type,class..)              - targeted annotation type can be inherited
+- restrict targeted java-language    from the super class. (false by default.)
+  elements where the annotation      When the user queries the annotation type
+  can be applied:                    and the class has no annotation for this
+  - ElementType.ANNOTATION_TYPE      type, the class'superclass is queried for
+  - ElementType.CONSTRUCTOR          the annotation type.
+  - ElementType.FIELD
+  - ElementType.LOCAL_VARIABLE
+  - ElementType.METHOD
+  - ElementType.PACKAGE
+  - ElementType.PARAMETER
+  - ElementType.TYPE (1.8+)
+[[}]]
 
 ## Unix4j [[{java_lang.functional]]
 @[https://github.com/tools4j/unix4j]
@@ -1117,121 +1212,8 @@ $ $ sudo update-alternatives --config java
 
 [[monitoring}]]
 
-## RECORDS!!! v15+ [[{java_lang.records,java_lang.data_structure]]
-* non-verbose inmutable classes. Java 15+
 
-  record Person (String name, int age) { } <·· Alt 1: short writing
-
-  record Person (String name, int age) {   <·· Alt 2: Validating constructor
-    Person {                                   ←  (optional) constructor: can NOT compute state,
-      if (age < 0)                                                        only validate or throw
-        throw new IllegalArgumentException("Too young");
-    }
-  }
-
-  var john = new Person ("john", 76);
-
-  Basic Rules:
-  - can NOT have any additional (internally computed) private or public instance fields.
-  - can NOT extend classes.
-  - are ALWAYS FINAL (cannot be extended),
-
-  WARN: Until the release of Hibernate 6, records could NOT be mapped to "anything" in JPA/Hibernate.
-        The could only be used as DTO projections in your queries. In Hibernate 6 they CAN'T be used
-        to model entity classes but can be used as embeddables.
-
-[[}]]
-
-## Read from file [[{java_lang.101,persistence.FS,io.101]]
-
-## Reading as lines of text:
-  import java.nio.file.Path
-  import java.nio.file.Files
-
-  final Path path01 = Files.writeString (     // <·· 'writeString' Java 11+
-    Files.createTempFile("test", ".txt"),
-    "Some string to dump to file");
-  out.println(Files.readString(path01));      // <·· 'readString' Java 11+
-
-  final File input1 = new File("input1.txt"),
-             input2 = new File("input1.txt");
-  final CharSource
-      source1 = Files.asCharSource(input1, Charsets.UTF_8),
-      source2 = Files.asCharSource(input2, Charsets.UTF_8),
-      source  =
-         CharSource.concat(source1, source2);   // ← Alt 3.2(Guava) Concat CharSources
-  final String result = source.read();
-
-  final FileReader reader = new FileReader("input.txt");
-  final String result =
-        CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
-  reader.close();                              // ←   WARN:  Don't forget to close
-
-## Read file as bytes:
-  final File file = new File("input.raw");
-  final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
-        = Files.asByteSource(file).
-          .slice(20 /* initial offset */, 100 /* len */);
-  final byte[] result = source.read();
-
-  FileInputStream reader =
-     new FileInputStream("input.raw");        // ←   Using FileInputStream
-  byte[] result =
-     ByteStreams.toByteArray(reader);         // ← + ByteStreams
-  reader.close();
-
-  final URL url =
-       Resources.getResource("test.txt");     // ← Read Resource in classpath
-  final String resource =
-       Resources.toString(url, Charsets.UTF_8);
-
-# Reading big files:
-     try (
-  final FileInputStream inputStream = new FileInputStream(path);
-  final Scanner sc =                        ← Use Scanner to read line-by-line
-            new Scanner(inputStream, "UTF-8");
-     ) {
-  while (sc.hasNextLine()) {
-      final String line = sc.nextLine();
-      // ... do any process ...
-      if (sc.ioException() != null) {    ← // scanner captures ioExceptions
-          // handle error                  // It's good to have a look
-      }
-  }
-     } finally {
-  ...
-     }
-
-final LineIterator it =                       ← Alt 2. From  Apache Commons IO
-   FileUtils.lineIterator(theFile, "UTF-8");
-   try {
-while (it.hasNext()) {
-   String line = it.nextLine();               ← Read line-by-line
-   // ...
-}
-   } finally {
-LineIterator.closeQuietly(it);                ← Close resources
-   }
-
-
-## java.nio.files.Files.lines: (Java 8+)
-  private static String readLineByLine(String filePath)
-  {
-      final StringBuilder contentBuilder = new StringBuilder();
-      try (
-        final java.util.stream.Stream<String> stream =   ← stream resource must be closed
-            java.nio.file.Files.lines(                      (with a try-with in this example)
-                java.nio.file.Paths.get(filePath),
-                java.nio.charset.StandardCharsets.UTF_8)
-       ) {
-          stream.forEach(
-              s -> contentBuilder.append(s).append("\n")
-          );
-      } catch(java.io.IOException e) { ...  }
-      return contentBuilder.toString();
-  }
-[[}]]
-
+# Time Control:
 ## java.time.* [[{java_lang.101,java_lang.date_time,concurrency]]
 - JDK 1.8+, "deprecating" java.util.(Date|Calendar|TimeZome):
   All the classes are IMMUTABLE and THREAD-SAFE
@@ -1389,7 +1371,7 @@ non-Java systems.
   have adopted the LDML to some degree. Microsoft .NET uses LDML for general
   interexchange of locale data, and there are packages available for Node.js
   and Ruby, just to mention a few.
-# TimeUnit
+## TimeUnit
 @[https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html]
 - JDK 1.5+
 - Represents time durations at a given unit of granularity and
@@ -1403,83 +1385,8 @@ Enums: DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
   ...
 [[}]]
 
-## Annotations [[{java_lang.101.annotations,qa]]
-@[http://docs.oracle.com/javase/tutorial/java/annotations/]
- predefined annotation types in java.lang:
-- @Deprecated
-- @Override
-- @SuppressWarnings
-- @SafeVarargs (SDK 1.? +) applied to a method/constructor,
-                           asserts that the code does not perform
-                           potentially unsafe operations
-                           on its varargs parameter.
-                           removing  related warnings
-
- Annotation types are a form of interface
-DECLARATION(interface is preceded by the @ sign) │ USAGE
-  @Documented                                    │
-  @interface ClassPreamble {                     │   @ClassPreamble (
-     String   author        ()              ;    │      author         = "John Doe"      ,
-     String   date          ()              ;    │      date           = "3/17/2002"     ,
-     int      currentRev    () default 1    ;    │      currentRev     = 6               ,
-     String   lastModified  () default "N/A";    │      lastModified   = "4/12/2004"     ,
-     String   lastModifiedBy() default "N/A";    │      lastModifiedBy = "Jane Doe"      ,
-     String[] reviewers     ()              ;    │      reviewers      = {"Alice", "Bob"}
-  }                                              │   )
-                                                 │ public class Generation3List extends Generation2List {
-                                                 │     // ...
-                                                 │ }
-# EXAMPLES
-new @Interned MyObject();              ← Class instance creation expression
-
-myString = (@NonNull String) str;      ← Type cast (1.8+)
-
-class UnmodifiableList<T> implements   ← implements clause
-      @Readonly List<@Readonly T>
-      { ... }
-
-void monitorTemperature() throws       ← throws exception declaration
-@Critical TemperatureException { ... }
-
-@SuppressWarnings(value = "unchecked") ← Predefined standard annotations
-void myMethod() { ... }
-@SuppressWarnings({"unchecked", "deprecation"})
-void myMethod() { ... }
-[[}]]
-
-# Meta-annotattons [[{java_lang.101,qa]]
-(Annotations applying to other annotations)
-
- @Retention
-RetentionPolicy.SOURCE: retained only in source (ignored by the compiler)
-RetentionPolicy.CLASS : retained by compiler    (ignored by the JVM)
-RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
-
- @Documented                       @Repeatable
-- indicates that whenever the     - (1.8+)
-  specified annotation is used    - targeted annotation can be applied
-  those elements should be          more than once to the same
-  documented using the Javadoc      declaration or type use.
-  tool. (By default, annotations    Ex:
-  are not included in Javadoc.)     @Author(name = "Jane Doe")
-                                    @Author(name = "John Smith")
-                                    class MyClass { ... }
 
 
- @Target                            @Inherited
- (field,type,class..)              - targeted annotation type can be inherited
-- restrict targeted java-language    from the super class. (false by default.)
-  elements where the annotation      When the user queries the annotation type
-  can be applied:                    and the class has no annotation for this
-  - ElementType.ANNOTATION_TYPE      type, the class'superclass is queried for
-  - ElementType.CONSTRUCTOR          the annotation type.
-  - ElementType.FIELD
-  - ElementType.LOCAL_VARIABLE
-  - ElementType.METHOD
-  - ElementType.PACKAGE
-  - ElementType.PARAMETER
-  - ElementType.TYPE (1.8+)
-[[}]]
 
 #[slf4j_summary]
 ## SLF4j Logging  [[{monitoring.logging.slf4j]]
@@ -1819,7 +1726,7 @@ to plug in the desired logging framework at deployment time.
 ## Lambdas 1.8+ [[{java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
 * simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
-### Context:
+### Context
   The conventional computing model of a Touring machine takes for granted
   that data is already available to be processed.
   In the Internet era, data is arriving at random and we don't want to block
@@ -1933,7 +1840,7 @@ collect(Collectors.toCollection(TreeSet::new))
 - (See also <a href="http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php">What can Reactive Streams offer to EE4J</a>)
 [[}]]
 
-# RxJava [[{async/reactive.rxjava,qa]]]] #[rxjava_summary]
+# RxJava [[{async/reactive.rxjava,qa]]
 @[https://github.com/ReactiveX/RxJava]
 
 ReactiveX provides a set of very-well thought-out cross-language abstraction to
@@ -2122,7 +2029,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
     Scheduler "==" Thread
 
 
-# External links:
+## External links:
 - Rx Workshop: Introduction
  @[https://channel9.msdn.com/Series/Rx-Workshop/Rx-Workshop-Introduction]
 - Introduction to Rx: IObservable
@@ -2138,7 +2045,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
 - Turning a callback into an Rx Observable by @afterecho
  @[https://afterecho.uk/blog/turning-a-callback-into-an-rx-observable.html]
 
-# Ops.classification 1
+## Ops.classification 1
  Operators creating new Observables
 @[http://reactivex.io/documentation/operators.html#creating]
     Create     create Observable from scratch programmatically
@@ -2289,7 +2196,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
  Operators to Convert Observables
     To        convert an Observable into another object or data structure
 
-# Ops.classification 2
+## Ops.classification 2
 - Basic Operators:
   - Suppressing operators:
     - filter, take, skip, takeWhile/skipWhile, distinct, distinctUntilChanged
@@ -2353,7 +2260,6 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 @[https://tech.xing.com/dealing-with-rxjavas-never-ending-observables-1ca8f18797ff] [[}]]
 
 [[async/reactive.rxjava}]]
-
 
 
 ## java.utility.function [[{java_lang.functional,qa,async/reactive.*,PM.WiP]]
@@ -2783,6 +2689,98 @@ Map<String, Double> map01 = new HashMap<>();
 
 
 # INPUT/OUTPUT
+
+## Read from file [[{java_lang.101,persistence.FS,io.101]]
+
+## Reading as lines of text
+  import java.nio.file.Path
+  import java.nio.file.Files
+
+  final Path path01 = Files.writeString (     // <·· 'writeString' Java 11+
+    Files.createTempFile("test", ".txt"),
+    "Some string to dump to file");
+  out.println(Files.readString(path01));      // <·· 'readString' Java 11+
+
+  final File input1 = new File("input1.txt"),
+             input2 = new File("input1.txt");
+  final CharSource
+      source1 = Files.asCharSource(input1, Charsets.UTF_8),
+      source2 = Files.asCharSource(input2, Charsets.UTF_8),
+      source  =
+         CharSource.concat(source1, source2);   // ← Alt 3.2(Guava) Concat CharSources
+  final String result = source.read();
+
+  final FileReader reader = new FileReader("input.txt");
+  final String result =
+        CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
+  reader.close();                              // ←   WARN:  Don't forget to close
+
+## Read file as bytes
+  final File file = new File("input.raw");
+  final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
+        = Files.asByteSource(file).
+          .slice(20 /* initial offset */, 100 /* len */);
+  final byte[] result = source.read();
+
+  FileInputStream reader =
+     new FileInputStream("input.raw");        // ←   Using FileInputStream
+  byte[] result =
+     ByteStreams.toByteArray(reader);         // ← + ByteStreams
+  reader.close();
+
+  final URL url =
+       Resources.getResource("test.txt");     // ← Read Resource in classpath
+  final String resource =
+       Resources.toString(url, Charsets.UTF_8);
+
+## Reading big files
+     try (
+  final FileInputStream inputStream = new FileInputStream(path);
+  final Scanner sc =                        ← Use Scanner to read line-by-line
+            new Scanner(inputStream, "UTF-8");
+     ) {
+  while (sc.hasNextLine()) {
+      final String line = sc.nextLine();
+      // ... do any process ...
+      if (sc.ioException() != null) {    ← // scanner captures ioExceptions
+          // handle error                  // It's good to have a look
+      }
+  }
+     } finally {
+  ...
+     }
+
+final LineIterator it =                       ← Alt 2. From  Apache Commons IO
+   FileUtils.lineIterator(theFile, "UTF-8");
+   try {
+while (it.hasNext()) {
+   String line = it.nextLine();               ← Read line-by-line
+   // ...
+}
+   } finally {
+LineIterator.closeQuietly(it);                ← Close resources
+   }
+
+
+## java.nio.files.Files.lines: (Java 8+)
+  private static String readLineByLine(String filePath)
+  {
+      final StringBuilder contentBuilder = new StringBuilder();
+      try (
+        final java.util.stream.Stream<String> stream =   ← stream resource must be closed
+            java.nio.file.Files.lines(                      (with a try-with in this example)
+                java.nio.file.Paths.get(filePath),
+                java.nio.charset.StandardCharsets.UTF_8)
+       ) {
+          stream.forEach(
+              s -> contentBuilder.append(s).append("\n")
+          );
+      } catch(java.io.IOException e) { ...  }
+      return contentBuilder.toString();
+  }
+[[}]]
+
+
 
 ## NIO (JDK 1.4+) [[{async/reactive.io]]
 @[http://tutorials.jenkov.com/java-nio/buffers.html]
@@ -4085,6 +4083,10 @@ jLine: GNU/readline alike library for JAVA:
   · Rust: clap, structopt
   · PHP: console
 [[}]]
+[[}]]
+
+## Snippets Collection [[{]]
+https://github.com/topics/snippets-collection
 [[}]]
 
 [[PM.TODO}]]
