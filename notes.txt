@@ -3420,6 +3420,20 @@ TODO: HTTPClient Quick intro:
 
 ## OkHTTP [[{io.HTTP.OkHTTP]]
 -   OkHTTP vs java.net.http.HTTPClient
+- See also [Retrofit](https://square.github.io/retrofit/), built on top
+  of OkHTTP.
+  OkHttp: pure HTTP/SPDY client responsible for any low-level network
+  operation, caching, request and response manipulation, and many more.
+  In contrast, Retrofit is a high-level REST abstraction build on top
+  of OkHttp. Retrofit 2 is strongly coupled with OkHttp and makes
+  intensive use of it.
+  OkHttp   Functions: Connection pooling, gzipping, caching, recovers from
+                      network problems, sync, and async calls, redirects,
+                      retries ... and so on.
+  Retrofit Functions: URL manipulation, requesting, loading, caching,
+                      threading, synchronization... It allows sync and
+                      async calls.
+
 From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
    OkHTTP PROs over                     OkHTTP CONs over
    java.net.http.HTTPClient             java.net.http.HTTPClient
@@ -3769,6 +3783,22 @@ their dependencies.
   - Designed to parse/generate/query standard JSON documents.
 [[}]]
 
+## JSON-B vs GSON vs ... [[{]]
+* https://www.reddit.com/r/javahelp/comments/bx6ded/jsonb_vs_jackson/
+   ... I've had issues with nested types (example: List<X>) when
+  decoding Json with most libraries (see usage examples [here](https://www.baeldung.com/java-json),
+  since they request a class as a parameter, which would be a raw type (in
+  this example, List.class).<br/>
+  Gson offers a helper class called TypeToken to circumvent this through
+  the usage of type instead of class (ex: https://www.baeldung.com/gson-json-to-map).
+  It's very complicated but at the same time very elegant.<br/>
+  I don't know if other Json libraries offer something equivalent, I
+  found Google's code to be concise and easy to understand so I didn't
+  edit: I did a quick search about Json-B (never really read much about
+  it before) and it doesn't seem to provide any way to handle the
+  scenario described above. You would still need a library at least to
+  obtain the type.
+[[}]]
 ## JSON-B / JSR-367 [[{]]
   @[https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/]
 - B stands for Ojbect binding

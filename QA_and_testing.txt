@@ -595,8 +595,6 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 # JavaDoc [[{qa.101.javadoc,qa.documentation]]
 
-
-
    Example
    /**
     * Short one line description.
@@ -633,29 +631,173 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 [[}]]
 
 
-# Junit [[{101.qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
-  Junit (TEST scoped) dependencies:
+# Junit [[{qa.junit.101,qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
+
+* Junit 5 is the sum of next modules:
+  ```
+  + JUnit Platform <··* == "core" to launch testing frameworks on the JVM.
+                         + TestEngine API (dev new testing frameworks)
+                         + Console Launcher
+                         + JUnit Platform Suite Engine
+                           (run custom test suite using 1+ test engines)
+                      * 1st class support in IDEs,Gradle/Maven
+  + JUnit Jupiter <·· * "combination of"
+                        1. programming model and
+                        2. extension model
+                        (for writing tests&extensions)
+                      * It provides a `TestEngine` for running Jupiter
+                        based tests on the platform.
+  + JUnit Vintage <·· TestEngine to JUnit 3/4 based tests.
+                      Depends on JUnit 4.12+
+  ```
+* Junit (maven/gradle TEST scoped) dependencies:
+
   org.junit.jupiter:junit-jupiter-api:${junit_version}
+                    \---------------^- The org.junit.jupiter.api package @ junit-jupiter-api module
+                                       contains the standard annotations for testing (@Test/@Before/...)
   org.junit.jupiter:junit-jupiter-engine:${junit_version}
 
-  @org.junit.jupiter.api.Test
+## Test life cycle:
 
-  @DisplayName("Display name Class Level")
+* Default behaviour: JUnit creates a new instance of each test class before executing each test method
+  "completely" isolating each test.
+  **WARN**: Do not use heavy/slow constructors.
+
+* Use `@TestInstance(Lifecycle.PER_CLASS)` to execute all methods on the same instance.
+  In that case use @BeforeEach or @AfterEach methods to reset state after each test.
+  @BeforeAll and @AfterAll can be used in this case.
+  * Java 16+: @BeforeAll, @AfterAll can be declared as static in @Nested test classes.
+
+
+## Documented test:
+
+
+  import static org.junit.jupiter.api.Assertions.fail;
+  import static org.junit.jupiter.api.Assertions.assertAll;
+  import static org.junit.jupiter.api.Assertions.assertEquals;
+  import static org.junit.jupiter.api.Assertions.assertNotNull;
+  import static org.junit.jupiter.api.Assertions.assertThrows;
+  import static org.junit.jupiter.api.Assertions.assertTimeout;
+  import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+  import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
+  import static org.junit.jupiter.api.Assumptions.assumeTrue;
+  import static org.junit.jupiter.api.Assertions.assertEquals;
+  import static org.junit.jupiter.api.Assumptions.assumeTrue;
+  import static org.junit.jupiter.api.Assumptions.assumingThat;
+
+  import org.junit.jupiter.api.AfterAll;
+  import org.junit.jupiter.api.AfterEach;
+  import org.junit.jupiter.api.BeforeAll;
+  import org.junit.jupiter.api.BeforeEach;
+  import org.junit.jupiter.api.Disabled;
+  import org.junit.jupiter.api.Test; // JUnit 5 (vs  org.junit.Test for JUnit <v5)
+  import static org.junit.jupiter.api.Assertions.assertEquals;
+
+ 2.10.2. Class Order
+
+  import org.junit.jupiter.api.Order;                        // Useful for integration & functional tests!!!
+  import org.junit.jupiter.api.TestMethodOrder;              // NOTE: Unit tests must not depend on the order
+//import org.junit.jupiter.api.ClassOrderer;                 // <·· order can also be applied to full classes
+  import org.junit.jupiter.api.MethodOrderer.DisplayName    : sorts alphanumerically by display name
+  import org.junit.jupiter.api.MethodOrderer.MethodName     : sorts alphanumerically by method name (and formal param list)
+  import org.junit.jupiter.api.MethodOrderer.OrderAnnotation: sorts numerically      by @Order annotation
+  import org.junit.jupiter.api.MethodOrderer.Random         : sorts pseudo-randomly
+                                             └────┬────────┘
+  @TestMethodOrder(                               ·
+     OrderAnnotation.class ) <··· (one of )······─┘
+  @DisplayName("😱Display name Class Level")       // custom display name in test runners/reports/IDEs.
   @DisplayNameGeneration(ReplaceCamelCase.class)
   class JUnitAPISummaryTest {
-                          // testing Life-Cycle methods:
-    @BeforeEach { ... } // ← executed before each @Test in class
-    @AfterEach  { ... } // ← executed after  each @Test in class
-    @BeforeAll  { ... } // ← executes before all tests.
-    @AfterAll   { ... } // ← executes after  all tests.
+    //                       // testing Life-Cycle methods:
 
 
+    @BeforeAll          // <·· executes before all tests.          == @BeforeClass in JUnit 4
+    static void initAll() {
+    }
+    @BeforeAll
+    void tearUp{ ... }
+    @AfterAll   { ... } // <·· executes after  all tests.          == @AfterClass  in JUnit 4
+    static void tearDownAll() { }
+    @BeforeEach         // <·· executed before each @Test in class == @Before      in JUnit 4
+    @Timeout(           // <·· fail-fast) if execution time exceeds 5 seconds at setup
+      threadMode = ThreadMode.SEPARATE_THREAD // optional INFERRED*|SAME_THREAD|SEPARATE_THREAD
+      value = 500,                            // Use -Djunit.jupiter.execution.timeout.default=... for def.value
+      unit = TimeUnit.MILLISECONDS)           // fine grained config exists for test,factory,lifecycle,beforeall,...
+    void init() { ... }
+    @AfterEach  { ... } // <·· executed after  each @Test in class == @After       in JUnit 4
+    void tearDown() { }                             └─┬─┘
+                                  (or @RepeatedTest @ParameterizedTest, @TestFactory)
 
-    @org.junit.jupiter.api.Test
+    @Test
+    @Order(1)
+    void failingTest() {
+        assertEquals(2, calculator.add(1, 1));
+        assertEquals(4, calculator.multiply(2, 2),
+                "The optional failure message is now the last parameter");
+        assertTrue('a' < 'b', () -> "Assertion messages can be lazily evaluated -- "
+                + "to avoid constructing complex messages unnecessarily.");
+        assertAll("person",
+            () -> assertEquals("Jane", person.getFirstName()),
+            () -> assertEquals("Doe", person.getLastName())
+        assertAll("properties",
+            () -> {
+                final String firstName = person.getFirstName();
+                assertNotNull(firstName);
+                assertAll("first name",
+                    () -> assertTrue(firstName.startsWith("J")),
+                    () -> assertTrue(firstName.endsWith("e"))
+                );
+            },
+            () -> { // Grouped assertion, processed independently of results of 1st name assertions
+                String lastName = person.getLastName();  // ...
+            }
+        );
+
+        Exception exception = assertThrows(ArithmeticException.class, () -> calculator.divide(1, 0));
+        assertEquals("/ by zero", exception.getMessage());
+
+        assertTimeout(ofMinutes(2), () -> { ... }); //  fails if execution time > timeout
+
+        String actualResult = assertTimeout(ofMinutes(2), () -> { return "result01"; });
+        assertEquals("result01", actualResult);
+
+        assertTimeoutPreemptively(ofMillis(10), () -> { // like assertTimeout but executes
+            new CountDownLatch(1).await();              // in different thread. "execution timed out after 10 ms"
+        });
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        NOTE: Specifically, Spring’s testing support binds
+        transaction state to the current thread (via a ThreadLocal)
+        any actions taken by Spring components in assertTimeoutPreemptively()
+        will not be rolled back with the test-managed transaction.
+         Such actions will be committed to the persistent store
+        even though the test-managed transaction is rolled back.
+
+
+        assumeTrue("abc".contains("Z")); // will throw.
+        assumeTrue( "CI".equals(System.getenv("ENV"))); // TODO:(?) what means assume??
+            () -> "Aborting test: not on developer workstation");
+        assumingThat("CI".equals(System.getenv("ENV")),
+            () -> { // run only on the CI server
+                assertEquals(2, calculator.divide(4, 2));
+            });
+        fail("test should have been aborted");
+    }
+
+
+    @Nested                       // <··· Nested tests allows for a hierarchical organization of tests
+    @DisplayName("when new")
+    class WhenNew { ...  }
+
+    @Test
+    @Order(2)
     @DisplayName("Test parameters with nice names")
     @ParameterizedTest(name = "Use the value {0} for test")
     @ValueSource(insts = { -1, -4 })
-    void test01( int number ) {
+    void test01( int number ) {            // <·· Test&lifecycle methods MUST NOT be abstract,
+                                                  neither return a value (except for @TestFactory)
+                                                  neither be private.
       Assumptions.assumeTrue (...);            // ← failed assumption aborts test
       Assumptions.assumeFalse(...);            //   Continuing execution will fail.
                                                //   Example: Initial state is not expected one
@@ -692,10 +834,25 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
            });
     }
 
-    @Test @Disabled   ...                      // Conditional execution
-    @Test @EnabledOnOs({ OS.LINUX }) ...
-    @Test @DisabledIfSystemProperty(named = "ci-server", matches = "true")
-    @Test @EnabledIfEnvironmentVariable(named = "ENV", matches = "test-env")
+
+    boolean customCondition1() { return true ; }
+    boolean customCondition2() { return false; }
+
+ //   ┌ Unlike JUnit 4’s @Test annotation, it does not declare any attributes:
+ //   · JUnit Jupiter test extensions operate based on their own dedicated annotations
+ //   · Such methods are inherited unless they are overridden.
+ // ┌─┴─┐
+    @Test
+    @Order(3)
+ // @Disabled("disable until bug #23 is fixed) == @Ignore in JUnit 4
+    @EnabledIf ("com.mycomp.myprj.mypck.myclass#customCondition1")
+    // boolean method (and probably static ) ─────────┬─────────┐
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless",
+        disabledReason = "headless environment")
+
+   @Test @Order(4) @EnabledOnOs({ OS.LINUX }) ...
+   @Test @Order(5) @DisabledIfSystemProperty(named = "ci-server", matches = "true")
+   @Test @Order(6) @EnabledIfEnvironmentVariable(named = "ENV", matches = "test-env")
 
    @RepeatedTest(
       value = 9,
@@ -717,6 +874,77 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
    }
   }
 
+
+
+## Other annotations:
+
+```
+@TestFactory : mark method as test factory for dynamic tests.
+@TestTemplate: mark method as template feeded with a number
+               of `invocation contexts` returned by the
+               registered providers. # TODO: Complete
+@TestClassOrder : set `@Nested class` execution order
+@TestMethodOrder: set `test method`   execution order
+@TestInstance   : Used to configure instance lifecycle
+@DisplayNameGeneration: set custom display name generator
+
+
+@Nested         : mark class as non-static nested test class.
+                  WARN: In Java 8-15, @BeforeAll and @AfterAll methods
+                        cannot be used directly in @Nested class unless
+                        the "per-class" test instance lifecycle is used.
+                        In Java 16 they can be declared as static in
+                        @Nested test class with either test instance lifecycle mode.
+@Tag: Used to filter-test-by-tag (class|method)
+      Similar to test groups in TestNG or
+      Categories in JUnit 4.  Tags name rules:
+      A tag must not be null or blank.
+      A trimmed tag must not contain whitespace.
+      A trimmed tag must not contain ISO control characters.
+      A trimmed tag must not contain next chars: , ( ) & | !
+
+
+      To filter by tags:
+        <build>
+          <plugins>
+            <plugin>                                             Plguin will scan for test classes
+              <artifactId>maven-surefire-plugin</artifactId> <·· whose fully qualified names match
+              <version>3.0.0-M7</version>                        the following patterns.
+                                                                 **/Test*.java  **/*Tests.java
+                                                                 **/*Test.java  **/*TestCase.java
+       +      <configuration>
+       +        <groups>acceptance | !feature-a</groups>
+       +        <excludedGroups>integration, regression</excludedGroups>
+       +            <properties>                          <··· -D... flags / properties
+       +                <configurationParameters>
+       +                    junit.jupiter.testinstance.lifecycle.default = per_class
+       +                </configurationParameters>
+       +            </properties>
+       +      </configuration>
+            </plugin>
+          </plugins>
+        </build>
+
+      * Tag Expressions:
+        * boolean expression.
+        * operators: ! & | ( ... )
+        * any() : select all tests with tags
+        * none(): select all tests without tags
+        * Example: (micro | integration) & (product | shipping)
+
+
+@Timeout: fail test,test-factory, test-template or lifecycle method if
+          execution exceeds timeout.
+
+@ExtendWith: register extensions declaratively. Example:
+         @ExtendWith(SerenityJUnit5Extension.class)
+
+@RegisterExtension: Register extensions programmatically via fields.
+
+@TempDir: supply temp dir via field|parameter injection in lifecycle|test method.
+          (org.junit.jupiter.api.io)
+
+
 ## Testsuites: run tests in multiple test classes and/or different packages.
   @RunWith(JUnitPlatform.class)
   @SelectPackages("com.myComp.junit5.package01")
@@ -724,7 +952,114 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   { }
 
 * See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
+
+
+## Dependency Injection for Constructors and Methods [[{]]
+* Junit 4: constructors or methods have zero params
+  Junit 5: constructors or methods have zero or more params
+           allowing for Dependency Injection.
+* Injection Rules:
+  1. If constructor, method or lifecycle method accepts a parameter
+     the parameter must be resolved at runtime by a registered ParameterResolver.
+  2. if constructor or method parameter is of type TestInfo, the TestInfoParameterResolver
+     will supply an instance of TestInfo corresponding to the current container or test
+     as the value for the parameter.
+     TestInfo: provides info about the current container or test (display name,
+               test class,method,associated tags,...)
+               (drop-in replacement for `TestName` JUnit 4)
+
+    TestInfoDemo(TestInfo testInfo) {
+        assertEquals("TestInfo Demo", testInfo.getDisplayName());
+    }
+
+ 3. In a @RepeatedTest, @BeforeEach, or @AfterEach method there is a parameter
+    of type RepetitionInfo, the RepetitionInfoParameterResolver will inject
+    an instance that can be used to retrieve total number of repetitions.
+
+ 4. If parameter is of type TestReporter, the TestReporterParameterResolver will
+    inject an instancte that can  be used to publish additional data about the
+    current test run.
+
+ 5. Other parameter resolvers must be explicitly enabled by registering appropriate
+    extensions via @ExtendWith.
 [[}]]
+
+2.16. Parameterized Tests [[{]]
+
+@ParameterizedTest
+
+    @ParameterizedTest // <··························· Each parameterized test needs a
+    @NullSource : provides a single null argument   // <·· test null inputs
+    @EmptySource: provides a single empty argument  // <·· test empty imputs
+    @ValueSource( strings = { "racecar", "radar" }) // <·· value source
+                                                    // Set autoCloseArguments to false
+                                                    // to false to avoid autoclossing
+                                                    // params after each test if needed .
+    @MethodSource("someMethodProvidindStrings")     // <·· example:
+    void palindromes(String candidate) {                   static Stream<String> stringProvider() {
+        assertTrue(StringUtils.isPalindrome(candidate));       return Stream.of("...", ...);
+    }                                                      }
+
+
+    // Enum params
+    @ParameterizedTest
+    @EnumSource(ChronoUnit.class)
+    @EnumSource(names = { "DAYS", "HOURS" })
+    @EnumSource(mode = EXCLUDE, names = { "ERAS", "FOREVER" })
+    @EnumSource(mode = MATCH_ALL, names = "^.*DAYS$")
+    void testWithEnumSourceInclude(ChronoUnit unit) {
+        assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
+    }
+
+    // Multi-argument examples
+    static Stream<Arguments> stringIntAndListProvider() {
+       return Stream.of(
+           arguments("apple", 1, Arrays.asList("a", "b")),
+           ...);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringIntAndListProvider")
+    void multiArgumentTest(String str, int num, List<String> list) {
+        ...
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+         "apple,         1",
+         "banana,        2",
+         "'lemon, lime', 0xF1",
+         "NIL,           700_000"
+       },
+       nullValues = "NIL"
+       ignoreLeadingAndTrailingWhitespace = true,
+    // textBlock = """        <··· Java 15+
+    //   apple,         1
+    //   NILL,    700_000
+    //   ... """
+    )
+    @CsvFileSource(resources = "/two-column.csv", numLinesToSkip = 1)
+    void test(String fruit, int rank) { ...  }
+[[}]]
+
+## Console Launcher (junit-platform-console-standalone-x.x.x.jar)
+$ java -jar junit-platform-console-standalone-1.9.3.jar  # alt 1.
+$ java -cp classes:testlib/*                             # alt 2.
+     org.junit.platform.console.ConsoleLauncher
+
+## Listeners [[{]]
+* APIs allowing JUnit, third parties, and custom code to react to events fired at
+  various points during the discovery and execution of a TestPlan.
+* LauncherSessionListener: receives events when a LauncherSession is opened and closed.
+* LauncherDiscoveryListener: receives events that occur during test discovery.
+* TestExecutionListener: receives events that occur during test execution.
+[[}]]
+
+## Test Suite [[{PM.TODO]]
+[[}]]
+
+
+[[qa.junit.101}]]
 
 ## AssertJ (Fluent Assertions) is composed of several modules:  [[{01_PM.TODO]]
   - core      module: assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
@@ -2512,7 +2847,7 @@ String response = given().urlEncodingEnabled(false)
 ## SpotBug examples
 @[https://spotbugs.readthedocs.io/en/latest/filter.html]
 
-# # Mockito [[{qa.testing.101,01_PM.TODO]]
+## Mockito [[{qa.testing.101,01_PM.TODO]]
 * Top voted Java testing framework in StackOverflow
 * Top 10 most-widely used Java amongt 30.000 inspected projects.
 [[}]]
