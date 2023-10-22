@@ -1,11 +1,7 @@
-## Apropos:
-  Content is versioned in git.  commits, issues and pull-requests welcome!
-@[https://www.github.com/earizon/JAVA]
-
 [[{DEVOPS.MAVEN]]
+# Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,DevOps.maven.troubleshooting,_PM.WiP]]
 
-# Maven Summary [[{DevOps.maven.101,devops.101,qa.*,devops,DevOps.maven.troubleshooting,_PM.WiP]] #[mvn_summary]
-## External Links
+* External Links
   - PUBLIC REPOSITORY:      @[https://mvnrepository.com/]
   - Artifact Search Engine: @[http://search.maven.org/]
   - Online doc from Maven : @[https://www.mvndoc.com]
@@ -13,24 +9,24 @@
     - full index   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index-all.html]
     - by package   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index.html]
 
-## maven lifecycle : execute a set of goals IN ORDER:
-    mvn   package   ┌ resources:resources     ←··· goal: unit of work. plugins implementing differet goals
-          └──┬──┘   │ compiler:compile             accept parametrization customizing its run-time behavior:
-             └──────┤ resources:testResources
-                    │ compiler:testCompile
-                    └ surefire:test jar:jar
+# maven lifecycle : execute a set of goals IN ORDER:
+  mvn   package   ┌ resources:resources     ←··· goal: unit of work. plugins implementing differet goals
+        └──┬──┘   │ compiler:compile             accept parametrization customizing its run-time behavior:
+           └──────┤ resources:testResources
+                  │ compiler:testCompile
+                  └ surefire:test jar:jar
 
 ## mvn Usssage :
   All mvn commands take the pom.xml project definition as input.
   First time mvn is executed will be slow, since lot of libraries must be downloaded.
 
-$ $ QS=maven-archetype-quickstart \
-$ $ mvn archetype:generate           ← create new project skeleton:
-$ $   -DgroupId=my.groupId \           ./pom.xml
-$ $   -DartifactId=myArtifact \        ./src/test/java/my.groupId/AppTest.java
-$ $   -DarchetypeVersion=1.4           ./src/main/java/my.groupId/App.java
-$ $   -DinteractiveMode=false          ./src/main/resouces/ (./META-INF/MANIFEST.MF, ./images/, ... )
-$ $   -DarchetypeArtifactId=$QS        ./src/test/resources/test.properties ← ex: InputStream is = getClass()
+  $ QS=maven-archetype-quickstart \
+  $ mvn archetype:generate           ← create new project skeleton:
+      -DgroupId=my.groupId \           ./pom.xml
+      -DartifactId=myArtifact \        ./src/test/java/my.groupId/AppTest.java
+      -DarchetypeVersion=1.4           ./src/main/java/my.groupId/App.java
+      -DinteractiveMode=false          ./src/main/resouces/ (./META-INF/MANIFEST.MF, ./images/, ... )
+      -DarchetypeArtifactId=$QS        ./src/test/resources/test.properties ← ex: InputStream is = getClass()
                                        └──────┬───────┘                           .getResourceAsStream("/test.properties";
                                      To add another non-standard (old code/tool-generated/...)
                                      directories add next lines to pom.xml:
@@ -41,28 +37,28 @@ $ $   -DarchetypeArtifactId=$QS        ./src/test/resources/test.properties ← 
                                      </build>
 
                                        EXECUTING LIFECYCLES (ordered lists of goals)
-$ $ mvn clean                        ← Remove ./target folder
-$ $ mvn compile                      ← ... → compile app and tests code
-$ $ mvn test-compile                 ← ... → compile tests only.
-$ $ mvn test                         ← ... → test (the surefire plugin executing test will search for
+  $ mvn clean                        ← Remove ./target folder
+  $ mvn compile                      ← ... → compile app and tests code
+  $ mvn test-compile                 ← ... → compile tests only.
+  $ mvn test                         ← ... → test (the surefire plugin executing test will search for
                                              **/(*Test|Test*|*TestCase).java inside ./src/main/test/*
 
-$ $ mvn  -Dexec.args="arg0 ..."  \   ← Execute Java program with the help of maven.
-$    exec:java \                       mvn will take care of setting complex class path properly
-$   -Dexec.mainClass=com.foo.Main      (discouraged in production).
+  $ mvn  -Dexec.args="arg0 ..."  \   ← Execute Java program with the help of maven.
+     exec:java \                       mvn will take care of setting complex class path properly
+    -Dexec.mainClass=com.foo.Main      (discouraged in production).
 
-$ $ mvn clean package                ← clean→resources→compile→test→package ( generates JAR/WAR/... package)
+  $ mvn clean package                ← clean→resources→compile→test→package ( generates JAR/WAR/... package)
                                        In detail:
                                        1) resources:resources       4) compiler:testCompile
                                        2) compiler:compile          5) surefire:test jar:jar
                                        3) resources:testResources
 
-$ $ mvn clean install                ← clean→compile→test→package→install_local
+  $ mvn clean install                ← clean→compile→test→package→install_local
                                        (Use -Dmaven.test.skip=true to skip (slow) testing )
 
-$ $ mvn clean deploy                 ← clean→compile→test→package→install_local→install_pub
+  $ mvn clean deploy                 ← clean→compile→test→package→install_local→install_pub
                                                                                 ("corporate") server
-$ $ mvn                              ← Default to next goals: (  WARN: no clean)
+  $ mvn                              ← Default to next goals: (  WARN: no clean)
   └────────┬────────────┘              1) process-resources  4) process-test-resources 7) prepare-package
            ·                           2) compile            5) test-compile           8) package
            ·                           3) process-classes    6) test                   9) install
@@ -78,19 +74,19 @@ $ $ mvn                              ← Default to next goals: (  WARN: no clea
   help:effective-pom     : Displays effective POM for current build                      [debugging]
   help:effective-settings: Prints calculated settings                                    [debugging]
 
-$ $ mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:list \   ← show ordered-by-phase list
-$   -Dbuildplan.tasks=install                                    of goals executed (Very useful to
+  $ mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:list \   ← show ordered-by-phase list
+    -Dbuildplan.tasks=install                                    of goals executed (Very useful to
                                                                  skip slow/non-important goals like
                                                                  doc, style-checks,...)
 
-$ $ mvn resources:resources \       ← quick local install (bypass tests/style-checks/...)
-$    compiler:compile \
-$    jar:jar \  install:install
+  $ mvn resources:resources \       ← quick local install (bypass tests/style-checks/...)
+     compiler:compile \
+     jar:jar \  install:install
 
                                                                            EXTRACT PACKAGE INFO
-$ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.artifactId   ← Artifact ID
-$ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.groupId      ← Extract Group ID
-$ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Extract Version
+  $ mvn help:evaluate -q -DforceStdout -Dexpression=project.artifactId   ← Artifact ID
+  $ mvn help:evaluate -q -DforceStdout -Dexpression=project.groupId      ← Extract Group ID
+  $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Extract Version
 
 ## Adding local jar dependency  (vs. maven central repository)
     WARN : discouraged, but sometimes needed
@@ -106,7 +102,7 @@ $ $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Ext
   <profiles>
     <profile>
       <id>fatjar</id>      ←···· STEP   : create 'fatjar' profile with customized maven-assembly-plugin
-      <activation>               STEP   : Exec $ $ mvn ... '-P fatjar'   to activate this profile
+      <activation>               STEP   : Exec   $ mvn ... '-P fatjar'   to activate this profile
         <property> <name>fatjar</name> </property>
       </activation>
       <build>
@@ -275,70 +271,190 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
     </dependencies>
   </project>
 <hr/>
-# Parent+Children Multiproject
-- Allows to inherit project dependency in children projects
 
-  .../parent/pom.xml              │ .../parent/child1/pom.xml
-  ─────────────────────────────── │ ──────────────────────────────────
-  <modelVersion>4.0.0             │ <parent>
-  </modelVersion>                 │   <groupId>...</groupId>
-  <groupId>....</groupId>         │   <artifactId>parent</artifactId>
-  <artifactId>parent</artifactId> │   <version>1</version>
-  <version>0.1.0</version>        │   <relativePath>
-  <packaging>pom</packaging>      │      ../pom.xml</relativePath>
-                                  │ </parent>
-                                  │ <dependecies>
-  <modules>                       │   <dependency>
-  <module>./child1</module>       │     <groupId>...</groupId>
-  <module>./child2</module>       │     <artifactId>...</artifactId>
-  </modules>                      │   </dependency>...
-                                  │ </dependecies>
+# Parent+Children Multiproject  [[{]]
+- Allows to inherit project dependency in children projects and build all sub-module child
+- [REF](https://maven.apache.org/guides/mini/guide-multiple-modules.html)
 
 
-  <dependencyManagement>            ←  *1
-    <dependencies>
-      <dependency>
-        <groupId>...</groupId>
-        <artifactId>...</artifactId>
-        <version>${dep1_ver}</version>    ← NOTE: no need to repeat version in children
-        <scope>compile</scope>      ← use compile by default. Let children override it.
+  .../parent/pom.xml                               │ .../parent/child1/pom.xml
+  ───────────────────────────────                  │ ──────────────────────────────────
+  <modelVersion>4.0.0                              │ <parent>
+  </modelVersion>                                  │   <groupId>...</groupId>
+  <groupId>....</groupId>                          │   <artifactId>parent</artifactId>
+  <artifactId>parent</artifactId>                  │   <version>1</version>
+  <version>0.1.0</version>                         │   <relativePath>
+  <packaging>pom</packaging>                       │      ../pom.xml</relativePath>
+                                                   │ </parent>
+                                                   │ <dependecies>
+  <modules>                                <·· *1  │   <dependency>
+  <module>./library1</module>                      │     <groupId>...</groupId>
+  <module>./library2</module>                      │     <artifactId>...</artifactId>
+  <module>./service1</module>                      │   </dependency>...
+  </modules>                                       │ </dependecies>
+                                                   │
+                                                   │
+  <dependencyManagement>                   <·· *2  │
+    <dependencies>                                 │
+      <dependency>                                 │
+        <groupId>...</groupId>                     │
+        <artifactId>...</artifactId>               │
+         <version>${dep1_ver}</version>    <·· Children will not need to declare version (merged from parent)
+         <scope>compile</scope>                unless they want to override with a different value.
       </dependency>...
     <dependencies>
+
+    <exclusions>                           <·· Exclusions commons to all modules.
+        <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </exclusion>
+    </exclusions>
+
+
   </dependencyManagement>
 
+ * best practice: Try to avoid using parent inherited properties in children, unless we know they are
+                  "inmutable" or really shared. Otherwise modifying the parent can break children.
 
-* best practice: Try to avoid using parent inherited properties in children.
-                 Modifyint the parent can break children.
+*1: Defining all children sub-modules in the <modules> sections converts the parent pom into an aggregator.
+    This allows to build all children in "one shot" like:
+    $ cd parent
+    $ mvn package              # <·· package all submodules. maven (reactor) will figure out the
+                                     dependencies amongst sub-modules (if any) to build in correct order.
+                                     It also include a given module using a plugin that itself is part
+                                     of the build. Such plugin will be built first.
+                                     Otherwise the default order in the <modules> section is used.
+                                     Optional flags include:
+                                     --resume-from          - resumes reactor from a given project (on previous fail)
+                                     --also-make            - build the specified projects, and any of their dependencies in the reactor
+                                     --also-make-dependents - build the specified projects, and any that depend on them
+                                     --fail-fast            - default behavior. Stop on first module fail.
+                                     --fail-at-end          - Continue on module failure.
+                                     --non-recursive        - Ignore <modules>, build just project in the current directory
+                                                              (not very useful since usually modules exists just on pom like projects)
+    (output will be similar to)
+    [INFO] Scanning for projects...
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Reactor Build Order:
+    [INFO] parent-project                                                     [pom]
+    [INFO] library1                                                           [jar]
+    [INFO] library2                                                           [jar]
+    [INFO] service1                                                           [war]
+    ...
+    [INFO] BUILD SUCCESS
 
-*1: best-practice: use this section to define all dependency versions,
-    but do not set a scope here so that all dependencies have scope
-    compile by default (or set to compile).
 
+*2: best-practices:
+    - use <dependencyManagement> @ parent's POM to define all dependency versions.
+      See Bill of Material (BOMs) section for more details.
+    - Do not set a scope or or set it to default compile.
 
-  - Use the pluginmanagement section of parent pom to define versions for
-     all  plugins that your build uses, even standard maven plugins like
+  - Use the pluginManagement section of parent pom to define versions for
+    all plugins that your build uses, even standard maven plugins like
     maven-compile-plugin and maven-source-plugin. This way your build will
     not suddenly behave differently when a new version of a plugin is released.
 
   - When using a parent POM not located in the directory directly above
     the current POM define an empty relativePath element in your parent section.
+[[}]]
 
+## Bill-of-materials BOM [[{]]
+- [REF](https://www.baeldung.com/spring-maven-bom)
 
+* pom vs bom:
+  POM == Project Object Model == information + configurations to import dependencies and build a project.
+  BOM == "Bill Of Materials"  == special POM used to control the versions of a project's dependencies and
+                                 provide a central place to define and update those versions.
 
-# Install non-mavenized jar
+* BOM Use Case: add a dependency to our module without worrying about the version that we should depend on.
 
-$ $ mvn install:install-file -Dfile=path_to_local_file -DgroupId=<groupId> \
-$   -DartifactId=<artifactId> -Dversion=<version> -Dpackaging=<packaging>
+* Problem: 2 dependencies refer to different versions of a specific artifact.
+              Project A's dependency tree:
+              A -> B -> C -> Dv1.4
+              A -> E      -> Dv1.0
+                             └─┬─┘
+             Which version of project D will be used. v1.4 or v1.0?
 
+  Solution 1: Maven automatic dependency mediation. "nearest one"/closest to our project.
+              (D v1.0 in previous dependency tree example)
+  Solution 2: Explicit declaration (put Dv1.4 as direct dependency in pom.xml of project A)
+  Solution 3: Use <dependencyManagement> as BOM (Bill of material)
+  Solution 3: Alt 1: Declare <dependencyManagement> in parent's pom, and just inherit in
+              child's submodule. A (parent) pom containing a <dependencyManagement> section
+              is call a Bill Of Material pom.
+  Solution 3: Alt 2: In complex projects there can be more than one set of
+              "Bill Of Material" BOMs files. Parent-child relationship will not be enough.
+              In that case we **import** each of the BOMs files like:
 
-# POM BEST PRACTICES:
+              <project ...>
+                ...
+                <dependencyManagement>
+                    <dependencies>
+                        <dependency>
+                            <groupId>project01</groupId>
+                            <artifactId>BOM_security</artifactId>     <·· BOM for security stuff
+                            <version>1.0</version>
+                            <type>pom</type>
+                            <scope>import</scope>                     <··· Note the import scope
+                        </dependency>
+                        <dependency>
+                            <groupId>project01</groupId>
+                            <artifactId>BOM_analytics</artifactId>
+                            <version>1.0</version>
+                            <type>pom</type>
+                            <scope>import</scope>                     <··· BOM for analytics stuff
+                        </dependency>
+                    </dependencies>
+                </dependencyManagement>
+              </project>
+
+* Version resolution will take precedence like:
+  1. direct   version declared in pom's <dependency>.
+  2. parent's version in parent's pom.
+  3. imported version in import scope.
+  4. (automatic) dependency mediation.
+
+### Real case example:
+* ensure that all Spring dependencies are at the same version:
+1. Step One. Import spring-framework-bom in our dependencyManagement to ensure that
+   all Spring dependencies are at the same version:
+   ```
+   <dependencyManagement>
+       <dependencies>
+           <dependency>
+               <groupId>org.springframework</groupId>
+               <artifactId>spring-framework-bom</artifactId>
+               <version>5.3.27</version>
+               <type>pom</type>
+               <scope>import</scope>
+           </dependency>
+       </dependencies>
+   </dependencyManagement>
+   ```
+2. No need now to set the specify version attribute for any Spring artifact:
+   ```
+   <dependencies>
+       <dependency>
+           <groupId>org.springframework</groupId>
+           <artifactId>spring-context</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework</groupId>
+           <artifactId>spring-web</artifactId>
+       </dependency>
+   <dependencies>
+   ```
+[[}]]
+
+# POM BEST PRACTICES:  [[{]]
 REF: @[http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/]
 
-$ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
-$     -Dincludes="org.checkerframework:*"
+  $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
+      -Dincludes="org.checkerframework:*"
 
-$ $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
-$     -Dincludes="com.google.guava:*"
+  $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
+      -Dincludes="com.google.guava:*"
 
 * Prefer ${project.artifactId} vs ${artifactId} or ${pom.artifactId}
   following XML document structure.
@@ -346,7 +462,7 @@ $     -Dincludes="com.google.guava:*"
 - Use the dependency plugin to check your project for both unnecessary
   dependencies and undeclared-but-used-none-the-less dependencies.
   The goal is called ‘analyze’:
-$ $ mvn dependency:analyze
+  $ mvn dependency:analyze
 
 - Make sure the pom files contain all the repository references needed
   to download all dependencies. If you want to use a local repository
@@ -364,9 +480,8 @@ $ $ mvn dependency:analyze
 @[http://www.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/]
 [[}]]
 
-<pre zoom  labels="DevOps.maven,qa.101,java_lang.*,qa.*,_PM.WiP" id="dependency_management_summary" >
-# Package Dependency Management
-$ $ mvn dependency:analyze       ← Inform about:
+# Package Dependency Management  [[{DevOps.maven,qa.101,java_lang.*,qa.*,_PM.WiP]]
+  $ mvn dependency:analyze       ← Inform about:
                                    - Dependencies used but not declared.
                                      If found in the parent pom, there is no problem when compiling,
                                      but must be included at runtime on the server.
@@ -375,7 +490,7 @@ $ $ mvn dependency:analyze       ← Inform about:
                                      (compile, provided…).  They can be in the parent pom too.
                                      Noneless, can be needed at runtime.
 
-$ $ mvn dependency:tree -Dscope=compile
+  $ mvn dependency:tree -Dscope=compile
                          ^^^^^^^^^^^^^^
                          skip/ignore test/provided/... dependencies
   → ...
@@ -402,8 +517,9 @@ $ $ mvn dependency:tree -Dscope=compile
   → [INFO] |  |  +- com.github.jnr:jnr-enxio:jar:0.19:compile
   → [INFO] |  |  \- com.github.jnr:jnr-posix:jar:3.0.47:compile
   → ...
+[[}]]
 
-# Publishing to Maven Central [[{DevOps.maven,devops]] #[mvn_pub2central]
+# Publishing to Maven Central [[{DevOps.maven,devops]]
 * External references:
   · @[https://www.apache.org/dev/publishing-maven-artifacts.html]
   · @[http://maven.apache.org/repository/guide-central-repository-upload.html]
@@ -457,15 +573,15 @@ $ $ mvn dependency:tree -Dscope=compile
         components to the Central Repository """
 
 * required files:
-$ $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc         *2
-$ $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc         *2
-$ $  cat artifact01-1.4.7-sources.jar *1 | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc *2
-$ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.jar.asc *2
+  $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc         *2
+  $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc         *2
+  $  cat artifact01-1.4.7-sources.jar *1 | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc *2
+  $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.jar.asc *2
          └──┬─────┘ └─┬─┘              ^               └──────────────┬───────────────┘  ^
          artifactId version            │                      GPG signatures *.asc       │
                                        │                                                 │
                                       *1: required except for pom (vs jar) packages      │
-                                      *2: Verify sign. like $ $ gpg2 --verify ...asc ────┘
+                                      *2: Verify sign. like   $ gpg2 --verify ...asc ────┘
 
 ## Build tool integration @[http://pgp.mit.edu]  [TODO]
   @[http://central.sonatype.org/pages/working-with-pgp-signatures.html#using-build-tools-for-signing]
@@ -516,15 +632,15 @@ $ $  cat artifact01-1.4.7-javadoc.jar *1 | gpg2 -ab -o artifact01-1.4.7-javadoc.
     <version> and <scm> elements. Anyother must be manually updated
     from original pom.xml.
 
-$ $ mvn deploy           ← Deploy snapshot (to be staged)
+  $ mvn deploy           ← Deploy snapshot (to be staged)
 
-$ mvn release:clean      ← Prepare for  release
-$ $ mvn release:prepare\ ← Dry run. Check output is OK.
-$   -DdryRun=true          -DautoVersionSubmodules=true can save time
+  mvn release:clean      ← Prepare for  release
+  $ mvn release:prepare\ ← Dry run. Check output is OK.
+    -DdryRun=true          -DautoVersionSubmodules=true can save time
                            in multi-module projects
-$ mvn release:prepare    ← Exec. release.  new tag will automatically
+  mvn release:prepare    ← Exec. release.  new tag will automatically
                            be created and checked in git (or svn,...)
-$ mvn release:perform    ← Stage release for a vote. release will
+  mvn release:perform    ← Stage release for a vote. release will
                            automatically be added to temp staging dir.
 [[}]]
 
@@ -535,163 +651,14 @@ $ mvn release:perform    ← Stage release for a vote. release will
 @[https://www.owasp.org/index.php/OWASP_Dependency_Check]
 [[}]]
 
+## Un-ordered recipes: [[{]]
 
+  $ mvn install:install-file \          <··· "Mavenize" a jar (copy and add coordinates into local .m2/repository)
+    -Dfile=path_to_local_jar.file \
+    -DgroupId=$groupId \
+    -DartifactId=$artifactId \
+    -Dversion=$version \
+    -Dpackaging=$packaging
+[[}]]
 
-# Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
-FROM maven:3.6-jdk-12-alpine as build
-WORKDIR /builder
-ADD pom.xml /builder/pom.xml
-ADD src /builder/src
-
-RUN mvn install -DskipTests=true
-
-FROM openjdk:11-jre
-ARG APP_NAME_ARG=middleware-0.0.1-SNAPSHOT.jar
-ENV APP_PROFILE docker
-ENV APP_NAME $APP_NAME_ARG
-WORKDIR /app
-COPY --from=build /builder/target/$APP_NAME /app
-COPY --from=build /builder/src/main/resources /app/src/main/resources
-EXPOSE 8080
-CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME
-<hr/>
-# Jib: Image Builder
-Docker+mvn/gradle integration:
-@[https://www.infoq.com/news/2018/08/jib]
-@[https://github.com/GoogleContainerTools/jib]
-
-- Build Java Container without Docker/Dockerfile
-- Jib's build approach separates the Java application
-  into multiple layers, so when there are any code changes,
-  only those changes are rebuilt, rather than the entire application.
-- these layers are layered on top of a distroless base image.
-  containing only the developer's application and its runtime deps.
-
--  Docker build flow
-        │JAR│ ← (build) ← │Project│
-          ·                                                              │Container │
-          ├·····→ │Build Context│ →(build)→ │ Container Image │ →(push)→ │Image     │
-          ·                                 │ (docker cache)  │          │(registry)│
-     │Dockerfile│
-
-   Jib Build Flow:
-                                                                         │Container │
-     │Project│ ───────────────(Jib)─────────────────────────────────────→│Image     │
-                                                                         │(registry)│
-
-- Ex: Creating images from command line:
-  Once jib is installed and added to PATH, to create a new image do something like:
-$ $ /opt/jib/bin/jib
-$   --insecure \                                ← allow conn. to HTTP (non TLS) dev.registries
-$   build \                                     ← build image
-$   --registry \                                ← Push to registry
-$     gcr.io/distroless/java \                  ← Base image (busybox, nginx, gcr.io/distroless/java,...)
-$     192.168.1.3:5000/jib:latest \             ← Destination registry / image
-$   --entrypoint "java,-cp,/app/lib/*,\
-$   com.google.cloud.tools.jib.cli.JibCli" \
-$   build/install/jib/lib,/app/lib
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    Other options include:
-    (See jib build --help for more options)
-
-    p=perms       set file and directory permissions:
-      actual      use actual values in file-system
-      fff:ddd     octal file and directory
-                  (Default to 644 for files and 755 for dir.)
-    ts=timestamp  set last-modified timestamps:
-       actual     use actual values in file-system
-       "seconds since Unix epoch"
-       "date-time in ISO8601 format"
-                  (Default  to 1970-01-01 00:00:01 UTC).
-    -a, --arguments=arg         container entrypoint's default arguments
-    -c, --creation-time=time    Set image creation time  (default: 1970-01-01T00:00:00Z)
-    -l, --label=key=val[,key=va l...]
-    -p, --port=port[,port...]   Expose port/type (ex: 25 or 25/tcp)
-    -u, --user=user             Set user for execution (uid or existing user id)
-    -V, --volume=path1,path2... Configure specified paths as volumes
-
-
-- Ex pom.xml to create tomcat container with war:
-  REF: https://stackoverflow.com/questions/63657172/option-to-auto-generate-dockerfile-and-other-deployment-tooling-in-intellij
-
-$ $ mvn clean package jib:dockerBuild
-$ $ docker run --rm -p 8082:8080 \
-$   registry.localhost/hello-world:latest
-
-  <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0"
-  "http://maven.apache.org/POM/4.0.0"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.example</groupId>
-    <artifactId>mvn-jib-example</artifactId>
-    <version>1.0</version>
-    <packaging>war</packaging>
-
-    <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <failOnMissingWebXml>false</failOnMissingWebXml>
-    </properties>
-
-    <dependencies>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>4.0.1</version>
-        <scope>provided</scope>
-      </dependency>
-    </dependencies>
-
-    <build>
-      <finalName>servlet-hello-world</finalName>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>com.google.cloud.tools</groupId>
-          <artifactId>jib-maven-plugin</artifactId>
-          <version>2.5.0</version>
-          <configuration>
-            <allowInsecureRegistries>true</allowInsecureRegistries>
-            <from> <image>tomcat:9.0.36-jdk8-openjdk</image> </from>
-            <to>
-              <image>registry.localhost/hello-world</image>
-              <auth> <username>...</username> <password>...</password> </auth>
-              <tags>
-                <tag>latest</tag>
-              </tags>
-            </to>
-            <container>
-              <appRoot>/usr/local/tomcat/webapps/ROOT</appRoot>
-            </container>
-            <extraDirectories>
-              <paths>
-                <path>
-                  <from>./src/main/resources/extra-stuff</from>
-                  <into>/path/in/docker/image/extra-stuff</into>
-                </path>
-                <path>
-                  <from>/absolute/path/to/other/stuff</from>
-                  <into>/path/in/docker/image/other-stuff</into>
-                </path>
-              </paths>
-            </extraDirectories>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
-  </project>
-
-
-See also: jKube notes
-[[devops.containarization}]]
 [[DEVOPS.MAVEN}]]
