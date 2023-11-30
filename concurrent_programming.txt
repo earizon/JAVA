@@ -46,30 +46,30 @@ See also: fast Inter-thread communication:
 - Concurrency problems arise from the desire to use CPU resources more efficiently. Non concurrent
   applications (single threaded/single process) are complete Touring machines that can potentially
   solve any problem with enough time and memory. In practice having a CPU assigned to single thread
-  will be very inneficient since the CPU will stand-by while the thread is waiting for input/output
+  will be very inefficient since the CPU will stand-by while the thread is waiting for input/output
   operations. Also, many algorithms allows to split processed data in isolated regions that can be
   processed in parallel by different CPU/CPU cores
-- Concurrent tries to solve the problem of multiple independents CPUs or threads accesing share
+- Concurrent tries to solve the problem of multiple independents CPUs or threads accessing share
   resources (memory)
-- Locks is the simples concurrent primite to protect code or data from concurrent
+- Locks is the simples concurrent primitive to protect code or data from concurrent
   access in situations where there are many threads of execution. Locks can be classified like:
-  | According to lock ussage:
+  | According to lock usage:
   |    Cooperative   A thread is encouraged (but not forced) to cooperate with other
-  |                  threads by adquiring a lock before accessing the associated data
+  |                  threads by acquiring a lock before accessing the associated data
   |
   |    Mandatory     a thread trying to access an already locked resource will throw
   |                  an exception
   | _________________________________________________
-  | According to lock rescheduing strategy:
+  | According to lock rescheduling strategy:
   |    Blocking      The OS block the thread requesting the lock and rescheduled another thread
   |
   |    Spinlock      The thread waits in a loop until the requested lock becomes available.
   |                  It's more efficient if threads are blocked for very short time (smaller than
   |                  the time needed by the OS to reschedule another thread into the current CPU)
-  |                  It's inneficient if the lock is held for a long time since a CPU core is
-  |                  waisted on the spinlock loop
+  |                  It's inefficient if the lock is held for a long time since a CPU core is
+  |                  wasted on the spinlock loop
   | _________________________________________________
-  | According to granularity: (measure of the ammount of data the lock is protecting)
+  | According to granularity: (measure of the amount of data the lock is protecting)
   |    Coarse        Protect large segments of data (few locks). Results in less lock overhead
   |                  for a single thread, but worse performance for many threads running concurrently
   |                  (most thread will be lock-contended waiting for share resource access)
@@ -77,10 +77,10 @@ See also: fast Inter-thread communication:
   |    Fine          Protect small amounts of data. Require more lock instances reducing lock
                      contention
 
-- Locks require CPU atomic instructions for efficient implementations suchs as
+- Locks require CPU atomic instructions for efficient implementations such as
     "test-and-set", "fetch-and-add", or "compare-and-swap", whether there are blocking
-    (managed by the OS) or spinlocks (managed by the thread)
-- Uniprocessors can just disable interruptions to implement locks, while multiprocessors
+    (managed by the OS) or spin-locks (managed by the thread)
+- Uniprocessor can just disable interruptions to implement locks, while multiprocessors
   using shared-memory will require complex hardware and/or software support
 -   Monitors wrap mutex-locks with condition variables (container of threads waiting
     for certain condition) . They are implemented as thread-safe classes
@@ -101,7 +101,7 @@ See also: fast Inter-thread communication:
     Important Points on Volatile Variables:
     - Volatile variables are not cached in registers or in caches :
       All read and writes are done in main memory, never done thread-locally
-    - Example Ussage: status flags used in spin loops
+    - Example Usage: status flags used in spin loops
     - Volatile keyword guarantees visibility and ordering
   - use of classes in the java.util.concurrent package
 - Monitors also have the ability to wait(block a thread) for a certain condition
@@ -122,7 +122,7 @@ See also: fast Inter-thread communication:
     of deadlock conditions.
 - Instead of explicit condition variables, each monitor(/object) is equipped with
   a single wait queue in addition to its entrance queue.
-- All waiting is done on this singleO wait queue  and allO notify/notifyAll
+- All waiting is done on this single wait queue  and all notify/notifyAll
   operations apply to this queue.
 
  monitor    enter
@@ -156,19 +156,19 @@ TODO Concurrent
 * Object allowing 1+ threads to wait until a
   1+ operations are completed in other threads.
 
-* example ussages:
+* example usages:
   - on/off latch or gate:
     When initialized to "one", parallel processing threads will
     invoke "await" and standby waiting for a "control" thread to
     open the gate with countDown().
-  - parallel thread synchonization:  (barriers, ...)
+  - parallel thread synchronization:  (barriers, ...)
     When initialized to 2+, it can be used to make a thread
     wait until "N" processing threads complete their task,
     (or 1+ proccesing threads complet an action N times).
 
     NOTE :
   - Threads calling countDown() can continue processing before count reach 0.
-    Only threads invoquing await will wait.
+    Only threads invoking await will wait.
 
 - The first is a start signal that prevents any worker from
    proceeding until the driver is ready for them to proceed; The second
@@ -337,9 +337,9 @@ TODO Concurrent
               <T> Future<T> submit(Callable<T> task): Submit Callable for execution
                   Future<?> submit(Runnable task)   : Submit Runnable for execution
               <T> Future<T> submit(Runnable task, T result)
-    ussage Alt 1: use an implementation of the interface (ThreadPoolExecutor, ScheduledThreadPoolExecutor)
+    usage Alt 1: use an implementation of the interface (ThreadPoolExecutor, ScheduledThreadPoolExecutor)
                   an Instance.execute(runnableInstance) to add a Runnable task to thread pool.
-    ussage Alt 2: Use factory methods in the 'Executors' class:
+    usage Alt 2: Use factory methods in the 'Executors' class:
                   Executors.newSingleThreadExecutor()
                   Executors.newFixedThreadPool(int numThreads)
                   Executors.newCachedThreadPool() (← unbounded pool, automatic reclamation)
@@ -453,7 +453,7 @@ TODO Concurrent
                                                        │  }
                                                        │}
                                                        │
-       USSAGE:                                         │ USSAGE:
+       USAGE:                                          │ USAGE:
        MyRecursiveAction myRecursiveAction =           │  MyRecursiveTask myRecursiveTask =
           new MyRecursiveAction(24);                   │     new MyRecursiveTask(128);
                                                        │  long mergedResult =
@@ -489,7 +489,7 @@ TODO Concurrent
         ││    I/O              ·               ↑                │
         │└──→ Thread :         ·               ·                │
         └──────────────────────·───────────────·────────────────┘
-                               ·               · Response|RemoteeError
+                               ·               · Response|RemoteError
                                ·               · |Timeout
                            ┌───↓───────────────↑─┐
                            │REMOTE SYSTEM        │
@@ -712,5 +712,3 @@ project Loom which should bring "native" Fiber/lightweight continuation
 support directly into JVM without the need of auxiliary library like Quasar.
 [[}]]
 [[{$ Concurrent Programming}]]
-
-

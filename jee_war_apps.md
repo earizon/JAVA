@@ -1,0 +1,317 @@
+# `WEB-INF/web.xml` [[{]]
+
+```
+  WEB-INF/web.xml
+  <web-app>
+     <servlet>
+       <servlet-name>MyService01</servlet-name>           <·· name for servlet(or JSP)/compiled class
+       <servlet-class>
+         com.myCompany.myDepartment.myProject.MyService01
+       </servlet-class>
+       <init-param>                                       <·· config param for this servlet
+         <param-name>parametername</param-name>               (vs global contex-param for all servlets)
+         <param-value>parametervalue</param-value>            No other servlet can access it.
+       </init-param>
+       <load-on-startup>1</load-on-startup>               <·· Init on start up. It also indicates in 
+                                                              which order if N servlets exists.
+                                                              Optional but good practice.
+                                                              Lower numbers are loaded first.
+                                                              Otherwise it is loaded on demand (on first
+                                                              "arriving" request). on-demand  loading 
+                                                              is more risky since we will not see configuration
+                                                              bugs on startup but just "later on" in a
+                                                              random future when the first request comes in.
+  
+       ...                                                <·· TODO: servlet security roles.
+     </servlet>
+  
+     <servlet-mapping>
+       <servlet-name>myservlet2</servlet-name>
+       <url-pattern>/v1/service1</url-pattern>            <·· URL path param. WildCards also allowed.
+     </servlet-mapping>                                       Ex: <url-pattern>*.doc</url-pattern>
+  
+     <context-param>                                      <·· Global config param for all servlets 
+       <param-name>debug</param-name>                         In code:
+       <param-value>true</param-value>                        String debug=request.getSession()
+     </context-param>                                                             .getServletContext()
+                                                                                  .getInitParameter("debug");
+     <context-param>
+        <param-name>jdbc_db1</param-name>
+       <param-value>jdbc://...</param-value>
+     </context-param>
+       ...                                                <·· TODO: Filters and fiter configuration
+                                                              Authentication, 
+                                                              Data compression
+                                                              Logging and Auditing
+                                                              Image conversion
+                                                              Encryption
+                                                              Tokenizing 
+                                                              Filters triggering resource access events
+                                                              ....
+  </web-app>
+  
+       Servlet 1<···> ServletConfig object. 
+                      --------------------- 
+                      created by the web container for each servlet from web.xml
+                      + String getInitParameter(String param_name) // returns param_value 
+                      + Enumeration getInitParameterNames()        // returns (all) parameter names list
+                      + String getServletName().
+                      + ServletContext getServletContext()  <··· Common config to all Servlets
+                        └─────┬──────┘
+  * The ServletContext defines a set of methods used by a servlet to communicate
+    with its servlet container, such as to get the MIME type of a file, to write
+    into a log file, to dispatch requests.
+    Usually, there is one context is per Web application inside each JVM.
+    WARN: The context can NOT be used as a location to share global information.
+  * There is also a method to return the name and version of 
+    the servlet container on which the servlet is running. We can get the 
+    context path of the web application. 
+  * We can get a SessionCookieConfig object form a servlet context through 
+    which various properties of the session tracking cookies created. 
+  * There is a possibility to set the session tracking modes(COOKIE, SSL, URL)
+    that are to become effective for this ServletContext.
+    You can set several types of them at once.
+  * With a ServletContext object, we can write a specified explanatory message
+    with or without stack trace for a given Throwable exception to a servlet
+    log file, usually an event log.  
+  * There is a possibility to manage a servlet filter with the use of
+    ServletContext object.  A filter object performs filtering tasks on the 
+    request to a resource, on the response from a resource. It can also filter
+    both. A resource can be a servlet or static content.
+  
+  
+  
+  class ... extends HttpServlet {
+  
+    public void doGet(...) throws ...  {
+      ServletConfig configuration = getServletConfig();              // <·· config of just this servlet
+      ServletContext context = configuration.getServletContext();    // <·· Global config.
+      Enumeration<String> paramNames = context.getInitParameterNames();
+      while (paramNames.hasMoreElements()) {
+        context_param = paramNames.nextElement();
+      }
+      ...
+      context.setAttribute("key1", "value1"); <·· Add    attribute 
+      context.removeAttribute("key1");        <·· Remove attribute
+    }
+  
+    public void init(ServletConfig servletConfig) throws ServletException{
+      this.testParam = servletConfig.getInitParameter("test");
+    }
+  }
+```
+[[}]]
+
+# Tomcat [[{ $tomcat ]]
+## External Links:
+* @[https://tomcat.apache.org/tomcat-9.0-doc/index.html]
+* @[https://wiki.apache.org/tomcat/FAQ]
+* @[https://wiki.apache.org/tomcat/]
+* @[http://www.jguru.com/faq/home.jsp?topic=Tomcat]
+* @[https://www.google.com/search?q=tomcat+mailing+list+archives]
+* @[https://tomcat.apache.org/lists.html]
+
+- Servlets 4.0 Spec: [[io.http.servlets]]
+@[https://jcp.org/aboutJava/communityprocess/final/jsr369/index.html]
+ "... In particular, you will need to understand the web application
+  directory structure and deployment file (Chapter 10), methods of
+  mapping request URIs to servlets (Chapter 12), container managed
+  security (Chapter 13), and the syntax of the web.xml
+  Web Application Deployment Descriptor (Chapter 14). "
+
+
+# General Schema [[{]]
+
+  ┌> 1 │INSTALLATION│
+  ·    ${CATALINA_HOME}: root path, static jar sources, binary files, ...
+  ·
+  └> N │TOMCAT RUNTIME│ 1 <···················> N │Context │ 1 <·> 1 path URI
+       ${CATALINA_BASE}                            (web app)   └┬┘
+       root path of runtime                       └──┬──┘    sys.admins will                     
+       └────────┬─────────┘                      ┌───┘       create the map
+   ┌────────────┘                                (ServletContext root)
+   Runtime filesystem Layout                     ├─ ?.html, ?.jsp, ?.js, ...
+   ├─bin/                                        ├─ ?.html, ?.jsp, ?.js, ...
+   │ - setenv.sh                                 │   Visible to external clients 
+   │ - start/stop scripts                        │
+   │ - tomcat─juli.jar <·· replace               ├─ /WEB─INF/web.xml
+   │   to use custom logging (discouraged)       │     WebApp Deployment descriptor
+   │                                             │     "everything about your app
+   │   ...                                       │     that the server needs to know"
+   ├─conf/                                       │     (except the context path)
+   │ - Config files and related DTDs.            │     Chapter 13@Servlet API Spec ver 2.3
+   │   Read at startup. Changes require          │     **WARN: tags are sensible to order**
+   │   server restart                            │        <filter>·><servlet>·><servlet-mapping>
+   │   server.xml   <·· main conf.file *1        ├─ /WEB-INF/lib/     Java class files
+   │   web.xml                         ├─ /WEB-INF/classes/ with restricted access
+   │                                             │
+   ├─logs/                                       └─ /META─INF/context.xml
+   ├─lib/                                           Tomcat non-standard Context Descriptor for
+   │ - extra resources to be added to Classpa.      custom config (data sources, session manager,..)
+   │   Recomended for apps that depends on          <Context> element is considered child
+   │   external libraries                           of the <Host> corresponding to the Host
+   │   By default Servlet 4.0 and JSP 2.3 APIs      to which the web application is being
+   │   implementations are included                 deployed.                                    
+   │                                                └────────┬──────────┘
+   └─webapps - automatically loaded webapps         can also be placed in:
+     ├─ webapp01.war <·· "compressed war"           ${CATALINA_BASE}/conf/[enginename]
+     ├─ webapp02/... <·· "exploded" deployment         /[hostname]/[webappname].xml
+     ├─ ...                                      
+     └────┬─────┘                                      
+          ·
+     Depployment can be:                                                 
+     - Static : webapp setup before Tomcat start
+     - Dynamic: - auto-deployment (Host autoDeploy = "true") triggers at:
+                  - "drop" the exploded or war file into webapps/
+                  - "touch" /WEB-INF/web.xml (or any other resource)
+                  - Re-deployment of dependent webapps
+                - Tomcat Manager (GUI or REST API)
+                - Ant, Maven, custom scripts
+                - Tomcat Client Deployer (TCD):
+                  cli tool that also compiles/validates/packages the app-,...
+     @[https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html]
+ 
+  *1 @[https://tomcat.apache.org/tomcat-9.0-doc/config/index.html]
+[[}]]
+
+# Web App Layout [[{]]
+
+* REF https://jakarta.ee/specifications/servlet/6.0/jakarta-servlet-spec-6.0#web-applications
+
+```
+./index.html
+./report01.jsp
+./images/logo.png
+./WEB-INF/web.xml deployment descriptor.
+  configuration and deployment information:
+  - ServletContext Init Parameters
+  - Session Configuration
+  - Servlet/JSP Definitions & Mappings
+  - MIME Type Mappings
+  - Welcome File list
+    <welcome-file-list>
+      <welcome-file>index.html</welcome-file>
+      <welcome-file>default.jsp</welcome-file>
+    </welcome-file-list>
+  - Error Pages
+  - Security
+
+./WEB-INF/classes/ servlets + utility classes. 
+
+./WEB-INF/lib/*.jar (./classes takes preference over *jar's)
+
+./META-INF/ <·· Added during war packaging
+./META-INF/MANIFEST.MF <·· Declare external dependencies that need 
+                           to be present in container (jdbc libraries ...)
+
+```
+
+## Web App bootstrap:
+
+before the web application begins processing client requests
+the following steps must be performed:
+1. Instantiate an instance of each event listener identified by a 
+   `<listener>` element in the deployment descriptor.
+2. For instantiated listener instances that implement 
+   ServletContextListener, call the contextInitialized() method.
+3. Instantiate an instance of each filter identified by a `<filter>`
+   element in the deployment descriptor and call each filter 
+   instance’s init() method.
+4. Instantiate an instance of each servlet identified by a `<servlet>`
+   element that includes a `<load-on-startup>` element in the order      [[{qa.fail_fast]]
+   defined by the load-on-startup element values, and call each servlet 
+   instance’s init() method.                                             [[}]]
+
+
+## Listeners
+* Servlet context listeners are used to manage resources or state 
+  held at a JVM level for the application.  (`jakarta.servlet.`)
+  * ServletContextListener          : init OK, ready to shut-down
+  * ServletContextAttributeListener: servlet's attributes modified.
+
+* HTTP session listeners are used to manage state or resources 
+  associated with a series of requests made into a web application from 
+  the same client or user.  (`jakarta.servlet.http.`)
+  * HttpSessionListener            HttpSession has been created/invalidated/timed out.
+  * HttpSessionAttributeListener   HttpSession's attributes modified
+  * HttpSessionIdListener          HttpSession'id changed
+  * HttpSessionActivationListener  HttpSession has been activated/passivated.
+  * HttpSessionBindingListener     Object has been bound to or unbound from HttpSession
+  * 
+
+* Servlet request listeners are used to manage state across the 
+  lifecycle of servlet requests.  (`jakarta.servlet.`)
+  * ServletRequestListener          Servlet-request has started being processed
+  * ServletRequestAttributeListener Servlet-request's attributes modified
+  * AsyncListener                   timeout, connection termination/completion 
+* Async listeners are used to manage async events such as time outs 
+  and completion of async processing.
+
+[[}]]
+
+# TODO [[{DevOps]]
+## Tomcat Manager
+  https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html
+  https://tomcat.apache.org/tomcat-9.0-doc/host-manager-howto.html
+  deployed by default on context path /manager,
+  - deploy/undeploy apps without tomcat restarting
+## Tomcat Specifications
+* https://cwiki.apache.org/confluence/display/tomcat/Specifications
+## Example war for testing:
+* https://tomcat.apache.org/tomcat-9.0-doc/appdev/sample/
+## Advanced IO on Tomcat
+* https://tomcat.apache.org/tomcat-9.0-doc/aio.html
+## APache Portable Runtime (APR)
+* https://tomcat.apache.org/tomcat-9.0-doc/apr.html
+## Deployer Howto:
+* @[https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html]
+## Realm howto:
+* @[https://tomcat.apache.org/tomcat-9.0-doc/realm-howto.html]
+## security manager howto:
+* https://tomcat.apache.org/tomcat-9.0-doc/security-manager-howto.html
+## JNDI resouces
+* https://tomcat.apache.org/tomcat-9.0-doc/jndi-resources-howto.html
+* https://tomcat.apache.org/tomcat-9.0-doc/jndi-datasource-examples-howto.html
+## class loader howto
+  https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html
+## jasper-howto.html
+*  https://tomcat.apache.org/tomcat-9.0-doc/jasper-howto.html
+## SSL how-to
+*https://tomcat.apache.org/tomcat-9.0-doc/ssl-howto.html
+## CGI- howto
+*  https://tomcat.apache.org/tomcat-9.0-doc/cgi-howto.html
+## Proxy Howto
+*  https://tomcat.apache.org/tomcat-9.0-doc/proxy-howto.html
+## Mbeans descriptors howto
+*  https://tomcat.apache.org/tomcat-9.0-doc/mbeans-descriptors-howto.html
+## Default servlet
+*  https://tomcat.apache.org/tomcat-9.0-doc/default-servlet.html
+## Cluster-HowTo
+https://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html
+## Balancer HowTo
+* https://tomcat.apache.org/tomcat-9.0-doc/balancer-howto.html
+## Connectors:
+* https://tomcat.apache.org/tomcat-9.0-doc/connectors.html
+## Monitoring
+*  https://tomcat.apache.org/tomcat-9.0-doc/monitoring.html
+## Logging
+* https://tomcat.apache.org/tomcat-9.0-doc/logging.html
+## Virtual Hosting
+* https://tomcat.apache.org/tomcat-9.0-doc/virtual-hosting-howto.html
+## Extras:
+https://tomcat.apache.org/tomcat-9.0-doc/extras.html
+## Maven jars
+* https://tomcat.apache.org/tomcat-9.0-doc/maven-jars.html
+## Security howto
+* https://tomcat.apache.org/tomcat-9.0-doc/security-howto.html
+## JDBC Pool
+* https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html
+## Web Sockets 
+* https://tomcat.apache.org/tomcat-9.0-doc/web-socket-howto.html
+## Rewrite
+* https://tomcat.apache.org/tomcat-9.0-doc/rewrite.html
+## Config
+* https://tomcat.apache.org/tomcat-9.0-doc/config/index.html
+## PSI-probe: Advanced manager and monitor for Tomcat
+* https://github.com/psi-probe/psi-probe
+[[ $tomcat }]]
