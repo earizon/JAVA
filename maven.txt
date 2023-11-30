@@ -273,6 +273,18 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
 <hr/>
 
 # Parent+Children Multiproject  [[{]]
+## parent vs aggregator
+* An aggregator is a pom.xml containing a <modules> section with a list of
+  aggregated projects. It can also be a parent when aggregated projects point
+  back to it as parent project, ussually because parent project includes
+  also a  <dependencyManagement> "bill-of-material" sections.
+* children projects can depend on a parent project that is NOT an
+  aggregator (does not contains a <modules> sections) just to inherit
+  common <properties> and <dependencyManagement> bill of materials.
+* As explained later, in complex project different pom.xml can import
+  not just one but many <dependencyManagment> sections from "orthogonal"
+  pom.xml (one for security, another one for loggin, ...)
+
 - Allows to inherit project dependency in children projects and build all sub-module child
 - [REF](https://maven.apache.org/guides/mini/guide-multiple-modules.html)
 
@@ -294,7 +306,7 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
   </modules>                                       │ </dependecies>
                                                    │
                                                    │
-  <dependencyManagement>                   <·· *2  │
+  <dependencyManagement>                           │
     <dependencies>                                 │
       <dependency>                                 │
         <groupId>...</groupId>                     │
@@ -345,7 +357,30 @@ Utilities to clean, organize, and restructure Maven POMs.                   [qa]
     [INFO] BUILD SUCCESS
 
 
-*2: best-practices:
+## Parent and Aggregator best-practices:
+
+- Split parents and aggregators in separate files like:
+
+  ├─ aggregatorSec/
+  │ └─ pom.xml                <·· Aggregate libraries related to a given set of security libraries.
+  │
+  │
+  ├─ aggregatorReporting/
+  │ └─ pom.xml                <·· Aggregate libraries related to a given set of reporting libraries.
+  │
+  ├─ module1/ (extends parent)
+  │ └─ pom.xml
+  ├─ module2/ (extends parent)
+  │ └─ pom.xml
+  ├─ parent/                  <·· Define plugins and versions that must be reused among children projects
+  │ └─ pom.xml
+
+This way you can always install the parent only, with mvn clean install without extra options.
+
+There are numerous benefits to keeping the parent and the aggregator as two separate things.
+But in the end, you choose what's best for your project/environment.
+
+
     - use <dependencyManagement> @ parent's POM to define all dependency versions.
       See Bill of Material (BOMs) section for more details.
     - Do not set a scope or or set it to default compile.

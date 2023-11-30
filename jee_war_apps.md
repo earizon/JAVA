@@ -80,7 +80,6 @@
     both. A resource can be a servlet or static content.
   
   
-  
   class ... extends HttpServlet {
   
     public void doGet(...) throws ...  {
@@ -122,6 +121,7 @@
 
 # General Schema [[{]]
 
+  ```
   ┌> 1 │INSTALLATION│
   ·    ${CATALINA_HOME}: root path, static jar sources, binary files, ...
   ·
@@ -172,38 +172,39 @@
      @[https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html]
  
   *1 @[https://tomcat.apache.org/tomcat-9.0-doc/config/index.html]
+  ```
 [[}]]
 
 # Web App Layout [[{]]
 
 * REF https://jakarta.ee/specifications/servlet/6.0/jakarta-servlet-spec-6.0#web-applications
 
-```
-./index.html
-./report01.jsp
-./images/logo.png
-./WEB-INF/web.xml deployment descriptor.
-  configuration and deployment information:
-  - ServletContext Init Parameters
-  - Session Configuration
-  - Servlet/JSP Definitions & Mappings
-  - MIME Type Mappings
-  - Welcome File list
-    <welcome-file-list>
-      <welcome-file>index.html</welcome-file>
-      <welcome-file>default.jsp</welcome-file>
-    </welcome-file-list>
-  - Error Pages
-  - Security
-
-./WEB-INF/classes/ servlets + utility classes. 
-
-./WEB-INF/lib/*.jar (./classes takes preference over *jar's)
-
-./META-INF/ <·· Added during war packaging
-./META-INF/MANIFEST.MF <·· Declare external dependencies that need 
-                           to be present in container (jdbc libraries ...)
-
+  ```
+  webapp/ ("context")
+  ├ index.html
+  ├ report01.jsp
+  ├ images/logo.png
+  ├ ./META─INF/ <·· Added during war packaging
+  ├ ./META─INF/MANIFEST.MF <·· Declare external dependencies that need 
+  │                            to be present in container (jdbc libraries ...)
+  └ WEB─INF/web.xml deployment descriptor.
+    │ configuration and deployment information:
+    │ - ServletContext Init Parameters
+    │ - Session Configuration
+    │ - Servlet/JSP Definitions & Mappings
+    │ - MIME Type Mappings
+    │ - Welcome File list
+    │   <welcome-file-list>
+    │     <welcome-file>index.html</welcome-file>
+    │     <welcome-file>default.jsp</welcome-file>
+    │   </welcome-file-list>
+    │ - Error Pages
+    │ - Security
+    ├ classes/            <·· servlets + utility classes. 
+    ├ lib/*.jar           <·· ./classes takes preference over *jar's
+    ...
+  
+  
 ```
 
 ## Web App bootstrap:

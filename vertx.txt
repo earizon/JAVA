@@ -496,5 +496,14 @@ easier. [[}]]
 
 [[01_PM.TODO}]]
 
+# VertX Mutiny Zero by Julien Ponge  [[{]]
+  Quarkus Insights 120
+  https://www.linkedin.com/feed/update/activity:7038552356413693952
+
+  latest developments around Mutiny, Mutiny Zero and switching from legacy Reactive Streams to JDK Flow.
+  https://www.youtube.com/watch?v=RRs4DJJUSx8
+[[}]]
+
+
 
 [[vertx}]]

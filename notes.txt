@@ -145,6 +145,22 @@ String string01 = "297",                                string01 == string02 : t
     .intern() method at the end of computed string.
 [[}]]
 
+## Loading a resource: [[{]]
+ ```
+ URL u = this.getClass().getResource("foo.txt");      // Alt 1.1. Attemp to load foo.txt relative to "this" package
+ InputStream i = this.getClass().                        and with class-loader of "this". Use "/x/y/foo.txt" for
+                        .getResourceAsStream("foo.txt")  <·· Fetch as stream.
+
+ Thread.currentThread()                          // Alt 2.  Use context-class-loader. It will NOT resolve
+    .getContextClassLoader()                                the name according to any package (it must be absolutely referenced)
+    .getResource("foo.txt");
+
+ System.class.getResource(name);                 // Alt 3.  Use system-class-loader. It will NOT resolve
+                                                            the name according to any package.
+                                                            you won't be able to put anything into the java.lang package .
+  ```
+[[}]]
+
 ## Optimization Tips [[{scalability.101,jvm.101,java_lang.101.best_patterns]]
 - To minimize the memory footprint, limit scope-of-variables as much as possible.
 
@@ -218,7 +234,94 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
 
 
 
+# java.base Module JDK 9+ [[{]]
+(foundational JDK APIs of Java SE)
+https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html
 
+- The JDK implementation of this module provides an
+  implementation of the jrt file system provider to
+  enumerate and read the class and resource files in
+  a run-time image.
+  The jrt file system can be created by calling
+  FileSystems.newFileSystem(URI.create("jrt:/")).
+### Packages
+ java.io 	       Provides for system input and output through data streams,
+                       serialization and file system.
+ java.lang 	       core classes to the design of the Java programming language.
+ java.lang.annotation  Library support for annotations.
+ java.lang.invoke      low-level primitives for interacting with the JVM.
+ java.lang.module      Classes to support module descriptors and creating configurations
+                       of modules by means of resolution and service binding.
+ java.lang.ref 	       Provides reference-object classes, with a limited degree of
+                       interaction with the garbage collector.
+ java.lang.reflect     classes and interfaces for obtaining reflective information
+ java.math 	       BigInteger and BigDecimal
+ java.net 	       Classes for implementing networking applications.
+ java.net.spi 	       Service-provider classes for the java.net package.
+ java.nio 	       Defines buffers: containers for data, and an overview of the
+                       other NIO packages.
+ java.nio.channels     Defines channels, representing connections to entities capable
+                       of performing I/O operations, such as files and sockets;
+                       selectors, for multiplexed, non-blocking I/O operations.
+ java.nio.channels.spi Service-provider classes for the java.nio.channels package.
+ java.nio.charset      charsets, decoders, and encoders, for translating bytes <··> Unicode
+ java.nio.charset.spi  Service-provider classes for the java.nio.charset package.
+ java.nio.file 	       interfaces and classes for the JVM to access files, attributes and FS.
+ java.nio.file.attribute Interfaces and classes providing access to file+FS attributes.
+ java.nio.file.spi     Service-provider classes for the java.nio.file package.
+ java.security 	       Classes+interfaces for the security framework.
+ java.security.acl     deprecated.
+ java.security.cert    Classes+interfaces for parsing and managing certificates,
+                       certificate revocation lists (CRLs), and certification paths.
+ java.security.interfaces  Interfaces for generating RSA (Rivest, Shamir and Adleman
+                       AsymmetricCipher algorithm) keys as defined in the RSA Laboratory
+                       Technical Note PKCS#1, and DSA (Digital Signature Algorithm) keys
+                       as defined in NIST's FIPS-186.
+ java.security.spec    Classes+interfaces for key specifications and algorithm parameter
+                       specifications.
+ java.text 	       library to manage text, dates, numbers, and messages in a manner
+                       independent of natural languages.
+ java.text.spi 	       Service provider classes for the classes in the java.text package.
+ java.time 	       Main API for dates, times, instants, and durations.
+ java.time.chrono      Generic API for calendar systems other than the default ISO.
+ java.time.format      Provides classes to print and parse dates and times.
+ java.time.temporal    Access to date and time using fields and units, and date time adjusters.
+ java.time.zone        Support for time-zones and their rules.
+ java.util 	       Contains the collections framework, i18n support, a service loader,
+                       properties, random number generation, string parsing and scanning classes,
+                       base64 encoding and decoding, a bit array, and several miscellaneous
+                       utility classes.
+ java.util.concurrent Utility classes commonly useful in concurrent programming.
+ java.util.concurrent.atomic  Small toolkit of classes that support lock-free thread-safe
+                       programming on single variables.
+ java.util.concurrent.locks Interfaces and classes providing a framework for locking
+                       and waiting for conditions that is distinct from built-in
+                       synchronization and monitors.
+ java.util.function    Functional interfaces for lambda expressions and method references.
+ java.util.jar 	       lib. for reading and writing the JAR (Java ARchive) file format,
+ java.util.regex       lib for matching character sequences against patterns specified by
+                       regular expressions.
+ java.util.spi 	       Service provider classes for the classes in the java.util package.
+ java.util.stream      Support for functional-style operations on streams of elements, such
+                       as map-reduce transformations on collections.
+ java.util.zip 	       lib for reading and writing ZIP and GZIP file formats.
+ javax.crypto 	       lib for cryptographic operations.
+ javax.crypto.interfaces interfaces for Diffie-Hellman keys as defined in RSA Laboratories' PKCS #3.
+ javax.crypto.spec     Classes and interfaces for key specifications and algorithm parameter specifications.
+ javax.net 	       Provides classes for networking applications.
+ javax.net.ssl 	       Provides classes for the secure socket package.
+ javax.security.auth   Framework for authentication and authorization.
+ javax.security.auth.callback classes necessary for services to interact with applications in order
+                       to retrieve information (authentication data including usernames or passwords,
+                       for example) or to display information (error and warning messages, for example).
+ javax.security.auth.login Pluggable authentication framework.
+ javax.security.auth.spi Interface to be used for implementing pluggable authentication modules.
+ javax.security.auth.x500 classes that should be used to store X500 Principal and X500 Private
+                       Credentials in a Subject.
+ javax.security.cert   classes for public key certificates.
+
+TODO: Tool Guides: java launcher, keytool
+[[}]]
 
 [[}]]
 
@@ -287,7 +390,10 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
 
 * Avoid checked exceptions. It was an error in the initial design of the Java language.
   Each time a checked exception is found convert to a runtime (subclass) exception.
-  More info at: @[https://phauer.com/2015/checked-exceptions-are-evil/]
+  More info at:
+  * @[https://phauer.com/2015/checked-exceptions-are-evil/]
+  * @[https://dzone.com/articles/introduction-to-pragmatic-functional-java]
+[[}]]
 
 [[java_lang.101.donts}]]
 
@@ -298,24 +404,24 @@ REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_so
 java.lang.Object
 │
 └─ java.lang.Throwable   ← Only instances of this (sub/)class are thrown
-│                       in JVM, can be thrown in throw statement or can
-│                       be an argument in catch clause.
-│
-├─   java.lang.Exception
-│    │
-│    ├─  java.lang.RuntimeException (non─checked)  ← Most common error raised by
-│    │                                               developer code
-│    │
-│    └─  java.lang.Exception        (checked ─A)   ←  Don't use . checked exceptions end up
-│                                                     being converted to Runtime Excep.
-│                                                     and bloats the code.
-│
-└─   java.lang.Error                (non─checked)  ← serious problems that app code
-                                                    should not try to catch.
-                                                    ThreadDeath error, though a "normal" condition,
-                                                    is also a subclass of Error because most apps
-                                                    should not try to catch it.
-
+   │                       in JVM, can be thrown in throw statement or can
+   │                       be an argument in catch clause.
+   │
+   ├─ java.lang.Exception
+   │  │
+   │  ├─  java.lang.RuntimeException (nonfchecked) <·· Most common error raised by
+   │  │                                                developer code
+   │  │
+   │  └─  java.lang.Exception        (    checked) <·· Don't use . checked exceptions end up
+   │                                                   being converted to Runtime Excep.
+   │                                                   and bloats the code.
+   │
+   └─ java.lang.Error                (non-checked) <·· serious problems that app code
+                                                       should not try to catch.
+                                                       ThreadDeath error, though a "normal" condition,
+                                                       is also a subclass of Error because most apps
+                                                       should not try to catch it.
+   
 - Dump Exception stack trace to STDERR: [[{java_lang.debugging]]
   StringWriter writer = new StringWriter();
   PrintWriter printWriter = new PrintWriter( writer );
@@ -496,22 +602,6 @@ RetentionPolicy.RUNTIME:retained by JVM, can be queried at Runtime
   - ElementType.TYPE (1.8+)
 [[}]]
 
-## Unix4j [[{java_lang.functional]]
-@[https://github.com/tools4j/unix4j]
-"""...Working in the finance industry in Melbourne, the authors of
-  Unix4j spent a lot of time writing complex text processing
-  applications in bash. Frustrated with the inherent limitations of the
-  bash language; lack of language support, IDEs, test frameworks etc,
-  the authors decided to try and bring the convenience of some of the
-  Unix commands into the Java language.
-  You may notice that the implemented commands are more bent towards
-  text processing rather than OS and file manipulation. This is
-  intended as we see text processing to be the real benefit of Unix4j.
-  Not to say that this will always be the case.
-"""
-  Allows for things like:
-  - Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
-[[}]]
 
 ## What's new [[{PM.WHATS_NEW,02_doc_has.ext_resource,async/reactive,java_lang.debugging]]
 ### v.17 2021-09-14
@@ -1066,154 +1156,6 @@ See also:
     ...
 [[}]]
 
-# Monitorization [[{monitoring]]
-#[micrometer_summary]
-## Micrometer Metrics [[{monitoring.micrometer,architecture.distributed,monitoring.distributed,PM.low_code,PM.WiP]]
-- simple facade to instrumentation clients for
-- instrument JVM-based apps without vendor lock-in.
-  (Think SLF4J, but for application metrics! supporting AppOptics,
-   Atlas, Datadog, Dynatrace, Elastic, Ganglia, Graphite,
-   Influx,Instana, JMX (hierarchical mapping), KairosDB, New Relic,
-   Prometheus, SignalFx, Stackdriver, StatsD, Wavefront,)
-
-- Recorded metrics are intended to be used to
-  observe/alert/react to current/recent operational state.
-
-  out-of-the-box instrumentation provided by Micrometer
-  - JVM Metrics on classloaders, memory, garbage collection,
-    threads, etc.
-  - Spring Boot 2.0.0.M5+: Micrometer used as instrumentation library powering
-    the delivery of application metrics from Spring.
-  @[https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-metrics]
-    2 simple steps setup: [low_code]
-    - Declare maven dependency.
-    - Add config. to application.yml
-
-  @[https://micrometer.io/docs/ref/spring/1.5] (legacy support)
-drop─down support for Spring Boot 1.5.x.
-  - Cache instrumentation for most popular caching frameworks.
-  - OkHttpClient Instrumentation
-
-Guides: [TODO]
--@[https://micrometer.io/docs/guide/consoleReporter]
--@[https://micrometer.io/docs/guide/httpSenderResilience4jRetry]
--@[https://micrometer.io/docs/guide/customMeterRegistry]
-[[}]]
-
-## JVM Implementations [[{jvm,PM.WiP]]
-@[https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html]
-
-In practical terms, there is only one set of source code for the JDK.
-
-- Anyone can take that source code,build and publish it.
-- The certification process ensures that the build is valid.
-- Certification run by the Java Community Process, which provides a
-  Technology Compatibility Kit (TCK, sometimes referred to as the JCK).
-  If build passes the TCK then it is described as "Java SE compatible".
-  Note: Built can NOT be referred to as "Java SE" without paying a commercial
-        license from Oracle.
-        Ex: AdoptOpenJDK passing TCK are "Java SE compatible" (vs "Java SE").
-  -  WARN : certification is currently on a trust-basis: results are
-            not submitted to the JCP/Oracle for checking, neither can
-            be made public.
-
-- Existing builds include:
-  - Oracle Java
-  - OpenJ9      (Eclipse "IBM")
-    └ https://en.wikipedia.org/wiki/OpenJ9
-    └ Pre-built binaries available at AdoptOpenJDK
-    └ Compared to Oracle's HotSpot VM, i touts higher
-      start-up performance and lower memory consumption
-      at a similar overall throughput.
-    └ JIT with all optimization levels.
-  - OpenJDK
-  - GraalVM
-  - Bellsoft Liberica:
-    - $free TCK verified OpenJDK distribution for x86, ARM32 and ARM64.
-  - Azul Systems
-  - Sap Machine
-    JDK for Java 10 and later under the GPL+CE license.
-    They also have a commercial closed-source JVM
-  - Amazon Corretto:
-    zero-cost build of OpenJDK with long-term support that passes the
-    TCK. It is under the standard GPL+CE license of all OpenJDK builds.
-    Amazon will be adding their own patches and running Corretto on AWS
-[[}]]
-
-
-
-
-
-
-## Jabba JDK Version Mng [[{]]
-@[https://github.com/shyiko/jabba]
-* pain-free JDK installing on Linux x86/x86_64/ARMv7+, macOS, Windows x86_64.
-* Support for:
-  · Oracle JDK (latest-version only)
-  · Oracle Server JRE (latest-version only),
-  · Adopt OpenJDK (jabba >=0.8.0 is required)
-        Hotspot
-        Eclipse OpenJ9
-  · Zulu OpenJDK (jabba >=0.3.0 is required)
-  · IBM SDK, Java Technology Edition (jabba >=0.6.0 is required)
-  · GraalVM CE
-  · OpenJDK
-  · OpenJDK Reference Implementation
-  · OpenJDK with Shenandoah GC (jabba >=0.10.0 is required)
-  · Liberica JDK
-  · Amazon Corretto
-
-* INSTALL/UPGRADE:
-$ $ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash
-$ $. ~/.jabba/jabba.sh
-
-   Use $ ... | bash --skip-rc   to avoid modifying common rc files.
-   In that case add next lines to .bashrc / ...
- + export JABBA_VERSION=...
- + [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
-
-* USAGE
-$ $ jabba ls-remote                   ←  list available JDK's
-$ $ jabba ls-remote zulu@~1.8.60      ← Narrow results
-$ $ jabba ls-remote --latest=minor\   ← semver allowed
-$        "*@>=1.6.45 <1.9"
-
-$ $ jabba ls                          ← list all installed JDK's
-$ $ jabba use adopt@1.8
-$ $ jabba use zulu@~1.6.97
-$ $ echo "1.8" > .jabbarc             ← switch to JDK in .jabbarc
-                                        It must be a valid YAML file.
-                                        'jdk: 1.8' or simply '1.8' are valid
-$ $ jabba alias default 1.8           ← set def.java ver. on shell (since 0.2.0)
-                                        automatically used on new terminals
-
-$ $ jabba install 1.15.0                      ← install Oracle JDK
-$ $ jabba install sjre@1.8                    ← install Oracle Server JRE
-$ $ jabba install adopt@1.8-0                 ← install Adopt OpenJDK (Hotspot)
-$ $ jabba install adopt-openj9@1.9-0          ← install Adopt OpenJDK (Eclipse OpenJ9)
-$ $ jabba install zulu@1.8                    ← install Zulu OpenJDK
-$ $ jabba install ibm@1.8                     ← install IBM SDK, Java Technology Edition
-$ $ jabba install graalvm@1.0-0               ← install GraalVM CE
-$ $ jabba install openjdk@1.10-0              ← install OpenJDK
-$ $ jabba install openjdk-shenandoah@1.10-0   ← install OpenJDK with Shenandoah GC
-          └──┬──┘
-   everything is installed under ~/.jabba. Removing this directory clean install
-$ $ jabba uninstall zulu@1.6.77               ← uninstall JDK
-$ $ jabba link system@1.8.72 \                ← link system JDK
-$   /usr/lib/jvm/jdk1.8.0_72.jdk
-
-* To modify JDK system-wide:
-$ $ sudo update-alternatives --install /usr/bin/java java ${JAVA_HOME%*/}/bin/java 20000
-$ $ sudo update-alternatives --install /usr/bin/javac javac ${JAVA_HOME%*/}/bin/javac 20000
-* To swith among GLOBAL JDK system-wide:
-$ $ sudo update-alternatives --config java
-[[}]]
-
-
-[[monitoring}]]
-
-
-# Time Control:
 ## java.time.* [[{java_lang.101,java_lang.date_time,concurrency]]
 - JDK 1.8+, "deprecating" java.util.(Date|Calendar|TimeZome):
   All the classes are IMMUTABLE and THREAD-SAFE
@@ -1385,10 +1327,6 @@ Enums: DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
   ...
 [[}]]
 
-
-
-
-#[slf4j_summary]
 ## SLF4j Logging  [[{monitoring.logging.slf4j]]
 @[https://www.slf4j.org/]
 Simple Log Facade or abstraction for various logging frameworks
@@ -1484,7 +1422,6 @@ to plug in the desired logging framework at deployment time.
     }                                                     unnecesary string processing (saving can
 [[monitoring.logging.slf4j}]]
 
-#[mdc_summary]
 ## MDC: "A Better Way of Logging" [[{monitoring.logging.MDC,monitoring.101,qa.best_patterns,devops,]]
 @[https://dzone.com/articles/mdc-better-way-of-logging-1]
   PROBLEM : How do we related logs together originating from a (single user, single data-flow)
@@ -1563,7 +1500,6 @@ to plug in the desired logging framework at deployment time.
       ...
 [[monitoring.logging.MDC}]]
 
-#[security_101]
 ## Security 101 [[{security.101,PM.low_code,spring,security.jvm]]
 @[https://snyk.io/blog/10-java-security-best-practices/]
 1. Make code immutable:
@@ -1721,9 +1657,8 @@ to plug in the desired logging framework at deployment time.
 11. Centralize logging and monitoring
 [[security.101}]]
 
-# Functional Programming
-[[{java_lang.101,java_lang.functional,PM.WiP]]
-## Lambdas 1.8+ [[{java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
+# Functional Programming [[{ $functional_programming ]]
+## Lambdas 1.8+ [[{java_lang.101,java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
 * simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
 ### Context
@@ -1824,6 +1759,38 @@ collect(Collectors.toCollection(TreeSet::new))
           }
     });
 [[java_lang.functional.lambdas}]]
+
+## Collectors 1.8+ [[{java_lang.101,JAVA_LANG.FUNCTIONAL,PM.TODO]]
+[[}]]
+
+## Monads in Java [[{java_lang.functional,java_lang.101,PM.TODO]]
+@[https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394]
+- two of the most commonly known Java 8 features are monad
+  implementations, namely Stream and Optional
+- Monad is a concept:  we can view it as a wrapper which puts our
+  value in some context and allows us to perform operations on the
+  value. In this context, the output of an operation at any step is the
+  input to the operation at the next step.
+[[}]]
+
+## Unix4j [[{java_lang.functional]]
+@[https://github.com/tools4j/unix4j]
+"""...Working in the finance industry in Melbourne, the authors of
+  Unix4j spent a lot of time writing complex text processing
+  applications in bash. Frustrated with the inherent limitations of the
+  bash language; lack of language support, IDEs, test frameworks etc,
+  the authors decided to try and bring the convenience of some of the
+  Unix commands into the Java language.
+  You may notice that the implemented commands are more bent towards
+  text processing rather than OS and file manipulation. This is
+  intended as we see text processing to be the real benefit of Unix4j.
+  Not to say that this will always be the case.
+"""
+  Allows for things like:
+  - Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
+[[}]]
+
+
 
 ## java.util.concurrent.Flow(1.9+) [[{async/reactive.io,async/reactive.101,PM.TODO]]
 @[https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html]
@@ -2305,7 +2272,9 @@ Obj(Double|Int|Long)Consumer‹T›             │opt. accepting an object-valu
 [[java_lang.functional}]]
 
 
-# Collections [[{]]
+[[ $functional_programming }]]
+
+# Collections [[{ $collections ]]
 ## Collections 101 [[{data_structures.101,java_lang.101,scalability.101]]
                   [[02_doc_has.decission_tree,02_doc_has.diagram,qa.data]]
   COLLECTION DECISSION TREE
@@ -2687,843 +2656,11 @@ Map<String, Double> map01 = new HashMap<>();
 [[}]]
 [[}]]
 
+[[ $collections }]]
 
-# INPUT/OUTPUT
+# Non-Classified / TODO [[{ $non_classified]]
 
-## Read from file [[{java_lang.101,persistence.FS,io.101]]
-
-## Reading as lines of text
-  import java.nio.file.Path
-  import java.nio.file.Files
-
-  final Path path01 = Files.writeString (     // <·· 'writeString' Java 11+
-    Files.createTempFile("test", ".txt"),
-    "Some string to dump to file");
-  out.println(Files.readString(path01));      // <·· 'readString' Java 11+
-
-  final File input1 = new File("input1.txt"),
-             input2 = new File("input1.txt");
-  final CharSource
-      source1 = Files.asCharSource(input1, Charsets.UTF_8),
-      source2 = Files.asCharSource(input2, Charsets.UTF_8),
-      source  =
-         CharSource.concat(source1, source2);   // ← Alt 3.2(Guava) Concat CharSources
-  final String result = source.read();
-
-  final FileReader reader = new FileReader("input.txt");
-  final String result =
-        CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
-  reader.close();                              // ←   WARN:  Don't forget to close
-
-## Read file as bytes
-  final File file = new File("input.raw");
-  final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
-        = Files.asByteSource(file).
-          .slice(20 /* initial offset */, 100 /* len */);
-  final byte[] result = source.read();
-
-  FileInputStream reader =
-     new FileInputStream("input.raw");        // ←   Using FileInputStream
-  byte[] result =
-     ByteStreams.toByteArray(reader);         // ← + ByteStreams
-  reader.close();
-
-  final URL url =
-       Resources.getResource("test.txt");     // ← Read Resource in classpath
-  final String resource =
-       Resources.toString(url, Charsets.UTF_8);
-
-## Reading big files
-     try (
-  final FileInputStream inputStream = new FileInputStream(path);
-  final Scanner sc =                        ← Use Scanner to read line-by-line
-            new Scanner(inputStream, "UTF-8");
-     ) {
-  while (sc.hasNextLine()) {
-      final String line = sc.nextLine();
-      // ... do any process ...
-      if (sc.ioException() != null) {    ← // scanner captures ioExceptions
-          // handle error                  // It's good to have a look
-      }
-  }
-     } finally {
-  ...
-     }
-
-final LineIterator it =                       ← Alt 2. From  Apache Commons IO
-   FileUtils.lineIterator(theFile, "UTF-8");
-   try {
-while (it.hasNext()) {
-   String line = it.nextLine();               ← Read line-by-line
-   // ...
-}
-   } finally {
-LineIterator.closeQuietly(it);                ← Close resources
-   }
-
-
-## java.nio.files.Files.lines: (Java 8+)
-  private static String readLineByLine(String filePath)
-  {
-      final StringBuilder contentBuilder = new StringBuilder();
-      try (
-        final java.util.stream.Stream<String> stream =   ← stream resource must be closed
-            java.nio.file.Files.lines(                      (with a try-with in this example)
-                java.nio.file.Paths.get(filePath),
-                java.nio.charset.StandardCharsets.UTF_8)
-       ) {
-          stream.forEach(
-              s -> contentBuilder.append(s).append("\n")
-          );
-      } catch(java.io.IOException e) { ...  }
-      return contentBuilder.toString();
-  }
-[[}]]
-
-
-
-## NIO (JDK 1.4+) [[{async/reactive.io]]
-@[http://tutorials.jenkov.com/java-nio/buffers.html]
-- Replaced OLD blocking IO based on [ byte/char, read-or-write streams ]
-┌──────────┐     ┌──────────────┐
-│ CORE NIO │     │ NON─BLOCKING │
-├──────────┴───┐ ├──────────────┴────────────────────────────────┐
-│ ─  CHANNELS  │ │· a thread requests a channel the intention    │
-│  ─ read/write│ │  to read/write data into a buffer:            │
-│ ─  BUFFERS   │ │  · While the channel moves data into/from     │
-│ ─  SELECTORS │ │   the buffer, the thread continues another job│
-└──────────────┘ │  · When data is ready, the thread is notified │
-                 └───────────────────────────────────────────────┘
-Channel  : File,Datagram/UDP,Socket/TCP,ServerSocket,...
-Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
-
-
-┌───────────────┐
-│  NON─CORE NIO │
-├───────────────┴─────────────────────────────────────────────────────┐
-│ ─ components like Pipe and FileLock can be considered               │
-│   "utility classes" supporting the first three ones.                │
-│                                                                     │
-│ ─ "SELECTORS" objects monitor one+ channels for events              │
-│   (connection opened, data arrived, ..):                            │
-│   ─ Thus, a single thread can monitor multiple channels for data.   │
-│     (Very handy if app has many connections/Channels/clients open   │
-│     but with low traffic on each connection.                        │
-│   ─ To use selectors:                                               │
-│     ─ Instantiate the selector                                      │
-│     ─ Register one+ channels with it                                │
-└─────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ BUFFER                                                                                           │
-│  ATTRIBUTES                                              METHODS                                 │
-│          ┌─────────────────┬───────────────────────────┐ ┌─────────────┬───────────────────────┐ │
-│          │ write mode      │  read mode                │ │rewind()     │                       │ │
-│ ┌────────┼─────────────────┴───────────────────────────┤ │             │                       │ │
-│ │capacity│ fixed size of memory block implementing     │ ├─────────────┼───────────────────────│ │
-│ │        │ the buffer                                  │ │clear()      │                       │ │
-│ ├────────┼─────────────────┬───────────────────────────┤ │compact()    │                       │ │
-│ │position│ starts at 0,    │ starts at 0 (after "flip")│ ├─────────────┼───────────────────────│ │
-│ │        │ increase at each│ increase at each          │ │mark()       │"bookmark position"    │ │
-│ ├────────┼─────────────────┼───────────────────────────┤ │reset()      │ and return "bookmark" │ │
-│ │   limit│ element written │ element read              │ ├─────────────┼───────────────────────│ │
-│ │        │ == capacity     │ == last written position  │ │equals()     │using only the         │ │
-│ └────────┴─────────────────┴───────────────────────────┘ │compareTo()  │remaining-to-read bytes│ │
-│                                                          │             │for the computation    │ │
-│                                                          └─────────────┴───────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────────────────────────────────
-│ SEQUENCE TO READ/WRITE DATA                   ┌───────┐
-│try (  /* try-with 1.7+ */                     │SUMMARY│
-│  RandomAccessFile   aFile  =                  ├───────┴──────────────────────────
-│    new RandomAccessFile("nio-data.txt", "rw") │-1 ) Write data into the Buffer
-│) throws IOException {                         │-2 ) Call buffer. flip()
-│  FileChannel   inChannel  =                   │     switch writing/reading mode
-│      aFile .getChannel();                     │-3 ) Read data out of the Buffer
-│                                               │-4a) buffer.clear();  ← alt1: clear all buffer
-│  ByteBuffer   buf =                           │-4b) buffer.compact() ← alt2: clear only data read
-│      ByteBuffer.allocate(48 /*capacity*/);    ├────────────────────────────────────
-│                                               │ channelIn → (data) → buffer
-│                                               │ buffer    → (data) → channelOut
-│  int  bytesRead =                             └────────────────────────────────────
-│         inChannel .read(  buf );  // ←   buf  now
-│                                          in write mode
-│  while  ( bytesRead  != -1)
-│  {
-│      buf . flip ();               // ←   buf  now
-│    while(  buf .hasRemaining()){         in read mode
-│        System.out.print(
-│           (char)   buf .get()     // ← alt.1: read 1 byte
-│        );                                     at a time
-│        // channel2.write(  buf )  // ← alt.2: read data
-│    }                                         in channel2
-│      buf .clear();                // ← make buffer
-│                                        ready-for-writing
-│     bytesRead  =   inChannel      // ←   buf  now
-│                    .read(  buf );        in write mode
-│  }
-│}
-└──────────────────────────────────────────────────────────────────────────────────────────────────
-
-┌────────────────┐
-│ SCATTER-GATHER │
-├────────────────┴─────────────────────────────────┬──────────────────────────────────────────────────┐
-│  scattering channel read                         │ scattering-write to channel                      │
-│ - channel → read to → buffer1, buffer2, ....     │ - buffer1, buffer2, ...→ write to → channel      │
-│ - Ex:                                            │ - ex:                                            │
-│   ByteBuffer header = ByteBuffer.allocate(128);  │   ByteBuffer header = ByteBuffer.allocate(128);  │
-│   ByteBuffer body   = ByteBuffer.allocate(1024); │   ByteBuffer body   = ByteBuffer.allocate(1024); │
-│   ByteBuffer[]   bufferArray  = { header, body };│   ByteBuffer[]   bufferArray  = { header, body };│
-│   channel .read(  bufferArray );                 │   channel .write(  bufferArray );                │
-│            ^^^^                                  │                                                  │
-│ fill up one buffer before moving on to the next  │                                                  │
-│ (not suited for undefined size messages)         │                                                  │
-└──────────────────────────────────────────────────┴──────────────────────────────────────────────────┘
-
-  CHANNEL-TO-CHANNEL
- - If one the the channels is FileChannel :
-   - FileChannel transferTo()/transferFrom()  can be used to move data between channels
-     WARN: Some SocketChannel implementations may transfer only the data the SocketChannel
-     has ready in its internal buffer here and now
-   ┌─────────┐
-   │Examples.│
-   ├─────────┴───────────────────────────────────┬─────────────────────────────────────────────┐
-   │  FileChannelG fromChannel =                 │  FileChannelG fromChannel =                 │
-   │     (new RandomAccessFile("from.txt", "rw"))│     (new RandomAccessFile("from.txt", "rw"))│
-   │     .getChannel(),                          │     .getChannel(),                          │
-   │  FileChannel   toChannel =                  │  FileChannel   toChannel =                  │
-   │     (new RandomAccessFile(  "to.txt", "rw"))│     (new RandomAccessFile(  "to.txt", "rw"))│
-   │     .getChannel();                          │     .getChannel();                          │
-   │  long count    =  fromChannel .size();      │  long count    = ;                          │
-   │  toChannel  .transferFrom (                 │  fromChannel  .transferTo (                 │
-   │       fromChannel ,                         │      0 /*position*/,                        │
-   │       0       , // posit.in dest-file to    │      fromChannel .size() /*count*/,         │
-   │                 // start writing from       │      toChannel );                           │
-   │       maxCount  /* max-bytes to transfer*/  │                                             │
-   │  );                ^^^^^^^^^                │                                             │
-   │                    constrained by data      │                                             │
-   │                    in source                │                                             │
-   └─────────────────────────────────────────────┴─────────────────────────────────────────────┘
-[[}]]
-
-## Async/Reactive Standlib API tree [[{async/reactive.io.network,persistence.fs]]
-JDK 8
-./java/nio/
-           Bits ByteOrder CharBufferSpliterator
-           ByteBufferAs(Char|Double|Float|...)Buffer(B|L|...
-           (|Float|Double|StringChar)Buffer
-           HeapByteBuffer Heap(Byte|Char|...)Buffer(R) HeapCharBuffer
-           (Int|Long|...)Buffer
-           (Mapped|Direct)ByteBuffer(R)
-           Direct(Byte|Char|Double|...)Buffer
-
-./java/nio/channels/
-                    Channel Channels CompletionHandler FileLock MembershipKey Pipe Selector SelectionKey
-                    Asynchronous(|Byte)Channel
-                    AsynchronousChannelGroup
-                    AsynchronousFileChannel
-                    AsynchronousServerSocketChannel
-                    AsynchronousSocketChannel
-                    (Byte|Datagram|File|GatheringByte|Interruptible|Multicast|
-                     Network|ReadableByte|ScatteringByte|SeekableByte|Selectable|
-                     ServerSocket|Socket|WritableByte)Channel
-                   /spi/Abstract(Interruptible|Selectable)Channel
-                        Abstract(SelectionKey|Selector)
-                        (AsynchronousChannel|Selector)Provider
-
-./java/nio/charset/
-                   Charset(|Decoder|Encoder) StandardCharsets
-                   CoderResult CodingErrorAction
-                  /spi/CharsetProvider
-
-./java/nio/file/attribute/AclEntry(|Flag|Permission|Type)
-                          (|AclFile|BasicFile|DosFile|File|
-                            FileOwner|FileStore|PosixFile|
-                            UserDefinedFile)AttributeView
-                          (BasicFile|DosFile|PosixFile)Attributes
-                          FileAttribute FileTime
-                          GroupPrincipal
-
-                          UserPrincipal(LookupService)
-./java/nio/file/
-                AccessMode CopyMoveHelper CopyOption DirectoryStream Files
-                LinkOption LinkPermission Path        PathMatcher        Paths
-                SecureDirectoryStream
-                File(Store|System|Systems|TreeIterator|TreeWalker|VisitOption|Visitor|VisitResult)
-                SimpleFileVisitor
-                OpenOption    Standard(Copy|Open)Option
-                StandardWatchEventKinds
-                StandardWatchEventKinds$StdWatchEventKind
-                TempFileHelper
-                Watchable      Watch(Event|Key|Service)
-                spi/FileSystemProvider
-                    FileTypeDetector
-[[}]]
-
-## SELECTORS [[{async/reactive.io.network]]
-@[https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html]
-
-- A Selector allows a single thread to manage multiple channels
-  (network connections), by examining which ones are ready for
-  connect,accept,read,write
-
-- A channel that "fires an event" is also said to be "ready" for that event.
-
- REGISTERING A SELECTOR                               │ USING SELECTORS
- AND ASSIGNING CHANNELS                               │
-    │  Selector   selectoR  = Selector.open();        │  STEP
-    │  channel.configureBlocking(false);              │  call one of the select() methods
-    │          ^^^^^^^^^^^^^^^^^^^^^^^^               │  (upon registering 1+ channels)
-    │   //     non-blocking-mode required             │  int select(long mSecTimeout) ← block until channel/s ready
-    │   //   WARN:  FileChannel can NOT be switched   │             └────(optional)┘
-    │   //   into NON-blocking mode and so            │  int selectNow()              ← Don't block even if none read
-    │   //   they can NOT be used with selectors.     │  └┬┘
-┌───→  SelectionKey key  = channel.register(          │  indicates how many channels became ready since last select() call.
-│   │      selector ,                                 │
-│   │    SelectionKey.OP_READ |                       │  STEP
-│   │    SelectionKey.OP_WRITE);                      │  examine ready channels returned by select like:
-│   │                 ^^^^^^^                         │  Set<SelectionKey> selectedKeys =
-│   │                 Or-set of interest:             │                      selectoR .  selectedKeys() ;
-│   │                 OP_CONNECT / OP_ACCEPT          │  Iterator<SelectionKey> keyIterator =
-│   │                 OP_READ    / OP_WRITE           │                    selectedKeys.iterator();
-│   │  ^^^^^^^^^^^^^^^^                               │  while(keyIterator.hasNext()) {
-│   │                                                 │      SelectionKey key = keyIterator.next();
-│ ┌─→  key .attach(extraInfoObject);                  │      //  "cast to proper channel"
-│ │ │  Object attachedObj =                           │             if (  key .isAcceptable ()) {
-│ │ │     selectionKey.attachment();                  │        ... connection accepted by ServerSocketChannel
-│ │ │                                                 │      } else if (  key .isConnectable()) {
-│ │ │                                                 │        ... connection established with remote server
-│ │ │ // After selection                              │      } else if (  key .isReadable   ()) {
-│ │ │ // ^^^^^^^^^^^^^^^                              │        ... channel ready for reading
-│ │ │ // explained later                              │      } else if (  key .isWritable   ()) {
-│ │ │                                                 │        ... channel ready for writing
-│ │ │ // Alternative 1:                               │      }
-│ │ │ int   readySet =   key .readyOps();             │      keyIterator.remove();
-│ │ │ boolean isAcceptable  =                         │  }
-│ │ │           readySet  & SelectionKey.OP_ACCEPT;   │  STEP
-│ │ │ ...                                             │  selector .close()
-│ │ │ // Alternative 2:                               │            ^^^^^
-│ │ │   key .isAcceptable();                          │   must be called after finishing ussage,
-│ │                                                   │   invalidating all SelectionKey instances
-│ └─── (optional) user attached object,               │   registered with this Selector.
-│      handy way to recognize a given                 │   The channels themselves are not closed.
-│      channel, provide extra info
-│      (buffer/s,...)
-│
-└───   key  can be queried like:
-       intO interestSet  =   key .interestOps()*;
-       boolean isInterestedInAccept
-           =   interestSet  & SelectionKey.OP_ACCEPT;
-
-  NOTE:
-  - A thread blocked by a call to select() can be forced to leave the select() method,
-     even if no channels are yet ready by having a different thread call
-     the   selectoR . wakeup()  method on the Selector which the first thread has
-     called select() on:
-     - The thread waiting inside select() will then return immediately.
-     - If a different thread calls wakeup() and no thread is currently
-       blocked inside select(), the next thread that calls select()
-       will "wake up" immediately.
-[[}]]
-
-## FileChannel [[{async/reactive.io,persistence.FS]]
-- Java NIO FileChannel: channel connected to a file allowing to
-      read data from  and write data to a file.
-- A FileChannel canNOT be set into non-blocking mode:
-  It always runs in blocking mode
-
-- Reading from FileChannel (Writting to buffer):
-  |/* You cannot open a FileChannel directly,
-  | * first you obtain a FileChannel via an (Input|Output)Stream or a RandomAccessFile
-  | */
-  |RandomAccessFile   aFile      = new RandomAccessFile("data/nio-data.txt", "rw");
-  |// Reading from channel
-  |try (  /* try-with 1.7+ */
-  |  RandomAccessFile   aFile  = new RandomAccessFile("data/nio-data.txt", "rw")
-  |) throws IOException {
-  |  FileChannel   inChannel  =   aFile .getChannel();
-  |
-  |  ByteBuffer   buf  = ByteBuffer.allocate(48 /* capacity*/);
-  |
-  |  int  bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
-  |  while ( bytesRead  != -1) {
-  |      buf .flip();                            //   buf  now in read mode
-  |    while(  buf .hasRemaining()){
-  |        // alt. read data directly, 1 byte at a time
-  |        System.out.print((char)   buf .get());
-  |        // alt. read data in channel
-  |        // anotherChannel.write(  buf )
-  |    }
-  |
-  |      buf .clear(); //make buffer ready for writing
-  |     bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
-  |  }
-  |}
-
-- Writing to a FileChannel (reading from buffer)
-  | String newData = "......" + System.currentTimeMillis();
-  | ByteBuffer   buf  = ByteBuffer.allocate(48);
-  |   buf .clear();
-  |   buf .put(newData.getBytes());
-  |   buf .flip(); // change buffer from write to read
-  |  while(  buf .hasRemaining()) {  channelO .write (  buf );  }
-  | channel.close();
-
-
-- FileChannel Position
-  | long pos = fileChannel.position(); // obtain current position
-  | fileChannel.position(pos +123); // change position
-
-   - If you set the position after the end of the file,
-     and try to read from the channel, you will get -1
-   - If you set the position after the end of the file,
-     and write to the channel, the file will be expanded
-     to fit the position and written data. This may result
-     in a "file hole", where the physical file on
-     the disk has gaps in the written data.
-
-- FileChannel Size
-  | long fileSize = fileChannel.size();
-                                ^^^^^^
-                            size of the file
-                            connected to channel
-
-- FileChannel (file) Truncate
-  | fileChannel.truncate(1024 /*length*/);
-
-- FileChannel Force:
-  flushes all unwritten data from the channel and OS cache to the disk
-  | channel.force(true /* flush also file meta-data like permissions....*/);
-[[}]]
-
-## Pipe [[{async/reactive.io,java_lang.functional]]
-- Pipe: one-way data connection between two threads
-  └"=="  source channel   ← One threads writes to sink
-        +  sink channel   ← One threads reads from source
-  Ex:
-    ByteBuffer   buf  = ByteBuffer.allocate(48);
-      buf .clear();
-      buf .put(newData.getBytes());
-
-    // WRITING TO PIPE
-    Pipe pipe = Pipe.open();
-    Pipe.SinkChannel sinkChannel = pipe.sink();
-    String newData = "..." + System.currentTimeMillis();
-      buf .flip();
-    while(  buf .hasRemaining()) { sinkChannel.write(  buf ); }
-
-    // READING FROM A PIPE
-    To read from a Pipe you need to access the source channel. Here is how that is done:
-    Pipe.SourceChannel sourceChannel = pipe.source();
-    int  bytesRead  =   inChannel .read(buf2);
-[[}]]
-
-## SocketChannel [[{async/reactive.io.network]]
-  There are two ways a SocketChannel can be created:
-
-  // Opening a SocketChannel
-  SocketChannel socketChannel = SocketChannel.open();
-  socketChannel.connect(new InetSocketAddress("http://jenkov.com", 80));
-
-  // Reading (writing to buffer)
-  ByteBuffer   buf  = ByteBuffer.allocate(48);
-  int  bytesRead  = socketChannel.read(  buf ); // If -1 is returned, the end-of-stream is reached (connection is closed)
-
-  // Writing to a SocketChannel
-  String newData = "..." + System.currentTimeMillis();
-  ByteBuffer   buf  = ByteBuffer.allocate(48);
-    buf .clear();
-    buf .put(newData.getBytes());
-    buf .flip();
-  while(  buf .hasRemaining()) { channel.write(  buf ); }
-
-  socketChannel.close();
-[[}]]
-
-
-## Non-blocking Mode [[{async/reactive.io.network]]
-- socketChannel .configureBlocking(false) ;
-- Calls to connect(), read() and write() will not block
-- In non-blocking mode connect() calls may return before
-  the connection is established:
-  - To determine whether the connection is established
-    use finishConnect() like this:
-
-  | socketChannel.configureBlocking(false);
-  | socketChannel.connect(
-  |   new InetSocketAddress("http://jenkov.com", 80));
-  |
-  | while(! socketChannel.finishConnect() ){
-  |     //wait, or do something else...
-  | }
-
-NOTE: non-blocking works much better with Selector's
-[[}]]
-
-## ServerSocketChannel [[{async/reactive.io.network]]
-ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-
-serverSocketChannel.socket().bind(new InetSocketAddress(9999));
-serverSocketChannel.configureBlocking(false);
-
-while(true){
-    SocketChannel socketChannel =
-            serverSocketChannel.accept(); // in blocking mode waits until incoming connection arrives
-    if(socketChannel != null /* always false in blocking mode */){
-        //do something with socketChannel...
-    }
-
-    //do something with socketChannel...
-}
-
-serverSocketChannel.close()
-[[}]]
-
-## Datagram Channel [[{async/reactive.io.network]]
-- Since UDP is a connection-less network protocol, you cannot just
-  by default read and write to a DatagramChannel like you do from
-  other channels. Instead you send and receive packets of data
-
-  | DatagramChannel channel = DatagramChannel.open();
-  | channel.socket().bind(new InetSocketAddress(9999));
-  |
-  | ByteBuffer   buf  = ByteBuffer.allocate(48);
-  |   buf .clear();
-  | // WARN: if read data is bigger than buffer size remaining data is discarded silently
-  | channel.receive(  buf );
-  |
-  | // Write to channel
-  | String newData = "..." + System.currentTimeMillis();
-  |   buf .clear();
-  |   buf .put(newData.getBytes());
-  |   buf .flip();
-  |
-  |
-  | // WARN:  No notice is received about packet delivery (UDP does not make any guarantees)
-  | int bytesSent = channel.send(  buf , new InetSocketAddress("jenkov.com", 80));
-  |
-  | // Alternatively you can "Connect" to a Specific Address. Since UDP is connection-less,
-  | // connecting to a remote address just means that the DatagramChannel can only send/receive
-  | // data packets from a given specific address.
-  | channel.connect(new InetSocketAddress("jenkov.com", 80));
-  | int  bytesRead  = channel.read(  buf );
-  | int bytesSent = channel.write(  buf );
-[[}]]
-
-## NonBlocking Server Example [[{async/reactive.io.network]]
-REF:
-- @[http://tutorials.jenkov.com/java-nio/non-blocking-server.html]
-- @[https://github.com/jjenkov/java-nio-server]
-- Non-blocking IO Pipelines:
-read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut
-read-only  pipeline:  channelIn  → selector → component → ... → componentN
-write-only pipeline:                        component → ... → componentN →  channelOut
-Note: It is the component that initiates reading of data from the Channel via the Selector
-read-pipeline read from stream/channelIn and split data into messages like:
-
-Data   → Message → Message
-Stream   Reader    Stream
-
-- A blocking Message Reader/Writer is simpler, since it
-  has never to handle situations where no data was read
-  from the stream, or where only a partial message was
-  read from the stream and message parsing needs to be
-  resumed later.
-- The drawback of blocking is the requirement of separate
-  threads for each parallel stream, which is a problem if the
-  server has thousands of concurrent connections
-- Each thread will take between 320K (32 bit JVM) and
-  1024K (64 bit JVM) memory for its stack
-- Queue messages can be used to reduce the problem. However,
-  this design requires that the inbound client  streams
-  send data reasonably often and input is processed fast.
-   If the inbound client stream may be inactive for longer periods
-  attached to hidden clients, a high number of inactive
-  connections may actually block all the threads in the thread
-  pool.
-  That means that the server becomes slow to respond or even
-  unresponsive.
-- A non-blocking IO pipeline can use a single thread to
-  read messages from multiple non-blocking streams.
-    When in non-blocking mode, a stream may return 0 or more
-  bytes when you attempt to read data from it.
-  When you call select() or selectNow() on the Selector it
-  gives you only the SelectableChannel instances ("connected
-  clients") that actually has data to read.
-
-  Component ──→ STEP 1: select() ──→ Selector ←──┬─→ Channel1
-      ↑                                │         ┼─→ Channel2
-      └───← STEP 2: ready channels ←───┘         └─→ Channel3
-
-
-- Reading Partial Messages: Data sent by "ready" channels can
-  contain fractions/incomplete messages:
-  - The Message Reader looks needs to check if the data block
-    contains at least one full message, adn storing partial ones.
-    (maybe using one Message Reader per Channel to avoid mixing messages)
-  - To store Partial Messages two design should be considered:
-    - copy data as little as possible for better performance
-    - We want full messages to be stored in consecutive byte to
-      make parsing messages easier
-  - Some protocol message formats are encoded using a TLV format
-    (Type, Length, Value).
-    Memory management is much easier since we known immediately
-    how much memory to allocate for the message. No memory is
-    wasted at the end of a buffer that is only partially used.
-  - The fact that TLV encodings makes memory management easier is
-    one of the reasons why HTTP 1.1 is such a terrible protocol.
-    That is one of the problems trying to be fixed in HTTP 2.0 where
-    data is transported in LTV encoded frames.
-  - Writing Partial Messages: channelOut.write(ByteBuffer) in
-    non-blocking mode gives no guarantee about how many of the
-    bytes in the ByteBuffer is being written. The method returns
-    how many bytes were written, so it is possible to keep track
-    of the number of written bytes.
-  - Just like with the Message Reader, a Message Writer is used
-    per channel to handle all the details.
-   (partial writes, message queues, resizable buffers, protocol aware tricks,...)
-
-- All in all a non-blocking server ends up with three "pipelines" it
-  needs to execute regularly:
-  - The read pipeline which checks for new incoming data from
-    the open connections.
-  - The process pipeline which processes any full messages received.
-  - The write pipeline which checks if it can write any outgoing
-    messages to any of the open connections
-[[}]]
-
-## Path (1.7+) [[{java_lang.101,persistence.FS]]
-- Represents a file/directory path in the FS
-- Similar to java.io.File but with some minor differences.
-// Ussage
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-Path path = Paths.get("/var/lib/myAppData/myfile.txt");
-System.out.println("Current dir:"+Paths.get(".").toAbsolutePath());
-[[}]]
-
-[[{]]persistence.FS,async/reactive,java_lang.101" >
-
-## Files [[{]]
-- java.nio.file.Files provides several methods for manipulating FS files/directories:
-- uses Path instances:
-
-boolean pathExists =  Files.exists (pathInstance,
-            new LinkOption[]{ LinkOption.NOFOLLOW_LINKS});
-
-Path newDir =  Files.createDirectory (path);
-
- Files.copy (sourcePath, destinationPath);
- Files.copy (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
- Files.move (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
- Files.delete (path);
-
-Files.walkFileTree(Paths.get("data"), new FileVisitor<Path>() {
-  @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-
-  @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-
-  @Override public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-
-  @Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-    // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
-  }
-});
-[[}]]
-
-## Asyncrhonous FileChannel 1.7+ [[{persistence.fs,async/reactive.io]]
-read/write data from/to files asynchronously
-
-Path path = Paths.get("data/test.xml");
-AsynchronousFileChannel fileChannel =
-    AsynchronousFileChannel.open(path, StandardOpenOption.READ);
-
-// Reading Data, Alt 1: Via a Future
-  Future<Integer> operation = fileChannel.read(/*ByteBuffeR*/buffer, 0 /* start position to read from */);
-  while(!operation.isDone());  // WARN: not a very efficient use of the CPU
-  buffer.flip();
-  byte[] data = new byte[buffer.limit()];
-  buffer.get(data);
-  System.out.println(new String(data));
-  buffer.clear();
-
-// Reading Data Alt 2: Via a CompletionHandler
-fileChannel.read(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
-    @Override
-    public void completed(Integer numBytesRead, ByteBuffer attachment) {
-        // NOTE: attachment is a reference to the third parameter passed to .read read()
-        System.out.println("numBytesRead = " + numBytesRead);
-        attachment.flip();
-        byte[] data = new byte[attachment.limit()];
-        attachment.get(data);
-        System.out.println(new String(data));
-        attachment.clear();
-    }
-
-    @Override
-    public void failed(Throwable exc, ByteBuffer attachment) { ...  }
-});
-
-// Writing data:
-AsynchronousFileChannel fileChannel =
-    AsynchronousFileChannel.open(path, StandardOpenOption.WRITE);
-
-// Writing Data: Alt 1: Via a Future
-  ...
-  Future<Integer> operation = fileChannel.write(buffer, position);
-  buffer.clear();
-  while(!operation.isDone());
-
-// Writing Data: Alt 2: Via CompletionHandler
-...
-  fileChannel.write(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
-
-      @Override public void completed(Integer result, ByteBuffer attachment) { /* ... */ }
-      @Override public void failed   (Throwable exc , ByteBuffer attachment) { /* ... */ }
-  });
-[[}]]
-
-## java.net.http.HTTPClient [[{io.net.http,async/reactive.io.network,PM.low_code,02_doc_has.comparative,qa]]
-API REF: @[https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html]
-JEP: @[https://openjdk.java.net/jeps/321]
-
-TODO: HTTPClient Quick intro:
-    @[https://openjdk.java.net/groups/net/httpclient/intro.html]
-
-- Example JShell script for GET request:
-  import java.io.PrintWriter;
-  import java.net.http.HttpClient
-  import java.net.http.HttpRequest
-  import java.net.http.HttpResponse
-  import java.net.http.HttpResponse.BodyHandlers
-  HttpClient client = HttpClient.newHttpClient();
-  var BASE_URL="https://earizon.github.io/"
-  var URL01=BASE_URL + "/txt_world_domination/index.html"
-  HttpRequest request = HttpRequest.newBuilder(
-    URI.create(URL01)).GET().build()
-  HttpResponse<String> response =
-    client.send(request, BodyHandlers.ofString());
-  System.out.println(response.body())
-  /exit
-[[}]]
-
-
-## OkHTTP [[{io.HTTP.OkHTTP]]
--   OkHTTP vs java.net.http.HTTPClient
-- See also [Retrofit](https://square.github.io/retrofit/), built on top
-  of OkHTTP.
-  OkHttp: pure HTTP/SPDY client responsible for any low-level network
-  operation, caching, request and response manipulation, and many more.
-  In contrast, Retrofit is a high-level REST abstraction build on top
-  of OkHttp. Retrofit 2 is strongly coupled with OkHttp and makes
-  intensive use of it.
-  OkHttp   Functions: Connection pooling, gzipping, caching, recovers from
-                      network problems, sync, and async calls, redirects,
-                      retries ... and so on.
-  Retrofit Functions: URL manipulation, requesting, loading, caching,
-                      threading, synchronization... It allows sync and
-                      async calls.
-
-From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
-   OkHTTP PROs over                     OkHTTP CONs over
-   java.net.http.HTTPClient             java.net.http.HTTPClient
-   -------------------------------      -------------------------------------------
- - built-in response cache.           - timeout like configuration can not be
- - HTTP 2.0 web sockets support.        modified after singleton connection.
- - easier to use/better defaults.     - Requires (small) extra non-JDK dependencies
- - used by 1+ billion Android devices   (okIO and okHTTP itself) in non-Android
- - Better cookie/headers/call model.    deployments
- - Retrofit compatibility
- - HTTP 1.1 Connection pooling and HTTP/2 support.
- - Transparent GZIP up/downloads.
- - silently recover from common connection problems.
-   (alternate IP addresses if available,...)
- - synch or async+callback API.
-
-@[https://square.github.io/okhttp/]
-
-  DAILY USSAGE  @[https://square.github.io/okhttp/recipes/]
-
-  import java.io.IOException;
-  import okhttp3.OkHttpClient;
-  import okhttp3.Request;
-  import okhttp3.Response;
-  import okhttp3.MediaType;                         // ← For POST
-  import okhttp3.RequestBody;                       // ← For POST
-  ...
-  OkHttpClient client = new OkHttpClient();
-  Request request = new Request.Builder()
-      .url("http://bla.ble.com/a/b?key=param")
-      .build();
-  try (
-    Response res =
-       client.newCall(request).execute()            // ← Exec. (GET) Request
-  ) {
-    System.out.println(res.body().string());
-  }
-
-
-  final String MediaType =  "application/json; charset=utf-8";
-  final String jsonBody = "{...}";
-  RequestBody body = RequestBody.create(jsonBody,   //  ← POST: prepare body rquest
-           MediaType.get(MediaType));
-  Request request = new Request.Builder()
-      .url("http://bla.ble.com/")
-      .post(body)                                   //  ← POST: prepare body rquest
-      .build();
-  try (
-    Response res =
-       client.newCall(request).execute()
-  ) {
-    return res.body().string();
-  }
-
-- Ex: Balancing connections with OKHttp:
-  https://medium.com/wandera-engineering/kubernetes-network-load-balancing-using-okhttp-client-54a2db8fc668
-
-[[io.HTTP.OkHTTP}]]
-
-## okIO [[{async/reactive.io.network,qa]]
-* complements java.nio
-@[https://github.com/square/okio]
-- makes it much easier to access, store, and process your data.
-- It started as a component of OkHttp, the capable HTTP client
-  included in Android. It's well-exercised and ready to solve new problems.
-[[}]]
-
-
-# Non-Classified
-
-## Netflix Libraries for microSerives:
-(widely used for example in Spring Framework)
-NOTE: Probably service Mesh solutions (istio, ...)
-are better since they are also cross-platform at the cost
-of some extra infrastructure and network traffic (since
-one or more L7 proxies are involved).
-* Eureka: Service discovery. Components:
-  - service registry
-  - service client
-Services at bootstrap register with the Eureka server
-using the service client. The service client is also
-used by the applications to discover the instances of
-their dependencies.
-
-* Hystrix: library providing fault tolerance
-* Ribbon: Java library for client-side load balancing.
-* Zuul: Application gateway supporting dynamic routing
-  based on service discovery.
-
-## JavaLite: lightweight async.job processing [[{async/reactive.javalite]]
+## JavaLite lightweight async.job processing [[{async/reactive.javalite]]
                    [[PM.low_code,messaging.jms,messaging.activemq]]
                    [[architecture.batch,architecture.distributed]]
 - Use Cases:
@@ -3728,7 +2865,6 @@ their dependencies.
       perform resource availability pre-checks (e.g. disk space check).
 [[async/reactive.FileQueue}]]
 
-
 ## FailSafe [[{enterprise_patterns,qa.error_control,architecture.distributed,PM.WiP]]
 
 @[https://github.com/failsafe-lib/failsafe]
@@ -3783,7 +2919,7 @@ their dependencies.
   - Designed to parse/generate/query standard JSON documents.
 [[}]]
 
-## JSON-B vs GSON vs ... [[{]]
+## JSON-B vs GSON vs ... [[{persistence.JSON,performance,io]]
 * https://www.reddit.com/r/javahelp/comments/bx6ded/jsonb_vs_jackson/
    ... I've had issues with nested types (example: List<X>) when
   decoding Json with most libraries (see usage examples [here](https://www.baeldung.com/java-json),
@@ -3799,7 +2935,8 @@ their dependencies.
   scenario described above. You would still need a library at least to
   obtain the type.
 [[}]]
-## JSON-B / JSR-367 [[{]]
+
+## JSON-B / JSR-367 [[{persistence.JSON,io,]]
   @[https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/]
 - B stands for Ojbect binding
   - Standard binding layer for converting
@@ -3999,24 +3136,6 @@ $ $ cat module-info.java
        which is a replacement for three flags: -source, -target and
        -bootclasspath.                                                        [[}]]
 [[java_lang.modules}]]
-
-## Collectors 1.8+ [[{java_lang.101,JAVA_LANG.FUNCTIONAL,PM.TODO]]
-
-[[}]]
-
-## Modern functional programming [[{JAVA_LANG.FUNCTIONAL.PM.TODO.NOW]]
-@[https://dzone.com/articles/introduction-to-pragmatic-functional-java]
-[[}]]
-
-## Monads in Java [[{java_lang.functional,java_lang.101,PM.TODO]]
-@[https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394]
-- two of the most commonly known Java 8 features are monad
-  implementations, namely Stream and Optional
-- Monad is a concept:  we can view it as a wrapper which puts our
-  value in some context and allows us to perform operations on the
-  value. In this context, the output of an operation at any step is the
-  input to the operation at the next step.
-[[}]]
 
 ## Resilience4j [[{architecture.distributed,java_lang.functional,qa.error_control,PM.TODO]]
 * higher-order functions (decorators) to enhance any functional interface,

@@ -48,113 +48,119 @@ See also: fast Inter-thread communication:
   solve any problem with enough time and memory. In practice having a CPU assigned to single thread
   will be very inefficient since the CPU will stand-by while the thread is waiting for input/output
   operations. Also, many algorithms allows to split processed data in isolated regions that can be
-  processed in parallel by different CPU/CPU cores
+  processed in parallel by different CPU/CPU cores.
 - Concurrent tries to solve the problem of multiple independents CPUs or threads accessing share
   resources (memory)
-- Locks is the simples concurrent primitive to protect code or data from concurrent
+- Lock is the simplest concurrent primitive to protect code or data from concurrent
   access in situations where there are many threads of execution. Locks can be classified like:
-  | According to lock usage:
-  |    Cooperative   A thread is encouraged (but not forced) to cooperate with other
-  |                  threads by acquiring a lock before accessing the associated data
-  |
-  |    Mandatory     a thread trying to access an already locked resource will throw
-  |                  an exception
-  | _________________________________________________
-  | According to lock rescheduling strategy:
-  |    Blocking      The OS block the thread requesting the lock and rescheduled another thread
-  |
-  |    Spinlock      The thread waits in a loop until the requested lock becomes available.
-  |                  It's more efficient if threads are blocked for very short time (smaller than
-  |                  the time needed by the OS to reschedule another thread into the current CPU)
-  |                  It's inefficient if the lock is held for a long time since a CPU core is
-  |                  wasted on the spinlock loop
-  | _________________________________________________
-  | According to granularity: (measure of the amount of data the lock is protecting)
-  |    Coarse        Protect large segments of data (few locks). Results in less lock overhead
-  |                  for a single thread, but worse performance for many threads running concurrently
-  |                  (most thread will be lock-contended waiting for share resource access)
-  |
-  |    Fine          Protect small amounts of data. Require more lock instances reducing lock
-                     contention
+  ```
+  ┌─ ACCORDING TO LOCK USAGE ───────────────────────────────────────────────────────────────────────
+  │
+  │    Cooperative   A thread is encouraged (but not forced) to cooperate with other
+  │                  threads by acquiring a lock before accessing the associated data.
+  │
+  │    Mandatory     a thread trying to access an already locked resource will throw
+  │                  an exception.
+  │
+  ├─ ACCORDING TO LOCK RESCHEDULING STRATEGY ───────────────────────────────────────────────────────
+  │
+  │    Blocking      The kernel blocks the thread requesting the lock and reschedules another thread
+  │
+  │    Spinlock      The thread waits in a loop until the requested lock becomes available.
+  │                  It's more efficient if threads are blocked for very short time (smaller than
+  │                  the time needed by the OS to reschedule another thread into the current CPU)
+  │                  It's inefficient if the lock is held for a long time since a CPU core is
+  │                  wasted on the spinlock loop
+  │
+  ├─ ACCORDING TO GRANULARITY ──────────────────────────────────────────────────────────────────────
+  │ (measure of the amount of data the lock is protecting)
+  │
+  │    Coarse        Protect large segments of data (few locks). Results in less lock overhead
+  │                  for a single thread, but worse performance for many threads running concurrently
+  │                  (most thread will be lock-contended waiting for share resource access)
+  │
+  │    Fine          Protect small amounts of data. Require more lock instances reducing lock
+  │                  contention
+  └─────────────────────────────────────────────────────────────────────────────────────────────────
+  ```
 
 - Locks require CPU atomic instructions for efficient implementations such as
-    "test-and-set", "fetch-and-add", or "compare-and-swap", whether there are blocking
-    (managed by the OS) or spin-locks (managed by the thread)
+  "test-and-set", "fetch-and-add", or "compare-and-swap", whether there are blocking
+  (managed by the OS) or spin-locks (managed by the thread).
 - Uniprocessor can just disable interruptions to implement locks, while multiprocessors
-  using shared-memory will require complex hardware and/or software support
--   Monitors wrap mutex-locks with condition variables (container of threads waiting
-    for certain condition) . They are implemented as thread-safe classes
+  using shared-memory will require complex hardware and/or software support.
+- Monitors wrap mutually exclusive (mutex) locks with condition variables (container of
+  threads waiting for certain condition). They are implemented as thread-safe classes.
 [[}]]
-[[{]]concurrency.101" >
+[[{concurrency.101.monitors]]
 # monitors
 - Object providing Mutual exclusion of threads to shared resources
 - simplest form of synchronization:
   alternatives include:
   - reads and writes of volatile variables
   @[https://avaldes.com/examining-volatile-keyword-with-java-threads-example/]
-    typically used in applications when one thread will
-    be making changes to the variables and the others all reading or
-    consumers of the data. If you have multiple threads making changes to
-    the data it will be best to stick with synchronized block or use
-    java.util.concurrent library package.
+    typically used in applications when one thread will be making changes to the
+    variables and the others all reading or consumers of the data. If you have
+    multiple threads making changes to the data it will be best to stick with
+    synchronized block or use `java.util.concurrent` library package.
     (volatile is actually simpler than monitors, but not universal)
     Important Points on Volatile Variables:
-    - Volatile variables are not cached in registers or in caches :
-      All read and writes are done in main memory, never done thread-locally
-    - Example Usage: status flags used in spin loops
-    - Volatile keyword guarantees visibility and ordering
-  - use of classes in the java.util.concurrent package
+    - Volatile variables are not cached in registers. They can be
+      All read and writes are done in cache memory if hardware support exists for
+      cache synchronization among cores or main memory.
+    - `volatile` keyword guarantees visibility and ordering.
+  - `java.util.concurrent` package.
 - Monitors also have the ability to wait(block a thread) for a certain condition
-  to become true, and signal other threads that their condition has been met
+  to become true, and signal other threads that their condition has been met.
 - Monitors provide a mechanism for threads to temporarily give up exclusive access in
   order to wait for some condition to be met, before regaining exclusive access and
-  resuming their task
-- each java object can be used as a monitor.
+  resuming their task.
+- Each Java object can be used as a monitor.
 - Methods/blocks of code requiring mutual exclusion must be explicitly marked with the
-  synchronized keyword :
-  - The synchronized statement computes a reference to an object;
+  `synchronized` keyword :
+  - The `synchronized` statement computes a reference to an object;
     it then attempts to perform a lock action on that object's monitor and does not
     proceed further until the lock action has successfully completed.
     After the lock action has been performed, the body of the synchronized statement
     is executed. If execution of the body is ever completed, either normally or abruptly,
     an unlock action is automatically performed on that same monitor.
-  -   WARN : The Java programming language neither prevents nor requires detection
+  - *WARN* : The Java programming language neither prevents nor requires detection
     of deadlock conditions.
 - Instead of explicit condition variables, each monitor(/object) is equipped with
   a single wait queue in addition to its entrance queue.
-- All waiting is done on this single wait queue  and all notify/notifyAll
+- All waiting is done on this single wait queue and all notify/notifyAll
   operations apply to this queue.
+  ```
+  monitor    enter
+  ┌───┬─────── · ──┐   - wait-sets are manipulated solely and atomically
+  │  notified  v   │     through the methods:
+  │ ·····>         │     Object.wait      : move     running  thread     to wait-queue
+  │   │        O   │     Object.notify    : move     thread   wait-queue to enter-queue
+  │ O │        O   │     Object.notifyAll : move all threads  wait-queue to enter-queue
+  │ O ├─────── · ──┴─┐   Interrupt??      : put thread into to monitor enter-queue
+  │ O │        v     │
+  │  <··wait   O     │  - In timed-waits  : internal action removes thread to enter-queue?
+  │   │     (Running │                      after at least milliseconds plus nanoseconds
+  └───┤      thread) │  - Implementations are permitted (but discouraged),
+      │              │    to perform "spurious wake-ups"
+      │    leave     │
+      └────── · ─────┘  O = Thread (Instruction Pointer + Stack Pointer + ...?)
+              v
+  ```
 
- monitor    enter
- ┌───┬─────── │ ──┐   - Wait sets are manipulated solely and atomically
- │  notified  v   │     through the methods
- │ ─────→         │     Object.wait      : move     running thread    → wait-queue
- │   │        O   │     Object.notify    : move     thread  wait-queue → enter-queue
- │ O │        O   │     Object.notifyAll : move all threads wait-queue → enter-queue
- │ O ├─────── │ ──┴─┐   Interrupt??      : put thread into to monitor enter-queue
- │ O │        v     │
- │  ←──wait   O     │  - In timed-waits  : internal action removes thread to enter-queue?
- │   │     (Running │                      after at least milliseconds plus nanoseconds
- └───┤      thread) │  - Implementations are permitted (but discouraged),
-     │              │    to perform "spurious wake-ups"
-     │    leave     │
-     └────── │ ─────┘  O = Thread (Instruction Pointer + Stack Pointer + ...?)
-             v
-<!--
-TODO Concurrent
-@ma: https://en.wikipedia.org/wiki/Monitor_(synchronization)
-     https://cs.nyu.edu/~lerner/spring12/Preso03-JavaPrimitives.pdf
-     https://en.wikipedia.org/wiki/Concurrent_computing
-     http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
--->
-[[}]]
+* TODO Concurrent                                                                           [[{PM.TODO]]
+  https://en.wikipedia.org/wiki/Monitor_(synchronization)
+  https://cs.nyu.edu/~lerner/spring12/Preso03-JavaPrimitives.pdf
+  https://en.wikipedia.org/wiki/Concurrent_computing
+  http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/ [[PM.TODO}]]
 
-[[{]]concurrency.barrier" >
+[[concurrency.101.monitors}]]
+
+[[{concurrency.barrier]]
 # CountDownLatch
-* (java.util.concurrent) Since JDK 1.5
+* In `java.util.concurrent` Since JDK 1.5
 @[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
-* Object allowing 1+ threads to wait until a
-  1+ operations are completed in other threads.
+* Object allowing 1+ threads to wait until a 1+ operations are completed in other threads.
 
 * example usages:
   - on/off latch or gate:
@@ -173,54 +179,60 @@ TODO Concurrent
 - The first is a start signal that prevents any worker from
    proceeding until the driver is ready for them to proceed; The second
    is a completion signal that allows the driver to wait until all
-   workers have completed.
+   workers have completed. Example:
+   ```
+   class DriverThread { // ...
 
-  -  Ex. 1:
-     class DriverThread { // ...
+     class Worker implements Runnable {
+       private final CountDownLatch   startSignal ;
+       private final CountDownLatch    doneSignal ;
 
-       class Worker implements Runnable {
-         private final CountDownLatch   startSignal ;
-         private final CountDownLatch   doneSignal ;
-         Worker(CountDownLatch   startSignal , CountDownLatch   doneSignal ) {
-            this.startSignal = startSignal ;
-            this.doneSignal  = doneSignal ;
-         }
-         public void run() {
-            try {
-              startSignal .await();      // ← Wait for driver-thread to be ready.
-              doWork();
-              doneSignal .countDown();   // ← Decrease count.
-            } catch (InterruptedException ex) {} // return;
-         }
-
-         void doWork() { ... }
+       Worker(CountDownLatch   startSignal,
+              CountDownLatch   doneSignal ) {
+          this.startSignal = startSignal ;
+          this. doneSignal  = doneSignal ;
        }
 
-       void main() throws InterruptedException {
-         CountDownLatch   startSignal =
-                          new CountDownLatch(1); // ← 1: Gate: Avoid workers to start before
-                                                 //       driver-thread is ready.
-
-         CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
-                          new CountDownLatch(N); //      have completed.
-                                                 //   Consider also CyclicBarrier
-                                                 //   (reset after count),
-
-         for (int i = 0; i < thread_number ; ++i) {
-           new Thread(                           // ← Setup workers in this (driver) thread.
-                new Worker(
-                      startSignal ,
-                      doneSignal
-           )).start();
-         }
-         ...
-         startSignal .countDown();      // ← Decrease count. count cannot be reset.
-         doSomethingElse();
-         doneSignal .await();           // ← block until current count reaches zero
-                                            Thread is released. Any subsequent invocations
-                                            return immediately.
+       public void run() {
+          try {
+            startSignal .await();      // <·· Wait for driver-thread to be ready.
+            doWork();
+            doneSignal .countDown();   // <·· Decrease count.
+          } catch (InterruptedException ex) {}
        }
+
+       void doWork() { ... }
      }
+
+     void main() throws InterruptedException {
+
+       int N = 5;                              // <·· Number of worker threads
+
+       CountDownLatch   startSignal =
+                        new CountDownLatch(1); // <·· 1 Gate: Avoid workers to start before
+                                               //             driver-thread is ready.
+
+       CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
+                        new CountDownLatch(N); //      have completed.
+                                               //      Consider also CyclicBarrier
+                                               //      (reset after count),
+
+       for (int i = 0; i < thread_number ; ++i) {
+         new Thread(                           // ← Setup workers in this (driver) thread.
+              new Worker(
+                    startSignal ,
+                    doneSignal
+         )).start();
+       }
+       ...
+       startSignal .countDown();      // <·· Decrease count. count cannot be reset.
+       doSomethingElse();
+       doneSignal .await();           // <·· block until current count reaches zero
+                                             Thread is released. Any subsequent invocations
+                                             return immediately.
+     }
+   }
+   ```
 
   -  Ex. 2:
      - divide problem into N parts
@@ -256,7 +268,7 @@ TODO Concurrent
      }
 
 @[https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67]
-[[}]]
+[[concurrency.barrier}]]
 
 # Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,02_doc_has.diagram]]
 @[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
