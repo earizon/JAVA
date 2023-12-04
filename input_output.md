@@ -1,0 +1,881 @@
+# JAVA INPUT/OUTPUT [[{ $INPUT_OUTPUT ]]
+
+## Read from file [[{java_lang.101,persistence.FS,io.101]]
+
+## Reading as lines of text
+
+  ```
+  import java.nio.file.Path
+  import java.nio.file.Files
+
+  final Path path01 = Files.writeString (     // <·· 'writeString' Java 11+
+    Files.createTempFile("test", ".txt"),
+    "Some string to dump to file");
+  out.println(Files.readString(path01));      // <·· 'readString' Java 11+
+
+  final File input1 = new File("input1.txt"),
+             input2 = new File("input1.txt");
+  final CharSource
+      source1 = Files.asCharSource(input1, Charsets.UTF_8),
+      source2 = Files.asCharSource(input2, Charsets.UTF_8),
+      source  =
+         CharSource.concat(source1, source2);   // ← Alt 3.2(Guava) Concat CharSources
+  final String result = source.read();
+
+  final FileReader reader = new FileReader("input.txt");
+  final String result =
+        CharStreams.toString(reader);          // ← Alt 4. (Big Files) CharStreams
+  reader.close();                              // ←   WARN:  Don't forget to close
+  ```
+
+## Read file as bytes
+
+  ```
+  final File file = new File("input.raw");
+  final ByteSource source                      // ← Alt 1: (Guava) Use ByteSource
+        = Files.asByteSource(file).
+          .slice(20 /* initial offset */, 100 /* len */);
+  final byte[] result = source.read();
+
+  FileInputStream reader =
+     new FileInputStream("input.raw");        // ←   Using FileInputStream
+  byte[] result =
+     ByteStreams.toByteArray(reader);         // ← + ByteStreams
+  reader.close();
+
+  final URL url =
+       Resources.getResource("test.txt");     // ← Read Resource in classpath
+  final String resource =
+       Resources.toString(url, Charsets.UTF_8);
+  ```
+
+## Reading big files
+  ```
+     try (
+  final FileInputStream inputStream = new FileInputStream(path);
+  final Scanner sc =                        ← Use Scanner to read line-by-line
+            new Scanner(inputStream, "UTF-8");
+     ) {
+  while (sc.hasNextLine()) {
+      final String line = sc.nextLine();
+      // ... do any process ...
+      if (sc.ioException() != null) {    ← // scanner captures ioExceptions
+          // handle error                  // It's good to have a look
+      }
+  }
+     } finally {
+  ...
+     }
+
+final LineIterator it =                       ← Alt 2. From  Apache Commons IO
+   FileUtils.lineIterator(theFile, "UTF-8");
+   try {
+while (it.hasNext()) {
+   String line = it.nextLine();               ← Read line-by-line
+   // ...
+}
+   } finally {
+LineIterator.closeQuietly(it);                ← Close resources
+   }
+  ```
+
+## java.nio.files.Files.lines: (Java 8+)
+
+  ```
+  private static String readLineByLine(String filePath)
+  {
+      final StringBuilder contentBuilder = new StringBuilder();
+      try (
+        final java.util.stream.Stream<String> stream =   ← stream resource must be closed
+            java.nio.file.Files.lines(                      (with a try-with in this example)
+                java.nio.file.Paths.get(filePath),
+                java.nio.charset.StandardCharsets.UTF_8)
+       ) {
+          stream.forEach(
+              s -> contentBuilder.append(s).append("\n")
+          );
+      } catch(java.io.IOException e) { ...  }
+      return contentBuilder.toString();
+  }
+  ```
+[[}]]
+
+## NIO (JDK 1.4+) [[{async/reactive.io]]
+@[http://tutorials.jenkov.com/java-nio/buffers.html]
+- Replaced OLD blocking IO based on [ byte/char, read-or-write streams ]
+  ```
+┌──────────┐     ┌──────────────┐
+│ CORE NIO │     │ NON─BLOCKING │
+├──────────┴───┐ ├──────────────┴────────────────────────────────┐
+│ ─  CHANNELS  │ │· a thread requests a channel the intention    │
+│  ─ read/write│ │  to read/write data into a buffer:            │
+│ ─  BUFFERS   │ │  · While the channel moves data into/from     │
+│ ─  SELECTORS │ │   the buffer, the thread continues another job│
+└──────────────┘ │  · When data is ready, the thread is notified │
+                 └───────────────────────────────────────────────┘
+  ```
+- Channel  : File,Datagram/UDP,Socket/TCP,ServerSocket,...<br/>
+  Buffer of: Byte|Char|Double|Float|Int|Long|Short|MappedByte)Buffer
+  ```
+┌───────────────┐
+│  NON─CORE NIO │
+├───────────────┴─────────────────────────────────────────────────────┐
+│ ─ components like Pipe and FileLock can be considered               │
+│   "utility classes" supporting the first three ones.                │
+│                                                                     │
+│ ─ "SELECTORS" objects monitor one+ channels for events              │
+│   (connection opened, data arrived, ..):                            │
+│   ─ Thus, a single thread can monitor multiple channels for data.   │
+│     (Very handy if app has many connections/Channels/clients open   │
+│     but with low traffic on each connection.                        │
+│   ─ To use selectors:                                               │
+│     ─ Instantiate the selector                                      │
+│     ─ Register one+ channels with it                                │
+└─────────────────────────────────────────────────────────────────────┘
+  ```
+
+  ```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ BUFFER                                                                                           │
+│  ATTRIBUTES                                              METHODS                                 │
+│          ┌─────────────────┬───────────────────────────┐ ┌─────────────┬───────────────────────┐ │
+│          │ write mode      │  read mode                │ │rewind()     │                       │ │
+│ ┌────────┼─────────────────┴───────────────────────────┤ │             │                       │ │
+│ │capacity│ fixed size of memory block implementing     │ ├─────────────┼───────────────────────│ │
+│ │        │ the buffer                                  │ │clear()      │                       │ │
+│ ├────────┼─────────────────┬───────────────────────────┤ │compact()    │                       │ │
+│ │position│ starts at 0,    │ starts at 0 (after "flip")│ ├─────────────┼───────────────────────│ │
+│ │        │ increase at each│ increase at each          │ │mark()       │"bookmark position"    │ │
+│ ├────────┼─────────────────┼───────────────────────────┤ │reset()      │ and return "bookmark" │ │
+│ │   limit│ element written │ element read              │ ├─────────────┼───────────────────────│ │
+│ │        │ == capacity     │ == last written position  │ │equals()     │using only the         │ │
+│ └────────┴─────────────────┴───────────────────────────┘ │compareTo()  │remaining-to-read bytes│ │
+│                                                          │             │for the computation    │ │
+│                                                          └─────────────┴───────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+  ```
+
+  ```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────
+│ SEQUENCE TO READ/WRITE DATA                   ┌───────┐
+│try (  /* try-with 1.7+ */                     │SUMMARY│
+│  RandomAccessFile   aFile  =                  ├───────┴──────────────────────────
+│    new RandomAccessFile("nio-data.txt", "rw") │-1 ) Write data into the Buffer
+│) throws IOException {                         │-2 ) Call buffer. flip()
+│  FileChannel   inChannel  =                   │     switch writing/reading mode
+│      aFile .getChannel();                     │-3 ) Read data out of the Buffer
+│                                               │-4a) buffer.clear();  ← alt1: clear all buffer
+│  ByteBuffer   buf =                           │-4b) buffer.compact() ← alt2: clear only data read
+│      ByteBuffer.allocate(48 /*capacity*/);    ├────────────────────────────────────
+│                                               │ channelIn → (data) → buffer
+│                                               │ buffer    → (data) → channelOut
+│  int  bytesRead =                             └────────────────────────────────────
+│         inChannel .read(  buf );  // ←   buf  now
+│                                          in write mode
+│  while  ( bytesRead  != -1)
+│  {
+│      buf . flip ();               // ←   buf  now
+│    while(  buf .hasRemaining()){         in read mode
+│        System.out.print(
+│           (char)   buf .get()     // ← alt.1: read 1 byte
+│        );                                     at a time
+│        // channel2.write(  buf )  // ← alt.2: read data
+│    }                                         in channel2
+│      buf .clear();                // ← make buffer
+│                                        ready-for-writing
+│     bytesRead  =   inChannel      // ←   buf  now
+│                    .read(  buf );        in write mode
+│  }
+│}
+└──────────────────────────────────────────────────────────────────────────────────────────────────
+  ```
+
+* SCATTER-GATHER
+  ```
+┌────────────────┐
+├────────────────┴─────────────────────────────────┬──────────────────────────────────────────────────┐
+│  scattering channel read                         │ scattering-write to channel                      │
+│ - channel → read to → buffer1, buffer2, ....     │ - buffer1, buffer2, ...→ write to → channel      │
+│ - Ex:                                            │ - ex:                                            │
+│   ByteBuffer header = ByteBuffer.allocate(128);  │   ByteBuffer header = ByteBuffer.allocate(128);  │
+│   ByteBuffer body   = ByteBuffer.allocate(1024); │   ByteBuffer body   = ByteBuffer.allocate(1024); │
+│   ByteBuffer[]   bufferArray  = { header, body };│   ByteBuffer[]   bufferArray  = { header, body };│
+│   channel .read(  bufferArray );                 │   channel .write(  bufferArray );                │
+│            ^^^^                                  │                                                  │
+│ fill up one buffer before moving on to the next  │                                                  │
+│ (not suited for undefined size messages)         │                                                  │
+└──────────────────────────────────────────────────┴──────────────────────────────────────────────────┘
+  ```
+
+* CHANNEL-TO-CHANNEL
+  * If one the the channels is FileChannel :<br/>
+    FileChannel transferTo()/transferFrom()  can be used to move data between channels
+     WARN: Some SocketChannel implementations may transfer only the data the SocketChannel
+     has ready in its internal buffer here and now.
+  * Example:
+    ```
+    FileChannelG fromChannel =
+       (new RandomAccessFile("from.txt", "rw"))
+       .getChannel(),
+    FileChannel   toChannel =
+       (new RandomAccessFile(  "to.txt", "rw"))
+       .getChannel();
+    long count    =  fromChannel .size();
+    toChannel  .transferFrom (
+         fromChannel ,
+         0       , // posit.in dest-file to
+                   // start writing from
+         maxCount  /* max-bytes to transfer*/
+    );                ^^^^^^^^^
+                      constrained by data
+                      in source
+    ```
+  * Example :
+    ```
+   FileChannelG fromChannel =
+      (new RandomAccessFile("from.txt", "rw"))
+      .getChannel(),
+   FileChannel   toChannel =
+      (new RandomAccessFile(  "to.txt", "rw"))
+      .getChannel();
+   long count    = ;
+   fromChannel  .transferTo (
+       0 /*position*/,
+       fromChannel .size() /*count*/,
+       toChannel );
+    ```
+[[}]]
+
+## Async/Reactive Standlib API tree [[{async/reactive.io.network,persistence.fs]]
+
+* JDK 8
+```
+./java/nio/
+           Bits ByteOrder CharBufferSpliterator
+           ByteBufferAs(Char|Double|Float|...)Buffer(B|L|...
+           (|Float|Double|StringChar)Buffer
+           HeapByteBuffer Heap(Byte|Char|...)Buffer(R) HeapCharBuffer
+           (Int|Long|...)Buffer
+           (Mapped|Direct)ByteBuffer(R)
+           Direct(Byte|Char|Double|...)Buffer
+
+./java/nio/channels/
+                    Channel Channels CompletionHandler FileLock MembershipKey Pipe Selector SelectionKey
+                    Asynchronous(|Byte)Channel
+                    AsynchronousChannelGroup
+                    AsynchronousFileChannel
+                    AsynchronousServerSocketChannel
+                    AsynchronousSocketChannel
+                    (Byte|Datagram|File|GatheringByte|Interruptible|Multicast|
+                     Network|ReadableByte|ScatteringByte|SeekableByte|Selectable|
+                     ServerSocket|Socket|WritableByte)Channel
+                   /spi/Abstract(Interruptible|Selectable)Channel
+                        Abstract(SelectionKey|Selector)
+                        (AsynchronousChannel|Selector)Provider
+
+./java/nio/charset/
+                   Charset(|Decoder|Encoder) StandardCharsets
+                   CoderResult CodingErrorAction
+                  /spi/CharsetProvider
+
+./java/nio/file/attribute/AclEntry(|Flag|Permission|Type)
+                          (|AclFile|BasicFile|DosFile|File|
+                            FileOwner|FileStore|PosixFile|
+                            UserDefinedFile)AttributeView
+                          (BasicFile|DosFile|PosixFile)Attributes
+                          FileAttribute FileTime
+                          GroupPrincipal
+
+                          UserPrincipal(LookupService)
+./java/nio/file/
+                AccessMode CopyMoveHelper CopyOption DirectoryStream Files
+                LinkOption LinkPermission Path        PathMatcher        Paths
+                SecureDirectoryStream
+                File(Store|System|Systems|TreeIterator|TreeWalker|VisitOption|Visitor|VisitResult)
+                SimpleFileVisitor
+                OpenOption    Standard(Copy|Open)Option
+                StandardWatchEventKinds
+                StandardWatchEventKinds$StdWatchEventKind
+                TempFileHelper
+                Watchable      Watch(Event|Key|Service)
+                spi/FileSystemProvider
+                    FileTypeDetector
+```
+[[}]]
+
+## SELECTORS [[{async/reactive.io.network]]
+@[https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html]
+
+- A Selector allows a single thread to manage multiple channels
+  (network connections), by examining which ones are ready for
+  connect,accept,read,write
+
+- A channel that "fires an event" is also said to be "ready" for that event.
+  ```
+   REGISTERING A SELECTOR                               │ USING SELECTORS
+   AND ASSIGNING CHANNELS                               │
+      │  Selector   selectoR  = Selector.open();        │  STEP
+      │  channel.configureBlocking(false);              │  call one of the select() methods
+      │          ^^^^^^^^^^^^^^^^^^^^^^^^               │  (upon registering 1+ channels)
+      │   //     non-blocking-mode required             │  int select(long mSecTimeout) ← block until channel/s ready
+      │   //   WARN:  FileChannel can NOT be switched   │             └────(optional)┘
+      │   //   into NON-blocking mode and so            │  int selectNow()              ← Don't block even if none read
+      │   //   they can NOT be used with selectors.     │  └┬┘
+  ┌───>  SelectionKey key  = channel.register(          │  indicates how many channels became ready since last select() call.
+  │   │      selector ,                                 │
+  │   │    SelectionKey.OP_READ |                       │  STEP
+  │   │    SelectionKey.OP_WRITE);                      │  examine ready channels returned by select like:
+  │   │                 ^^^^^^^                         │  Set<SelectionKey> selectedKeys =
+  │   │                 Or-set of interest:             │                      selectoR .  selectedKeys() ;
+  │   │                 OP_CONNECT / OP_ACCEPT          │  Iterator<SelectionKey> keyIterator =
+  │   │                 OP_READ    / OP_WRITE           │                    selectedKeys.iterator();
+  │   │  ^^^^^^^^^^^^^^^^                               │  while(keyIterator.hasNext()) {
+  │   │                                                 │      SelectionKey key = keyIterator.next();
+  │ ┌─>  key .attach(extraInfoObject);                  │      //  "cast to proper channel"
+  │ │ │  Object attachedObj =                           │             if (  key .isAcceptable ()) {
+  │ │ │     selectionKey.attachment();                  │        ... connection accepted by ServerSocketChannel
+  │ │ │                                                 │      } else if (  key .isConnectable()) {
+  │ │ │                                                 │        ... connection established with remote server
+  │ │ │ // After selection                              │      } else if (  key .isReadable   ()) {
+  │ │ │ // ^^^^^^^^^^^^^^^                              │        ... channel ready for reading
+  │ │ │ // explained later                              │      } else if (  key .isWritable   ()) {
+  │ │ │                                                 │        ... channel ready for writing
+  │ │ │ // Alternative 1:                               │      }
+  │ │ │ int   readySet =   key .readyOps();             │      keyIterator.remove();
+  │ │ │ boolean isAcceptable  =                         │  }
+  │ │ │           readySet  & SelectionKey.OP_ACCEPT;   │  STEP
+  │ │ │ ...                                             │  selector .close()
+  │ │ │ // Alternative 2:                               │            ^^^^^
+  │ │ │   key .isAcceptable();                          │   must be called after finishing ussage,
+  │ │                                                   │   invalidating all SelectionKey instances
+  │ └─── (optional) user attached object,               │   registered with this Selector.
+  │      handy way to recognize a given                 │   The channels themselves are not closed.
+  │      channel, provide extra info
+  │      (buffer/s,...)
+  │
+  └───── key  can be queried like:
+         intO interestSet  =   key .interestOps()*;
+         boolean isInterestedInAccept
+             =   interestSet  & SelectionKey.OP_ACCEPT;
+  ```
+
+* NOTE: A thread blocked by a call to select() can be forced to leave the select() 
+     method, even if no channels are yet ready by having a different thread call
+     the   selectoR . wakeup()  method on the Selector which the first thread has
+     called select() on:
+     * The thread waiting inside select() will then return immediately.
+     * If a different thread calls wakeup() and no thread is currently
+       blocked inside select(), the next thread that calls select()
+       will "wake up" immediately.
+[[}]]
+
+## FileChannel [[{async/reactive.io,persistence.FS]]
+- Java NIO FileChannel: channel connected to a file allowing to
+      read data from  and write data to a file.
+- A FileChannel canNOT be set into non-blocking mode:
+  It always runs in blocking mode
+
+- Reading from FileChannel (Writting to buffer):
+  ```
+  /* You cannot open a FileChannel directly,
+   * first you obtain a FileChannel via an (Input|Output)Stream or a RandomAccessFile
+   */
+  RandomAccessFile   aFile      = new RandomAccessFile("data/nio-data.txt", "rw");
+  // Reading from channel
+  try (  /* try-with 1.7+ */
+    RandomAccessFile   aFile  = new RandomAccessFile("data/nio-data.txt", "rw")
+  ) throws IOException {
+    FileChannel   inChannel  =   aFile .getChannel();
+  
+    ByteBuffer   buf  = ByteBuffer.allocate(48 /* capacity*/);
+  
+    int  bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
+    while ( bytesRead  != -1) {
+        buf .flip();                            //   buf  now in read mode
+      while(  buf .hasRemaining()){
+          // alt. read data directly, 1 byte at a time
+          System.out.print((char)   buf .get());
+          // alt. read data in channel
+          // anotherChannel.write(  buf )
+      }
+  
+        buf .clear(); //make buffer ready for writing
+       bytesRead  =   inChannel .read(  buf ); //   buf  now in write mode
+    }
+  }
+  ```
+
+- Writing to a FileChannel (reading from buffer)
+  ```
+  String newData = "......" + System.currentTimeMillis();
+  ByteBuffer   buf  = ByteBuffer.allocate(48);
+    buf .clear();
+    buf .put(newData.getBytes());
+    buf .flip(); // change buffer from write to read
+   while(  buf .hasRemaining()) {  channelO .write (  buf );  }
+  channel.close();
+  ```
+
+* FileChannel Position
+  ```
+  long pos = fileChannel.position(); // obtain current position
+  fileChannel.position(pos +123); // change position
+  ```
+  * If you set the position after the end of the file,
+    and try to read from the channel, you will get -1
+  * If you set the position after the end of the file,
+    and write to the channel, the file will be expanded
+    to fit the position and written data. This may result
+    in a "file hole", where the physical file on
+    the disk has gaps in the written data.
+
+* FileChannel Size
+  ```
+    long fileSize = fileChannel.size(); // (size of the file connected to channel)
+  ```
+
+- FileChannel (file) Truncate
+  ```
+  fileChannel.truncate(1024 /*length*/);
+  ```
+- ```
+  channel.force(true /* flush also file meta-data like permissions....*/);
+  // flushes all unwritten data from the channel and OS cache to the disk
+  ```
+[[}]]
+
+## Pipe [[{async/reactive.io,java_lang.functional]]
+- Pipe: one-way data connection between two threads
+  ```
+   "=="  source channel   ← One threads writes to sink
+        +  sink channel   ← One threads reads from source
+  Ex:
+    ByteBuffer   buf  = ByteBuffer.allocate(48);
+      buf .clear();
+      buf .put(newData.getBytes());
+
+    // WRITING TO PIPE
+    Pipe pipe = Pipe.open();
+    Pipe.SinkChannel sinkChannel = pipe.sink();
+    String newData = "..." + System.currentTimeMillis();
+      buf .flip();
+    while(  buf .hasRemaining()) { sinkChannel.write(  buf ); }
+
+    // READING FROM A PIPE
+    To read from a Pipe you need to access the source channel. Here is how that is done:
+    Pipe.SourceChannel sourceChannel = pipe.source();
+    int  bytesRead  =   inChannel .read(buf2);
+  ```
+[[}]]
+
+## SocketChannel [[{async/reactive.io.network]]
+* There are two ways a SocketChannel can be created:
+
+  ```
+  // Opening a SocketChannel
+  SocketChannel socketChannel = SocketChannel.open();
+  socketChannel.connect(new InetSocketAddress("http://jenkov.com", 80));
+
+  // Reading (writing to buffer)
+  ByteBuffer   buf  = ByteBuffer.allocate(48);
+  int  bytesRead  = socketChannel.read(  buf ); // If -1 is returned, the end-of-stream is reached (connection is closed)
+
+  // Writing to a SocketChannel
+  String newData = "..." + System.currentTimeMillis();
+  ByteBuffer   buf  = ByteBuffer.allocate(48);
+    buf .clear();
+    buf .put(newData.getBytes());
+    buf .flip();
+  while(  buf .hasRemaining()) { channel.write(  buf ); }
+
+  socketChannel.close();
+  ```
+[[}]]
+
+## Non-blocking Mode [[{async/reactive.io.network]]
+- socketChannel .configureBlocking(false) ;
+- Calls to connect(), read() and write() will not block
+- In non-blocking mode connect() calls may return before
+  the connection is established:
+  - To determine whether the connection is established
+    use finishConnect() like this:
+  ```
+  socketChannel.configureBlocking(false);
+  socketChannel.connect(
+    new InetSocketAddress("http://jenkov.com", 80));
+  
+  while(! socketChannel.finishConnect() ){
+      //wait, or do something else...
+  }
+  ```
+
+NOTE: non-blocking works much better with Selector's
+[[}]]
+
+[[{async/reactive.io.network]]
+## ServerSocketChannel
+  ```
+  ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+  
+  serverSocketChannel.socket().bind(new InetSocketAddress(9999));
+  serverSocketChannel.configureBlocking(false);
+  
+  while(true){
+      SocketChannel socketChannel =
+              serverSocketChannel.accept(); // in blocking mode waits until incoming connection arrives
+      if(socketChannel != null /* always false in blocking mode */){
+          //do something with socketChannel...
+      }
+  
+      //do something with socketChannel...
+  }
+  
+  serverSocketChannel.close()
+  ```
+[[}]]
+
+## Datagram Channel [[{async/reactive.io.network]]
+- Since UDP is a connection-less network protocol, you cannot just
+  by default read and write to a DatagramChannel like you do from
+  other channels. Instead you send and receive packets of data
+
+  ```
+  DatagramChannel channel = DatagramChannel.open();
+  channel.socket().bind(new InetSocketAddress(9999));
+  
+  ByteBuffer   buf  = ByteBuffer.allocate(48);
+    buf .clear();
+  // WARN: if read data is bigger than buffer size remaining data is discarded silently
+  channel.receive(  buf );
+  
+  // Write to channel
+  String newData = "..." + System.currentTimeMillis();
+    buf .clear();
+    buf .put(newData.getBytes());
+    buf .flip();
+  
+  
+  // WARN:  No notice is received about packet delivery (UDP does not make any guarantees)
+  int bytesSent = channel.send(  buf , new InetSocketAddress("jenkov.com", 80));
+  
+  // Alternatively you can "Connect" to a Specific Address. Since UDP is connection-less,
+  // connecting to a remote address just means that the DatagramChannel can only send/receive
+  // data packets from a given specific address.
+  channel.connect(new InetSocketAddress("jenkov.com", 80));
+  int  bytesRead  = channel.read(  buf );
+  int bytesSent = channel.write(  buf );
+  ```
+[[}]]
+
+## NonBlocking Server Example [[{async/reactive.io.network]]
+REF:
+- @[http://tutorials.jenkov.com/java-nio/non-blocking-server.html]
+- @[https://github.com/jjenkov/java-nio-server]
+- Non-blocking IO Pipelines:
+  ```
+  read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut
+  read-only  pipeline:  channelIn  → selector → component → ... → componentN
+  write-only pipeline:                        component → ... → componentN →  channelOut
+  ```
+- Note: It is the component that initiates reading of data from the Channel via the Selector
+  read-pipeline read from stream/channelIn and split data into messages like:
+  ```
+  Data   → Message → Message
+  Stream   Reader    Stream
+  ```
+- A blocking Message Reader/Writer is simpler, since it
+  has never to handle situations where no data was read
+  from the stream, or where only a partial message was
+  read from the stream and message parsing needs to be
+  resumed later.
+- The drawback of blocking is the requirement of separate
+  threads for each parallel stream, which is a problem if the
+  server has thousands of concurrent connections
+- Each thread will take between 320K (32 bit JVM) and
+  1024K (64 bit JVM) memory for its stack
+- Queue messages can be used to reduce the problem. However,
+  this design requires that the inbound client  streams
+  send data reasonably often and input is processed fast.
+   If the inbound client stream may be inactive for longer periods
+  attached to hidden clients, a high number of inactive
+  connections may actually block all the threads in the thread
+  pool.
+  That means that the server becomes slow to respond or even
+  unresponsive.
+- A non-blocking IO pipeline can use a single thread to
+  read messages from multiple non-blocking streams.
+    When in non-blocking mode, a stream may return 0 or more
+  bytes when you attempt to read data from it.
+  When you call select() or selectNow() on the Selector it
+  gives you only the SelectableChannel instances ("connected
+  clients") that actually has data to read.
+
+  ```
+  Component ··> STEP 1: select() ··> Selector <──┬─> Channel1
+      ^                                │         ├─> Channel2
+      └···· STEP 2: ready channels <···┘         └─> Channel3
+  ```
+
+* Reading Partial Messages: Data sent by "ready" channels can
+  contain fractions/incomplete messages:
+  * The Message Reader looks needs to check if the data block
+    contains at least one full message, adn storing partial ones.
+    (maybe using one Message Reader per Channel to avoid mixing messages)
+  * To store Partial Messages two design should be considered:
+    * copy data as little as possible for better performance
+    * We want full messages to be stored in consecutive byte to
+      make parsing messages easier
+  * Some protocol message formats are encoded using a TLV format
+    (Type, Length, Value).
+    Memory management is much easier since we known immediately
+    how much memory to allocate for the message. No memory is
+    wasted at the end of a buffer that is only partially used.
+  * The fact that TLV encodings makes memory management easier is
+    one of the reasons why HTTP 1.1 is such a terrible protocol.
+    That is one of the problems trying to be fixed in HTTP 2.0 where
+    data is transported in LTV encoded frames.
+  * Writing Partial Messages: channelOut.write(ByteBuffer) in
+    non*blocking mode gives no guarantee about how many of the
+    bytes in the ByteBuffer is being written. The method returns
+    how many bytes were written, so it is possible to keep track
+    of the number of written bytes.
+  * Just like with the Message Reader, a Message Writer is used
+    per channel to handle all the details.
+   (partial writes, message queues, resizable buffers, protocol aware tricks,...)
+
+* All in all a non*blocking server ends up with three "pipelines" it
+  needs to execute regularly:
+  * The read pipeline which checks for new incoming data from
+    the open connections.
+  * The process pipeline which processes any full messages received.
+  * The write pipeline which checks if it can write any outgoing
+    messages to any of the open connections
+[[}]]
+
+## Path (1.7+) [[{java_lang.101,persistence.FS]]
+* Represents a file/directory path in the FS
+* Similar to java.io.File but with some minor differences.
+* Ussage
+  ```
+  import java.nio.file.Path;
+  import java.nio.file.Paths;
+  
+  Path path = Paths.get("/var/lib/myAppData/myfile.txt");
+  System.out.println("Current dir:"+Paths.get(".").toAbsolutePath());
+  ```
+[[}]]
+
+## Files [[{persistence.FS,async/reactive,java_lang.101]]
+- java.nio.file.Files provides several methods for manipulating FS files/directories:
+- uses Path instances:
+  ```
+  boolean pathExists =  Files.exists (pathInstance,
+              new LinkOption[]{ LinkOption.NOFOLLOW_LINKS});
+  
+  Path newDir =  Files.createDirectory (path);
+  
+   Files.copy (sourcePath, destinationPath);
+   Files.copy (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+  
+   Files.move (sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+  
+   Files.delete (path);
+  
+  Files.walkFileTree(Paths.get("data"), new FileVisitor<Path>() {
+    @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+      // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+    }
+  
+    @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+      // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+    }
+  
+    @Override public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+      // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+    }
+  
+    @Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+      // ...  return FileVisitResult.CONTINUE; // CONTINUE TERMINATE SKIP_SIBLINGS SKIP_SUBTREE
+    }
+  });
+  ```
+[[}]]
+
+## Asyncrhonous FileChannel 1.7+ [[{persistence.fs,async/reactive.io]]
+* read/write data from/to files asynchronously
+  ```
+  Path path = Paths.get("data/test.xml");
+  AsynchronousFileChannel fileChannel =
+      AsynchronousFileChannel.open(path, StandardOpenOption.READ);
+  ```
+* Reading Data, Alt 1: Via a Future
+  ```
+  Future<Integer> operation = fileChannel.read(/*ByteBuffeR*/buffer, 0 /* start position to read from */);
+  while(!operation.isDone());  // WARN: not a very efficient use of the CPU
+  buffer.flip();
+  byte[] data = new byte[buffer.limit()];
+  buffer.get(data);
+  System.out.println(new String(data));
+  buffer.clear();
+  ```
+
+* Reading Data Alt 2: Via a CompletionHandler
+  ```
+  fileChannel.read(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
+    @Override
+    public void completed(Integer numBytesRead, ByteBuffer attachment) {
+      // NOTE: attachment is a reference to the 
+      // third parameter passed to .read read()
+      System.out.println("numBytesRead = " + numBytesRead);
+      attachment.flip();
+      byte[] data = new byte[attachment.limit()];
+      attachment.get(data);
+      System.out.println(new String(data));
+      attachment.clear();
+    }
+  
+    @Override
+    public void failed(Throwable exc, ByteBuffer attachment) { ...  }
+  });
+  ```
+* Writing data:
+  ```
+AsynchronousFileChannel fileChannel =
+    AsynchronousFileChannel.open(path, StandardOpenOption.WRITE);
+  ```
+* Writing Data: Alt 1: Via a Future
+  ```
+  ...
+  Future<Integer> operation = fileChannel.write(buffer, position);
+  buffer.clear();
+  while(!operation.isDone());
+  ```
+* Writing Data: Alt 2: Via CompletionHandler
+  ```
+...
+  fileChannel.write(
+    buffer, position, buffer, 
+    new CompletionHandler<Integer, ByteBuffer>() {
+      @Override
+      public void completed(Integer result, ByteBuffer attachment) {  ... }
+      @Override 
+      public void failed(Throwable exc , ByteBuffer attachment) { ...  }
+    }
+    );
+  ```
+[[}]]
+
+
+[[{io.net.http,async/reactive.io.network,PM.low_code,02_doc_has.comparative,qa]]
+## java.net.http.HTTPClient
+* API REF: @[https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html]
+* JEP: @[https://openjdk.java.net/jeps/321]
+
+* TODO: HTTPClient Quick intro: @[https://openjdk.java.net/groups/net/httpclient/intro.html]
+
+* Example JShell script for GET request:
+  ```
+  import java.io.PrintWriter;
+  import java.net.http.HttpClient
+  import java.net.http.HttpRequest
+  import java.net.http.HttpResponse
+  import java.net.http.HttpResponse.BodyHandlers
+  HttpClient client = HttpClient.newHttpClient();
+  var BASE_URL="https://earizon.github.io/"
+  var URL01=BASE_URL + "/txt_world_domination/index.html"
+  HttpRequest request = HttpRequest.newBuilder(
+    URI.create(URL01)).GET().build()
+  HttpResponse<String> response =
+    client.send(request, BodyHandlers.ofString());
+  System.out.println(response.body())
+  /exit
+  ```
+[[}]]
+
+## OkHTTP [[{io.HTTP.OkHTTP]]
+- @[https://square.github.io/okhttp/]
+
+### OkHTTP vs java.net.http.HTTPClient
+- See also [Retrofit](https://square.github.io/retrofit/), built on top
+  of OkHTTP.
+  OkHttp: pure HTTP/SPDY client responsible for any low-level network
+  operation, caching, request and response manipulation, and many more.
+  In contrast, Retrofit is a high-level REST abstraction build on top
+  of OkHttp. Retrofit 2 is strongly coupled with OkHttp and makes
+  intensive use of it.
+  ```
+  OkHttp   Functions: Connection pooling, gzipping, caching, recovers from
+                      network problems, sync, and async calls, redirects,
+                      retries ... and so on.
+  Retrofit Functions: URL manipulation, requesting, loading, caching,
+                      threading, synchronization... It allows sync and
+                      async calls.
+  ```
+
+* From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
+  ```
+   OkHTTP PROs over                     OkHTTP CONs over
+   java.net.http.HTTPClient             java.net.http.HTTPClient
+   -------------------------------      -------------------------------------------
+ - built-in response cache.           - timeout like configuration can not be
+ - HTTP 2.0 web sockets support.        modified after singleton connection.
+ - easier to use/better defaults.     - Requires (small) extra non-JDK dependencies
+ - used by 1+ billion Android devices   (okIO and okHTTP itself) in non-Android
+ - Better cookie/headers/call model.    deployments
+ - Retrofit compatibility
+ - HTTP 1.1 Connection pooling and HTTP/2 support.
+ - Transparent GZIP up/downloads.
+ - silently recover from common connection problems.
+   (alternate IP addresses if available,...)
+ - synch or async+callback API.
+  ```
+
+* DAILY USSAGE  @[https://square.github.io/okhttp/recipes/]
+  ```
+  import java.io.IOException;
+  import okhttp3.OkHttpClient;
+  import okhttp3.Request;
+  import okhttp3.Response;
+  import okhttp3.MediaType;                         // ← For POST
+  import okhttp3.RequestBody;                       // ← For POST
+  ...
+  OkHttpClient client = new OkHttpClient();
+  Request request = new Request.Builder()
+      .url("http://bla.ble.com/a/b?key=param")
+      .build();
+  try (
+    Response res =
+       client.newCall(request).execute()            // ← Exec. (GET) Request
+  ) {
+    System.out.println(res.body().string());
+  }
+  
+  final String MediaType =  "application/json; charset=utf-8";
+  final String jsonBody = "{...}";
+  RequestBody body = RequestBody.create(jsonBody,   //  ← POST: prepare body rquest
+           MediaType.get(MediaType));
+  Request request = new Request.Builder()
+      .url("http://bla.ble.com/")
+      .post(body)                                   //  ← POST: prepare body rquest
+      .build();
+  try (
+    Response res =
+       client.newCall(request).execute()
+  ) {
+    return res.body().string();
+  }
+  ```
+- Ex: Balancing connections with OKHttp
+  https://medium.com/wandera-engineering/kubernetes-network-load-balancing-using-okhttp-client-54a2db8fc668
+
+[[io.HTTP.OkHTTP}]]
+
+## okIO [[{async/reactive.io.network,qa]]
+* complements java.nio
+@[https://github.com/square/okio]
+- makes it much easier to access, store, and process your data.
+- It started as a component of OkHttp, the capable HTTP client
+  included in Android. It's well-exercised and ready to solve new problems.
+[[}]]
+
+[[ $INPUT_OUTPUT}]]
