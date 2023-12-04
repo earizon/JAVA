@@ -16,8 +16,10 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 2011: Software caused 25% of all medical device recalls.
 [[}]]
 
-# Checker framework (Java 8+) [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
- fix errors at compile time  (vs later on at execution/runtime)
+# Checker framework [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
+
+* (Java 8+)
+* fix errors at compile time  (vs later on at execution/runtime)
 @[https://github.com/typetools/checker-framework]
 @[https://checkerframework.org/manual/]
 @[https://www.youtube.com/watch?v=6E1CSydgzQc]

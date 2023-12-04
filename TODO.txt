@@ -2529,3 +2529,7 @@ at Oracle.
 [[}]]
 [[java,01_PM.TODO}]]
 
+
+* Recheck tool Guides: java launcher, keytool
+
+* java.lang.StrictMath

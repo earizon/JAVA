@@ -1,19 +1,30 @@
+[[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
 # JVM Troubleshooting and Monitoring [[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
 
-- jcmd:  (See section)
-- Flight Recorder:
-- jstat:
+[[{troubleshooting.debugging]]
+## Dump Exception stack trace 
+(to STDERR)
+  ```
+  StringWriter writer = new StringWriter();
+  PrintWriter printWriter = new PrintWriter( writer );
+  e.printStackTrace( printWriter );
+  printWriter.flush();
+  System.err.println(writer);           [[}]]
+  ```
 
-  - jmap (WARN: NOT RECOMENDED, experimental&unsupported in JDK)
+
+- jstat
+
+- jmap (WARN: NOT RECOMENDED, experimental&unsupported in JDK)
   @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jmap.md]
    $ jmap -dump:[live],format=b,file=$filePath  $jvm_pid  # <- capture heap-dump
                  └┬─┘         └ binary-format dump
                   └ live: prints objects with active references,
                     discards those ready for GC
 
-  - jhat ...
-  - jstack
-  @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jstack.md]
+- jhat ...
+- jstack
+ @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jstack.md]
 
                                    - Container aware tools
 - Expose JMX port                    - ctop
@@ -144,8 +155,46 @@
 
 [[}]]
 
+## Logging Uncaught Exceptions <!-- { -->
+* The `Thread` class contains two methods to set an ExceptionHandler for uncaught exceptions:
+  ```
+  · setDefaultUncaughtExceptionHandler:  handles exceptions occurring on any thread
+  ·        setUncaughtExceptionHandler:  handles exceptions occurring on a specific thread
+                                         or ThreadGroup
+
+  sets up an exception handler that logs the exception using java.util.logging.
+ It then starts a thread, which immediately throws a RuntimeException:
+  
+  // ExceptionDemo.java
+
+  public class ExceptionDemo {
+    
+    public static void main(String[] args) {
+       Thread
+         .setDefaultUncaughtExceptionHandler(
+           new Thread.UncaughtExceptionHandler() {
+             public void uncaughtException(Thread t, Throwable e) {
+               ...
+               // logger.log(Level.SEVERE, t + " ExceptionDemo threw an exception: ", e);
+             };
+           });
+       final Thread t = new Thread(
+          () -> { throw new RuntimeException(); }).start();
+    }
+  }
+  ```
+<!-- } -->
+
 
 # Flight Recorder [[{monitoring.101,monitoring.flight_recorder,java_lang.profiling,02_doc_has.comparative]]
+
+- Start like:
+  ```
+  $ java -XX:+UnlockCommercialFeatures \
+         -XX:+FlightRecorder \
+         -XX:StartFlightRecording=duration=60s,filename=myrecording.jfr MyApp
+  ```
+
 @[https://www.youtube.com/watch?v=azshjd5Vsv0]
 - Free of use starting with Java 11+ and backported to OpenJDK 8u272+
   @[https://www.infoq.com/news/2019/11/jfr-openjdk-8/]
