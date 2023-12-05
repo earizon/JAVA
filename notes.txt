@@ -30,15 +30,13 @@
 
 ## Bibliography
 
-- ```
-  (Must READ)
-  Effective Java 3rd Edition, Joshua Bloch
+- Effective Java 3rd Edition, Joshua Bloch (Must READ)
+  ```
   ISBN-10: 0134685997
   ISBN-13: 978-0134685991
   ```
-
-- ```
-  Java Performance: The Definitive Guide, by Scott Oaks
+- Java Performance: The Definitive Guide, by Scott Oaks
+  ```
   ISBN-10: 1449358454
   ISBN-13: 978-1449358457
   ```
@@ -1659,9 +1657,11 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
       </exclusion>                                         "   slf4j-jdk14-1.7.21.jar!...StaticLoggerBinder.class"
     </exclusions>                                          "logback-classic-1.1.7.jar!...StaticLoggerBinder.class"
   </dependency>
+  ```
 <!-- } -->
 
 * Example Ussage
+
   ```
   import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
@@ -1968,22 +1968,25 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 <!-- } -->
 [[monitoring.logging}]]
 
-## Security 101 [[{security.101,PM.low_code,spring,security.jvm]]
+[[{security.101,PM.low_code,spring,security.jvm]]
+
+# Security 101 
+
 @[https://snyk.io/blog/10-java-security-best-practices/]
-1. Make code immutable:
-   * Tag variables as 'final' by default.
-     (a final variable is not variable but constant)
-   * Try to initialize all classes in constructors. and centralize
-     all input checks in the constructor. Raise a runtime exception
-     if the constructor is not happy with input data.
-     (vs using getters and setters).
-      Doing so warrants that a class is properly instantiated and
-     safe upon constructor exit.
-      This also warrants fail-fast applications. If something is
-     undefined at startup time constructors will not be able to
-     initialize and the application will fail to start: This is
-     life-saving for DevOps and normal deployments.
-2. Parameterize SQL:
+## Make code immutable
+* Tag variables as 'final' by default.
+  (a final variable is not variable but constant)
+* Try to initialize all classes in constructors. and centralize
+  all input checks in the constructor. Raise a runtime exception
+  if the constructor is not happy with input data.
+  (vs using getters and setters).
+   Doing so warrants that a class is properly instantiated and
+  safe upon constructor exit.
+   This also warrants fail-fast applications. If something is
+  undefined at startup time constructors will not be able to
+  initialize and the application will fail to start: This is
+  life-saving for DevOps and normal deployments.
+## Parameterize SQL
    ```
    query = "SELECT ... WHERE lastname = "  + parameter ;  // ← Incorrect:
    Statement         stm01 = con.createStatement();
@@ -1993,61 +1996,62 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
    statementB .setString(1, parameter);
 
    ...  stm01.executeQuery(query);
-   ```
-3. Use OpenID Connect with 2FA:<br/>
-   * OAuth 2.0: Identity delegation. N applications delegate login
-     authentication to a third service that emmits signed tokens
-     with claims about authorization for a given authenticated 
-     user.
-   * OpenID: OAuth 2.0 extension providing user information
-     claims to the signed OAuth 2.0 token.
-     It adds an ID token in addition to an access token plus
-     a /userinfo endpoint to retrieve additional information
-     plus endpoint discovery and dynamic client registration.
-   * Example low-code OpenID in Spring:
-     ```
-     STEP 1: Addd next dependencies:
-     org.springframework.boot:spring-boot-starter-oauth2-client
-     org.springframework.boot:spring-boot-starter-security
-
-      STEP 2: Spring Configuration
-      │ spring:
-      │  ...
-      │  security:
-      │    oauth2:
-      │      client:
-      │        registration:
-      │          github:
-      │            client─id: ...
-      │            client─secret: ....
-      │          okta:
-      │            client─id: ...
-      │            client─secret: ...
-      │            client─name: ...
-      │          google:
-      │            ...
-      │        provider:
-      │          okta:
-      │            issuer─uri: https://.....okta.com/oauth2/default
-     ```
-4. Scan dependencies for known vulnerabilities<br/>
+  ```
+## Use OpenID Connect with 2FA:<br/>
+* OAuth 2.0: Identity delegation. N applications delegate login
+  authentication to a third service that emmits signed tokens
+  with claims about authorization for a given authenticated 
+  user.
+* OpenID: OAuth 2.0 extension providing user information
+  claims to the signed OAuth 2.0 token.
+  It adds an ID token in addition to an access token plus
+  a /userinfo endpoint to retrieve additional information
+  plus endpoint discovery and dynamic client registration.
+* Example low-code OpenID in Spring:
+  STEP 1: Addd next dependencies:
+  ```
+  org.springframework.boot:spring-boot-starter-oauth2-client
+  org.springframework.boot:spring-boot-starter-security
+  ```
+  STEP 2: Spring Configuration
+  ```
+   spring:
+    ...
+    security:
+      oauth2:
+        client:
+          registration:
+            github:
+              client─id: ...
+              client─secret: ....
+            okta:
+              client─id: ...
+              client─secret: ...
+              client─name: ...
+            google:
+              ...
+          provider:
+            okta:
+              issuer─uri: https://.....okta.com/oauth2/default
+  ```
+## Scan dependencies for known vulnerabilities
    Ej.: Use a service like  @[https://snyk.io/test/] !!!
    
-5. Handle sensitive data with care
-   * Use secrets on-demand and remove from memory as soon as possible.
-     Ideally manage secrets through HSM. Secrets (signature keys, password,
-     ...) must never leave the HSM.
+## Handle secrets with care
+ * Use secrets on-demand and remove from memory as soon as possible.
+   Ideally manage secrets through HSM. Secrets (signature keys, password,
+   ...) must never leave the HSM.
   
-6. Sanitize all input:
-   * Example 1, sanitizing HTML
-   Add dependency: `org.owasp.encoder:encoder:vX.Y.Z`
-   ```
-   final String
-      untrustedInput = "<script> alert(1); </script>",
-        trustedInput = StEncode.forHtml(untrustedInput));
-   ```
+## Sanitize all input
+* Example 1, sanitizing HTML<br/>
+  Add dependency: `org.owasp.encoder:encoder:vX.Y.Z`
+  ```
+  final String
+     untrustedInput = "<script> alert(1); </script>",
+       trustedInput = StEncode.forHtml(untrustedInput));
+  ```
 
-7. Configure your XML-parsers to disable XXE (eXternal Entity)
+## disable XXE (eXternal Entity) in XML parsers
    ```
    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <!DOCTYPE bar [
@@ -2070,65 +2074,69 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
      "https://apache.org/xml/features/disallow-doctype-decl" , true );
    ...
    ```
-8. Avoid Java serialization as much as possible
-   * Java serialization is also called   “the gift that keeps on giving” .
-     Oracle is planning to eventually remove Java serialization as part
-     of Project Amber.
-   * If you really need to implement serializable on your domain entities,
-     implement its own readObject().
-     ```
-     private final void
-     readObject(ObjectInputStream in) throws java.io.IOException {
-       // check 1
-       // check 2
-       ...
-       throw new java.io.IOException("Deserialized not allowed");
-     }
-     ```
-   * If you need to Deserialize an inputstream yourself, you should use an
-     ObjectsInputStream with restrictions.<br/>
-     e.j Apache Commons IO ValidatingObjectInputStream, that checks whether
-         the object being deserialized is allowed or not.
-         ```
-         final FileInputStream fileInput = new FileInputStream(fileName);
-         ValidatingObjectInputStream in = new ValidatingObjectInputStream(fileInput);
-         in.accept(Foo.class);
-         Foo foo_ = (Foo) in.readObject();
-         ```
-   * Object deserialization can also apply to JSON, XML, ...
-     [REF@snyk.io](https://snyk.io/blog/jackson-deserialization-vulnerability/)
-9. Use strong encryption and hashing algorithms.<br/>              [[{security.cryptography}]]
-   TIP: Prefer Google Tink  (vs Low Level Java crypto libraries)
-10. Enable the Java Security Manager                               [[{security.jvm]]
-    * By default, JVM imposes no restrictions to running apps.
-      (file system, network, ..)
-    * Ex. By default the Attach API is active allowing to easely
-      change bytecode of running apps. (from inside the machine).
-    * Activate it like:
+## Avoid Java serialization 
+(as much as possible)
+* Java serialization is also called  "the gift that keeps on giving".
+  Oracle is planning to eventually remove Java serialization as part
+  of Project Amber.
+* If you really need to implement serializable on your domain entities,
+  implement its own readObject().
+  ```
+  private final void
+  readObject(ObjectInputStream in) throws java.io.IOException {
+    // check 1
+    // check 2
+    ...
+    throw new java.io.IOException("Deserialized not allowed");
+  }
+  ```
+* If you need to Deserialize an inputstream yourself, you should use an
+  ObjectsInputStream with restrictions.<br/>
+  e.j Apache Commons IO ValidatingObjectInputStream, that checks whether
+      the object being deserialized is allowed or not.
       ```
-      $ java ... -Djava.security.manager            <·· Use default policy
+      final FileInputStream fileInput = new FileInputStream(fileName);
+      ValidatingObjectInputStream in = new ValidatingObjectInputStream(fileInput);
+      in.accept(Foo.class);
+      Foo foo_ = (Foo) in.readObject();
+      ```
+* Object deserialization can also apply to JSON, XML, ...
+  [REF@snyk.io](https://snyk.io/blog/jackson-deserialization-vulnerability/)
 
-      $ java ... -Djava.security.manager \          <·· Use custom  policy
-        -Djava.security.policy==.../custom.policy       <·· == : replace default
-                                                             = :  expand  default
-      ```
-    * More info at [oracle.com](https://docs.oracle.com/en/java/javase/11/security/permissions-jdk1.html)
-      ```
-      java.awt.AWTPermission                      java.sql.SQLPermission
-      java.io.FilePermission                      java.util.logging.LoggingPermission
-      java.io.SerializablePermission              java.util.PropertyPermission
-      java.lang.RuntimePermission                 javax.management.MBeanPermission
-      java.lang.management.ManagementPermission   javax.management.MBeanServerPermission
-      java.lang.reflect.ReflectPermission         javax.management.MBeanTrustPermission
-      java.net.NetPermission                      javax.management.remote.SubjectDelegationPermission
-      java.net.URLPermission                      javax.net.ssl.SSLPermission
-      java.net.SocketPermission                   javax.security.auth.AuthPermission
-      java.nio.file.LinkPermission                javax.security.auth.PrivateCredentialPermission
-      java.security.AllPermission                 javax.security.auth.kerberos.DelegationPermission
-      java.security.SecurityPermission            javax.security.auth.kerberos.ServicePermission
-      java.security.UnresolvedPermission          javax.sound.sampled.AudioPermission [[}]]
-      ```
-11. Centralize logging and monitoring
+## Use strong encryption and hashing algorithms.<br/>              [[{security.cryptography}]]
+   TIP: Prefer Google Tink  (vs Low Level Java crypto libraries)
+
+## Enable the Java Security Manager                               [[{security.jvm]]
+* By default, JVM imposes no restrictions to running apps.
+  (file system, network, ..)
+* Ex. By default the Attach API is active allowing to easely
+  change bytecode of running apps. (from inside the machine).
+* Activate it like:
+  ```
+  $ java ... -Djava.security.manager            <·· Use default policy
+
+  $ java ... -Djava.security.manager \          <·· Use custom  policy
+    -Djava.security.policy==.../custom.policy       <·· == : replace default
+                                                         = :  expand  default
+  ```
+* More info at [oracle.com](https://docs.oracle.com/en/java/javase/11/security/permissions-jdk1.html)
+  ```
+  java.awt.AWTPermission                      java.sql.SQLPermission
+  java.io.FilePermission                      java.util.logging.LoggingPermission
+  java.io.SerializablePermission              java.util.PropertyPermission
+  java.lang.RuntimePermission                 javax.management.MBeanPermission
+  java.lang.management.ManagementPermission   javax.management.MBeanServerPermission
+  java.lang.reflect.ReflectPermission         javax.management.MBeanTrustPermission
+  java.net.NetPermission                      javax.management.remote.SubjectDelegationPermission
+  java.net.URLPermission                      javax.net.ssl.SSLPermission
+  java.net.SocketPermission                   javax.security.auth.AuthPermission
+  java.nio.file.LinkPermission                javax.security.auth.PrivateCredentialPermission
+  java.security.AllPermission                 javax.security.auth.kerberos.DelegationPermission
+  java.security.SecurityPermission            javax.security.auth.kerberos.ServicePermission
+  java.security.UnresolvedPermission          javax.sound.sampled.AudioPermission [[}]]
+  ```
+
+## Centralize logging and monitoring
 [[security.101}]]
 
 # Functional Programming [[{ $functional_programming ]]
@@ -2136,22 +2144,24 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 ## Lambdas 1.8+
 * simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
-### Context
-  The conventional computing model of a Touring machine takes for granted
-  that data is already available to be processed.
-  In the Internet era, data is arriving at random and we don't want to block
-  our CPU in an infinite loop waiting for such data to arrive.
 
-  The conventional approach is to let the OS scheduler to divide the CPU
-  into threads or processes sharing the hardware at defined intervals.
-  While this approach works well for standard load scenarios, it fails for
-  "moderm" workloads with thousands or tens of thousands of simultaneous
-  clients accessing the server. Each new OS thread requires some extra
-  memory on the OS kernel (about 2Kilobytes per Thread, and even more
-  per Process). Switching from thread to thread or process to process becomes
-  expensive or prohibitive with that number of concurent I/O flows.
-  This is even worse when our server is virtualized with many other
-  competing VMs running on the same physical server.
+### Context
+
+The conventional computing model of a Touring machine takes for granted
+that data is already available to be processed.
+In the Internet era, data is arriving at random and we don't want to block
+our CPU in an infinite loop waiting for such data to arrive.
+
+The conventional approach is to let the OS scheduler to divide the CPU
+into threads or processes sharing the hardware at defined intervals.
+While this approach works well for standard load scenarios, it fails for
+"moderm" workloads with thousands or tens of thousands of simultaneous
+clients accessing the server. Each new OS thread requires some extra
+memory on the OS kernel (about 2Kilobytes per Thread, and even more
+per Process). Switching from thread to thread or process to process becomes
+expensive or prohibitive with that number of concurent I/O flows.
+This is even worse when our server is virtualized with many other
+competing VMs running on the same physical server.
 
   Async programming will try to reause the same thread by many different
   clients or flows of I/O data providing a much better ussage of hardware
@@ -3091,8 +3101,7 @@ Map<String, Double> map01 = new HashMap<>();
   Set          Collections.checkedSet(Set s, Class type)
   SortedMap    Collections.checkedSortedMap
                            (SortedMap m, Class keyType, Class valueType)
-
-
+  
   SortedSet    Collections.checkedSortedSet(SortedSet s, Class type)
   void         Collections.copy(List dest, List src)                     Copies src list elements to dest list
   boolean      Collections.disjoint(Collection c1, Collection c2)        true if c1/c2 have no elements in common.
@@ -3223,8 +3232,7 @@ Map<String, Double> map01 = new HashMap<>();
            System.out.println(message);
        }
    }
-
-
+   
    for(int i = 0; i < 100; i++){         ←  sending commands async
       async.send(
         "MESSAGES_QUEUE",
@@ -3234,7 +3242,7 @@ Map<String, Double> map01 = new HashMap<>();
    → Hello Number 0
    → Hello Number 1
    → ...
-
+   
    List<Command> topCommands             ←  Peek (vs Consume) 3 "top"
       =  async .getTopCommands(            commands from "ERROR_QUEUE"
            3, "ERROR_QUEUE");
@@ -3530,8 +3538,7 @@ perform resource availability pre-checks (e.g. disk space check).
           in.close();
           return new JSONObject(response.toString()); //String myJSONStr
       }
-
-
+      
       /*                                                                              */
       /**
        * Overrides the SSL TrustManager and HostnameVerifier to allow
