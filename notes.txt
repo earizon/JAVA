@@ -2,7 +2,7 @@
 * Content is versioned in git.  commits, issues and pull-requests welcome!
   @[https://www.github.com/earizon/JAVA]
 * This __"cheat-sheet with steroids"__ presents an always-growing set of
-  "TOP Java recipes" well ordered&amp;classified extracted from 
+  "TOP Java recipes" well ordered&amp;classified extracted from
   * DZone
   * InfoQ
   * Redhat Developers
@@ -55,21 +55,21 @@
       out.printf("Hello %s !!", args[0]);
     }
   }
-                                                 BEFORE JAVA 11:
-  $ javac ./HelloUniverse.java                   <·· compile (./HelloUniverse.class generated)
-  $ java  ./HelloUniverse  arg1                  <·· start up JVM, load class, execute code
-  $ java  SomeClass.class                        <·· Java launcher 1.0+
-  $ java  SomeLib.jar                            <·· Java launcher 1.0+: Run    JAR's main class
-  $ java  SomeLib.jar                            <·· Java launcher 9.0+: Run Module's main class
+                                    BEFORE JAVA 11:
+  $ javac ./HelloUniverse.java      <·· compile (./HelloUniverse.class generated)
+  $ java  ./HelloUniverse  arg1     <·· start up JVM, load class, execute code
+  $ java  SomeClass.class           <·· Java launcher 1.0+
+  $ java  SomeLib.jar               <·· Java launcher 1.0+: Run    JAR's main class
+  $ java  SomeLib.jar               <·· Java launcher 9.0+: Run Module's main class
 
-                                                 AFTER JAVA 11 (JEP 330)
-  $ java HelloUniverse.java arg1                 <·· compile, start up JVM, load class, execute code
-    --add-modules=ALL-DEFAULT                        (no *.class generated on disk). Options include:
-    └─────────┬─────────────┘                        --source ${version}: Mandatory if '.java' extension
-              ·                                          is missing or to set a specific version
+                                    AFTER JAVA 11 (JEP 330)
+  $ java HelloUniverse.java arg1    <·· compile, start up JVM, load class, execute code
+    --add-modules=ALL-DEFAULT           (no *.class generated on disk). Options include:
+    └─────────┬─────────────┘           --source ${version}: Mandatory if '.java' extension
+              ·                             is missing or to set a specific version
               ·
-              └································· By default compiled code is part of an 'unnamed' module.
-                                                 This provides access to ALL standard modules in JDK.
+              └···················· By default compiled code is part of an 'unnamed' module.
+                                    This provides access to ALL standard modules in JDK.
 
   $ cat script.java
   #!/path/to/java --source $version  <·· UNIX scripting using "Shebang notation"
@@ -84,35 +84,35 @@
 
 * Install JDKs:
   ```
-  $ jbang jdk list                                        <·· List installed JDKs
-  $ jbang jdk install 17                                  <·· Install JDK 17
-  $ jbang jdk home                                        <·· Show installation path
+  $ jbang jdk list         <·· List installed JDKs
+  $ jbang jdk install 17   <·· Install JDK 17
+  $ jbang jdk home         <·· Show installation path
   ```
 
 * Daily ussage:
   ```
-    helloworld.java                                       <·· Exec like: 
-                                                              $ jbang helloworld.java
-                                                              $ jbang --jfr helloworld.java    # Run with Flight Recorder
-                                                              $ jbang --debug helloworld.java  # Suspend execution and 
-                                                                                               # wait until you connect 
-                                                                                               # a debugger
-    
+    $ cat helloworld.java     <··· Exec like:
+                                   $ jbang helloworld.java
+                                   $ jbang --jfr helloworld.java    # Run with Flight Recorder
+                                   $ jbang --debug helloworld.java  # Suspend execution and
+                                                                    # wait until you connect
+                                                                      # a debugger
+
     ///usr/bin/env jbang "$0" "$@" ; exit $?
 
-    //DEPS ch.qos.reload4j:reload4j:1.2.19                <·· gradle style locator to compiled repository
-    //DEPS com.github.jbangdev:jbang:v1.2.3               <·· Git link like dependency "a la Go". 
-    //DEPS my.comp.proj:mypck:${VER}                      <·· OS Enviromental variables allowed
+    //DEPS ch.qos.reload4j:reload4j:1.2.19     <·· gradle style locator to compiled repository
+    //DEPS com.github.jbangdev:jbang:v1.2.3    <·· Git link like dependency "a la Go".
+    //DEPS my.comp.proj:mypck:${VER}           <·· OS Enviromental variables allowed
 
-    //JAVA 17+                                            <·· Force Java 17 or higher.
+    //JAVA 17+                                 <·· Force Java 17 or higher.
                                                               //JAVA 17 <·· Force 17 version
 
-    //REPOS id=https://maven.google.com/                  <·· Add custom repository
+    //REPOS id=https://maven.google.com/       <·· Add custom repository
 
-    //FILES resource.properties                           <·· Add resource
-    //FILES META-INF/resources/index.html=index.html      <·· Add resource "mounted" on META-INFO/resource/index.html
-  
-    class helloworld { 
+    //FILES resource.properties                <·· Add resource
+    //FILES META-INF/index.html=index.html     <·· Add resource "mounted" on META-INFO/resource/index.html
+
+    class helloworld {
       public static void main(String[] args) {
         if(args.length==0) {
             System.out.println("Hello World!");
@@ -127,8 +127,8 @@
 ## Strings  [[{java_lang.strings,java_lang.101,PM.WiP]]
   ```
   final String
-     output1 = String .format ("%s = %d", "joe", 35), ← Format string
-     output2 = String .format ("%4d",100);            ←
+     output1 = String .format ("%s = %d", "joe", 35), // <·· Format string
+     output2 = String .format ("%4d",100);
   See also notes about "Format String Checker"
 
   final String[] args = ...
@@ -160,9 +160,9 @@
 - Ex: `"[George:Sally:Fred]"` may be constructed as follows:
   ```
   final StringJoiner sj = new StringJoiner(
-                             ":" /* Delimiter */,
-                             "[" /* prefix */,
-                             "]" /* sufix */);
+             ":" /* Delimiter */,
+             "[" /* prefix */,
+             "]" /* sufix */ );
   sj.add("George").add("Sally").add("Fred");
   String desiredString = sj.toString();
 
@@ -181,8 +181,10 @@
 * StringBuffer   is thread-safe.
 * StringBuilder  is faster. (when thread-safety is not needed)
   ```
-  for (int i = 0; i < 0 ; i++) { sbuffer.append(""); } // ← 2241 millisec
-  for (int i = 0; i < 0 ; i++) { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
+  for (int i = 0; i < 0 ; i++)
+    { sbuffer.append(""); } // ← 2241 millisec
+  for (int i = 0; i < 0 ; i++)
+    { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
   ```
 
 ### forcing String pool reuse [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
@@ -191,10 +193,10 @@
 - Stored on the heap.
 - Java manages a string pool in memory, reusing strings whenever possible.
   ```
-  String string01 = "297",                                string01 == string02 : true
-         string02 = "297",                                string01 == string03 : false
-         string03 = new Integer(297).toString(),          string01 == string04 : true
-         string04 = new Integer(297).toString()           string05 == string01 : false
+  String string01 = "297",                       // <·· string01 == string02 : true
+         string02 = "297",                       //     string01 == string03 : false
+         string03 = new Integer(297).toString(), //     string01 == string04 : true
+         string04 = new Integer(297).toString()  //     string05 == string01 : false
                     .intern() ;
          string05 = new String("297")
 
@@ -223,7 +225,7 @@
 [[}]]
 
 [[{scalability.101,jvm.101,java_lang.101.best_patterns]]
-## Optimization Tips 
+## Optimization Tips
 
 - To minimize the memory footprint, limit scope-of-variables as much as possible.
 - Explicitly refer to null obsolete references making them eligible for GC.
@@ -293,7 +295,7 @@
 [[scalability.101}]]
 
 [[{java.101.modules]]
-## Module JDK 9+ 
+## Module JDK 9+
 
 * foundational JDK APIs of Java SE
 * [REF@Oracle.com](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html)
@@ -425,24 +427,24 @@
   WRONG                        RIGHT
   ========================     ========================
   try { ...                    try { ...
-    // try to update data        // try to update data 
+    // try to update data        // try to update data
   } catch (IOException e) {    } catch (IOException e) {
       e.printStackTrace();         throw new RuntimeException("Data couldn't be updated", e);
   }                            }
   ```
    The correct "right" code looks weaker, since the exception is propagated ... <br/>
-  and that's a good thing, because the error has not been fixed, but some other piece 
+  and that's a good thing, because the error has not been fixed, but some other piece
   of code (or maybe final user or system operator) will be notified.<br/>
     In the "wrong" code **the original bug is just hidden and unreported**.<br/>
    This will trigger undefined behaviour, null pointers, nightmares and developer's
    non-paid extra hours.<br/>
-   This way is of thinking can look counter-intuitive to newcommers, but that's how 
-  real world works. errors are ... errors, and they can not be fixed, they just can be 
+   This way is of thinking can look counter-intuitive to newcommers, but that's how
+  real world works. errors are ... errors, and they can not be fixed, they just can be
   reported:<br/>
-   In the example above, an IOException is always caused by a full disk, a hardware error, 
-  a network error, a bug in the OS, ... There is nothing our code can do other than 
+   In the example above, an IOException is always caused by a full disk, a hardware error,
+  a network error, a bug in the OS, ... There is nothing our code can do other than
   report back to the IT department to fix it.<br/>
-  Erlang is a language designed for 99.99999% uptime systems, 
+  Erlang is a language designed for 99.99999% uptime systems,
   [makes it clear](https://amplab.github.io/cs262a-fall2016/notes/18-Go-and-Erlang.pdf).
   * **Crash early**:
     * Let some other process do the error recovery.
@@ -454,7 +456,7 @@
   More info [here](./QA_and_testing.txt#Checkerframework).
 * **Avoid huge interfaces**. Prefer small, decoupled ones, with few exposed methods
   decoupled interfaces related to security from storage from cache from ...
-  (This is unfortunatelly not the case if standard interfaces designed in the 
+  (This is unfortunatelly not the case if standard interfaces designed in the
   original Java libraries, just don't imitate wrong design).
 * Avoid interfaces that will ever be implemented by a single class, specially if such
   class is a data-like one with all inmutable (final) fields. Data classes can be
@@ -503,27 +505,27 @@ java.lang.Object
   optional.map    ( s -> "RebelLabs:" + s);            // <·· Process the optional
   optional.flatMap( s -> Optional.ofNullable(s));      // <·· map a function that returns Optional
   optional.ifPresent(System.out::println);             // <·· run if the value is ther
-  
+
   optional.get();                                      // <·· Alt 1: get the value or throw an exception
   optional.orElse("Hello world!");                     // <·· Alt 2: get the value or default
-  
+
   optional.filter( s -> s.startsWith("RebelLabs"));    // <·· return empty Optional if not satisfied
   ```
 - A much better alternative for values not known at compile time, but just
   at some **future time at runtime** is to initialize the variable with some
   arbitrary "future" value and provide for the possibility of a "future" value,
   a set of "error values" (timeouts, I/O errors) and final valid "values".
-  This simplifies debugging in complex software, speed up execution and 
+  This simplifies debugging in complex software, speed up execution and
   protects against some sort of race conditions.
 
 [[}]]
 
 ## <<AutoClosable>> (1.7+) [[{jvm.101.autoclosable,IO.101,JVM.GC,qa.101]]
 
-- Reminder: The java garbage collector can not automatically clean any other 
+- Reminder: The java garbage collector can not automatically clean any other
   resource appart from memory (objects not referenced anywhere else in code).
    All resources related to I/O (virtual/physical devices) must be closed
-  programatically, specially those that are related to remote machines like 
+  programatically, specially those that are related to remote machines like
   sockets, http connections, database connections, ...  since neither the
   compiler, not the runtime can take control of such (non-controlled)
   devices/resources. Under the hood, closing such resource, usually means
@@ -573,10 +575,10 @@ java.lang.Object
 [[{java_lang.records,java_lang.data_structure,QA.101]]
 ## RECORDS!!! v15+
 
-* Java classes have a bloated syntax when we just want to declare data-like 
+* Java classes have a bloated syntax when we just want to declare data-like
   objects. Objects whose only purpose is to "transport" data in an structured
   way.  In that sense, even the "old" C from the 70's provided a much better
-  support until the appearence of `record` in Java 15.  
+  support until the appearence of `record` in Java 15.
 
 * `record` provides a non-verbose inmutable way to declare inmutable classes.
   ```
@@ -593,12 +595,12 @@ java.lang.Object
   ```
 
 ### `record` Basic Rules
-- can NOT have any additional (internally computed) private or public instance 
+- can NOT have any additional (internally computed) private or public instance
   fields.
 - can NOT extend classes.
 - are ALWAYS FINAL (cannot be extended).
 
-- **WARN:** Until the release of Hibernate 6, records could NOT be mapped to 
+- **WARN:** Until the release of Hibernate 6, records could NOT be mapped to
   "anything" in JPA/Hibernate. The could only be used as DTO projections in
   queries. In Hibernate 6 they CAN'T be used to model entity classes but can
   be used as embeddables.
@@ -606,7 +608,7 @@ java.lang.Object
 [[}]]
 
 [[{java_lang.101.annotations,qa]]
-## Annotations 
+## Annotations
 @[http://docs.oracle.com/javase/tutorial/java/annotations/]
 
 -  predefined annotation types in java.lang include:
@@ -621,19 +623,19 @@ java.lang.Object
                              removing  related warnings
   ```
 
-- Annotation types are a form of interface. They are declared like: 
+- Annotation types are a form of interface. They are declared like:
   ```
-  @Documented                                    
-  @interface ClassPreamble {                     
-     String   author        ()              ;    
-     String   date          ()              ;    
-     int      currentRev    () default 1    ;    
-     String   lastModified  () default "N/A";    
-     String   lastModifiedBy() default "N/A";    
-     String[] reviewers     ()              ;    
-  }                                              
+  @Documented
+  @interface ClassPreamble {
+     String   author        ()              ;
+     String   date          ()              ;
+     int      currentRev    () default 1    ;
+     String   lastModified  () default "N/A";
+     String   lastModifiedBy() default "N/A";
+     String[] reviewers     ()              ;
+  }
   ```
-  and ussed like:                                               
+  and ussed like:
   ```
   @ClassPreamble (
      author         = "John Doe"      ,
@@ -650,16 +652,16 @@ java.lang.Object
 ### Annotation examples:
   ```
   new @Interned MyObject();              // <·· Class instance creation expression
-  
+
   myString = (@NonNull String) str;      // <·· Type cast (1.8+)
-  
+
   class UnmodifiableList<T> implements   // <·· implements clause
         @Readonly List<@Readonly T>
         { ... }
-  
+
   void monitorTemperature() throws       // <·· throws exception declaration
   @Critical TemperatureException { ... }
-  
+
   @SuppressWarnings(value = "unchecked") ← Predefined standard annotations
   void myMethod() { ... }
   @SuppressWarnings({"unchecked", "deprecation"})
@@ -686,8 +688,8 @@ java.lang.Object
     are not included in Javadoc.)     @Author(name = "Jane Doe")
                                       @Author(name = "John Smith")
                                       class MyClass { ... }
- 
- 
+
+
   @Target                            @Inherited
   (field,type,class..)              - targeted annotation type can be inherited
  - restrict targeted java-language    from the super class. (false by default.)
@@ -746,7 +748,7 @@ java.lang.Object
         long             DateFormat.getDateInstance(DateFormat.LONG, getLocale())
         full             DateFormat.getDateInstance(DateFormat.FULL, getLocale())
         SubformatPattern new SimpleDateFormat(subformatPattern, getLocale())
-  
+
   time  (none)           DateFormat.getTimeInstance(DateFormat.DEFAULT, getLocale())
         short            DateFormat.getTimeInstance(DateFormat.SHORT, getLocale())
         medium           DateFormat.getTimeInstance(DateFormat.DEFAULT, getLocale())
@@ -755,7 +757,7 @@ java.lang.Object
         SubformatPattern new SimpleDateFormat(subformatPattern, getLocale())
   ```
 ### Compatibility with Java <=1.8
-  
+
 * (java.util.) Date, Calendar and TimeZone
   "buggy" classes/subclasses were used:
   * Calendar class was NOT type safe.
@@ -823,27 +825,28 @@ java.lang.Object
   -----------------------------------------------------------------------------------
   Month              A month-of-year, such as 'July'.
   -----------------------------------------------------------------------------------
-  
+
   Exception          Description
   -----------------------------------------------------------------------------------
   DateTimeException  Exception used to indicate a problem while calculating a date-time.
   ```
 
 * Note: Java 9 [REF](https://www.infoq.com/news/2017/02/java9-cldr-ldml)
+
 > A number of parsing and formatting changes have been incorporated in Java 9 to
 > bring the functionality closer to Unicode Locale Data Markup Language (LDML).
 > providing better interoperability with non-Java systems.
-> ... supervised by Stephen Colebourne (JodaTime), precursor of java.time, 
+> ... supervised by Stephen Colebourne (JodaTime), precursor of java.time,
 > LDML is used by the Unicode Common Locale Data Repository (CLDR) project,
 > (Unicode Consortium) to gather and store locale data from different parts of
 > the world ... Among others, LDML deals with date formatting and parsing.
-* New features coming in Java 9 that bring java.time: 
-  * DateTimeFormatter: letter ‘g’, as specified in LDML, indicates a 
+* New features coming in Java 9 that bring java.time:
+  * DateTimeFormatter: letter ‘g’, as specified in LDML, indicates a
     “Modified Julian day” ... different from a normal Julian day in the sense
-    that:  
+    that:
     a) it depends on local time, rather than GMT,
     b) it demarcates days at midnight, as opposed to noon.
-  * Add date-time patterns 'v' and 'vvvv’: LDML formats to indicate 
+  * Add date-time patterns 'v' and 'vvvv’: LDML formats to indicate
     “generic non-location format”, e.g. “Pacific Time”, as opposed to
     the “generic location format” with specifies a city, like “Los Angeles Time”.
   * DateTimeFormatter pattern letters ‘A’, ’n’, ’N’: although LDML
@@ -864,7 +867,7 @@ java.lang.Object
 * Represents time durations at a given unit of granularity and
   provides utility methods to convert across units, and to perform
   timing and delay operations in these units.
-* Enums: 
+* Enums:
   ```
   DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
 
@@ -891,7 +894,7 @@ java.lang.Object
              permits com.example.polar.Circle,                    different file
                      com.example.quad.Rectangle,
                      com.example.quad.simple.Square { ... }
-         
+
          abstract sealed class Root { ...             ← Syntax 2: Permitted classed inside
              final class A extends Root { ... }                   parent class.
              final class B extends Root { ... }
@@ -900,13 +903,13 @@ java.lang.Object
          ```
 * 412: Foreign Function& Memory API (Incubator):
   API to efficiently interoperate with native code through foreign
-  functions while safely accessing foreign memory (not managed by 
+  functions while safely accessing foreign memory (not managed by
   the JVM). Future replacement for the brittleness and danger of JNI.
   Easy of use and able to work with different kinds of foreign memory
   (native memory, persistent memory, managed heap memory,..).
 * 306: Restore Always-Strict Floating-Point Semantics for
   numerically-sensitive libraries, including `java.lang.Math` and
-  `java.lang.StrictMath`. 
+  `java.lang.StrictMath`.
 * 356: Enhanced Pseudo-Random Number Generators [[{security.cryptography,PM.TODO}]]
 * 403: **Strongly Encapsulate JDK Internals**. it will no longer be
         possible to bypass strong encapsulation via --illegal-access flag.
@@ -928,22 +931,22 @@ java.lang.Object
 * production ready ZGC low-latency garbage collector, expected to be
   quite impactful for a multitude of workloads.
 * text blocks (JEP 378): strings spanning several lines ("templates", ...)
-* JEP 360: Sealed Classes (Preview): Avoid extending class designed to NOT 
-  be extended by third parties. 
+* JEP 360: Sealed Classes (Preview): Avoid extending class designed to NOT
+  be extended by third parties.
 * JEP 383: Foreign (C/Assembler) Memory Access API (Preview) (Project Panama).
 <!-- } -->
 
 ### v.14 2020-03-??  <!-- { -->
 * [REF@infoq.com](https://www.infoq.com/news/2019/12/java14-feature-freeze/)
-  * More container awareness...  
+  * More container awareness...
   * NUMA container support added to hotspot (JDK-8198715)
   * Add Container MBean to JMX (JDK-8199944)
 * Record-types (Preview)
-* Shenandoah GC: 
+* Shenandoah GC:
   [REF1@redhat.com](https://developers.redhat.com/blog/2020/03/04/shenandoah-gc-in-jdk-14-part-1-self-fixing-barriers/)
   """ ... self-fixing barriers aims to reduce local latencies
   spent in barrier mid-and slow paths. The second will cover
-  concurrent root processing and concurrent class unloading. """  
+  concurrent root processing and concurrent class unloading. """
   [REFw@redhat.com](https://developers.redhat.com/blog/2020/03/09/shenandoah-gc-in-jdk-14-part-2-concurrent-roots-and-class-unloading/)
   """... concurrent roots processing and concurrent class unloading,
          aim to reduce GC pause time by moving GC work from the pause
@@ -990,7 +993,7 @@ java.lang.Object
    it becomes a need when for annotations like @Nullable )
 * Nested Based Access Control: fix some issues when using (**discouraged**) reflection.
 * Dynamic Class-File Constants(JEP 309):<br/>
-  `class-file` format now extends support a new constant pool form:  
+  `class-file` format now extends support a new constant pool form:
   CONSTANT_Dynamic , reduce the cost and disruption of developing
   new forms of materializable class-file constraints.
 
@@ -1168,13 +1171,13 @@ java.lang.Object
   * executing bytecode (maybe, but not for sure).
   * thread interrupted (by the OS) while not at a safepoint.
 * JVM cannot force any thread into a safepoint state but ...
-  JVM can stop threads from leaving a safepoint state.  
-  * Q: How then bring ALL threads into a safepoint?  
+  JVM can stop threads from leaving a safepoint state.
+  * Q: How then bring ALL threads into a safepoint?
     A: Java threads poll a 'safepoint flag' (global or thread level) at 'reasonable' intervals
        and transition into a safepoint state (thread is blocked at a safepoint) when active.
     * Q: how to avoid waste time checking if C1/C2 (client/server) JIT compilers need to stop?
-         how to keep safepoint polls to a minimum.  
-      A: considerations combined lead to the following locations for safepoint polls:  
+         how to keep safepoint polls to a minimum.
+      A: considerations combined lead to the following locations for safepoint polls:
          ```
          - Between any 2 bytecodes while running in the interpreter (effectively)
          - On 'non-counted' loop back edge in C1/C2 compiled code
@@ -1264,7 +1267,7 @@ java.lang.Object
 [[}]]
 
 [[{jvm.101,scalability.jvm,monitoring.jvm]]
-## JVM Memory 
+## JVM Memory
 * REF: @[https://dzone.com/articles/java-memory-management]
 * JAVA MEMORY MODEL:
   ```
@@ -1391,17 +1394,17 @@ Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
   (or `/etc/sysctl.d/99-sonarqube.conf`)
   ```
   + sysctl -w vm.max_map_count=524288
-  + sysctl -w fs.file-max=131072            
+  + sysctl -w fs.file-max=131072
   ```
 * To modify temporarelly (changes lost at system restart)
   ```
-  $ ulimit -n 131072  
+  $ ulimit -n 131072
   $ ulimit -u 8192
   ```
 * To modify user limits permanently Add next lines to:
   * Alt 1:  /etc/security/limits.conf  (non SystemD)
   ```
-  + sonarqube   -   nofile   131072       ← 
+  + sonarqube   -   nofile   131072       ←
   + sonarqube   -   nproc    8192
   ```
   * Alt 2: SystemD unit definition (SystemD)
@@ -1411,18 +1414,18 @@ Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
   + LimitNOFILE=131072                      .
   + LimitNPROC=8192
     ...
-  ``` 
+  ```
 [[}]]
 <!-- JVM internals } -->
 
 [[{monitoring.logging]]
-# JAVA Logging 
+# JAVA Logging
 
 ## Logging Ecosystem Overview <!-- { -->
-* Logging Frameworks offer different features, but they all offer the same 
-  global structure 
+* Logging Frameworks offer different features, but they all offer the same
+  global structure
   * LogRecords "data objects" with Log levels.
-  * Loggers: 
+  * Loggers:
   * Handlers (also called Appenders).
   * Formatters (Layouts).
   ```
@@ -1434,8 +1437,8 @@ Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
     file for configuration. Supports txt and XML formats by default.
   * Log4j(Apache): solid performance, extremely configurable.
     In big projects, consider using it on top of SLF4J with Log4j binding.
-    Supports text, XML, JSON and YAML output. 
-    * At startup, Log4j searches for a log4j2.$format file. If not found, 
+    Supports text, XML, JSON and YAML output.
+    * At startup, Log4j searches for a log4j2.$format file. If not found,
       it will default to console output.
   * Logback: Designed as successor to Log4jv1 before Log4jv2 was released.
   * tinylog:
@@ -1448,7 +1451,7 @@ Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
   * Log4j has an SMTPAppender to send mail.
   * Log4j has a FailoverAppender, that automatically switches to a
     different Appender in case one or more fails.
-  * java.util.logging provides two Layouts/Formatters: 
+  * java.util.logging provides two Layouts/Formatters:
     SimpleFormatter (def for console) and XMLFormatter (def. for files)
   * Log4jv2 looks to be faster than Logback and more stable.
     according to [performance comparative](https://www.loggly.com/blog/benchmarking-java-logging-frameworks/)
@@ -1466,7 +1469,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 
 * core package includes support for delivering text or XML log records
   to memory, output streams, consoles, files, and sockets.
-* The core API is are capable of interacting with logging services 
+* The core API is are capable of interacting with logging services
   on the host operating system.
 
 * Loggin Control Flow:
@@ -1479,8 +1482,8 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
    logger.log    (Level.WARNING, String srcClass, String srcMethod, String msg) ²
    logger.warning(Level.WARNING, String srcClass, String srcMethod, String msg)
    logger.log    (                                                  String msg) ¹
-    ·            
-    ·            ¹: Logging framework will make a "best effort" to determine 
+    ·
+    ·            ¹: Logging framework will make a "best effort" to determine
     ·               which class and method called into the logging framework
     ·            ²: In other frameworks logp() (log precise) is used to set  source class/method
     ·
@@ -1491,14 +1494,14 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
  │Logger  │ ·········>(LogRecord)····>│Handler│ ··(publish to) ··>│Outside World│
                                                                    (│Handler│, I/O stream,
   ^^^^^^^^                             ^^^^^^^                      console, file, socket,...)
-  0+ LogRecords                        
-  0+ Filters                           0+ Filters         <·· Filters and Logging Level objects decide 
-  1+ Logging Level                     0+ Logging Level       if they are interested in a particular 
+  0+ LogRecords
+  0+ Filters                           0+ Filters         <·· Filters and Logging Level objects decide
+  1+ Logging Level                     0+ Logging Level       if they are interested in a particular
      (Log request below level                                 LogRecord object.
-      are discarded)                   0+ Formatters      <·· localize and format message before publishing 
+      are discarded)                   0+ Formatters      <·· localize and format message before publishing
   1 "dot-separated" name                  └────────┴─ == "Layouts" in other Log frameworks.
-    in a hierarchical namespace,       
-    managed by │LogManager│,           LogManager <·· Singleton object. 
+    in a hierarchical namespace,
+    managed by │LogManager│,           LogManager <·· Singleton object.
     typically aligned with package     ----------     (Retrieve it with LogManager.getLogManager)
     namespace, but not required to.    1 hierarchical namespace of named Loggers
   1+ Handler object                    1 control properties (read from configuration file)
@@ -1506,23 +1509,23 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
     (except for root "" logger)        ┌───────────────────────────────────────┘
     By default, loggers inherit next   java.util.Properties file including config for:
     attributes from their parent:      - root-level handlers to install during at startup.
-    · Minimum Logging level. Ex:       - levels for particular named loggers. 
+    · Minimum Logging level. Ex:       - levels for particular named loggers.
       logger.setLevel(Level.WARNING);  - arbitrary properties for use by any handler.
     · Handlers from parent             - Ej:
     · Resource bundle names              handlers=java.util.logging.ConsoleHandler, java.util.logging.FileHandler
-    · Resource bundle names              java.util.logging.FileHandler.pattern = %h/java%u.log 
+    · Resource bundle names              java.util.logging.FileHandler.pattern = %h/java%u.log
                                          java.util.logging.FileHandler.limit = 50000
                                          java.util.logging.FileHandler.count = 1
                                          java.util.logging.FileHandler.formatter = java.util.logging.XmlFormatter
                                          java.util.logging.MemoryHandler.size=... # <·· default size for ring buffer
                                          └─────────────┬───────────────┘
                                          Convention, handler props. start with handler class name
-                                       
+
   Default Java SE Handlers                                      Default Java SE Formatters:
   ------------------------                                      ---------------------------
-  StreamHandler : writes formatted-record to OutputStream       SimpleFormatter: Writes brief "human-readable" summaries 
+  StreamHandler : writes formatted-record to OutputStream       SimpleFormatter: Writes brief "human-readable" summaries
   ConsoleHandler: writes formatted-record to System.err                          of log records
-     FileHandler: writes formatted-log records to:                 XMLFormatter: Writes detailed XML-structured record. 
+     FileHandler: writes formatted-log records to:                 XMLFormatter: Writes detailed XML-structured record.
                   - alt 1: single file                          (Creating new formatters is straightforward)
                   - alt 1: set of rotating log files
    SocketHandler: writes formatted-log records to TCP ports
@@ -1536,14 +1539,14 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
   MemoryHandler (SDK) ·······> (publish to) ··> Target Handler
   -------------                 @trigger-events
-  1 ring buffer<LogRecords> 
+  1 ring buffer<LogRecords>
   0+filters
   0 formatters   <·· no format applied to intermediate handlers
   ```
-* In addition to named Logger objects, it is also possible to create anonymous Logger 
+* In addition to named Logger objects, it is also possible to create anonymous Logger
   objects that do NOT appear in the shared namespace. (See the Security section).
   Anonymous loggers have root as their parent.
-  
+
 ### Examples
 
 * logging with default configuration:
@@ -1553,18 +1556,18 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 
   package com.wombat;
   import java.util.logging.*;
-  
+
   public class Nose {
-      private static Logger logger =             
+      private static Logger logger =
          Logger.getLogger("com.wombat.nose");
 
       public static void main(String argv[]) {
           logger.fine("doing stuff");           // Obtain a suitable logger.
           try ( stream = ...) {
-            ...  
+            ...
           } catch(IOException e1) {
             logger.log(Level.WARNING, "...", e1);
-            throw 
+            throw
           }
           logger.fine("done");
       }
@@ -1577,7 +1580,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
       Logger.getLogger(""/*root*/  ).addHandler(fh);
       Logger.getLogger("com.wombat")
         .setLevel(Level.WARNING); // Ignore all Logs below WARNING level
-                  └───────────┴─··· := FINEST < FINER < FINE < CONFIG < INFO < WARNING < SEVERE 
+                  └───────────┴─··· := FINEST < FINER < FINE < CONFIG < INFO < WARNING < SEVERE
                                        ALL: log all messages regardless of level
                                        OFF: disable logging.
       ...
@@ -1587,7 +1590,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
   package com.wombat;
   import java.util.logging.*;
-  
+
   public class Nose {
     private static Logger logger = Logger.getLogger("com.wombat.nose");
     private static FileHandler fh = new FileHandler("mylog.txt");
@@ -1621,7 +1624,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
     </record>
   ```
 
-* Format(Layout) config: 
+* Format(Layout) config:
   ```
   Handler ch = new ConsoleHandler();
   ch.setFormatter(new XMLFormatter()); // <·· Use XMLFormatter (txt by default in console)
@@ -1630,7 +1633,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 <!-- } -->
 
 [[{monitoring.logging.slf4j]]
-## SLF4j Logging  
+## SLF4j Logging
 * @[https://www.slf4j.org/]
 * Simple Log Facade or abstraction for various logging frameworks
   (e.g. java.util.logging, logback, log4j) allowing the end user
@@ -1680,12 +1683,12 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 [[monitoring.logging.slf4j}]]
 
 [[{monitoring.logging.log4j,monitoring.logging.logback]]
-## Log4j2/Logback config 
+## Log4j2/Logback config
  ```
  <xml version="1.0" encoding="UTF-8"?>
  <Configuration status="warn" name="MyApp">
 
-                                                       
+
    <Appenders> ¹
      <Console name="MyAppender1" target="SYSTEM_OUT">  <·· Console is the default in most frameworks
        <PatternLayout pattern="%m%n"/>
@@ -1698,13 +1701,13 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 
    <Loggers>   ²
      <Root level="error"> ³                            <·· Only root logger is defined in the example.
-       <AppenderRef ref="MyAppender1"/>                    which accepts all messages by default, and 
+       <AppenderRef ref="MyAppender1"/>                    which accepts all messages by default, and
      </Root>                                               logs only about ERROR level.
    </Loggers>
  </Configuration>
- ¹ STEP 1) Configure Appender/Handlers    
+ ¹ STEP 1) Configure Appender/Handlers
  ² STEP 2) Configure Loggers
- ³ 
+ ³
  ```
 
 ### LogBack Config Example <!-- { -->
@@ -1721,14 +1724,14 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
      class="ch.qos.Logback.core.FileAppender">
      <file>myLog.log</file>
      <append>true</append>
-     <prudent>true</prudent>                   <·· true => increases cost of writing but safely manages 
+     <prudent>true</prudent>                   <·· true => increases cost of writing but safely manages
                                                    file writes from multiple FileAppenders and/or Java programs
      <encoder>
        <pattern>%m%n</pattern>
      </encoder>
    </appender>
 
-   
+
    <root level="error">
      <appender-ref ref="MyAppender" />
    </root>
@@ -1739,7 +1742,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 ### Format/Layout config in Log4j/Logback <!-- { -->
 * one of the most common Layouts in Log4j and Logback is the PatternLayout.
   ```
-  <PatternLayout 
+  <PatternLayout
     pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
                                                               └┴─ append new line
                                                            └─┴─·· message
@@ -1761,7 +1764,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
   [%p] %t: %m<b>%xEx</b>
                 └──┴─·········  full stacktrace with packaging information for each call in the stack
-                                [ERROR] main: ... java.io.FileNotFoundException: foo.file 
+                                [ERROR] main: ... java.io.FileNotFoundException: foo.file
                                    at java.io.FileInputStream.open(Native Method) ~[?:1.7.0_79]
                                    ...
                                    at FooClass.main(FooClass.java:47)
@@ -1779,9 +1782,9 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 * ThreadContext enhances over Log4jv1 and Logback NDC and MDC.
 
 ### Log4j2 ThreadContext and Nested Diagnostic Context(NDC) <!-- { -->
-* NDC is based on the idea of a stack. Information can be 
-  pushed/popped from the stack.  The values in the stack can then be 
-  accessed by a Logger without having to pass a value to the logging 
+* NDC is based on the idea of a stack. Information can be
+  pushed/popped from the stack.  The values in the stack can then be
+  accessed by a Logger without having to pass a value to the logging
   method explicitly.
 * Example with Log4j+NDC: Associate username with log entry<br/>
   ```
@@ -1820,7 +1823,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
   Logging configuration will be similar to:
   ```
-  <PatternLayout 
+  <PatternLayout
      pattern="%X{username} %X{sessionID} %-5p - %m%n" />
   Output will be similar to:
   admin 1234 INFO - Login successful
@@ -1871,7 +1874,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 
   ```
   <Configuration name="MyApp">
-    <DynamicThresholdFilter 
+    <DynamicThresholdFilter
         key="trace-logging-enabled"       <·· automatically adjusts log level if key matches value
         onMatch="ACCEPT"                      <·· := ACCEPT | DENY | NEUTRAL
         onMismatch="NEUTRAL">                        NEUTRAL: defer to next filter
@@ -1906,7 +1909,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   <configuration>
     <root level="ALL">                      <·· Apply to all packages/levels
       <appender                             <·· Add file appender.
-         name="APPENDER_FILE" 
+         name="APPENDER_FILE"
          class="ch.qos.logback.core.rolling.RollingFileAppender">
          <file>log</file>
          <rollingPolicy
@@ -1922,7 +1925,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
           </encoder>
       </appender>
 
-      <appender   
+      <appender
           name="APPENDER_STDOUT"
           class="ch.qos.logback.core.ConsoleAppender">
         <encoder>                                                           [[{troubleshooting]]
@@ -1932,9 +1935,9 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
               sun.reflect,
               org.apache.catalina,                      <·· remove catalina engine (in tomcat)
               org.springframework.aop,                  <·· remove "almost" whole Spring framework
-              org.springframework.security,                
-              org.springframework.transaction,             
-              org.springframework.web,                     
+              org.springframework.security,
+              org.springframework.transaction,
+              org.springframework.web,
               net.sf.cglib,                             <·· remove CGLIB classes.
               ByCGLIB
             }
@@ -1963,14 +1966,14 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   from the device's OS, processes, and services.
 * Syslog events are categorized by facility, which specifies the
   type of event being logged (auth, ...).
-* Natively supported in Log4j and Logback by just indicating 
+* Natively supported in Log4j and Logback by just indicating
   the host number, port number, and protocol.
 <!-- } -->
 [[monitoring.logging}]]
 
 [[{security.101,PM.low_code,spring,security.jvm]]
 
-# Security 101 
+# Security 101
 
 @[https://snyk.io/blog/10-java-security-best-practices/]
 ## Make code immutable
@@ -2000,7 +2003,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 ## Use OpenID Connect with 2FA:<br/>
 * OAuth 2.0: Identity delegation. N applications delegate login
   authentication to a third service that emmits signed tokens
-  with claims about authorization for a given authenticated 
+  with claims about authorization for a given authenticated
   user.
 * OpenID: OAuth 2.0 extension providing user information
   claims to the signed OAuth 2.0 token.
@@ -2036,12 +2039,12 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
 ## Scan dependencies for known vulnerabilities
    Ej.: Use a service like  @[https://snyk.io/test/] !!!
-   
+
 ## Handle secrets with care
  * Use secrets on-demand and remove from memory as soon as possible.
    Ideally manage secrets through HSM. Secrets (signature keys, password,
    ...) must never leave the HSM.
-  
+
 ## Sanitize all input
 * Example 1, sanitizing HTML<br/>
   Add dependency: `org.owasp.encoder:encoder:vX.Y.Z`
@@ -2074,7 +2077,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
      "https://apache.org/xml/features/disallow-doctype-decl" , true );
    ...
    ```
-## Avoid Java serialization 
+## Avoid Java serialization
 (as much as possible)
 * Java serialization is also called  "the gift that keeps on giving".
   Oracle is planning to eventually remove Java serialization as part
@@ -2203,21 +2206,21 @@ competing VMs running on the same physical server.
   ```
   (parameters) -> expression
   (parameters) -> { statements; }
-  
+
   Function<Long, String> f = (l) -> l.toString();    // <·· takes a Long, returns a String
-  
+
   Supplier<Thread> s = Thread::currentThread;        // <·· takes nothing, gives you Thread
-  
+
   Consumer<String> c = System.out::println;          // <·· takes a string as the parameter
-  
+
   new ArrayList<String>().stream()....               // <·· use lambdas in streams
-  
+
   peek ( e -> System.out.println(e)). ...            // <·· peek: Debug streams without changes
-  
+
   map ( e -> e.hashCode())...                        // <·· map: Convert every element into something
-  
+
   // filter (hc -> (hc % 2) == 0) ...
-  
+
   collect(Collectors.toCollection(TreeSet::new))    // <·· collect all values from the stream
   ```
 <!-- } -->
@@ -2234,28 +2237,28 @@ competing VMs running on the same physical server.
 
 * Standard Java 8
 ```
-  Standard Java 8:                 
-  ================                 
-  Arrays                           
-  .stream(dir.listFiles())         
-  .forEach(file -> {               
-        try {                      
-    System.out.println(            
-         file.getCanonicalPath()); 
-        } catch (IOException e) {  
-    throw new RuntimeException(e); 
+  Standard Java 8:
+  ================
+  Arrays
+  .stream(dir.listFiles())
+  .forEach(file -> {
+        try {
+    System.out.println(
+         file.getCanonicalPath());
+        } catch (IOException e) {
+    throw new RuntimeException(e);
         }
   });
 ```
 * using jooq labmda wrapper
 ```
-  using jooq labmda wrapper:     
-  ==========================     
-  Arrays                         
-  .stream(dir.listFiles())       
-  .forEach(                      
-    Unchecked.consumer(file -> { 
-      System.out.println(        
+  using jooq labmda wrapper:
+  ==========================
+  Arrays
+  .stream(dir.listFiles())
+  .forEach(
+    Unchecked.consumer(file -> {
+      System.out.println(
         file.getCanonicalPath());
     })
   );
@@ -2308,14 +2311,14 @@ competing VMs running on the same physical server.
 @[https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html]
 * JDK 1.9+
 * Reactive Streams was adopted by the JDK in the form of the java.util.concurrent.Flow API.
-* It allows two different libraries that support asynchronous 
-  streaming to connect to each other, with well specified semantics 
-  about how each should behave, so that backpressure, completion, 
-  cancellation and error handling is predictably propagated between the 
+* It allows two different libraries that support asynchronous
+  streaming to connect to each other, with well specified semantics
+  about how each should behave, so that backpressure, completion,
+  cancellation and error handling is predictably propagated between the
   two libraries.
-* There is a rich ecosystem of open source libraries that support 
-  Reactive Streams, and since its inclusion in JDK9, there are a few in 
-  development implementations that are targetting the JDK, including 
+* There is a rich ecosystem of open source libraries that support
+  Reactive Streams, and since its inclusion in JDK9, there are a few in
+  development implementations that are targetting the JDK, including
   the incubating <a href="http://openjdk.java.net/jeps/321">JDK9 HTTP Client</a>,
   and the [Asynchronous Database Adapter (ADBA)](https://twitter.com/brunoborges/status/915302682939711488)
 * See also @[http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php]
@@ -2464,7 +2467,7 @@ Observer<Integer> myObserver = new Observer<Integer>() {
 * In RxJava 2.0, Observables **NO LONGER SUPPORT EMITTING null VALUES** !!! [[{qa.101,qa.billion_dolar_mistake}]]
 
 [[{doc_has.decission_tree]]
-## RxJava Decision Tree  (Choosing the right Operator for a task) 
+## RxJava Decision Tree  (Choosing the right Operator for a task)
 * [REF](http://reactivex.io/documentation/operators.html#tree)
   ```
   Alphabetical List of Observable Operators
@@ -2744,8 +2747,8 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 @[http://reactivex.io/documentation/implement-operator.html]
 [[{async/reactive.rxjava,qa,PM.TODO}]]
 * 5 Not So Obvious Things About RxJava
-@[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc] 
-* Error control 
+@[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc]
+* Error control
 @[https://github.com/ReactiveX/RxJava/wiki/Error-Handling-Operators]
 * Dealing with RxJava's never-ending Observables
 @[https://tech.xing.com/dealing-with-rxjavas-never-ending-observables-1ca8f18797ff]
@@ -2756,19 +2759,19 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 @[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html]
 @[https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html]
 * JDK 1.8+
-* Incomplete but good enough to cover the "shape" of many lambda 
-  expressions and method references representing abstract concepts like 
+* Incomplete but good enough to cover the "shape" of many lambda
+  expressions and method references representing abstract concepts like
   functions, actions, or predicates
 * The @FunctionalInterface is used to capture design intent (not needed by compiler).
-* In documenting functional interfaces, or referring to variables 
-  typed as functional interfaces, it is common to refer directly to 
-  those abstract concepts, for example using "this function" instead of 
+* In documenting functional interfaces, or referring to variables
+  typed as functional interfaces, it is common to refer directly to
+  those abstract concepts, for example using "this function" instead of
   "the function represented by this object".
-* Each functional interface has a single abstract method, called the 
-  functional method for that functional interface, to which the lambda 
+* Each functional interface has a single abstract method, called the
+  functional method for that functional interface, to which the lambda
   expression's parameter and return types are matched or adapted.
-* Functional interfaces can provide a target type in multiple 
-  contexts, such as assignment context, method invocation, or cast 
+* Functional interfaces can provide a target type in multiple
+  contexts, such as assignment context, method invocation, or cast
   context:
   ```
   Predicate<String> p = String::isEmpty;           // Assignment context
@@ -2806,7 +2809,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 
 # Collections [[{ $collections ]]
 [[{data_structures.101,java_lang.101,scalability.101,02_doc_has.decission_tree,02_doc_has.diagram,qa.data]]
-## Collections 101 
+## Collections 101
 * COLLECTION DECISSION TREE
   ```
                                   ┌──────────┐
@@ -2962,7 +2965,7 @@ final ArrayList<String> mutableList   ← Mutable list.
          Arrays.asList(arr));
 ```
 
-* Walk over Lists(Set/...) collections 
+* Walk over Lists(Set/...) collections
 ```
  for ( int idx = 0; idx < collection   .length ; idx++) { ← Alt 1: Java 1.0 for-walk over collection index.
    type array_element = collection   .get(idx);           ←   WARN:  Very slow for LinkedLists
@@ -3101,7 +3104,7 @@ Map<String, Double> map01 = new HashMap<>();
   Set          Collections.checkedSet(Set s, Class type)
   SortedMap    Collections.checkedSortedMap
                            (SortedMap m, Class keyType, Class valueType)
-  
+
   SortedSet    Collections.checkedSortedSet(SortedSet s, Class type)
   void         Collections.copy(List dest, List src)                     Copies src list elements to dest list
   boolean      Collections.disjoint(Collection c1, Collection c2)        true if c1/c2 have no elements in common.
@@ -3147,9 +3150,9 @@ Map<String, Double> map01 = new HashMap<>();
 
 * [Eclipse Collections](https://www.eclipse.org/collections/)
   (Originated from Goldman Sachs [gs-collection](https://github.com/goldmansachs/gs-collections)
-  Features you want with the collections you need Previously known as 
-  gs-collections, this library includes almost any collection you might 
-  need: primitive type collections, multimaps, bidirectional maps and 
+  Features you want with the collections you need Previously known as
+  gs-collections, this library includes almost any collection you might
+  need: primitive type collections, multimaps, bidirectional maps and
   so on.
 [[}]]
 
@@ -3157,14 +3160,14 @@ Map<String, Double> map01 = new HashMap<>();
 ## `<<Enumeration>>`(1.0) vs `<<Iterator>>`(1.7)
 @[https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator]
 * both interfaces will give successive elements
-* Iterators allow the caller to remove elements from the underlying 
+* Iterators allow the caller to remove elements from the underlying
   collection during the iteration with well-defined semantics.
   (additional remove method)
 * Iterators Method names have been improved.
 * Iterators are fail-fast:
-  * If thread A changes the collection, while thread B is traversing 
-    it, the iterator implementation will try to throw a 
-    ConcurrentModificationException (best effort since it can not always 
+  * If thread A changes the collection, while thread B is traversing
+    it, the iterator implementation will try to throw a
+    ConcurrentModificationException (best effort since it can not always
     be guaranteed)
   * The fail-fast behavior of iterators can be used only to
     detect bugs sin the best effort doesn't warrant its trigger.
@@ -3172,7 +3175,7 @@ Map<String, Double> map01 = new HashMap<>();
     Reading thread B will traverse the collection "snapshot" at
     the start of read.
 
-* Iterator should be preferred over Enumeration taking the place of 
+* Iterator should be preferred over Enumeration taking the place of
   Enumeration in collections framework
   ```
   Enumeration     │ Iterator
@@ -3189,7 +3192,7 @@ Map<String, Double> map01 = new HashMap<>();
 # Non-Classified / TODO [[{ $non_classified]]
 
 [[{async/reactive.javalite,PM.low_code,messaging.jms,messaging.activemq,architecture.batch,architecture.distributed]]
-## JavaLite lightweight async.job processing 
+## JavaLite lightweight async.job processing
 
 * Use Cases:
   * website that needs to run batch process in background
@@ -3232,7 +3235,7 @@ Map<String, Double> map01 = new HashMap<>();
            System.out.println(message);
        }
    }
-   
+
    for(int i = 0; i < 100; i++){         ←  sending commands async
       async.send(
         "MESSAGES_QUEUE",
@@ -3242,7 +3245,7 @@ Map<String, Double> map01 = new HashMap<>();
    → Hello Number 0
    → Hello Number 1
    → ...
-   
+
    List<Command> topCommands             ←  Peek (vs Consume) 3 "top"
       =  async .getTopCommands(            commands from "ERROR_QUEUE"
            3, "ERROR_QUEUE");
@@ -3289,7 +3292,7 @@ Map<String, Double> map01 = new HashMap<>();
 [[async/reactive.javalite}]]
 
 [[{async/reactive.FileQueue,PM.low_code,messaging.jms,messaging.activemq,scalability.101]]
-## FileQueue  
+## FileQueue
 @[https://github.com/stimulussoft/filequeue]
 * KISS alternative using MVStore
 @[http://www.h2database.com/html/mvstore.html]
@@ -3389,7 +3392,7 @@ perform resource availability pre-checks (e.g. disk space check).
 [[async/reactive.FileQueue}]]
 
 [[{enterprise_patterns,qa.error_control,architecture.distributed,PM.WiP]]
-## FailSafe 
+## FailSafe
 
 @[https://github.com/failsafe-lib/failsafe]
 * Fault tolerance and resilience patterns for the JVM
@@ -3419,9 +3422,9 @@ perform resource availability pre-checks (e.g. disk space check).
 ## JDepend [[{qa.reporting,qa.versioning,security.auditing,DevOps.101]]
 @[https://github.com/clarkware/jdepend]
 @[https://htmlpreview.github.io/?https://github.com/clarkware/jdepend/blob/master/docs/JDepend.html]
-* JDepend traverses Java class and source file directories and 
-   generates design-quality-metrics for each Java package in terms of 
-  its extensibility, reusability, and maintainability to effectively 
+* JDepend traverses Java class and source file directories and
+   generates design-quality-metrics for each Java package in terms of
+  its extensibility, reusability, and maintainability to effectively
   manage and control package dependencies.
 [[}]]
 
@@ -3538,7 +3541,7 @@ perform resource availability pre-checks (e.g. disk space check).
           in.close();
           return new JSONObject(response.toString()); //String myJSONStr
       }
-      
+
       /*                                                                              */
       /**
        * Overrides the SSL TrustManager and HostnameVerifier to allow
@@ -3681,15 +3684,15 @@ A module is:
 [[}]]
 
 ## SummaryStatistics(1.8+) [[{java_lang.functional,PM.TODO]]
-- Three of the new classes introduced in JDK 8 are 
-  DoubleSummaryStatistics, IntSummaryStatistics, 
-  andLongSummaryStatistics of the java.util package. These classes make 
-  quick and easy work of calculating total number of elements, minimum 
-  value of elements, maximum value of elements, average value of 
-  elements, and the sum of elements in a collection of doubles, 
-  integers, or longs. Each class's class-level Javadoc documentation 
-  begins with the same single sentence that succinctly articulates 
-  this, describing each as "A state object for collecting statistics 
+- Three of the new classes introduced in JDK 8 are
+  DoubleSummaryStatistics, IntSummaryStatistics,
+  andLongSummaryStatistics of the java.util package. These classes make
+  quick and easy work of calculating total number of elements, minimum
+  value of elements, maximum value of elements, average value of
+  elements, and the sum of elements in a collection of doubles,
+  integers, or longs. Each class's class-level Javadoc documentation
+  begins with the same single sentence that succinctly articulates
+  this, describing each as "A state object for collecting statistics
   such as count, min, max, sum, and average."
 [[}]]
 
