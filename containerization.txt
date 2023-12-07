@@ -1,4 +1,7 @@
 # Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
+
+* Example Dockerfile
+```
 FROM maven:3.6-jdk-12-alpine as build
 WORKDIR /builder
 ADD pom.xml /builder/pom.xml
@@ -15,20 +18,22 @@ COPY --from=build /builder/target/$APP_NAME /app
 COPY --from=build /builder/src/main/resources /app/src/main/resources
 EXPOSE 8080
 CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME
-<hr/>
+```
+
 # Jib: Image Builder
-Docker+mvn/gradle integration:
+* Docker+mvn/gradle integration:
 @[https://www.infoq.com/news/2018/08/jib]
 @[https://github.com/GoogleContainerTools/jib]
 
-- Build Java Container without Docker/Dockerfile
-- Jib's build approach separates the Java application
+* Build Java Container without Docker/Dockerfile
+* Jib's build approach separates the Java application
   into multiple layers, so when there are any code changes,
   only those changes are rebuilt, rather than the entire application.
-- these layers are layered on top of a distroless base image.
+* these layers are layered on top of a distroless base image.
   containing only the developer's application and its runtime deps.
 
--  Docker build flow
+*  Docker build flow
+  ```
         │JAR│ ← (build) ← │Project│
           ·                                                              │Container │
           ├·····→ │Build Context│ →(build)→ │ Container Image │ →(push)→ │Image     │
@@ -39,18 +44,20 @@ Docker+mvn/gradle integration:
                                                                          │Container │
      │Project│ ───────────────(Jib)─────────────────────────────────────→│Image     │
                                                                          │(registry)│
+  ```
 
-- Ex: Creating images from command line:
+* Ex: Creating images from command line:
   Once jib is installed and added to PATH, to create a new image do something like:
-$ $ /opt/jib/bin/jib
-$   --insecure \                                ← allow conn. to HTTP (non TLS) dev.registries
-$   build \                                     ← build image
-$   --registry \                                ← Push to registry
-$     gcr.io/distroless/java \                  ← Base image (busybox, nginx, gcr.io/distroless/java,...)
-$     192.168.1.3:5000/jib:latest \             ← Destination registry / image
-$   --entrypoint "java,-cp,/app/lib/*,\
-$   com.google.cloud.tools.jib.cli.JibCli" \
-$   build/install/jib/lib,/app/lib
+  ```
+  $ /opt/jib/bin/jib
+    --insecure \                                ← allow conn. to HTTP (non TLS) dev.registries
+    build \                                     ← build image
+    --registry \                                ← Push to registry
+      gcr.io/distroless/java \                  ← Base image (busybox, nginx, gcr.io/distroless/java,...)
+      192.168.1.3:5000/jib:latest \             ← Destination registry / image
+    --entrypoint "java,-cp,/app/lib/*,\
+    com.google.cloud.tools.jib.cli.JibCli" \
+    build/install/jib/lib,/app/lib
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     Other options include:
     (See jib build --help for more options)
@@ -70,14 +77,15 @@ $   build/install/jib/lib,/app/lib
     -p, --port=port[,port...]   Expose port/type (ex: 25 or 25/tcp)
     -u, --user=user             Set user for execution (uid or existing user id)
     -V, --volume=path1,path2... Configure specified paths as volumes
+  ```
 
+* Ex pom.xml to create tomcat container with war:
+  REF: <https://stackoverflow.com/questions/63657172/option-to-auto-generate-dockerfile-and-other-deployment-tooling-in-intellij>
 
-- Ex pom.xml to create tomcat container with war:
-  REF: https://stackoverflow.com/questions/63657172/option-to-auto-generate-dockerfile-and-other-deployment-tooling-in-intellij
-
-$ $ mvn clean package jib:dockerBuild
-$ $ docker run --rm -p 8082:8080 \
-$   registry.localhost/hello-world:latest
+  ```
+  $ mvn clean package jib:dockerBuild
+  $ docker run --rm -p 8082:8080 \
+    registry.localhost/hello-world:latest
 
   <?xml version="1.0" encoding="UTF-8"?>
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -151,6 +159,7 @@ $   registry.localhost/hello-world:latest
       </plugins>
     </build>
   </project>
+  ```
 
 * alternatives to Distroless include Chainguard images and Chiselled Ubuntu.<br/>
 Extracted from <https://www.infoq.com/news/2023/12/canonical-chiselled-ubuntu/>

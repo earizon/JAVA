@@ -5,9 +5,11 @@
 [[{ $devops.gradle]]
 
 # Gradle Summary [[{devops.gradle.101,devops.gradle.troubleshooting]]
-* TLDR
+
+
+## SETUP TASKS  <!-- { -->
+
   ```
-  # SETUP TASKS {{{ ───────────────────────────────────────────────────────
   $ gradle init        \   <- Initializes a new a new Gradle build
     --dsl  kotlin      \   <·· kotlin | groovy 
     --package ...      \   <·· eg:  my.comp.package
@@ -19,10 +21,9 @@
   --test-framework ... \   <·· := junit|junit-jupiter|kotlintest|...
                               Further details:
                               $ gradle -q help --task init
-
-
-
+  ```
   (Output layout will be similar to ..)
+  ```
   ├─ gradle/               <·· Gradle Wrapper: Gradle versioned "snapshot" JAR for project replacing
   │  │                         "random" OS-wide gradle install.
   │  └─ wrapper/               (For existing projects with no wrapper it can be generated with `$ gradle wrapper`)
@@ -114,8 +115,9 @@
   ├─ `gradle.properties` <·· Modify/customize plugins 
   │                          NOTE: It is NOT initialized by default.
   │                          See related section for details.
-     [[}]]
+  ```
 
+  ```
   $ git add \                           <···· NEXT) Commit gradle artifacts to git.
     build.gradle gradle* settings.gradle
   $ git commit -m "Adding graddle support"
@@ -131,8 +133,12 @@
   ^                                           downloaded,...
   Click the link and explore which tasks where executed,
   which dependencies where downloaded and many more details!
-  }}} 
-  BUILD TASKS {{{ ───────────────────────────────────────────────────────
+  ```
+<!-- } -->
+
+## BUILD TASKS <!-- { -->
+
+  ```
   $ gradle build           <- Compile package
                               -x {{test}} : Exclude test task:
                               --offline   : offline mode (prevent network access/updates)
@@ -154,9 +160,8 @@
   $ projects               <- show sub-projects of root project     'JAVA'.
   $ properties             <- show properties of root project       'JAVA'.
   $ tasks                  <- show tasks runnable from root project 'JAVA'.
-
-  }}}
   ```
+<!-- } -->
 
 # GRADLE CORE MODEL  [[{gradle.101.core_model,02_doc_has.diagram.UML.ER]]
 
