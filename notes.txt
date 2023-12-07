@@ -2303,59 +2303,6 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 * simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
 
-### Context
-
-The conventional computing model of a Touring machine takes for granted
-that data is already available to be processed.
-In the Internet era, data is arriving at random and we don't want to block
-our CPU in an infinite loop waiting for such data to arrive.
-
-The conventional approach is to let the OS scheduler to divide the CPU
-into threads or processes sharing the hardware at defined intervals.
-While this approach works well for standard load scenarios, it fails for
-"moderm" workloads with thousands or tens of thousands of simultaneous
-clients accessing the server. Each new OS thread requires some extra
-memory on the OS kernel (about 2Kilobytes per Thread, and even more
-per Process). Switching from thread to thread or process to process becomes
-expensive or prohibitive with that number of concurent I/O flows.
-This is even worse when our server is virtualized with many other
-competing VMs running on the same physical server.
-
-  Async programming will try to reause the same thread by many different
-  clients or flows of I/O data providing a much better ussage of hardware
-  resources and avoiding unnecesary context-switches between threads or
-  processes.
-
-  The term "reactive" refers to programming models that are built around
-  reacting to change — network component reacting to I/O events, UI controller
-  reacting to mouse events, etc. In that sense non-blocking is reactive because
-  instead of being blocked we are now in the mode of reacting to notifications
-  as operations complete or data becomes available.
-
-  Spring Reactive Streams is a small spec, also adopted in Java 9, that defines
-  the interaction between asynchronous components with back pressure. For
-  example a data repository — acting as Publisher, can produce data that an
-  HTTP server — acting as Subscriber, can then write to the response. The main
-  purpose of Reactive Streams is to allow the subscriber to control how fast or
-  how slow the publisher will produce data.
-
-  Reactive Streams is of interest to low-level reusable libraries but
-  no final applications are better suites using a higher level and richer
-  (functional) API like Java8+ Collection-Stream API or more ingeneral APIs
-  like those provided by ReactiveRX.
-
-  Reactive programming can also be compared with the way data flows in Unix
-  pipelines when handling text files. In the next Unix command there is a
-  file input (it can be a real file in the hard-disk or a socket receiving
-  data) and the different commands in the pipe consume STDIN and result to
-  STDOUT for further processing.
-  ```
-  $ cat input.csv | grep "...." | sort | uniq | ... >  output.csv
-  ```
-  Reactive Java frameworks are ussually much fasters since everything executes
-  on the same process (a Unix pipeline requires the help of the underlying
-  OS to work), and the type of input/output data can be any sort of Java
-  object (not just file text).
 
 ### Sytnax  <!-- { -->
   ```
@@ -2483,6 +2430,61 @@ competing VMs running on the same physical server.
 * @[https://github.com/ReactiveX/RxJava]
 * ReactiveX provides a set of very-well thought-out cross-language abstraction to
   implement the reactive patterns.
+
+## Why Reactive Programming <!-- { -->
+
+The conventional computing model of a Touring machine takes for granted
+that data is already available to be processed.
+In the Internet era, data is arriving at random and we don't want to block
+our CPU in an infinite loop waiting for such data to arrive.
+
+The conventional approach is to let the OS scheduler to divide the CPU
+into threads or processes sharing the hardware at defined intervals.
+While this approach works well for standard load scenarios, it fails for
+"moderm" workloads with thousands or tens of thousands of simultaneous
+clients accessing the server. Each new OS thread requires some extra
+memory on the OS kernel (about 2Kilobytes per Thread, and even more
+per Process). Switching from thread to thread or process to process becomes
+expensive or prohibitive with that number of concurent I/O flows.
+This is even worse when our server is virtualized with many other
+competing VMs running on the same physical server.
+
+  Async programming will try to reause the same thread by many different
+  clients or flows of I/O data providing a much better ussage of hardware
+  resources and avoiding unnecesary context-switches between threads or
+  processes.
+
+  The term "reactive" refers to programming models that are built around
+  reacting to change — network component reacting to I/O events, UI controller
+  reacting to mouse events, etc. In that sense non-blocking is reactive because
+  instead of being blocked we are now in the mode of reacting to notifications
+  as operations complete or data becomes available.
+
+  Spring Reactive Streams is a small spec, also adopted in Java 9, that defines
+  the interaction between asynchronous components with back pressure. For
+  example a data repository — acting as Publisher, can produce data that an
+  HTTP server — acting as Subscriber, can then write to the response. The main
+  purpose of Reactive Streams is to allow the subscriber to control how fast or
+  how slow the publisher will produce data.
+
+  Reactive Streams is of interest to low-level reusable libraries but
+  no final applications are better suites using a higher level and richer
+  (functional) API like Java8+ Collection-Stream API or more ingeneral APIs
+  like those provided by ReactiveRX.
+
+  Reactive programming can also be compared with the way data flows in Unix
+  pipelines when handling text files. In the next Unix command there is a
+  file input (it can be a real file in the hard-disk or a socket receiving
+  data) and the different commands in the pipe consume STDIN and result to
+  STDOUT for further processing.
+  ```
+  $ cat input.csv | grep "...." | sort | uniq | ... >  output.csv
+  ```
+  Reactive Java frameworks are ussually much fasters since everything executes
+  on the same process (a Unix pipeline requires the help of the underlying
+  OS to work), and the type of input/output data can be any sort of Java
+  object (not just file text).
+<!-- } -->
 
   ```
  Observable/Operators/Observers

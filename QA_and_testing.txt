@@ -1,8 +1,11 @@
-┌────────────────────────────┐
-│ JAVA QA & Testing "Zipped" │
-└────────────────────────────┘
-(This page is an always-work-in-progress.
- Contribute
+## Apropos
+* JAVA .
+* Content is versioned in git.  commits, issues and pull-requests welcome!
+  @[https://www.github.com/earizon/JAVA]
+* This __"cheat-sheet with steroids"__ presents an always-growing set of
+  Quality Assurance and Testing "Zipped" notes well ordered&amp;classified 
+  extracted from many, many places and author's own experience in different
+  projects.
 
 # Cost of software failures [[{qa.billion_dolar_mistake]]
 $312 billion per year: global cost of software bug (2013)
@@ -16,16 +19,18 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 2011: Software caused 25% of all medical device recalls.
 [[}]]
 
-# Checker framework [[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
+[[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
+# Checker framework 
 
 * (Java 8+)
 * fix errors at compile time  (vs later on at execution/runtime)
-@[https://github.com/typetools/checker-framework]
-@[https://checkerframework.org/manual/]
-@[https://www.youtube.com/watch?v=6E1CSydgzQc]
-@[https://www.baeldung.com/checker-framework]
+  * <https://github.com/typetools/checker-framework>
+  * <https://checkerframework.org/manual/>
+  * <https://www.youtube.com/watch?v=6E1CSydgzQc>
+  * <https://www.baeldung.com/checker-framework>
 
-  COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...)
+* COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...)
+  ```
                  ┌─────────────┬────────┬────────┐                 ┌──────────────────┬─────────────────────┐
                  │ Null Pointer│        │        │                 │ Verification     │ Bug─Finding         │
                  │    errors   │ False  │Annotat.│                 │ ( Checker FW ,)  │ (Infer,StopBugs,    │
@@ -45,49 +50,54 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │IntelliJ      │0    │ 9     │  1     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
   │+@NotNull 2017│3    │ 6     │  1     │ 925+8  │  │Downside      │ user burden      │ missed bugs         │
   └──────────────┴─────┴───────┴────────┴────────┘  └──────────────┴──────────────────┴─────────────────────┘
+  ```
 
-  PROBLEM: STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH
-   - Next examples compile, but fail at runtime:
-     System.console().readLine()       ; <·· Ex.1 NullPointer
+* **PROBLEM**: STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH  
+  Next examples compile properly, but fail at runtime:
+  ```
+  System.console().readLine()       ; <·· Ex.1 NullPointer
 
-     Collections.emptyList().add("one"); <·· Ex.2 Unsupported Operation
+  Collections.emptyList().add("one"); <·· Ex.2 Unsupported Operation
 
-     Date key1 = new Date();             <·· Ex.3
-     myMap.put(key1, "now");
-     myMap.get(key1);                        <··  returns "now"
-     key1.setSeconds(0);                     <··  Mutate key
-     myMap.get(key1);                        <··  returns null
-
-
-  SOLUTION:
+  Date key1 = new Date();             <·· Ex.3
+  myMap.put(key1, "now");
+  myMap.get(key1);                        <··  returns "now"
+  key1.setSeconds(0);                     <··  Mutate key
+  myMap.get(key1);                        <··  returns null
+  ```
+  **SOLUTION**:
    Java 8+ allows to compile programs using "PLUGGABLE TYPE SYSTEMs" ,
    allowing to apply stricter checks than default ones in compiler like
    Ex:
+   ```
    $ javac  -processor NullnessChecker  MyFile.java
+   ```
 
-    PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
-            (1)           No errors ²
-     Source ···> Compiler ·(No error ·····┬···> Executable
-       ^            │       detected      ·²         ^
-       ·            v                     v          ·
-       ·         Standard               Optional     · Guaranteed
-       ·         Compiler               Type      ···┘ Behaviour
-       ·         Errors                 Checker
-       ·                                  ·
-       ·                                  v
-       └·················· Warnings ······┘
+* PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
+  ```
+         (1)           No errors ²
+  Source ···> Compiler ·(No error ·····┬···> Executable
+    ^            │       detected      ·²         ^
+    ·            v                     v          ·
+    ·         Standard               Optional     · Guaranteed
+    ·         Compiler               Type      ···┘ Behaviour
+    ·         Errors                 Checker
+    ·                                  ·
+    ·                                  v
+    └·················· Warnings ······┘
 
-       ² plugable type system allows generation
-         of executable to allow CI continue the
-         pipeline with further tests (functional
-         testing, configuration testing, ...)
+    ² plugable type system allows generation
+      of executable to allow CI continue the
+      pipeline with further tests (functional
+      testing, configuration testing, ...)
+  ```
 
-## Instalation [[{]]
-
-0. Check new releases/versions at
-  @[https://search.maven.org/search?q=g:org.checkerframework]
+## Instalation <!-- { -->
+1. Check new releases/versions at
+   <https://search.maven.org/search?q=g:org.checkerframework>
 
 1. Add next pom.xml dependencies like:
+   ```
    <dependency>
        <groupId>org.checkerframework</groupId>
        <artifactId>checker-qual</artifactId>
@@ -103,96 +113,96 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
        <artifactId>jdk8</artifactId>
        <version>2.11.0</version>
    </dependency>
-
-
- 2. tweak maven-compiler-plugin to use Checker Framework
-    as a pluggable Type System:
-    <plugin>
-      <artifactId> maven-compiler-plugin </artifactId>
-      <version>3.6.1</version>
-      <configuration>
-        <source>1.8</source>
-        <target>1.8</target>
-        <compilerArguments>
-          <Xmaxerrs>10000</Xmaxerrs>
-          <Xmaxwarns>10000</Xmaxwarns>
-        </compilerArguments>
-        <annotationProcessors>                            <······ "==" javac -processor ...
+   ```
+1. tweak maven-compiler-plugin to use Checker Framework
+   as a pluggable Type System:
+   ```
+   <plugin>
+     <artifactId> maven-compiler-plugin </artifactId>
+     <version>3.6.1</version>
+     <configuration>
+       <source>1.8</source>
+       <target>1.8</target>
+       <compilerArguments>
+         <Xmaxerrs>10000</Xmaxerrs>
+         <Xmaxwarns>10000</Xmaxwarns>
+       </compilerArguments>
+       <annotationProcessors>                            <······ "==" javac -processor ...
+         <annotationProcessor>
+            org.checkerframework.checker.nullness.NullnessChecker
+          </annotationProcessor>
           <annotationProcessor>
-             org.checkerframework.checker.nullness.NullnessChecker
-           </annotationProcessor>
-           <annotationProcessor>
-             org.checkerframework.checker.interning.InterningChecker
-           </annotationProcessor>
-           <annotationProcessor>
-             org.checkerframework.checker.fenum.FenumChecker
-           </annotationProcessor>
-           <annotationProcessor>
-             org.checkerframework.checker.formatter.FormatterChecker
-           </annotationProcessor>
-        </annotationProcessors>
-        <compilerArgs>
-          <arg>-AprintErrorStack</arg>
-          <arg>-Awarns</arg>
-        </compilerArgs>
-      </configuration>
-    </plugin>
+            org.checkerframework.checker.interning.InterningChecker
+          </annotationProcessor>
+          <annotationProcessor>
+            org.checkerframework.checker.fenum.FenumChecker
+          </annotationProcessor>
+          <annotationProcessor>
+            org.checkerframework.checker.formatter.FormatterChecker
+          </annotationProcessor>
+       </annotationProcessors>
+       <compilerArgs>
+         <arg>-AprintErrorStack</arg>
+         <arg>-Awarns</arg>
+       </compilerArgs>
+     </configuration>
+   </plugin>
+   ```
 
-3.  Manually add extended type annotations in real Java code
-[[}]]
+1. Manually add extended type annotations in real Java code
+<!-- } -->
 
-## Ussage [[{]]
--   Avoiding Nulls
+## Daily Ussage [[{]]
 
-  CHECKS  ON TYPES
-
-
+* Avoiding Nulls:
+  ```
   private static int func1 (
-     @RequiresNonNull  String[] args   <·· func. preconditions.
+     @RequiresNonNull  String[] args  // <·· func. preconditions.
   ) {
-      @EnsuresNonNull final result;    <·· func. post-condition. variable is guaranteed to be non─null on return.
-      result = args.length;                Also: @EnsuresNonNullIf: variables is guaranteed to be non─null on ret.true/false
-      return result;
+      @EnsuresNonNull final result;   // <·· func. post-condition. variable is guaranteed
+      result = args.length;           //     to be non-null on return. 
+      return result;                  //     Also: @EnsuresNonNullIf: variables is guaranteed 
+                                      //     to be non─null on ret.true/false  
   }
 
   public static void main
     ( @Nullable  String[] args) {
       ...
-      func1(args);  //                 <·· [WARNING] ... [argument.type.incompatible]
-  }                                        incompatible types in argument.
-                                           found    : null
-                                           required : @Initialized @NonNull ...
+      func1(args);  //                 // <·· [WARNING] ... [argument.type.incompatible]
+  }                                    //     incompatible types in argument.
+                                       //     found    : null
+                                       //     required : @Initialized @NonNull ...
 
   static final
-     @Fenum("country") String ITALY = "IT",   <·· Safe Enum with Fenum (Fake enum)
+     @Fenum("country") String ITALY = "IT",         // <·· Safe "country" string.
      @Fenum("country") String US    = "US",
      ...
-     @Fenum("planet" ) String MARS   = "Mars",
+     @Fenum("planet" ) String MARS   = "Mars",      // <·· Safe "planet" string.
      @Fenum("planet" ) String EARTH   = "Earth";
   ...
 
-  void function1(                      <·· Function expected "planet" string
+  void function1(                      // <·· Function expected "planet" string
     @Fenum("planet") String inputPlanet){
       System.out.println("Hello " + planet);
   }
 
   public static void main(String[] args) {
-      obj.greetPlanets(US);            <·· [WARNING] ... incompatible types in argument.
-  }                                         found   : @Fenum("country") String
-                                            required: @Fenum("planet")  String
+      obj.greetPlanets(US);            // <·· [WARNING] ... incompatible types in argument.
+  }                                    //      found   : @Fenum("country") String
+                                       //      required: @Fenum("planet")  String
 
 
-  @Regex(1) static                     <·· Force regext string with at least one matching group
-      String FIND_NUMBERS = "\\d*";        <·· [WARNING] ... incompatible types in assignment.
-                                               found   : @Regex String
-                                               required: @Regex(1) String
+  @Regex(1) static                     // <·· Force regext string with at least one matching group
+      String FIND_NUMBERS = "\\d*";    //     <·· [WARNING] ... incompatible types in assignment.
+                                       //         found   : @Regex String
+                                       //         required: @Regex(1) String
 
-   @Untainted String                   <·· Validating tainted (non-trusted) input
+   @Untainted String                   // <·· Validating tainted (non-trusted) input
    validate (String sqlInput) {
       // ... Do any suitable checks
       //     OR THROW ON ERROR
-      @SuppressWarnings("tainting")        <·· "swear" that developer got sure
-      @Untainted String result = ...;           of input correctness
+      @SuppressWarnings("tainting")    //     <·· "swear" that developer got sure
+      @Untainted String result = ...;  //          of input correctness
       return result;
   }
 
@@ -201,18 +211,20 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   }
 
   public static void main(String[] args) {
-      obj.execSQL(arg[0]);                 <··  warning at compile time
-      obj.execSQL(validate(arg[0]));       <·· "OK". validate un-tain the input
+      obj.execSQL(arg[0]);             //  <··  warning at compile time
+      obj.execSQL(validate(arg[0]));   //  <·· "OK". validate un-tain the input
   }
 
-  @Immutable Date date = new Date();       <·· Mark as real immutable (vs weak "final")
-  date.setSeconds(0);                      <·· compile-time error
+  @Immutable Date date = new Date();   //  <·· Mark as real immutable (vs weak "final")
+  date.setSeconds(0);                  //  <·· compile-time error
+  ```
 [[}]]
 
 ## Avoiding (certain) concurrency errors [[{]]
   Lock Checker enforces a locking discipline:
   "which locks must be held when a given operation occurs"
 
+  ```
   CHECKS ON TYPES                             │ CHECKS ON FUNCTION DECLARATION
                                               │                 ┌────┬────┬───────────────────────────┐
    @GuardedBy("lockexpr1","lockexpr2",...)    │                 │FUNC│FUNC│DESCRIPTION                │
@@ -232,7 +244,10 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
                                               ││                │    │    │.lock()                    │
                                               ││                │    │    │if method return true|false│
                                               │└────────────────┴────┴────┴───────────────────────────┘
-   SIDE EFFECT SPECIFICATIONS
+  ```
+  
+  ```
+  SIDE EFFECT SPECIFICATIONS
   ┌────────────────────┬───────────────────────────────────────────────┐
   │ @LockingFree       │method does NOT acquire│release locks:         │
   │                    │· it is not synchronized,                      │
@@ -251,17 +266,20 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │ @EnsuresLockHeldIf │(default if no @LockingFree│@MayReleaseLocks│  │
   │                    │@SideEffectFree│@Pure used).                   │
   └────────────────────┴───────────────────────────────────────────────┘
+  ```
 [[}]]
 
--  Format String Checker
-  - prevents use of incorrect format strings in System.out.printf,....
-
-    void printFloatAndInt
-         ( @Format({FLOAT, INT})  String   format )
-    {
-      System.out.printf(  format , 3.1415, 42);
-    }
-- I18n Format Checker examples
+## Format String Checker
+* prevents use of incorrect format strings in System.out.printf,....
+  ```
+  void printFloatAndInt
+       ( @Format({FLOAT, INT})  String   format )
+  {
+    System.out.printf(  format , 3.1415, 42);
+  }
+  ```
+* I18n Format Checker examples
+  ```
   MessageFormat.format("{0} {1}", 3.1415);
                                         ^
                               second argument missing
@@ -276,20 +294,23 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   MessageFormat.format("{0, number, #.#.#}", 3.1415);
                                     ^^^^^
                               subformat is invalid.
+  ```
 
-- Property File Checker!!!!    TODO
-  - It ensures that used keys are found in the corresponding
-    property file or resource bundle.
+## Property File Checker!!!!  [[{PM.TODO]]
+* It ensures that used keys are found in the corresponding
+  property file or resource bundle.
+[[}]]  
 
-- GUI Effect Checker
-  - It is difficult for a programmer to remember
-    which methods may be called on which thread(s).
-    (Main GUI thread or others)
-   Checker types the method as if:
-   - It accesses no UI elements (and may run on any thread);
-   - It may access UI elements  (and must run on the UI thread)
+## GUI Effect Checker
+* It is difficult for a programmer to remember
+  which methods may be called on which thread(s).
+  (Main GUI thread or others)
+  Checker types the method as if:
+  * It accesses no UI elements (and may run on any thread);
+  * It may access UI elements  (and must run on the UI thread)
 
-- (physical) Internation System UNIT annotations :
+## (physical) Internation System UNIT annotations :
+  ```
   @Acceleration: Meter Per Second Square @mPERs2
   @Angle       : Radians @radians
                  Degrees @degrees
@@ -311,18 +332,22 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   @Time        : seconds @s
                  minutes @min
                  hours @h
+  ```
 
-- @Unsigned/@Signed ← guarantees values are not mixed
+## @Unsigned/@Signed
+* guarantees values are not mixed
 
-- type alias or typedef
-  share same representation as another type
+## type alias or typedef
+* share same representation as another type
   but is conceptually distinct from it.
+  ```1: get sure that Strings representing addresses
   Ex 1: get sure that Strings representing addresses
         and passwords are NOT mixed
   Ex 2: get sure that integers used for meters are
         not mixed with integers used for centimeters.
-
-  Example:
+  ```
+* Example:
+  ```
   @NonNull List<String>
   List<@NonNull String>
   @Regex String validation = "(Java|JDK) [7,8]"
@@ -337,7 +362,10 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
    ProcessBuilder processBuilder = new ProcessBuilder(command);
    Process process = processBuilder.start();
   }
-<hr/>
+  ```
+[[qa.101.checker_fw}]]
+
+[[{qa.101.spotbugs]]
 # SpotBugs
 @[https://github.com/spotbugs/spotbugs/issues]
 * OOSS static analysis tool for java code bugs.
@@ -352,12 +380,14 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   @[https://find-sec-bugs.github.io/]
     It can detect 141 different vulnerability types with
     over 823 unique API signatures.
+* When compared with SonarCube, SpotBugs emmits fewer false
+  possitives.
 
-## Running SpotBugs [[{]]
-  · Presetup. Compile java code to classes or jars.
-    SpotBugs runs against compiles class files, using source code
-    as a reference when displaying output.
-
+## Running SpotBugs
+* Presetup. Compile java code to classes or jars.
+  **SpotBugs runs against compiles class files, using source code
+  as a reference when displaying output.**
+  ```
   $ java -jar ../spotbugs.jar ...$SPOTBUG_ OPTIONS ..
 
                              JVM OPTIONS
@@ -497,42 +527,13 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   │
   │ </FindBugsFilter>
   └────────────────────────────────────────────
-[[}]]
+  ```
+[[qa.101.spotbugs}]]
 
-
-# Lint4j
-@[http://www.jutils.com/]
-*  WARN : Not maintained any more.
-* Lint4j ("Lint for Java") is a static Java source and byte code
-  analyzer that detects locking and threading issues, performance and
-  scalability problems, and checks complex contracts such as Java
-  serialization by performing type, data flow, and lock graph analysis.
-
-## Ussage
-  @[http://www.jutils.com/uguide.html]
-  $ lint4j \
-     -sourcepath src/main \             ← analyze source
-     -classpath lib/bcel.jar:... \
-     -exclude "packagename"   \         ← package or package-prefix
-     "com.jutils.lint4j.*"
-
-  $ lint4j -sourcepath .../log4j.jar    ← analyze binary
-      "org.apache.*"
-
-  $ lint4j  \
-     -sourcepath ./build/log4j.jar      ← analyze 2 package in jar
-     org.apache.log4j \
-     org.apache.log4j.spi
-
-  $ lint4j \
-    -sourcepath com/.../ClassN.java \
-                com/.../CalssJ.java
-
-[[qa.101.checker_fw}]]
-
-# SonarQube [[{qa.101.snarqube,01_PM.low_code,]]
-            [[concurrency.101,JAVA_LANG.DEBUGGING]]
-            [[scalability.profiling,01_PM.WiP]]
+[[{qa.101.snarqube,01_PM.low_code,]]
+[[concurrency.101,JAVA_LANG.DEBUGGING]]
+[[scalability.profiling,01_PM.WiP]]
+# SonarQube
 * SonarQube empowers all developers to write cleaner and safer code.
 * Comunity with 200K+ dev. teams.
 * Easely integrates with CI/CD pipelines.
@@ -542,48 +543,46 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 ## Running SonarQube:
 
- 1. Launch SonarQube Server:
-    ```
-    $ docker run -d --name sonarqube               \
-      -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
-      -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
-      -p 9000:9000 sonarqube:latest
-    ```
+1. Launch SonarQube Server:
+```
+$ docker run -d --name sonarqube               \
+  -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true    \
+  -v $(pwd)/sonarqube_data:/opt/sonarqube/data \
+  -p 9000:9000 sonarqube:latest
+```
+2. Create a new project through the web console
+   and annotate the 40-random-chars TOKEN.
+   (Needed by client-side sonar-scanner).
 
- 2. Create a new project through the web console
-    and annotate the 40-random-chars TOKEN.
-    (Needed by client-side sonar-scanner).
+3. "CLIENT SIDE"
+  * Setup `${PROJECT_SRC_ROOT}/sonar-project.properties`
+```
+┌─ sonar-project.properties ──
+│sonar.projectKey=my:project  ← Required
+│
+│#sonar.projectName=...       ← def:project key
+│#sonar.projectVersion=1.0    ← def:'not provided'
+│sonar.sources=src/java/      ← relative to
+│                               sonar-project.properties
+│#sonar.sourceEncoding=UTF-8
+│sonar.java.binaries=./build/ ← compiled *class dir.
+│sonar.java.libraries=...     ← ex: /lib/*.jar,./plugins/lib/*jar
+└─────────────────────────────
+```
+  * launch client scanner like:
+```
+$ mvn clean verify sonar:sonar \        <· alt1) using mvn plugin
+    -Dsonar.projectKey=test2 \
+    -Dsonar.host.url=http://...:9000 \
+    -Dsonar.login=$PROJECT_TOKEN
 
- 3. "CLIENT SIDE"
-    * Setup `${PROJECT_SRC_ROOT}/sonar-project.properties`
-      ```
-      ┌─ sonar-project.properties ──
-      │sonar.projectKey=my:project  ← Required
-      │
-      │#sonar.projectName=...       ← def:project key
-      │#sonar.projectVersion=1.0    ← def:'not provided'
-      │sonar.sources=src/java/      ← relative to
-      │                               sonar-project.properties
-      │#sonar.sourceEncoding=UTF-8
-      │sonar.java.binaries=./build/ ← compiled *class dir.
-      │sonar.java.libraries=...     ← ex: /lib/*.jar,./plugins/lib/*jar
-      └─────────────────────────────
-      ```
-
-    * launch client scanner like:
-       ```
-       $ mvn clean verify sonar:sonar \        <· alt1) using mvn plugin
-           -Dsonar.projectKey=test2 \
-           -Dsonar.host.url=http://...:9000 \
-           -Dsonar.login=$PROJECT_TOKEN
-
-       $ docker run \                          <· alt2) using docker
-         --rm \
-         -e SONAR_HOST_URL="http:...:9000" \
-         -e SONAR_LOGIN="$PROJECT_TOKEN" \
-         -v "${YOUR_REPO}:/usr/src" \
-         sonarsource/sonar-scanner-cli
-
+$ docker run \                          <· alt2) using docker
+  --rm \
+  -e SONAR_HOST_URL="http:...:9000" \
+  -e SONAR_LOGIN="$PROJECT_TOKEN" \
+  -v "${YOUR_REPO}:/usr/src" \
+  sonarsource/sonar-scanner-cli
+```
 
 * See original source for more info about SonarScanner Troubleshooting
   recipes, advanced docker config, running, caching scanner files,
@@ -594,10 +593,10 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 [[qa.101.snarqube}]]
 
-
 # JavaDoc [[{qa.101.javadoc,qa.documentation]]
 
-   Example
+* Example
+  ```
    /**
     * Short one line description.
     * <p>
@@ -630,8 +629,8 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
    public int methodName (...) {
        // method body with a return statement
    }
-[[}]]
-
+  ```
+[[qa.101.javadoc}]]
 
 # Junit [[{qa.junit.101,qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
 
@@ -653,11 +652,12 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
                       Depends on JUnit 4.12+
   ```
 * Junit (maven/gradle TEST scoped) dependencies:
-
+  ```
   org.junit.jupiter:junit-jupiter-api:${junit_version}
                     \---------------^- The org.junit.jupiter.api package @ junit-jupiter-api module
                                        contains the standard annotations for testing (@Test/@Before/...)
   org.junit.jupiter:junit-jupiter-engine:${junit_version}
+  ```
 
 ## Test life cycle:
 
@@ -671,9 +671,8 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
   * Java 16+: @BeforeAll, @AfterAll can be declared as static in @Nested test classes.
 
 
-## Documented test:
-
-
+## Documented test: <!-- { -->
+  ```
   import static org.junit.jupiter.api.Assertions.fail;
   import static org.junit.jupiter.api.Assertions.assertAll;
   import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -875,11 +874,11 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
        assertNotEquals(0, rank);
    }
   }
+  ```
+<!-- } -->
 
 
-
-## Other annotations:
-
+## Other JUnit annotations <!-- { -->
 ```
 @TestFactory : mark method as test factory for dynamic tests.
 @TestTemplate: mark method as template feeded with a number
@@ -945,109 +944,109 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 
 @TempDir: supply temp dir via field|parameter injection in lifecycle|test method.
           (org.junit.jupiter.api.io)
-
+```
+<!-- } -->
 
 ## Testsuites: run tests in multiple test classes and/or different packages.
-  @RunWith(JUnitPlatform.class)
-  @SelectPackages("com.myComp.junit5.package01")
-  public class JUnit5TestSuiteExample
-  { }
-
-* See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
-
+```
+@RunWith(JUnitPlatform.class)
+@SelectPackages("com.myComp.junit5.package01")
+public class JUnit5TestSuiteExample
+{ }
+```
+See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
 
 ## Dependency Injection for Constructors and Methods [[{]]
-* Junit 4: constructors or methods have zero params
-  Junit 5: constructors or methods have zero or more params
+* Junit 4: constructors or methods have zero params<br/>
+* Junit 5: constructors or methods have zero or more params
            allowing for Dependency Injection.
 * Injection Rules:
   1. If constructor, method or lifecycle method accepts a parameter
      the parameter must be resolved at runtime by a registered ParameterResolver.
   2. if constructor or method parameter is of type TestInfo, the TestInfoParameterResolver
      will supply an instance of TestInfo corresponding to the current container or test
-     as the value for the parameter.
-     TestInfo: provides info about the current container or test (display name,
-               test class,method,associated tags,...)
-               (drop-in replacement for `TestName` JUnit 4)
-
-    TestInfoDemo(TestInfo testInfo) {
-        assertEquals("TestInfo Demo", testInfo.getDisplayName());
-    }
-
+     as the value for the parameter.<br/>
+     **TestInfo**: provides info about the current container or test (display name,
+     test class,method,associated tags,...)
+     (drop-in replacement for `TestName` JUnit 4)
+```
+TestInfoDemo(TestInfo testInfo) {
+    assertEquals("TestInfo Demo", testInfo.getDisplayName());
+}
+```
  3. In a @RepeatedTest, @BeforeEach, or @AfterEach method there is a parameter
     of type RepetitionInfo, the RepetitionInfoParameterResolver will inject
     an instance that can be used to retrieve total number of repetitions.
-
  4. If parameter is of type TestReporter, the TestReporterParameterResolver will
     inject an instancte that can  be used to publish additional data about the
     current test run.
-
  5. Other parameter resolvers must be explicitly enabled by registering appropriate
     extensions via @ExtendWith.
 [[}]]
 
 2.16. Parameterized Tests [[{]]
+```
+@ParameterizedTest // <··························· Each parameterized test needs a
+@NullSource : provides a single null argument   // <·· test null inputs
+@EmptySource: provides a single empty argument  // <·· test empty imputs
+@ValueSource( strings = { "racecar", "radar" }) // <·· value source
+                                                // Set autoCloseArguments to false
+                                                // to false to avoid autoclossing
+                                                // params after each test if needed .
+@MethodSource("someMethodProvidindStrings")     // <·· example:
+void palindromes(String candidate) {                   static Stream<String> stringProvider() {
+    assertTrue(StringUtils.isPalindrome(candidate));       return Stream.of("...", ...);
+}                                                      }
+
+
+// Enum params
+@ParameterizedTest
+@EnumSource(ChronoUnit.class)
+@EnumSource(names = { "DAYS", "HOURS" })
+@EnumSource(mode = EXCLUDE, names = { "ERAS", "FOREVER" })
+@EnumSource(mode = MATCH_ALL, names = "^.*DAYS$")
+void testWithEnumSourceInclude(ChronoUnit unit) {
+    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
+}
+
+// Multi-argument examples
+static Stream<Arguments> stringIntAndListProvider() {
+   return Stream.of(
+       arguments("apple", 1, Arrays.asList("a", "b")),
+       ...);
+}
 
 @ParameterizedTest
+@MethodSource("stringIntAndListProvider")
+void multiArgumentTest(String str, int num, List<String> list) {
+    ...
+}
 
-    @ParameterizedTest // <··························· Each parameterized test needs a
-    @NullSource : provides a single null argument   // <·· test null inputs
-    @EmptySource: provides a single empty argument  // <·· test empty imputs
-    @ValueSource( strings = { "racecar", "radar" }) // <·· value source
-                                                    // Set autoCloseArguments to false
-                                                    // to false to avoid autoclossing
-                                                    // params after each test if needed .
-    @MethodSource("someMethodProvidindStrings")     // <·· example:
-    void palindromes(String candidate) {                   static Stream<String> stringProvider() {
-        assertTrue(StringUtils.isPalindrome(candidate));       return Stream.of("...", ...);
-    }                                                      }
-
-
-    // Enum params
-    @ParameterizedTest
-    @EnumSource(ChronoUnit.class)
-    @EnumSource(names = { "DAYS", "HOURS" })
-    @EnumSource(mode = EXCLUDE, names = { "ERAS", "FOREVER" })
-    @EnumSource(mode = MATCH_ALL, names = "^.*DAYS$")
-    void testWithEnumSourceInclude(ChronoUnit unit) {
-        assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
-    }
-
-    // Multi-argument examples
-    static Stream<Arguments> stringIntAndListProvider() {
-       return Stream.of(
-           arguments("apple", 1, Arrays.asList("a", "b")),
-           ...);
-    }
-
-    @ParameterizedTest
-    @MethodSource("stringIntAndListProvider")
-    void multiArgumentTest(String str, int num, List<String> list) {
-        ...
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-         "apple,         1",
-         "banana,        2",
-         "'lemon, lime', 0xF1",
-         "NIL,           700_000"
-       },
-       nullValues = "NIL"
-       ignoreLeadingAndTrailingWhitespace = true,
-    // textBlock = """        <··· Java 15+
-    //   apple,         1
-    //   NILL,    700_000
-    //   ... """
-    )
-    @CsvFileSource(resources = "/two-column.csv", numLinesToSkip = 1)
-    void test(String fruit, int rank) { ...  }
+@ParameterizedTest
+@CsvSource({
+     "apple,         1",
+     "banana,        2",
+     "'lemon, lime', 0xF1",
+     "NIL,           700_000"
+   },
+   nullValues = "NIL"
+   ignoreLeadingAndTrailingWhitespace = true,
+// textBlock = """        <··· Java 15+
+//   apple,         1
+//   NILL,    700_000
+//   ... """
+)
+@CsvFileSource(resources = "/two-column.csv", numLinesToSkip = 1)
+void test(String fruit, int rank) { ...  }
+```
 [[}]]
 
 ## Console Launcher (junit-platform-console-standalone-x.x.x.jar)
+```
 $ java -jar junit-platform-console-standalone-1.9.3.jar  # alt 1.
 $ java -cp classes:testlib/*                             # alt 2.
      org.junit.platform.console.ConsoleLauncher
+```
 
 ## Listeners [[{]]
 * APIs allowing JUnit, third parties, and custom code to react to events fired at
@@ -1063,92 +1062,103 @@ $ java -cp classes:testlib/*                             # alt 2.
 
 [[qa.junit.101}]]
 
-## AssertJ (Fluent Assertions) is composed of several modules:  [[{01_PM.TODO]]
-  - core      module: assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
-  - Guava     module: assertions for Guava types (Multimap, Optional...)
-  - Joda Time module: assertions for Joda Time types (DateTime, LocalDateTime)
-  - Neo4J     module: assertions for Neo4J types (Path, Node, Relationship...)
-  - DB        module: assertions for relational database types (Table, Row, Column...)
-  - Swing     module provides a simple and intuitive API for functional testing of Swing user interfaces
+## AssertJ (Fluent Assertions) [[{01_PM.TODO,qa.junit.assertj]]
+* composed of several modules: 
+  ```
+  MODULE 
+  - core      assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
+  - core      assertions for JDK types (String, Iterable, Stream, Path, File, Map...)
+  - Guava     assertions for Guava types (Multimap, Optional...)
+  - Joda Time assertions for Joda Time types (DateTime, LocalDateTime)
+  - Neo4J     assertions for Neo4J types (Path, Node, Relationship...)
+  - DB        assertions for relational database types (Table, Row, Column...)
+  - Swing     provides a simple and intuitive API for functional testing of Swing user interfaces
+  ```
 
-  import static org.assertj.core.api.Assertions.*;
-  ...
-  assertThat(frodo.getName()).isEqualTo("Frodo"); //  ← basic assertions
-  assertThat(frodo).isNotEqualTo(sauron);
+* Example:
+```
+import static org.assertj.core.api.Assertions.*;
+...
+assertThat(frodo.getName()).isEqualTo("Frodo"); //  ← basic assertions
+assertThat(frodo).isNotEqualTo(sauron);
 
-  assertThat(frodo.getName())                     // ← chaining string specific assertions
-      .startsWith("Fro")
-      .endsWith("do")
-      .isEqualToIgnoringCase("frodo");
+assertThat(frodo.getName())                     // ← chaining string specific assertions
+    .startsWith("Fro")
+    .endsWith("do")
+    .isEqualToIgnoringCase("frodo");
 
-  assertThat(fellowshipOfTheRingList)            // ← collection specific assertions
-     .hasSize(9)                                 //   (there are plenty more)
-     .contains(frodo, sam)
-     .doesNotContain(sauron);
+assertThat(fellowshipOfTheRingList)            // ← collection specific assertions
+   .hasSize(9)                                 //   (there are plenty more)
+   .contains(frodo, sam)
+   .doesNotContain(sauron);
 
-  assertThat(frodo.getAge())
-     .as("check %s's age", frodo.getName())     // ← as() used to describe the test
-     .isEqualTo(33);                            //    will be shown before the error message
+assertThat(frodo.getAge())
+   .as("check %s's age", frodo.getName())     // ← as() used to describe the test
+   .isEqualTo(33);                            //    will be shown before the error message
 
-  assertThatThrownBy(() -> {                    // ← exception assertion ( standard style)
-     throw new Exception("boom!"); })
-  .hasMessage("boom!");
-  Throwable thrown = catchThrowable(() -> {     // ← exception assertion  ( BDD style)
-     throw new Exception("boom!");
-  });
-  assertThat(thrown).hasMessageContaining("boom");
+assertThatThrownBy(() -> {                    // ← exception assertion ( standard style)
+   throw new Exception("boom!"); })
+.hasMessage("boom!");
+Throwable thrown = catchThrowable(() -> {     // ← exception assertion  ( BDD style)
+   throw new Exception("boom!");
+});
+assertThat(thrown).hasMessageContaining("boom");
 
-  assertThat(fellowshipOfTheRingList)
-      .extracting(TolkienCharacter::getName)    // ← 'extracting' feature on Collection
-      .doesNotContain("Sauron", "Elrond");      //
+assertThat(fellowshipOfTheRingList)
+    .extracting(TolkienCharacter::getName)    // ← 'extracting' feature on Collection
+    .doesNotContain("Sauron", "Elrond");      //
 
-  assertThat(fellowshipOfTheRingList)
-     .extracting("name", "age", "race.name")    // extracting multiple values at once grouped in tuples
-     .contains(
-        tuple("Boromir",   37, "Man"   ),
-        tuple("Sam"    ,   38, "Hobbit"),
-        tuple("Legolas", 1000, "Elf"   ) );
+assertThat(fellowshipOfTheRingList)
+   .extracting("name", "age", "race.name")    // extracting multiple values at once grouped in tuples
+   .contains(
+      tuple("Boromir",   37, "Man"   ),
+      tuple("Sam"    ,   38, "Hobbit"),
+      tuple("Legolas", 1000, "Elf"   ) );
 
-  assertThat(fellowshipOfTheRingList)
-    .filteredOn(                              // ← filtering before asserting
-      fellow -> fellow.getName().contains("o")
-    )
-    .containsOnly(aragorn, frodo);
+assertThat(fellowshipOfTheRingList)
+  .filteredOn(                              // ← filtering before asserting
+    fellow -> fellow.getName().contains("o")
+  )
+  .containsOnly(aragorn, frodo);
 
-  assertThat(fellowshipOfTheRingList)
-    .filteredOn(                              // combining filtering and extraction
-      fellow -> fellow.getName().contains("o")
-    )
-    .containsOnly(aragorn, frodo)
-    .extracting(
-       fellow -> fellow.getRace().getName())
-    .contains("Hobbit", "Elf");
+assertThat(fellowshipOfTheRingList)
+  .filteredOn(                              // combining filtering and extraction
+    fellow -> fellow.getName().contains("o")
+  )
+  .containsOnly(aragorn, frodo)
+  .extracting(
+     fellow -> fellow.getRace().getName())
+  .contains("Hobbit", "Elf");
 
-  // and many more assertions:
-  // iterable, stream, array, map, dates, path, file, numbers, predicate, optional ...
-[[}]]
+// and many more assertions:
+// iterable, stream, array, map, dates, path, file, numbers, predicate, optional ...
+```
+[[01_PM.TODO,qa.junit.assertj}]]
 
-# Property Testing [[{qa.testing.property]]
-* A property testing is just something like:
+[[{qa.testing.property]]
+# Property Testing
 
-  for all (x, y, ...)
-  such as precondition(x, y, ...) holds
-  property(x, y, ...) is true
+ A property testing is just something like:
+```
+for all (x, y, ...)
+such as precondition(x, y, ...) holds
+property(x, y, ...) is true
+```
 
-  It checks that a function/program/whatever is under test
-  abides by a property.  Most of the time, properties do not
-  have to go into too much details about the output, they
-  just have to check for useful characteristics that must be
-  seen in the output.
+ It checks that a function/program/whatever is under test
+abides by a property.  Most of the time, properties do not
+have to go into too much details about the output, they
+just have to check for useful characteristics that must be
+seen in the output.
 
-* Property based testing has become quite famous in the functional
-  world. Mainly introduced by QuickCheck framework in Haskell, it
-  suggests another way to test software. IT TARGETS ALL THE SCOPE
-  COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
+ Property based testing has become quite famous in the functional
+world. Mainly introduced by QuickCheck framework in Haskell, it
+suggests another way to test software. IT TARGETS ALL THE SCOPE
+COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
 
 * Available automated test technics:
  @[https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237]
-
+ ```
           △ • Random
      full ┆   - Fuzzing
        △  ┆   - Monkey testing
@@ -1161,10 +1171,11 @@ $ java -cp classes:testlib/*                             # alt 2.
    partial┆   - ...
          ─┼─╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶▷
             Low  ← Feature compliance →    High
+ ```
 
-
-* Extracted from @[https://en.wikipedia.org/wiki/QuickCheck].
-  List of Java libs for property testing :
+Extracted from @[https://en.wikipedia.org/wiki/QuickCheck]<br/>
+* List of Java libs for property testing 
+  ```
   "FunctionalJava's QuickCheck module". FunctionalJava.  2015-08-14
   "Quickcheck for Java". Quickcheck.dev.java.net.        2011-12-09
   "JCheck". JCheck.                                      2011-12-09
@@ -1172,9 +1183,10 @@ $ java -cp classes:testlib/*                             # alt 2.
   "jqwik for the JUnit5 Platform". jqwik.                2017-06-19
   "Quick Theories property tests Java 8"                 2017-10-30
   "jetCheck prop.-based tests    Java 8" (JetBrains)     2018-07-10
-
+  ```
 
 * e.g. test using 'jqwik':
+  ```
   """ fizzBuzz() must return "Fizz"
       for every divisible-by-3 input """
   →  PRECONDITION: Consider inputs in [1 ... 100] divisible by 3
@@ -1215,6 +1227,7 @@ $ java -cp classes:testlib/*                             # alt 2.
                .startsWith("Fizz");          // ← check Postcondition
       }
   }
+  ```
 [[qa.testing.property}]]
 
 
@@ -1225,44 +1238,51 @@ $ java -cp classes:testlib/*                             # alt 2.
 # TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,01_PM.TODO]]
 @[https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type]
 ( TODO: Compare how it compares/overlaps CheckerFramework )
+```
+  @NonNull  compiler can determine cases where a │ @(Un)Tainted   Identity types of data that should
+            code path might receive a null value,│                not be used together, such as remote
+            without ever having to debug a       │                user input being used in system
+            NullPointerException. The compiler   │                commands, or sensitive information in
+            just print a warning, but it         │                log streams
+            continues to compile!!!              │
+                                                 │ @              Units of measure ensures that numbers
+  @ReadOnly compiler will flag any attempt to    │                used for measuring objects are used
+            change the object. This is similar to│                and compared correctly, or have
+            Collections.unmodifiableList, but    │                undergone the proper unit
+            more general and verified at compile │                conversion.
+            time.                                │
+  @Regex    Provides compile-time verification   │ @FunctionalInterface  indicates that the type declaration
+            that a String intended to be used as │                is intended to be a functional
+            a regular expression is a properly   │                interface, as defined by the Java
+            formatted regular expression.        │                Language Spec.
+```
 
-  @NonNull      compiler can determine cases where a      │ @(Un)Tainted          Identity types of data that should
-                code path might receive a null value,     │                       not be used together, such as remote
-                without ever having to debug a            │                       user input being used in system
-                NullPointerException. The compiler        │                       commands, or sensitive information in
-                just print a warning, but it              │                       log streams
-                continues to compile!!!                   │
-                                                          │ @                     Units of measure ensures that numbers
-  @ReadOnly     compiler will flag any attempt to         │                       used for measuring objects are used
-                change the object. This is similar to     │                       and compared correctly, or have
-                Collections.unmodifiableList, but         │                       undergone the proper unit
-                more general and verified at compile time.│                       conversion.
-                                                          │
-  @Regex        Provides compile-time verification        │ @FunctionalInterface  indicates that the type declaration
-                that a String intended to be used as      │                       is intended to be a functional
-                a regular expression is a properly        │                       interface, as defined by the Java
-                formatted regular expression.             │                       Language Spec.
+* Examples :
+```
+Annotation
+@NonNull List<String>                          // <·· A non-null list of Strings.
+List<@NonNull String>                          // <·· A list of non-null Strings.
+@Regex String validation = "(Java|JDK) [7,8]"  // <·· Check at compile time that this 
+                                               //     String is a valid regular expression.
+private String getInput(String parameterName){ // <·· The object assigned to retval is tainted
+                                               //     and not for use in sensitive operations.
+  final String retval =
+    @Tainted request.getParameter(parameterName);
+  return retval;
+}
 
-└  Examples :
-  Annotation
-  @NonNull List<String>                              ← A non-null list of Strings.
-  List<@NonNull String>                              ← A list of non-null Strings.
-  @Regex String validation = "(Java|JDK) [7,8]"      ← Check at compile time that this String is a valid regular expression.
-  private String getInput(String parameterName){     ← The object assigned to retval is tainted and not for use in sensitive operations.
-    final String retval =
-      @Tainted request.getParameter(parameterName);
-    return retval;
-  }
-
-  private void runCommand(@Untainted String… commands){            Each command must be untainted. For example, the previously
-    ProcessBuilder processBuilder = new ProcessBuilder(command);   tainted String must be validated before being passed in here.
-
-    Process process = processBuilder.start();
-  }
+private void 
+runCommand(@Untainted String... commands){     // <·· Each command must be untainted. 
+  ProcessBuilder processBuilder                //     For example, the previously tainted
+     = new ProcessBuilder(command);            //     String must be validated before 
+                                               //     being passed in here.
+  Process process = processBuilder.start();
+}
+```
 [[}]]
 
 # Behavior Driven Development (BDD)
-## BDD KEYPOINTS [[{]]
+## BDD KEYPOINTS  <!-- { -->
   C&P&Summarized from "The Cucumber For Java Book" (by Seb Rose, Matt Wynne and Aslak Hellesøy)
 * Help developers, project managers, product owners and testers
   develop functional-test scripts:
@@ -1292,7 +1312,7 @@ $ java -cp classes:testlib/*                             # alt 2.
   process. That development takes work. It takes effort to really listen to one
   another and agree on the words you’ll use, and it takes discipline to stick to
   those commitments.
-[[}]]
+<!-- } -->
 
 # Cucumber BDD [[{]]
 * Multilanguage (Java, Ruby, Go, Python,...)
@@ -1325,39 +1345,40 @@ $ java -cp classes:testlib/*                             # alt 2.
 
 ## Cucumber JAVA + Maven Setup:
 
-  ```
-  <dependency>
-    <groupId>info.cukes</groupId>
-    <artifactId>cucumber-java</artifactId>
-    <version>1.0.2</version>
-    <scope>test</scope>
-  </dependency>
+```
+<dependency>
+  <groupId>info.cukes</groupId>
+  <artifactId>cucumber-java</artifactId>
+  <version>1.0.2</version>
+  <scope>test</scope>
+</dependency>
 
-  <dependency>
-    <groupId>info.cukes</groupId>
-    <artifactId>cucumber-junit</artifactId>
-    <version>1.0.2</version>
-    <scope>test</scope>
-  </dependency>
-  ```
+<dependency>
+  <groupId>info.cukes</groupId>
+  <artifactId>cucumber-junit</artifactId>
+  <version>1.0.2</version>
+  <scope>test</scope>
+</dependency>
+```
 
 ## Ussage from command line:
-   $ java -cp "jars/*" cucumber.api.cli.Main --help
+```
+ $ java -cp "jars/*" cucumber.api.cli.Main --help
 
-   Example shell script to launch cucumber tests:
-   javac -cp "jars/*" \
-      step_definitions/CheckoutSteps.java <··· compile Steps definitions
-   java -cp "jars/*:." \
-      cucumber.api.cli.Main \             <··· Cucumber CLI interface
-      -p pretty \                         <··· use pretty formatter plugin (or -p progress ..)
-      --snippets camelcase \
-      -g step_definitions \               <··· Where to look for Step definitions
-      --strict                            <··· Returns -1 if there are undef.|pending steps.
-      features/                           <··· Path to *.feature files
+ Example shell script to launch cucumber tests:
+ javac -cp "jars/*" \
+    step_definitions/CheckoutSteps.java <··· compile Steps definitions
+ java -cp "jars/*:." \
+    cucumber.api.cli.Main \             <··· Cucumber CLI interface
+    -p pretty \                         <··· use pretty formatter plugin (or -p progress ..)
+    --snippets camelcase \
+    -g step_definitions \               <··· Where to look for Step definitions
+    --strict                            <··· Returns -1 if there are undef.|pending steps.
+    features/                           <··· Path to *.feature files
+```
 
---------------------------------------------------------
+## Features KEYPOINT
 
-## Features KEYPOINT:
 > When writing Cucumber features, make readability your main goal.
 > Otherwise, a reader can easily feel more like they’re reading a computer pro-
 > gram than a specification document, which is something we want you to try
@@ -1365,6 +1386,7 @@ $ java -cp classes:testlib/*                             # alt 2.
 > to read, you might as well just be writing your tests in plain old code.
 > Each `Feature` is tested in one or more `Scenario`s (`Scenario Outline`s)
 
+```
 Feature: The user must be able to checkout provided
   he has control of a credit card
   # `Background` avoid repetitive code to all scenarios
@@ -1446,84 +1468,86 @@ Feature: The user must be able to checkout provided
 
   NOTE: `Given`, `When`, `Then`, `And`, `But` are actually ALIASES to
         `StepDefAnnotation`. The distintion is made just for human readability.
+```
 
+## Tabulated test data <!-- { -->
 
-## Tabulated test data [[{]]
+```
+     ┌─ BoardSteps ─────────────────────────────────────┐ ┌─ board.feature ──────────────────────────┐
+     │ package tic_tac_toe;                             │ │ Feature:                                 │
+     │                                                  │ │   Scenario:                              │
+     │ import cucumber.api.java.en.*;                   │ │                                          │
+     │ import cucumber.api.PendingException;            │ │                                          │
+     │ import cucumber.api.DataTable;                   │ │                                          │
+     │                                                  │ │                                          │
+     │ // Managing tests with tables:                   │ │                                          │
+     │ public class BoardSteps {                        │ │                                          │
+     │                                                  │ │                                          │
+     │   @Given("^a board like this:$")                 │ │     Given a board like this:             │
+  ┌··>   public void aBoardLikeThis(DataTable arg1)     │ │     |   | 1 | 2 | 3 |                    │
+  ·  │  throws Throwable {                              │ │     | 1 |   |   |   |                    │
+  ·  │     // Mark as pending!!!                        │ │     | 2 |   |   |   |                    │
+  ·  │     throw new PendingException();                │ │     | 3 |   |   |   |                    │
+  ·  │   }                                              │ │                                          │
+  ·  │                                                  │ │                                          │
+  ·  │   @When("^X plays in row (\\d+), column (\\d+)$")│ │    When X plays in row 2, column 1       │
+  ·  │   public void                                    │ │                                          │
+  ·  │     playerXPlaysInRowColumn(int arg1, int arg2)  │ │                                          │
+  ·  │   throws Throwable {                             │ │                                          │
+  ·  │     throw new PendingException();                │ │                                          │
+  ·  │   }                                              │ │                                          │
+  ·  │                                                  │ │                                          │
+  ·  │   @Then("^the board should look like this:$")    │ │    Then the board should look like this: │
+  ·  │   public void                                    │ │     |   | 1 | 2 | 3 |                    │
+  ├··>      theBoardShouldLookLikeThis(DataTable arg1)  │ │     | 1 |   |   |   |                    │
+  ·  │   throws Throwable {                             │ │     | 2 | x |   |   |                    │
+  ·  │     throw new PendingException();                │ │     | 3 |   |   |   |                    │
+  ·  │   }                                              │ └──────────────────────────────────────────┘
+  ·  │ }                                                │
+  ·  └──────────────────────────────────────────────────┘
+  └·· For automatic transformation, change DataTable to one of
+      List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
+      E,K,V must be a scalar (String, Integer, Date, enum etc)
    ```
-   ┌─ BoardSteps ─────────────────────────────────────┐ ┌─ board.feature ──────────────────────────┐
-   │ package tic_tac_toe;                             │ │ Feature:                                 │
-   │                                                  │ │   Scenario:                              │
-   │ import cucumber.api.java.en.*;                   │ │                                          │
-   │ import cucumber.api.PendingException;            │ │                                          │
-   │ import cucumber.api.DataTable;                   │ │                                          │
-   │                                                  │ │                                          │
-   │ // Managing tests with tables:                   │ │                                          │
-   │ public class BoardSteps {                        │ │                                          │
-   │                                                  │ │                                          │
-   │   @Given("^a board like this:$")                 │ │     Given a board like this:             │
-┌··>   public void aBoardLikeThis(DataTable arg1)     │ │     |   | 1 | 2 | 3 |                    │
-·  │  throws Throwable {                              │ │     | 1 |   |   |   |                    │
-·  │     // Mark as pending!!!                        │ │     | 2 |   |   |   |                    │
-·  │     throw new PendingException();                │ │     | 3 |   |   |   |                    │
-·  │   }                                              │ │                                          │
-·  │                                                  │ │                                          │
-·  │   @When("^X plays in row (\\d+), column (\\d+)$")│ │    When X plays in row 2, column 1       │
-·  │   public void                                    │ │                                          │
-·  │     playerXPlaysInRowColumn(int arg1, int arg2)  │ │                                          │
-·  │   throws Throwable {                             │ │                                          │
-·  │     throw new PendingException();                │ │                                          │
-·  │   }                                              │ │                                          │
-·  │                                                  │ │                                          │
-·  │   @Then("^the board should look like this:$")    │ │    Then the board should look like this: │
-·  │   public void                                    │ │     |   | 1 | 2 | 3 |                    │
-├··>      theBoardShouldLookLikeThis(DataTable arg1)  │ │     | 1 |   |   |   |                    │
-·  │   throws Throwable {                             │ │     | 2 | x |   |   |                    │
-·  │     throw new PendingException();                │ │     | 3 |   |   |   |                    │
-·  │   }                                              │ └──────────────────────────────────────────┘
-·  │ }                                                │
-·  └──────────────────────────────────────────────────┘
-└·· For automatic transformation, change DataTable to one of
-    List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
-    E,K,V must be a scalar (String, Integer, Date, enum etc)
-   ```
-[[}]]
+<!-- } -->
 
 ## Step Definition Code Snippets
-  ```
-  assertEquals(total, checkout.total()); // Launch AssertionError if false
-  throw new PendingException(); // mark test as pending ("half way" done)
 
-  Cucumber Hooks examples:
-  package hooks;
-  import cucumber.api.Scenario;
+```
+assertEquals(total, checkout.total()); // Launch AssertionError if false
+throw new PendingException(); // mark test as pending ("half way" done)
 
-  public class SomeTestHooks {
-   //                        /--------v-··· optional: Selectively run the hook
-   @cucumber.api.java.Before("@webTest")  // If Scenario is tagged with tag.
-   public void resetBeforeCallingScenario() {
-     // let's reset to stable state "anything"
-     ...
-   }
+Cucumber Hooks examples:
+package hooks;
+import cucumber.api.Scenario;
 
-   @cucumber.api.java.After
-   public void afterRunningScenario(Scenario scenario) {
-   System.out.println("... " + scenario.getStatus());
-   }
-  }
-  ```
+public class SomeTestHooks {
+ //                        /--------v-··· optional: Selectively run the hook
+ @cucumber.api.java.Before("@webTest")  // If Scenario is tagged with tag.
+ public void resetBeforeCallingScenario() {
+   // let's reset to stable state "anything"
+   ...
+ }
 
+ @cucumber.api.java.After
+ public void afterRunningScenario(Scenario scenario) {
+ System.out.println("... " + scenario.getStatus());
+ }
+}
+```
 [[}]]
 
-# BDD Serenity Testing [[{qa.testing.bdd.serenity,qa.documentation,01_PM.TODO]]
+[[{qa.testing.bdd.serenity,qa.documentation,01_PM.TODO]]
+# BDD Serenity Testing
 @[https://serenity-bdd.github.io/theserenitybook/latest/index.html]
 
 * Serenity BDD provides strong support for different
   types of automated acceptance testing, including:
-- Web testing with Selenium.
-- REST API testing with RestAssured.
-- Highly readable, maintainable and scalable automated
-  testing with the Screenplay pattern.
-- BDD-style executable specifications with Cucumber
+  * Web testing with Selenium.
+  * REST API testing with RestAssured.
+  * Highly readable, maintainable and scalable automated
+    testing with the Screenplay pattern.
+  * BDD-style executable specifications with Cucumber
 
 * Serenity reports also include how tests were tested,
   including step-by-step details and optional screenshots,
@@ -1537,21 +1561,22 @@ Feature: The user must be able to checkout provided
 
 * Serenity BDD automated acceptance testing libraries
   includ:
-  - REST API testing with RestAssured.
-  - Highly readable, maintainable and scalable automated
+  * REST API testing with RestAssured.
+  * Highly readable, maintainable and scalable automated
     testing with the Screenplay pattern.
-  - Rich built-in support for web testing with Selenium.
-  - Cucumber or JBehave for BDD.
+  * Rich built-in support for web testing with Selenium.
+  * Cucumber or JBehave for BDD.
 
 
 ## Screenplay Pattern [[{]]
-https://serenity-bdd.github.io/docs/tutorials/screenplay
+
+* <https://serenity-bdd.github.io/docs/tutorials/screenplay>
 * write readable test automation modeled around the user.
 * built on good software engineering principles such as:
   * Single Responsibility Principle.
   * Open-Closed Principle
   * effective use of Layers of Abstraction.
-
+ ```
  ┌·performs··>|tasks|¹    ¹Task       : action/s to perform some goal.
  ·              ◇         ²Interaction: action    with the App.(UI,...)
  ·              ·
@@ -1568,10 +1593,10 @@ https://serenity-bdd.github.io/docs/tutorials/screenplay
              v    ·
          |Questions|
           about the system
+ ```
 
 * Example:
   ```
-
   ┌───┬─·····················  Screenplay test: User-centric model:
   ·   ·                        "everything" starts
   ·   ·                        with the actor, interacting with the app
@@ -1589,23 +1614,21 @@ https://serenity-bdd.github.io/docs/tutorials/screenplay
   );
   ```
 
-Quick start: clone one of the starter projects.
+* Quick start: clone one of the starter projects.
+  * <https://github.com/serenity-bdd/serenity-cucumber-starter>
+  * <https://github.com/serenity-bdd/serenity-junit-starter>
+  * <https://github.com/serenity-bdd/serenity-junit-screenplay-starter>
+  * <https://github.com/serenity-bdd/docs-starter-tutorial>
+  * <https://github.com/serenity-bdd/serenity-rest-starter>
+  * <https://github.com/serenity-bdd/serenity-jbehave-starter>
+  * <https://github.com/serenity-bdd/serenity-cucumber4-starter>
+  * <https://github.com/serenity-bdd/bdd-starter>
+  * <https://github.com/serenity-bdd/serenity-cucumber5-starter>
 
-https://github.com/serenity-bdd/serenity-cucumber-starter
-https://github.com/serenity-bdd/serenity-junit-starter
-https://github.com/serenity-bdd/serenity-junit-screenplay-starter
-https://github.com/serenity-bdd/docs-starter-tutorial
-https://github.com/serenity-bdd/serenity-rest-starter
-https://github.com/serenity-bdd/serenity-jbehave-starter
-https://github.com/serenity-bdd/serenity-cucumber4-starter
-https://github.com/serenity-bdd/bdd-starter
->https://github.com/serenity-bdd/serenity-cucumber5-starter
-
-Ex: Serenity Screenplay and JUnit 5.
-
-We will use some simple conventions to organise our test classes, based on the standard Maven project structure you can see here:
-
-
+* Ex: Serenity Screenplay and JUnit 5.<b re/>
+  We will use some simple conventions to organise our test classes, 
+  based on the standard Maven project structure you can see here:
+  ```
  ┌────────────┬─··········  standard maven convention for JAVA tests
  src/test/java/todomvc/features   <·· test clases
  src/test/java/todomvc/screenplay <·· Screenplay classes, designed to be highly modular and reusable,
@@ -1615,12 +1638,14 @@ We will use some simple conventions to organise our test classes, based on the s
  src/test/resources/serenity.conf <·· JUnit test results are based on the package structure
                                       set here the root package for tests.
  + serenity.test.root = todomvc.features
+  ```
 
 ### Writing an scenario
 
 * Creating the test case:
-   Test: add a 'to do' item (say, "Buy some milk") to an empty list.
+  Test: add a 'to do' item (say, "Buy some milk") to an empty list.
 
+  ```
   src/test/java/todomvc/features
 
   package todomvc.features;
@@ -1656,29 +1681,31 @@ We will use some simple conventions to organise our test classes, based on the s
         );                                  about the state of the application.
     }
   }
-
+  ```
+  ```
   $ mvn clean verify  # Generate test reports
-
-$ mvn verify...
-[INFO] -----------------------------------------
-[INFO]  SERENITY TESTS: SUCCESS
-[INFO] -----------------------------------------
-[INFO] | Test cases executed    | 1
-[INFO] | Tests executed         | 1
-[INFO] | Tests passed           | 1
-[INFO] | ...
-...
-[INFO] SERENITY REPORTS
-[INFO]   - Full Report: file:.../index.html
-[INFO] ...
-[INFO] BUILD SUCCESS
+  $ mvn verify...
+  [INFO] -----------------------------------------
+  [INFO]  SERENITY TESTS: SUCCESS
+  [INFO] -----------------------------------------
+  [INFO] | Test cases executed    | 1
+  [INFO] | Tests executed         | 1
+  [INFO] | Tests passed           | 1
+  [INFO] | ...
+  ...
+  [INFO] SERENITY REPORTS
+  [INFO]   - Full Report: file:.../index.html
+  [INFO] ...
+  [INFO] BUILD SUCCESS
+  ```
 [[}]]
 
 ## Rest Testing:  [[{]]
 * TIGHT INTEGRATION WITH REST ASSURED !!!
-  https://serenity-bdd.github.io/docs/tutorials/rest
+  <https://serenity-bdd.github.io/docs/tutorials/rest>
 
 * PRESETUP:
+ ```
  $ editor pom.xml
    <dependencies>
      ...
@@ -1695,8 +1722,10 @@ $ mvn verify...
    src/main/java/starter                    <·· empty. Just testing public Pet Store API
    src/test/java/starter                    <·· test class/es + helpers
    src/test/java/starter/petstore/resources <·· re-use (from the template) the contents already there
+ ```
 
-
+* Ussage:
+ ```
   package starter.petstore;
   import io.cucumber.java.en.Given;
   import io.cucumber.java.en.Then;
@@ -1733,8 +1762,9 @@ $ mvn verify...
         .body("name", Matchers.equalTo("Kitty"));
       }
   }
+ ```
 
-  ──────────────────────────────────────────────────────
+* ```
   package starter.petstore;
   import net.serenitybdd.junit5.SerenityJUnit5Extension;
   import org.junit.jupiter.api.Test;                  // <··· WARN: Don't mix with org.junit.Test
@@ -1756,24 +1786,29 @@ $ mvn verify...
       petApi.thenISeeKittyAsResult();
     }
   }
+  ```
 
-  $ mvn clean verify # Execute tests  # Report generated in target/site/serenity/index.html
+  ```
+  $ mvn clean verify # Execute tests  
+  ( Report generated in target/site/serenity/index.html )
   [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0,
-
   ...
+  ```
 [[}]]
 
 ## Cucumber + screenplay [[{]]
-  https://serenity-bdd.github.io/docs/tutorials/cucumber-screenplay
+* <https://serenity-bdd.github.io/docs/tutorials/cucumber-screenplay>
 
-  Use Gherkin language in `.feature` file for the well-known TodoMVC project
+* Use Gherkin language in `.feature` file for the well-known TodoMVC project
   Create living documentation that also serves as a test report and a progress report
-
+  ```
   src/main/java/starter
   src/test/java/starter/helpers
   src/test/resources/features/*.feature      <··· Executable *.feature specification file
   src/test/java/starter/stepdefinitions      <··· "glue" code implementing steps mentioned in *.feature files.
+  ```
 
+  ```
   ┌─ add_new_todo.feature ─────────────────────────────────────────────┐
   │ Feature: Add new item to TODO list                                 │
   │ Scenario: Add buying milk to the list                              │
@@ -1781,7 +1816,9 @@ $ mvn verify...
   │              When he adds "Buy some milk" to the list              │
   │              Then he sees "Buy some milk" as item in the TODO list │
   └────────────────────────────────────────────────────────────────────┘
+  ```
 
+  ```
   package starter.helpers;
   import net.serenitybdd.core.pages.PageObject;
   import net.serenitybdd.screenplay.targets.Target;
@@ -1807,8 +1844,9 @@ $ mvn verify...
           Open.browserOn().the(TodoListPage.class));
       }
   }
+  ```
 
-  ────────────────────────────────────────────────────────────────────────────────────
+  ```
   package starter.helpers;
   import net.serenitybdd.screenplay.Performable;
   import net.serenitybdd.screenplay.Task;
@@ -1826,8 +1864,9 @@ $ mvn verify...
         );
       }
   }
-
-  ───────────────────────────────────────────────────────────────────────────────────────────
+  ```
+  
+  ```
   package starter.stepdefinitions;
   import io.cucumber.java.en.Given;
   import io.cucumber.java.en.Then;
@@ -1856,19 +1895,23 @@ $ mvn verify...
           actor.attemptsTo(Ensure.that(TodoListPage.ITEMS_LIST).hasText(expectedItemName));
       }
   }
+  ```
 
-     $ mvn clean verify   # Run tests.
-     [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.42 s - in starter.CucumberTestSuite
-     ...
+  ```
+  $ mvn clean verify   # Run tests.
+  [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.42 s - in starter.CucumberTestSuite
+  ...
+  ```
 [[}]]
 
 ## 1/2-way integration with JIRA [[{]]
-https://serenity-bdd.github.io/docs/reporting/integrating_with_jira
+* REF: <https://serenity-bdd.github.io/docs/reporting/integrating_with_jira>
 
 ### One way integration with JIRA
 
 * ... JIRA commonly store requirements as story cards grouped into epics.
   placed into sprints for project planning
+  ```
   ┌─ JIRA Story card: ──────────────────────────────────────────────────────┐
   │ Flying High / FH-17                                                     │
   │ "Calculating status based on points"                                    │
@@ -1893,8 +1936,9 @@ https://serenity-bdd.github.io/docs/reporting/integrating_with_jira
   │ concrete examples. We can then automate these scenarios using a BDD
   │ tool like JBehave.
   └──────────────────────────────────────────────────────────────────────────
-
-  Acceptance criteria as seen by JBehave scenario:
+  ```
+* Acceptance criteria as seen by JBehave scenario:
+  ```
   │ Frequent Flyer status is calculated based on points
 ┌·> Meta:@issue #FH-17
 · │ Scenario: New members should start out as Bronze members
@@ -1916,91 +1960,98 @@ https://serenity-bdd.github.io/docs/reporting/integrating_with_jira
 ·
 └─ @issue associate JBehave-stories|JUnit-tests to JIRA card
           creating  HTML links to JIRA task.
+  ```
+* JIRA setup:
+  ```
+  serenity.properties
++ jira.url=https://srv1.atlassian.netjira.project=FHjira.username=$user.password=$pass
 
-   JIRA setup:
-   serenity.properties
- + jira.url=https://srv1.atlassian.netjira.project=FHjira.username=$user.password=$pass
-
-   (props. can also be set in graddle.settings or maven pom.xml)
-
+  (props. can also be set in graddle.settings or maven pom.xml)
+  ```
 * Automatically feedback JIRA about tests results:
+  ```
+   pom.xml
+   <dependencies>
+       ...
+ +     <dependency>
+ +         <groupId>net.serenity.plugins.jira</groupId>
+ +         <artifactId>serenity-jira-requirements-provider</artifactId>
+ +         <version>xxx</version>
+ +     </dependency></dependencies>
+   </dependencies>
+   ...
+   <build>
+       ...
+       <plugins>
+           ...
+           <plugin>
+               <groupId>net.serenity.maven.plugins</groupId>
+               <artifactId>maven-serenity-plugin</artifactId>
+               <version>xxx</version>
+               <executions>
+ +                 <execution>
+ +                     <id>serenity-reports</id>
+ +                     <phase>post-integration-test</phase>
+ +                     <goals>
+ +                         <goal>aggregate</goal>
+ +                     </goals>
+ +                 </execution>
+               </executions>
+               <dependencies>
+ +                 <dependency>
+ +                     <groupId>net.serenity.plugins.jira</groupId>
+ +                     <artifactId>serenity-jira-requirements-provider</artifactId>
+ +                     <version>xxx</version>
+ +                 </dependency>
+               </dependencies>
+           </plugin>
+       </plugins>
+   </build>
+  ```
+*  serenity.properties
+  ```
+   ...
+ + jira.custom.field.1=Acceptance Criteria     <··· add to report output
+  ```
 
-   pom.xml:
-  │<dependencies>
-  │    ...
- +│    <dependency>
- +│        <groupId>net.serenity.plugins.jira</groupId>
- +│        <artifactId>serenity-jira-requirements-provider</artifactId>
- +│        <version>xxx</version>
- +│    </dependency></dependencies>
-  │</dependencies>
-  │...
-  │<build>
-  │    ...
-  │    <plugins>
-  │        ...
-  │        <plugin>
-  │            <groupId>net.serenity.maven.plugins</groupId>
-  │            <artifactId>maven-serenity-plugin</artifactId>
-  │            <version>xxx</version>
-  │            <executions>
- +│                <execution>
- +│                    <id>serenity-reports</id>
- +│                    <phase>post-integration-test</phase>
- +│                    <goals>
- +│                        <goal>aggregate</goal>
- +│                    </goals>
- +│                </execution>
-  │            </executions>
-  │            <dependencies>
- +│                <dependency>
- +│                    <groupId>net.serenity.plugins.jira</groupId>
- +│                    <artifactId>serenity-jira-requirements-provider</artifactId>
- +│                    <version>xxx</version>
- +│                </dependency>
-  │            </dependencies>
-  │        </plugin>
-  │    </plugins>
-  │</build>
+ Now, when running the tests,  Serenity will query JIRA to determine
+the epics and stories that you have defined and list them on the
+Requirements page of the output report.
 
-   serenity.properties
-  │...
- +│jira.custom.field.1=Acceptance Criteria     <··· add to report output
+```
+|Overall Test Result|   |Requirements|  |Releases|  ....
 
-   Now, when running the tests,  Serenity will query JIRA to determine
-   the epics and stories that you have defined and list them on the
-   Requirements page of the output report.
-
-   |Overall Test Result|   |Requirements|  |Releases|  ....
-
-    Requirements Overview
-    Requirement Type  |   Total  | Pass   | Fail  | Pending   | Ignored | Untested
-    Epics                   7  ...
-    Stories                15  ...
-    Acceptance Criteria   100  ...  (tests)
+ Requirements Overview
+ Requirement Type  |   Total  | Pass   | Fail  | Pending   | Ignored | Untested
+ Epics                   7  ...
+ Stories                15  ...
+ Acceptance Criteria   100  ...  (tests)
+```
 
 
 ### Two way integration with JIRA
 
-* Simplest way:
-   ┌─ serenity.properties  ────
-   │ ...
-  +│ serenity.public.url=https://.../serenity/report <·· tell Serenity where reports live
-   │ ...                                                 Serenity will then insert a link
-   │                                                     into the JIRA issue card
-  +│ serenity.jira.workflow.active=true
+Simplest way:
+  ```
+  $ editor serenity.properties 
+     ...
+  +  serenity.public.url=https://.../serenity/report <·· tell Serenity where reports live
+     ...                                                 Serenity will then insert a link
+                                                         into the JIRA issue card
+  +  serenity.jira.workflow.active=true
                                    └┬─┘
      (Optional) Update JIRA issue states (deactivated by default)
      default JIRA workflow: open or in progress issues associated with
      successful tests will be resolved, and closed or resolved issues
      associated with failing tests will be reopened.
+  ```
 
+NOTE: to skip updates to JIRA (for example, testing in local -vs QA enviroment)
+     `serenity.skip.jira.updates=true`
 
-    NOTE: to skip updates to JIRA (for example, testing in local -vs QA enviroment)
-     serenity.skip.jira.updates=true
+### Customized JIRA workflows (Groovy DSL)
 
-  Customized JIRA workflows:  (Groovy DSL)
-
+   ```
    + serenity.jira.workflow=my-workflow.groovy
    ┌────────────────┬─·····─┴────────────────┘
    my-workflow.groovy
@@ -2009,94 +2060,85 @@ https://serenity-bdd.github.io/docs/reporting/integrating_with_jira
    when 'Resolved'   , {    'failure' should: 'Reopen Issue'}
    when 'In Progress', {    'success' should: ['Stop Progress','Resolve Issue']}
    when 'Closed'     , {    'failure' should: 'Reopen Issue'}
-
+   ```
 
 ### RELEASE MANAGEMENT
 In JIRA, project releases are commonly organised into versions:
 
-   PROJECT XXXX
-     Key: FH Lead: ...
-
-     |Overview| |Administration|
-      ^^^^^^^^
-      Summary    ┌─────────────────────────────────────────────────────────────
-      Issues     │ VERSIONS
-      Agile      │ Name           Start Date     Release Date    Description
-      Change Log │ ──────────────────────────────────────────────────────────
-      Reports    │ Release 2.0
-      Versions  ─┤ Iteration 1.3
-      Calendar   │ ...
-                 │ Release 1.0
-                   └─────┬──────┘
-                  - To JIRA they all are flat versions.
-                  - Serenity use a hierarchical structure based on naming convention:
-                    "release"  : 1st level
-                    "iteration": 2nd level
-                    (or "sprint")
-                   - Use next config. property to customize the behaviour. Ex:
-                     serenity.release.types=milestone, release, version
+```
+PROJECT XXXX
+  Key: FH Lead: ...
+  
+  |Overview| |Administration|
+   ^^^^^^^^
+   Summary    ┌─────────────────────────────────────────────────────────────
+   Issues     │ VERSIONS
+   Agile      │ Name           Start Date     Release Date    Description
+   Change Log │ ──────────────────────────────────────────────────────────
+   Reports    │ Release 2.0
+   Versions  ─┤ Iteration 1.3
+   Calendar   │ ...
+              │ Release 1.0
+                └─────┬──────┘
+               - To JIRA they all are flat versions.
+               - Serenity use a hierarchical structure based on naming convention:
+                 "release"  : 1st level
+                 "iteration": 2nd level
+                 (or "sprint")
+                - Use next config. property to customize the behaviour. Ex:
+                  serenity.release.types=milestone, release, version
+```
 [[}]]
 
-## TODO:
-  https://serenity-bdd.github.io/docs/reporting/the_serenity_reports
+## TODO
+
+* <https://serenity-bdd.github.io/docs/reporting/the_serenity_reports>
   Serenity reports aim not only to report test results, but also
   to document how features are tested, and what the application does.
+* <https://serenity-bdd.github.io/docs/reporting/living_documentation> !!!
+  * BDD Tests as Living documentation describing the software
+  <https://serenity-bdd.github.io/docs/reporting/filtering_reports>
+  <https://serenity-bdd.github.io/docs/reporting/additional_reports>
+  * e-mail reports!
+  * Single page react app reports.
 
-  https://serenity-bdd.github.io/docs/reporting/living_documentation !!!
-  - BDD Tests as Living documentation describing the software
-
-  https://serenity-bdd.github.io/docs/reporting/filtering_reports
-  https://serenity-bdd.github.io/docs/reporting/additional_reports
-  - e-mail reports!
-  - Single page react app reports.
-
-  https://serenity-bdd.github.io/docs/reporting/reports_custom_info
+* <https://serenity-bdd.github.io/docs/reporting/reports_custom_info>
   Custom fields can be included in the reports, using values that are
   either taken from the environment variables or passed into the build
   via system properties. This can be useful if you want to include the
   product or build version, the environment the tests were run on, or
   the test run date.
-
-  https://serenity-bdd.github.io/docs/cloud/selenium-grid
+* <https://serenity-bdd.github.io/docs/cloud/selenium-grid>
   execute WebDriver scripts on remote parallel machines (virtual or real)
   by routing commands sent by the client to remote browser instances.
-
-
-  https://serenity-bdd.github.io/docs/cloud/lambdatest
+* <https://serenity-bdd.github.io/docs/cloud/lambdatest>
   LambdaTest is a cloud platform for test execution and test
   orchestration. With LambdaTest, Serenity users can extend their
   automation test coverage of their web and mobile apps on 3000+ real
   devices, browsers, and operating systems.
-
-  https://serenity-bdd.github.io/docs/cloud/browserstack
+* <https://serenity-bdd.github.io/docs/cloud/browserstack
   online platform that allows you to run cross-browser tests in parallel at scale.
-
-  https://serenity-bdd.github.io/docs/cloud/saucelabs
+* <https://serenity-bdd.github.io/docs/cloud/saucelabs>
   seamless integration with the SauceLabs online test automation platform.
   "Test on thousands of device, browser, and OS configurations – anywhere, any time"
-
-  https://serenity-bdd.github.io/docs/cloud/bitbar
+* <https://serenity-bdd.github.io/docs/cloud/bitbar>
   seamless integration with the BitBar online test automation platform
   web, native, or hybrid, securely test your app across real environments
-
-  https://serenity-bdd.github.io/docs/mobile/appium
+* <https://serenity-bdd.github.io/docs/mobile/appium>
   running tests on mobile devices/emulators
-
-  https://serenity-bdd.github.io/docs/reference/serenity-properties
+* <https://serenity-bdd.github.io/docs/reference/serenity-properties>
   Serenity configuration options.
-
-
-
 [[qa.testing.bdd.serenity}]]
 
 [[{async/reactive.testing,qa.testing.async/reactive,01_PM.TODO]]
 # Awaitility(Async->Sync) Tests
 @[https://github.com/awaitility/awaitility]
-- Awaitility: DSL allowing to express async results (test expectations) easely.
+* Awaitility: DSL allowing to express async results (test expectations) easely.
   removing complexity of handling threads, timeouts, concurrency issues, ...
   that obscured test code.
 
-- Ex 1:
+* Ex 1:
+  ```
   @Test
   public void updatesCustomerStatus() {
     // Publish a (async) message to a message broker:
@@ -2104,11 +2146,11 @@ In JIRA, project releases are commonly organised into versions:
     await().atMost(5, SECONDS).until(customerStatusIsUpdated()) ;
     ...
   }
+  ```
 [[}]]
 
-# RESTAssured: REST API Full Journey testing [[{qa.testing.REST_API,persistence.json]]
-
-*
+[[{qa.testing.REST_API,persistence.json]]
+# RESTAssured: REST API Full Journey testing
 
 ## Maven setup
 
@@ -2128,18 +2170,24 @@ In JIRA, project releases are commonly organised into versions:
       <artifactId>json-schema-validator</artifactId>
       <version>${restassured.ver}</version>
   </dependency>
+  ```
 
 ## REST Assured summary
-* Gherkins standard BDD syntax "GIVEN > WHEN > THEN "
-  replaces RestAssured 1.0 syntax `given()...expect()... when()`
-  (still supported for compatibility)
 
-  given().param("x", "y")....
-   when().get("/lotto").
-   then().statusCode(400).
-    and().body("lotto.lottoId", equalTo(6));
-    └───┴─ syntactic sugar. Not really needed.
+  Gherkins standard BDD syntax "GIVEN > WHEN > THEN "<br/>
+replaces RestAssured 1.0 syntax `given()...expect()... when()`
+(still supported for compatibility)
 
+```
+given().param("x", "y")....
+ when().get("/lotto").
+ then().statusCode(400).
+  and().body("lotto.lottoId", equalTo(6));
+  └───┴─ syntactic sugar. Not really needed.
+```
+
+ Example:
+```
 import from io.restassured.RestAssured.*                   // Static imports, recomended
 import from io.restassured.matcher.RestAssuredMatchers.*
 import from org.hamcrest.Matchers.*                   // equalTo, hasItems
@@ -2149,44 +2197,51 @@ import from io.restassured.module.jsv.JsonSchemaValidator.* // Json Schema valid
 import from io.restassured.module.mockmvc.RestAssuredMockMvc.* // spring-mock-mvc unit test support
 
 
-                given().
-                        param("key1", "val1"). // <·· set request params. REST Assured will
-                        param("key2", "val2").        automatically try  query|form format
-                        param("key3").         // <·· no value
-                        param("list1", "val1", "val2").
-                        param("list1", "val1", "val2").
-                        cookie("favourite", "Red", "Green"). // <·· Use new Cookie.Builder for details.
-                        header("MyHeader", "Something").
-                        contentType("application/json").   // or ContentType.TEXT or
-                                                           // noContentType() (for no contentType at all)
-                        request().body("some body").       // Works for POST, PUT and DELETE requests
-                                       ^^^^^^^^^^^         // request() is optional. It makes it more explicit
-                        //         or  new byte[]{42,1,..}
-                  ····  pathParam("pathKey1", "23").
-                  ·     // queryParam("queryParamName", "value2"). <·· explicit query or post
-              ┌───┴────┐// formParam("formParamName", "value1").
-   > GET /AAA/{pathKey1}
-                 when().
-                        get("/AAA/{pathKey1}").
-                 then().
-                        assertThat().                      // Syntax Sugar. Not really needed.
-                        body( // match against JSON-schema
-                          matchesJsonSchemaInClasspath("myschema.json")).
-                        body(equalTo("{...}")). // <·· Full body/content matching
-                        body("key1.%s[%d]", withArgs(key2, index2), equalTo(...)) // path arguments
-                        and().cookie("cookieName", "cookieValue" /*or containsString("cookieValue1")*/ ).
-                        and().statusCode(200).
-                        and().statusLine("something" /* or containsString("some") */).
-                        and().contentType(ContentType.JSON).
-                        and().header("headerName", "headerValue").
-                        and().header("Content-Length",
-                                      Integer::parseInt,   // <·· Use mapping function
-                                      lessThan(1000));
+given()
+  .param("key1", "val1")              // <·· set request params. REST Assured will
+  .param("key2", "val2")                     automatically try  query|form format
+  .param("key3")                      // <·· no value
+  .param("list1", "val1", "val2")
+  .param("list1", "val1", "val2")
+  .cookie("favourite", "Red", "Green")// <·· Use new Cookie.Builder for details.
+  .header("MyHeader", "Something") 
+  .contentType("application/json")    // := ContentType.TEXT | 
+                                      //    noContentType() (for no contentType at all)
+                                      // 
+
+  .request().body("some body")        // <·· POST/PUT/DELETE requests
+        //        └────┬────┘            request() is optional. It makes code more explicit
+        //             └─···············    or new byte[]{42,1,..}
+  .pathParam("pathKey1", "23")        // <·· GET /AAA/{pathKey1}
+  // queryParam("queryParamName", "value2"). <·· explicit query or post
+  // formParam("formParamName", "value1").
+.when()
+  .get("/AAA/{pathKey1}")
+.then().
+  .assertThat()                      // <·· Syntax Sugar. Not really needed.
+  .body( 
+     matchesJsonSchemaInClasspath(   // <·· Response matches JSON-schema
+       "myschema.json")).
+  .body(equalTo("{...}"))            // <·· Full body/content matching
+  .body(                             // <·· key.valu path 
+    "key1.%s[%d]",
+    withArgs(key2, index2), equalTo(...))
+  .and()                             // <·· and() not really needed. Improves reading
+        .cookie("cookieName", "cookieValue" /*or containsString("cookieValue1")*/ )
+  .and().statusCode(200)
+  .and().statusLine("something" */)  // <·· alt 1 
+  .and().statusLine(                 // <·· alt 2 
+           containsString("something"))
+  .and().contentType(ContentType.JSON)
+  .and().header("headerName", "valueA")
+  .and().header("Content-Length",
+                 Integer::parseInt,  // <·· Use mapping function
+                 lessThan(1000));
 
    Ex: JSON Response like:           JSON assert:
    < {                               ...assertThat()....
    <   "lotto":{
-   <    "lottoId":5,                 and().body("lotto.lottoId", equalTo(5));
+   <    "lottoId":5,                      .body("lotto.lottoId", equalTo(5));
    <    "winning-numbers":[2,45,34],
    <    "winners":[{
    <      "winnerId":[23,54],        and().body("lotto.winners.winnerId", hasItems(23, 54));
@@ -2204,8 +2259,13 @@ import from io.restassured.module.mockmvc.RestAssuredMockMvc.* // spring-mock-mv
                                                   RestAssured.config().jsonConfig(
                                                    jsonConfig().numberReturnType(BIG_DECIMAL)))
                                              NOTE: is(12.12) fails (double, expected float)
-## Recipes:
-* Validating JSON root documents with "$":
+```
+
+## Recipes <!-- recipes { -->
+
+
+### Validating JSON root documents with "$":  [[{]]
+```
    tested body JSON:     RESTAssured test:
    [1, 2, 3]             body("$", hasItems(1, 2, 3));
 
@@ -2219,8 +2279,11 @@ import from io.restassured.module.mockmvc.RestAssuredMockMvc.* // spring-mock-mv
   < </greeting>                           └──────────────────┬────────────────────┘
                                  or  body(hasXPath("/greeting/lastName", containsString("Do"))
                                  or       hasXPath("/greeting/firstName[text()='John']"));
+```
+[[}]]
 
-## Default values [[{]]
+### Default values [[{]]
+```
 RestAssured.baseURI = "http://myhost.org";  // defaults to http://localhost
 RestAssured.port = 80;                      // defaults to 8080
 RestAssured.basePath = "/resource";         // get("/hello") => GET /resource/hello
@@ -2240,11 +2303,13 @@ RestAssured.unregisterParser(..)       // Unregister a parser for the given cont
 RestAssured.reset();                   // Reset baseURI, basePath, port, root path, Auth.Scheme
                                           and url encoding to defaults
 RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+```
 [[}]]
 
-## Complex parsing and validation:  [[{]]
-*  (where REST Assured really starts to shine!)
+### Complex parsing and validation  [[{]]
+(where REST Assured really starts to shine!)
 
+```
     POST /shopping
 
     <shopping>
@@ -2293,22 +2358,27 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
   when().get("/...").then().body(
    "store.book.author.collect { it.length() }.sum()", // Check: length sum of all-author-names > 50
    greaterThan(50));
+```
   or ...
+```
    body("store.book.author*.length().sum()", greaterThan(50))
                           ^ └──────^·····┐
     ┌─···················─┘              ·
    `*.`: Groovy spread operator, call function for
          each element in list returning new list with
          lengths results (sort of map)
-
+```
   or:
+```
   String response = get("/store").asString(); // get response as string
   int sumOfAllAuthorLengths = from(response)
       .getInt("store.book.author*.length().sum()");
   assertThat(sumOfAllAuthorLengths, is(53));
+```
 [[}]]
 
-## Deserialization with Generics 3.3+ [[{]]
+### Deserialization with Generics 3.3+ [[{]]
+```
    [                                    final List<
      {                                   Map<String /* key: id, name, price, tags, ...*/, Object>
        "id": 2,                         > products = get("/products").as(new TypeRef<List<Map<String, Object>>>() {});
@@ -2320,21 +2390,25 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
      {
        "id": 3,                         assertThat(products.get(1).get("id"   ), equalTo(3));
        "name": "A blue mouse",          assertThat(products.get(1).get("name" ), equalTo("A blue mouse"));
-       "price": 25.50,                  assertThat(products.get(1).get("price"), equalTo(25.5));```
+       "price": 25.50,                  assertThat(products.get(1).get("price"), equalTo(25.5));
        ...
      }
    ]
+```
 [[}]]
 
-### GETTING RESPONSE DATA
+### GETTING RESPONSE DATA [[{]]
+```
   with (InputStream stream = get("/lotto").asInputStream()) { // Alt 1:
     ...
   }
   byte[] byteArray = get("/lotto").asByteArray(); // Alt 2
   String json = get("/lotto").asString(); // Alt 3
+```
+[[}]]
 
-### Validate response, then extract data:
-
+### Validate response, then extract data: [[{]]
+```
   final String nextTitleLink =
     given().param("param_name", "param_value").  ┐
     when().get("/title").                        ├ validate response
@@ -2355,74 +2429,98 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     final String              statusLine = response.getStatusLine();
     final int statusCode                 = response.getStatusCode();
     final ??? detailedCookie             = response.getDetailedCookie("cookie1"); // path, expiry date, ...
+```
+[[}]]
 
-## Recipe: ReposnoseAware>Matcher:
-
+### Recipe: ReposnoseAware>Matcher [[{]]
+```
   > GET /some-id
   < { "userId" : "some-id", "href" : ".../some-id" }
                   └─────┴─·· must be == ··┴─────┘
 
   Test like:
   ....body("href", response -> equalTo(".../" + response.path("userId"));
+```
+[[}]]
 
-## predefined matchers:
+### predefined matchers [[{]]
+```
    get("/x").then().body("href", endsWithPath("userId"));
                    .body("href", and(                           // <·· composing ResponseAwareMatchers
                                   startsWith("..."),
                                   endsWithPath("userId")  ));
+```
+[[}]]
+<!-- recipes } -->
 
-## Measuring response time: (v 2.8+)
-  * Added support to measure and test response time. Examples:
-    long timeInMs = get("/lotto").time()
-    long timeInSc = get("/lotto").timeIn(TimeUnit.SECONDS);
-    when().get("/lotto").then().time(lessThan(2000L)); // Milliseconds
-    when().get("/lotto").then().time(lessThan(2L), TimeUnit.SECONDS);
+## Measuring response time: (v 2.8+) <!-- { -->
+* Added support to measure and test response time. Examples:
+  ```
+  long timeInMs = get("/lotto").time()
+  long timeInSc = get("/lotto").timeIn(TimeUnit.SECONDS);
+  when().get("/lotto").then().time(lessThan(2000L)); // Milliseconds
+  when().get("/lotto").then().time(lessThan(2L), TimeUnit.SECONDS);
 
     WARN: time measurement should be performed when the JVM is hot!
+  ```
+<!-- } -->
 
-## OAuth 1/2 Authentication [[{]]
-### Presetup (OAuth 1 and OAuth 2 when supplying token as query parameter):
-   $ editor pom.xml
-     ...
-   + <dependency>
-   +   <groupId>com.github.scribejava</groupId>
-   +   <artifactId>scribejava-apis</artifactId>
-   +   <version>2.5.3</version>
-   +   <scope>test</scope>
-   + </dependency>
+## RESTAssured OAuth 1/2 Authentication [[{security.AAA,qa.testing]]
 
+* Presetup (OAuth 1 and OAuth 2 when supplying token as query parameter):
+```
+$ editor pom.xml
+  ...
++ <dependency>
++   <groupId>com.github.scribejava</groupId>
++   <artifactId>scribejava-apis</artifactId>
++   <version>2.5.3</version>
++   <scope>test</scope>
++ </dependency>
+```
 
-   given().auth().oauth(..          )... // OAuth 1
-   given().auth().oauth2(accessToken)...            // OAuth 2. Put OAuth2 accessToken in a header.
-   given().auth().preemptive().oauth2(accessToken). // OAuth 2. explicit alternative
-   given().auth().oauth2(accessToken,               // OAuth 2. with token in query param (requirest Scribe)
-                        OAuthSignature.QUERY_STRING).
-[[}]]
+```
+given().auth().oauth(..          )... // OAuth 1
+given().auth().oauth2(accessToken)...            // OAuth 2. Put OAuth2 accessToken in a header.
+given().auth().preemptive().oauth2(accessToken). // OAuth 2. explicit alternative
+given().auth().oauth2(accessToken,               // OAuth 2. with token in query param (requirest Scribe)
+                     OAuthSignature.QUERY_STRING).
+```
 
 ## Other Authentication Schemas
+```
   given().auth().form("John", "Doe").              // Form auth
   given().auth().digest("username", "password").   // Digest auth.
   given().auth().basic ("username", "password").   // Basic preemptive | Challenged Alt 1.
    when().get(...)....
   RestAssured.authentication =                     // Basic preemptive | Challenged Alt 2.
                  basic ("username", "password");
+```
+[[security.AAA,qa.testing}]]
+
+[[{security.XSR]]
+## Cross-site Request Forgery Support (CSRF)  
+
+  Today it's common for the server to supply a CSRF token with
+the response in order to avoid these kinds of attacks.
+
+  REST Assured has support for automatically parsing and supplying the 
+CSRF token to the server.  In order for this to work REST
+Assured must make an additional request and parse (parts) of the website.
+
+REST Assured supports two ways of providing CSRF tokens to the server:
 
 
-## Cross-site Request Forgery Support (CSRF)
-* Today it's common for the server to supply a CSRF token with
-  the response in order to avoid these kinds of attacks.
-* REST Assured has support for automatically parsing and supplying the CSRF token to the server.
-  In order for this to work REST Assured must make an additional request and parse (parts) of the website.
-
-* REST Assured supports two ways of providing CSRF tokens to the server:
 1. submitting the CSRF token in a form
-
+  ```
   <form action="/users" method="POST">
     <input type="hidden" name="_csrf"                <·· CSRF token that "we" want to "forward"
       value="8adf2ea1-b246-40aa-8e13-a85fb7914341"/>     in new request
     ...
   </form>
+  ```
 
+  ```
   // RestAssuredConfig.config()
   //    .csrfConfig(csrfConfig().with()
   //       .csrfInputFieldName("_mycsrf"));  // <·· change default "_csrf" name
@@ -2431,9 +2529,11 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
           formParam("lastName", "Doe")
    when().post("/users").
    then().statusCode(200);
+  ```
 
 2. submitting the CSRF token as a header.
 
+  ```
    > GET /LOGIN
 
    < <head>
@@ -2441,7 +2541,9 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
    <      content="ab8722b1-1f23-4dcf-bf63-fb8b94be4107"/>
    <   ...
    < </head>
+  ```
 
+  ```
   // RestAssuredConfig.config()
   //    .csrfConfig(csrfConfig().with()
   //       .csrfMetaTagName("_my_csrf_header") // <·· Change default "_csrf_header" name
@@ -2453,15 +2555,19 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
    RestAssuredConfig.config()
      .csrfConfig(csrfConfig().with()
+  ```
+[[security.XSR}]]
 
 ## Object Mapping
+
 * Jackson/2 for JSON, Gson, Johnzon for classpath and Jakarta EE or JAXB for XML
-  // Refer to original doc.
+  (Refer to original doc)
 
 ## Specification Re-use
-* Use RequestSpecBuilder and/or ResponseSpecBuilder.
 
+Use `RequestSpecBuilder` and/or `ResponseSpecBuilder`
 
+```
   final RequestSpecBuilder builder = new RequestSpecBuilder();
   builder.addParam("parameter1", "parameterValue");
   builder.addHeader("header1", "headerValue");
@@ -2483,23 +2589,26 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
    when().get("/something").
    then().spec(responseSpec).                    // <·· REUSE RESPONSE SPEC !!
           body("x.y.z", equalTo("something"));   // <·· Extend it
-
+```
 
 ## Filters: inspect&alter requests and responses.  [[{]]
 
 * Filters can be used to implement custom authentication schemes,
-  session management, logging etc.
+session management, logging etc.
 
-   import io.restassured.filter.Filter
-   io.restassured.filter.OrderedFilter // v 3.0.2+
-   given().filter(new MyFilter()). ..
-
-   // NOTE: sometimes is useful to change the response. Do it like:
-   final Response newResponse = new ResponseBuilder().
-         clone(originalResponse).setBody("Something").build();
+```
+  import io.restassured.filter.Filter
+  io.restassured.filter.OrderedFilter // v 3.0.2+
+  given().filter(new MyFilter()). ..
+  
+  // NOTE: sometimes is useful to change the response. Do it like:
+  final Response newResponse = new ResponseBuilder().
+        clone(originalResponse).setBody("Something").build();
+```
 
 ### ready to use filters
-* io.restassured.filter.log.RequestLoggingFilter : print request spec details.
+* `io.restassured.filter.log.RequestLoggingFilter`: print request spec details.
+  ```
   given().log().XXX().    // v1.5+
                 └─┴─··· all │ params │ body │ headers │ cookies │ method │path
                         WARN: underlying HTTP Builder & HTTP Client can add extra
@@ -2514,17 +2623,17 @@ RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
           onFailMessage("messageXXX").       // to be displayed on failure 4.5.0+
    ...
           └─┴─········· all | statusLine | headers | cookies
+  ```
 
 
-
-* io.restassured.filter.log.ResponseLoggingFilter: print response details if matching
-                                                   a given status code.
-* io.restassured.filter.log.ErrorLoggingFilter   : print response body if error raised
-                                                   [400... 599]
+* `io.restassured.filter.log.ResponseLoggingFilter`:<br/>
+   print response details if matching a given status code.
+* `io.restassured.filter.log.ErrorLoggingFilter`   :
+   print response body if error raised `[400... 599]`
 [[}]]
 
-
 ## Session Support
+```
 given().sessionId("1234").            // Alt 1
 given().cookie("JSESSIONID", "1234"). // Alt 2
 RestAssured.sessionId = "1234";       // Alt 3
@@ -2541,35 +2650,43 @@ RestAssured.config = RestAssured.config().
       .sessionIdName("phpsessionid")); // Change JSESSIONID ··> phpsessionid
 
 String sessionId = get("/").sessionId(); // Retrieve in response
+```
 
-Session Filter
+### Session Filter (TODO)
 
 ## SSL for non-standard certificates or PKI setups.  [[{]]
 
 * Relaxed verification setup:
-   SSLPeerUnverifiedException
-      given().relaxedHTTPSValidation()      // SSL
-      given().relaxedHTTPSValidation("TLS") // TLS
-
-   RestAssured.useRelaxedHTTPSValidation();
+```
+  SSLPeerUnverifiedException
+     given().relaxedHTTPSValidation()      // SSL
+     given().relaxedHTTPSValidation("TLS") // TLS
+    
+  RestAssured.useRelaxedHTTPSValidation();
+```
 
 * Custom PKI (Certificate chains):
-
+```
   given().keystore("/pathToJksInClassPath", pass). ..   // alt 1
   RestAssured.keystore("/pathToJksInClassPath", pass);  // alt 2
   RestAssured.trustStore(keystore);                           // alt 3. An keystore is already loaded
+```
 
 * SSL invalid hostname error "relaxing":
+```
   RestAssured.config().sslConfig(sslConfig().allowAllHostnames());
-
+```
 [[}]]
 
 ## Disable URL Encoding
-   Use case: URL already encoded
+(Use case: URL already encoded)
+```
 String response = given().urlEncodingEnabled(false)
                    then().get("/v1/search?jql=project%20=%20BAM%20AND%20issuetype%20=%20Bug");
+```
 
 ## Proxy Configuration
+```
   given().proxy("localhost", 8888).  // Setup HTTP Proxy 2.3.2+
   given().proxy(host("localhost").withScheme("https")). // Setup HTTPs proxy 2.3.2+
   given().proxy(auth("username", "password")).when() .. // Setup HTTP proxy with preemptive basic auth.
@@ -2577,26 +2694,33 @@ String response = given().urlEncodingEnabled(false)
   RestAssured.proxy("localhost", 8888);     // Config HTTP proxy globally
   RequestSpecification reqSpec = new        // Config HTTP proxy in reusable request spec.
      RequestSpecBuilder().setProxy("localhost").build();
+```
 
 ## Redirect DSL
-
-   given().redirects().max(12).and().redirects().follow(true).when(). ..
+```
+  given().redirects().max(12).and()
+    .redirects().follow(true).when(). ..
+```
 
 ## Connection Config
 
-   RestAssured.config = RestAssured.config().connectionConfig(
-     connectionConfig().closeIdleConnectionsAfterEachResponse());
+```
+  RestAssured.config = RestAssured.config().connectionConfig(
+    connectionConfig().closeIdleConnectionsAfterEachResponse());
+```
 
 ## FailureConfig 3.3.0+ (log, notify failures)
-   It allows to get callbacks when validations fails.
-  e.g.: get email in case of failure:
+
+  It allows to get callbacks when validations fails.<br/>
+  e.g.: get email in case of failure.
+
+
+  ```
   final ResponseValidationFailureListener emailOnFailure =
     (reqSpec, respSpec, resp) -> emailService.sendEmail(...);
   given().
     config(RestAssured.config().failureConfig(
        failureConfig().with().failureListeners(emailOnFailure)))....
-
-
   ```
 
 ## FULL JOURNEY Example
@@ -2758,6 +2882,7 @@ String response = given().urlEncodingEnabled(false)
 
 * 5.2
   * Much improved Cross-site request forgery support. Example  [[{security]]
+  ```iven().csrf("/users").                // <·· make a GET request to /users
     given().csrf("/users").                // <·· make a GET request to /users
                                            //     to fetch page containing the  CSRF token.
                                            //     Rest Assured will then automatically try to
@@ -2765,6 +2890,7 @@ String response = given().urlEncodingEnabled(false)
             formParm("firstName", "John").
             when().post("/users").         // <·· and include it in the POST to /users.
             then().statusCode(200);
+  ```
 
                                                                [[security}]]
 * 5.0
@@ -2772,16 +2898,20 @@ String response = given().urlEncodingEnabled(false)
 * 4.5
   * Introduced rest-assured bom project for maven.
   * Add onFailMessage to more easily  distinguish between failed tests
+  ```
     when().get().then()
       .onFailMessage("Some specific message")
       .statusCode(200);
-
+  ```
 * 4.2
   * Allows to blacklist displaying headers in request|response log.
+  ```
     given().config(config().logConfig(logConfig().blacklistHeader("Accept"))). ..
+  ```
 
 * 4.0
   * Allows to specify multi-expectation body with arguments. Examples:
+  ```
     when().get("/jsonStore").
     then()
     .rootPath("store.book.find { it.author == '%s' }")
@@ -2789,6 +2919,7 @@ String response = given().urlEncodingEnabled(false)
       "price", withArgs("Nigel Rees"  ), is(8.95f),
       "price", withArgs("Evelyn Waugh"), is(12.99f)
     );
+  ```
 * 3.2
   * New Spring Web Test Client module to test Spring Reactive Web stack components.
     for example, Spring (Webflux) Controllers.
@@ -2812,20 +2943,22 @@ String response = given().urlEncodingEnabled(false)
 
 * 3.1
   * Allow a mapping function when validating headers. Example:
+  ```
     when().get("/something").then()
       .header(
           "Content-Length",
           Integer::parseInt,  // <··· Map Header to Integer
           lessThan(1000) );   // <··· Then check that is is smaller than 1000
+  ```
 
 [[}]]
 
-# TODO:
-## Facebook Infer
-    @[http://fbinfer.com/] (Static analysis Java/C/...)
+# TODO [[{PM.TODO]]
+## Facebook Infer <https://fbinfer.com/> (Static analysis Java/C/...)
 ## Scrutinizer
 ## StopBugs
 ## Eclipse Static Code Analasys [[{]]
+   ```
     Eclipse → Properties → Java → Compiler → Errors/Warnings → Null analysis:
     * Null pointer access
     * Potential null pointer access
@@ -2845,6 +2978,8 @@ String response = given().urlEncodingEnabled(false)
           - Enable syntatic null analisys for fields
         - Treat above errors like fatal compile erros
           (make compiled code not executable)
+   ```
+[[}]]
 
 ## SpotBug examples
 @[https://spotbugs.readthedocs.io/en/latest/filter.html]
@@ -2856,16 +2991,15 @@ String response = given().urlEncodingEnabled(false)
 
 ## JfrUnit [[{qa.testing,scalability.profiling,01_PM.TODO]]
 @[https://github.com/moditect/jfrunit]
-- JUnit extension for asserting JDK Flight Recorder events
+* JUnit extension for asserting JDK Flight Recorder events
   emitted by an application identifying performance regressions
   (e.g. increased latencies, reduced throughput).
-
-- JfrUnit supports assertions not on metrics like latency/throughput
+* JfrUnit supports assertions not on metrics like latency/throughput
   themselves, but on indirect metrics which may impact those.
-  - memory allocation,
-  - database IO
-  - number of executed SQL statements
-  - ...
+  * memory allocation,
+  * database IO
+  * number of executed SQL statements
+  * ...
 
 - JfrUnit provide means of identifying and analysizing such issues in
   a reliable, environment independent way in standard JUnit tests,
@@ -2874,7 +3008,7 @@ String response = given().urlEncodingEnabled(false)
 
 ## Tablasco [[{qa.testing.data,architecture.batch,01_PM.low_code,01_PM.TODO]]
 @[https://github.com/goldmansachs/tablasco]
-- (By Goldman Sasch) JUnit rule that adds table verification to unit
+* (By Goldman Sasch) JUnit rule that adds table verification to unit
   tests. For software products that produce large amounts of data, this
   tool can help to create automated tests that are both comprehensive
   and easy to maintain. Users only need to adapt their existing data to
@@ -2884,8 +3018,7 @@ String response = given().urlEncodingEnabled(false)
   Furthermore, Tablasco features automated baseline management,
   allowing users to easily update the baseline file of a failing test.
 
-- JUnit rule for comparing tables and Spark module for comparing large data sets.
+* JUnit rule for comparing tables and Spark module for comparing large data sets.
 [[}]]
 
-
-[[}]]
+[[PM.TODO}]]
