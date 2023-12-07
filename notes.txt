@@ -740,8 +740,28 @@ java.lang.Object
   │String s1 = zdt1.toString();         │
           ^^
   2017-06-30T01:02:03.100+02:00[Europe/Madrid]
+  ```
 
+
+* `java.text.DateFormat` API summary:
+  ```
   java.text.DateFormat:
+  ---------------------
+  FIELDS ───────────────────────────────────
+  protected Calendar         calendar       instance used for calculating date-time fields & instant-of-time
+  protected NumberFormat     numberFormat   formatter used to format numbers in dates and times.
+
+  STYLE PATTERN CONSTANTS ─────────────
+  DEFAULT   SHORT     MEDIUM    LONG      FULL
+
+  ALIGNMENT CONSTANTS ────────────  
+  AM_PM_FIELD                   HOUR_OF_DAY0_FIELD    MONTH_FIELD
+  DATE_FIELD                    HOUR_OF_DAY1_FIELD    SECOND_FIELD
+  DAY_OF_WEEK_FIELD             HOUR0_FIELD           TIMEZONE_FIELD
+  DAY_OF_WEEK_IN_MONTH_FIELD    HOUR1_FIELD           WEEK_OF_MONTH_FIELD
+  DAY_OF_YEAR_FIELD             MILLISECOND_FIELD     WEEK_OF_YEAR_FIELD
+  ERA_FIELD                     MINUTE_FIELD          YEAR_FIELD
+
   date  (none)           DateFormat.getDateInstance(DateFormat.DEFAULT, getLocale())
         short            DateFormat.getDateInstance(DateFormat.SHORT, getLocale())
         medium           DateFormat.getDateInstance(DateFormat.DEFAULT, getLocale())
@@ -755,7 +775,93 @@ java.lang.Object
         long             DateFormat.getTimeInstance(DateFormat.LONG, getLocale())
         full             DateFormat.getTimeInstance(DateFormat.FULL, getLocale())
         SubformatPattern new SimpleDateFormat(subformatPattern, getLocale())
+
+
+  java.text.SimpleDateFormat  ───────────────────────────────────────────────────
+ (inherits from java.text.DateFormat)
+  **WARN:** Date formats are not synchronized.
+            It is recommended to create separate format 
+            instances for each thread.
+
+  CONSTRUCTORS                 Contruct using ...
+  ──────────────────────────── ──────────────────────────────────────────────────────
+  SimpleDateFormat()           <·· Def pattern, def date format for def.FORMAT locale
+  SimpleDateFormat(String pat) <·· set pattern, def date format for def.FORMAT locale
+  SimpleDateFormat(String pat, <·· set pattern, set date format symbols.
+    DateFormatSymbols fs)
+  SimpleDateFormat(String pat, <·· set pattern, def date format symbols for set locale
+    Locale l)
+
+  INSTANCE USSAGE 
+  ─────────────── 
+  StringBuffer format(Date date,   <··  Date ··> String                        
+     StringBuffer toAppendTo,           Formats date into date/time string,   
+     FieldPosition pos)                 appends result to StringBuffer         
+  
+  Date parse(String txt,           <·· String ··> Date
+        ParsePosition pos)              Parses text, returns Date
+                                         
+*  (See original doc for full API ref)
+
+  PATTERN FORMAT:  ───────────────────────────────────────────
+  Letter Date or Time       Presentation  Examples
+         Component     
+  G      Era designator     Text           AD
+  y      Year               Year           1996; 96
+  Y      Week year          Year           2009; 09
+  M      Month in year      Month          July; Jul; 07
+         (context sensitive)
+  L      Month in year      Month          July; Jul; 07
+         (standalone form)
+  w      Week in year       Number          27
+  W      Week in month      Number          2
+  D      Day in year        Number          189
+  d      Day in month       Number          10
+  F      Day of week        Number          2
+               in month
+  E      Day name in week   Text            Tuesday; Tue
+  u      Day num. of week   Number          1
+         (1=Mon,...7=Sun)
+  a      Am/pm marker       Text            PM
+  H      0-23               Number          0
+  k      1-24               Number          24
+  K      am/pm(0-11)        Number          0
+  h      am/pm(1-12)        Number          12
+  m      Minute             Number          30
+  s      Second             Number          55
+  S      Millisecond        Number          978
+  z      Time zone          General  TZ     PST¹ (GMT-08:00)
+  Z      Time zone          RFC 822  TZ     -0800
+  X      Time zone          ISO 8601 TZ     -08 -0800 -08:00
+  ¹ Pacific Standard Time; 
+
+  Pattern Examples:
+  Date and Time Pattern          Result
+  "yyyy.mm.dd g 'at' hh:mm:ss z"  2001.07.04 ad at 12:08:56 pdt
+  "eee, mmm d, ''yy"              wed, jul 4, '01
+  "h:mm a"                        12:08 pm
+  "hh 'o''clock' a, zzzz"         12 o'clock pm, pacific daylight time
+  "k:mm a, z"                     0:08 pm, pdt
+  "yyyyy.mmmmm.dd ggg hh:mm aaa"  02001.july.04 ad 12:08 pm
+  "eEE, d MMM yyyy HH:mm:ss Z"    Wed, 4 Jul 2001 12:08:56 -0700
+  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"    2001-07-04T12:08:56.235-0700
+  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"  2001-07-04T12:08:56.235-07:00
+  "YYYY-'W'ww-u"                  2001-W27-3
+
+
   ```
+<!-- } -->
+
+* java.time.LocalTime ··> String using `java.time.format.DateTimeFormatter`:
+  ```
+  String time = STR."The time is \{
+      // The java.time.format package is very useful
+      DateTimeFormatter.ofPattern("HH:mm:ss")
+                       .format(LocalTime.now())
+  } right now";
+  | "The time is 12:34:56 right now"`
+  ```
+
 ### Compatibility with Java <=1.8
 
 * (java.util.) Date, Calendar and TimeZone
@@ -881,9 +987,58 @@ java.lang.Object
 [[java_lang.101}]]
 
 
-[[{PM.WHATS_NEW,02_doc_has.ext_resource,async/reactive,java_lang.debugging]]
+[[{PM.WHATS_NEW,doc_has.ext_resource,async/reactive,java_lang.debugging]]
 ## What's new
-*## v.17 2021-09-14 <!-- { -->
+### v.21 2023-09 <!-- { -->
+
+* JEP 453 (Preview): Structured Concurrency, simplifying concurrent
+  programming by introducing an API for structured concurrency.
+  Structured concurrency treats groups of related tasks running in 
+ different threads as a single unit of work, thereby streamlining 
+ error handling and cancellation, improving reliability, and enhancing 
+ observability. This is a preview API.
+
+
+* JEP 430: String Templates (Preview). <https://openjdk.org/jeps/430><br/>
+  ```
+  val name = "Joan";
+  String info = STR."My name is \{name}"; // <·· STR: Template processor.
+  | My name is Joan"
+
+  int x = 10, y = 20;
+  String s = STR."\{x} + \{y} = \{x + y}"; // <·· Embedded expression is OK!
+  | "10 + 20 = 30"
+
+  val filePath = "somePath.txt"; 
+  val fileExists = true; 
+  String msg = STR."The file \{filePath} \{fileExists} ? "does" : "does not"} exist";
+                                                         ^    ^   ^        ^
+                                                     No need to scape '"'
+
+  ```
+* JEP 431: Sequenced Collections
+* JEP 439: Generational ZGC
+* JEP 440: Record Patterns
+* JEP 441: Pattern Matching for switch
+* JEP 442: Foreign Function & Memory API (Third Preview)
+* JEP 443: Unnamed Patterns and Variables (Preview)
+* JEP 444: **Production ready Virtual Threads**. Now we can reserve a full 
+           thread for a connected client, even if we have 100.000 simultaneous
+           users with long connections, since Threads are virtual (vs OS backed).
+           No need anymore for complex asynchronous processing and pooling in
+           servlets and related code.
+* JEP 445: Unnamed Classes and Instance Main Methods (Preview)
+* JEP 446: Scoped Values (Preview)
+* JEP 448: Vector API (Sixth Incubator)
+* JEP 449: Deprecate the Windows 32-bit x86 Port for Removal
+* JEP 451: Prepare to Disallow the Dynamic Loading of Agents
+* JEP 452: Key Encapsulation Mechanism API
+  <https://openjdk.org/jeps/452>
+* JEP 453: Structured Concurrency (Preview)
+
+<!-- } -->
+
+### v.17 2021-09 <!-- { -->
 * 1st long-term support (LTS) release after JDK 11 (2018).
 * 14 JEPs includes:
   * 409: Sealed Classes
@@ -2808,7 +2963,7 @@ Specialty Observables that have more precisely-controlled subscription dynamics
 [[ $functional_programming }]]
 
 # Collections [[{ $collections ]]
-[[{data_structures.101,java_lang.101,scalability.101,02_doc_has.decission_tree,02_doc_has.diagram,qa.data]]
+[[{data_structures.101,java_lang.101,scalability.101,doc_has.decission_tree,doc_has.diagram,qa.data]]
 ## Collections 101
 * COLLECTION DECISSION TREE
   ```
@@ -3156,7 +3311,7 @@ Map<String, Double> map01 = new HashMap<>();
   so on.
 [[}]]
 
-[[{data_structures.iterator,data_structures.101,02_doc_has.comparative]]
+[[{data_structures.iterator,data_structures.101,doc_has.comparative]]
 ## `<<Enumeration>>`(1.0) vs `<<Iterator>>`(1.7)
 @[https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator]
 * both interfaces will give successive elements
