@@ -152,6 +152,21 @@ $   registry.localhost/hello-world:latest
     </build>
   </project>
 
+* alternatives to Distroless include Chainguard images and Chiselled Ubuntu.<br/>
+Extracted from <https://www.infoq.com/news/2023/12/canonical-chiselled-ubuntu/>
+
+> Chiselled Ubuntu containers solve a similar need for cut-down 
+> container base images as Google's Distroless and Chainguard's images, 
+> bringing the same benefits such as minimising dependency challenges, 
+> reducing bloat and resource usage, speeding up startup, and enhancing 
+> security through reducing the number of unneeded files in the image. 
+> Chisel itself uses Slice Definition Files, which relate to the 
+> upstream packages in the Ubuntu archives, defining subsets of those 
+> package contents needed at runtime. This provides fine-grained 
+> dependency management through a developer-friendly CLI, enabling more 
+> efficient containerization with enhanced security by reducing the 
+> container image attack surface and entirely eliminating some 
+> potential attack vectors.
 
 See also: jKube notes
 [[devops.containarization}]]

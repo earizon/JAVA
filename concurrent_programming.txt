@@ -177,95 +177,96 @@ See also: fast Inter-thread communication:
     Only threads invoking await will wait.
 
 - The first is a start signal that prevents any worker from
-   proceeding until the driver is ready for them to proceed; The second
-   is a completion signal that allows the driver to wait until all
-   workers have completed. Example:
-   ```
-   class DriverThread { // ...
+  proceeding until the driver is ready for them to proceed; The second
+  is a completion signal that allows the driver to wait until all
+  workers have completed. Example:
+  ```
+  class DriverThread { // ...
 
-     class Worker implements Runnable {
-       private final CountDownLatch   startSignal ;
-       private final CountDownLatch    doneSignal ;
+    class Worker implements Runnable {
+      private final CountDownLatch   startSignal ;
+      private final CountDownLatch    doneSignal ;
 
-       Worker(CountDownLatch   startSignal,
-              CountDownLatch   doneSignal ) {
-          this.startSignal = startSignal ;
-          this. doneSignal  = doneSignal ;
-       }
+      Worker(CountDownLatch   startSignal,
+             CountDownLatch   doneSignal ) {
+         this.startSignal = startSignal ;
+         this. doneSignal  = doneSignal ;
+      }
 
-       public void run() {
-          try {
-            startSignal .await();      // <·· Wait for driver-thread to be ready.
-            doWork();
-            doneSignal .countDown();   // <·· Decrease count.
-          } catch (InterruptedException ex) {}
-       }
+      public void run() {
+         try {
+           startSignal .await();      // <·· Wait for driver-thread to be ready.
+           doWork();
+           doneSignal .countDown();   // <·· Decrease count.
+         } catch (InterruptedException ex) {}
+      }
 
-       void doWork() { ... }
-     }
+      void doWork() { ... }
+    }
 
-     void main() throws InterruptedException {
+    void main() throws InterruptedException {
 
-       int N = 5;                              // <·· Number of worker threads
+      int N = 5;                              // <·· Number of worker threads
 
-       CountDownLatch   startSignal =
-                        new CountDownLatch(1); // <·· 1 Gate: Avoid workers to start before
-                                               //             driver-thread is ready.
+      CountDownLatch   startSignal =
+                       new CountDownLatch(1); // <·· 1 Gate: Avoid workers to start before
+                                              //             driver-thread is ready.
 
-       CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
-                        new CountDownLatch(N); //      have completed.
-                                               //      Consider also CyclicBarrier
-                                               //      (reset after count),
+      CountDownLatch   doneSignal  =          // ← N: Make driver thread wait until workers
+                       new CountDownLatch(N); //      have completed.
+                                              //      Consider also CyclicBarrier
+                                              //      (reset after count),
 
-       for (int i = 0; i < thread_number ; ++i) {
-         new Thread(                           // ← Setup workers in this (driver) thread.
-              new Worker(
-                    startSignal ,
-                    doneSignal
-         )).start();
-       }
-       ...
-       startSignal .countDown();      // <·· Decrease count. count cannot be reset.
-       doSomethingElse();
-       doneSignal .await();           // <·· block until current count reaches zero
-                                             Thread is released. Any subsequent invocations
-                                             return immediately.
-     }
-   }
-   ```
+      for (int i = 0; i < thread_number ; ++i) {
+        new Thread(                           // ← Setup workers in this (driver) thread.
+             new Worker(
+                   startSignal ,
+                   doneSignal
+        )).start();
+      }
+      ...
+      startSignal .countDown();      // <·· Decrease count. count cannot be reset.
+      doSomethingElse();
+      doneSignal .await();           // <·· block until current count reaches zero
+                                            Thread is released. Any subsequent invocations
+                                            return immediately.
+    }
+  }
+  ```
 
-  -  Ex. 2:
-     - divide problem into N parts
-     - describe each part with a Runnable executing a portion,
-     - queue all Runnables to an Executor.
-     - When all sub-parts are complete, coordinating-thread will "pass" through await.
+* Ex. 2:
+  * divide problem into N parts
+  * describe each part with a Runnable executing a portion,
+  * queue all Runnables to an Executor.
+  * When all sub-parts are complete, coordinating-thread will "pass" through await.
+  ```
+  class Driver2 { // ...
+    class WorkerRunnable implements Runnable {
+      private final CountDownLatch   doneSignal ;
+      WorkerRunnable(
+         CountDownLatch   doneSignal , ...) {
+         this.doneSignal = doneSignal ;
+      }
 
-     class Driver2 { // ...
-       class WorkerRunnable implements Runnable {
-         private final CountDownLatch   doneSignal ;
-         WorkerRunnable(
-            CountDownLatch   doneSignal , ...) {
-            this.doneSignal = doneSignal ;
-         }
+      public void run() {
+         try {
+           doneSignal.countDown();
+         } catch (InterruptedException ex) {} // return;
+      }
 
-         public void run() {
-            try {
-              doneSignal.countDown();
-            } catch (InterruptedException ex) {} // return;
-         }
+      void doWork() { ... }
+    }
+    void main() throws InterruptedException {
+      CountDownLatchO doneSignal = new CountDownLatch(N);
+      Executor e = ...
 
-         void doWork() { ... }
-       }
-       void main() throws InterruptedException {
-         CountDownLatchO doneSignal = new CountDownLatch(N);
-         Executor e = ...
+      for (int i = 0; i < N; ++i) // create and start threads
+        e.execute(new WorkerRunnable(  doneSignal , i));
 
-         for (int i = 0; i < N; ++i) // create and start threads
-           e.execute(new WorkerRunnable(  doneSignal , i));
-
-         doneSignal .await();           // wait for all to finish
-       }
-     }
+      doneSignal .await();           // wait for all to finish
+    }
+  }
+  ```
 
 @[https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67]
 [[concurrency.barrier}]]
@@ -273,7 +274,7 @@ See also: fast Inter-thread communication:
 # Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,02_doc_has.diagram]]
 @[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
 * Basic Thread objects
-
+  ```
    Java 1.0+           Java 1.5+
   ┌────────────┐       (java.util.concurrent)
   │<<Runnable>>│
@@ -290,50 +291,52 @@ See also: fast Inter-thread communication:
   │+sleep()    │       Complements Thread, returning a result/exception
   │....        │       the "parent" thread triggering the Callable
   └────────────┘
+  ```
+## Executor interface ( Java 1.5+):
+* REF: <https://www.uml-diagrams.org/java-7-concurrent-uml-class-diagram-example.html>
 
+0. Executors : Utility Factory + utility methods for Executor,(Scheduled)ExecutorService,
+   ThreadFactory, Callable) It can also create a "wrapped" ExecutorService
+   disabling reconfiguration.
+  ```
+  ┌╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶ <<CompletionService>>
+  ┆                Executors ⁰                          ^
+  ┆                  ┆┆┆┆      <<Executor>>  ←╶╶╶╶╶╶╶┐  ┆
+  ┆   <<Callable>> <─┘┆┆┆      void execute(Runnable)┆  ┆
+  ┆                   ┆┆┆           ^                ┆  ┆
+  ┆ <<ThreadFactory>><┘┆┆           │       ExecutorCompletionService ───┐
+  ┆                    ┆┆           │                                    ↓
+  ┆                    ┆┆           │                                <<BlockingQueue>>
+  ┆                    ┆└╶╶> <<ExecutorService>><╴╴╴╴╴╴╴┐                    │
+  └→ <<Future>> ←╶╶╶╶╶╶┆╶╶╶╶╶╶╶╶╶┘  ^ ¹                 ┆                    │
+       ^   ^           ┆            │             AbstractExecutorSevice     │
+       ┆   ┆           └╶╶╶╶╶╶→ <<Scheduled- ²       ^   ^                   │
+       ┆   ┆                  ExecutorService>>      │   │                   │
+    ┌╴─┘   └─╴╴╴╴╴┐                 ^                │   │                   │
+  FutureTask     ForkJoin           ┆  1.7+     ┌────┘   └──────┐            │
+                 Task    ←╶╶╶╶╶╶┐   ┆  ForkJoinPool       ThreadPoolExecutor ◊
+                 ^  ^           ┆   ┆           │               ^            ◊
+                 │  │           ┆   ┆           │               │            │
+           ┌─────┘  └────┐      ┆   ┆           ◊               │        Rejected
+       Recursive    Recursive   └╶╶╶┆╶╶╶╶╶ ForkJoin             │      ExecutionHandler
+       Action       Task            ┆      WorkerThread         │
+                                    ┆                           │
+                                    └╴╴╴╴╴╴╴╴ ScheduledTreadPoolExecutor
+                                     ┌────────┴────────────────────────┘
+                                     └ Prefered to "old" java.util.timer:
+                                       • timer can be sensitive to system clock changes
+                                       • timer has only one execution thread. Long-running
+                                         task can delay other tasks. Sch.Thre.PoolEx.
+                                         can be configured with "N" threads.
+                                       • runtime exceptions kill the Timer thread.
+        CyclicBarrier Semaphore          Sch.Thre.Ex. catches them, allowing to handle
+ CountDownLatch ┆ Phaser ┆   Exchanger   by overriding 'afterExecute' from ThreadPoolExecutor
+    └───────────┴──┬─┴───┴───────┘       Only Task throwing the exception will be canceled.
+               TimeUnit enum
+  ```
 
-* Executor interface ( Java 1.5+):
-  REF: https://www.uml-diagrams.org/java-7-concurrent-uml-class-diagram-example.html
-
-  *0: Executors : Utility Factory + utility methods for Executor,(Scheduled)ExecutorService,
-                  ThreadFactory, Callable) It can also create a "wrapped" ExecutorService
-                  disabling reconfiguration.
-  ┌╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶ <<CompletionService>>                        │
-  ┆                Executors *0                         △                                    │
-  ┆                  ┆┆┆┆      <<Executor>>  ←╶╶╶╶╶╶╶┐  ┆                                    │
-  ┆   <<Callable>> ←─┘┆┆┆      void execute(Runnable)┆  ┆                                    │
-  ┆                   ┆┆┆           △                ┆  ┆                                    │
-  ┆ <<ThreadFactory>>←┘┆┆           │       ExecutorCompletionService ───┐                   │
-  ┆                    ┆┆           │                                    ↓                   │
-  ┆                    ┆┆           │                                <<BlockingQueue>>       │
-  ┆                    ┆└╶╶→ <<ExecutorService>>◁╴╴╴╴╴╴╴┐                    │               │
-  └→ <<Future>> ←╶╶╶╶╶╶┆╶╶╶╶╶╶╶╶╶┘  △ *1                ┆                    │               │
-       △   △           ┆            │             AbstractExecutorSevice     │               │
-       ┆   ┆           └╶╶╶╶╶╶→ <<Scheduled─ *2      △   △                   │               │
-       ┆   ┆                  ExecutorService>>      │   │                   │               │
-    ┌╴─┘   └─╴╴╴╴╴┐                 △                │   │                   │               │
-  FutureTask     ForkJoin           ┆  1.7+     ┌────┘   └──────┐            │               │
-                 Task    ←╶╶╶╶╶╶┐   ┆  ForkJoinPool       ThreadPoolExecutor ◇               │
-                 △  △           ┆   ┆           │               △            ◇               │
-                 │  │           ┆   ┆           │               │            │               │
-           ┌─────┘  └────┐      ┆   ┆           ◇               │        Rejected            │
-       Recursive    Recursive   └╶╶╶┆╶╶╶╶╶ ForkJoin             │      ExecutionHandler      │
-       Action       Task            ┆      WorkerThread         │                            │
-                                    ┆                           │                            │
-                                    └╴╴╴╴╴╴╴╴ ScheduledTreadPoolExecutor                     │
-                                     ┌────────┴────────────────────────┘                     │
-                                     └ Prefered to "old" java.util.timer:                    │
-                                       • timer can be sensitive to system clock changes      │
-                                       • timer has only one execution thread. Long-running   │
-                                         task can delay other tasks. Sch.Thre.PoolEx.        │
-                                         can be configured with "N" threads.                 │
-                                       • runtime exceptions kill the Timer thread.           │
-        CyclicBarrier Semaphore          Sch.Thre.Ex. catches them, allowing to handle       │
- CountDownLatch ┆ Phaser ┆   Exchanger   by overriding 'afterExecute' from ThreadPoolExecutor│
-    └───────────┴──┬─┴───┴───────┘       Only Task throwing the exception will be canceled.  │
-               TimeUnit enum                                                                 │
-
-  *1: ExecutorService:    managed threads collection available to execute tasks
+1. ExecutorService:    managed threads collection available to execute tasks
+  ```
         <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks[,long timeout, TimeUnit unit])
                             Executes given tasks. when ALL complete (or timeout expires), return result.
                       <T> T invokeAny(Collection<? extends Callable<T>> tasks[,long timeout, TimeUnit unit])
@@ -357,8 +360,10 @@ See also: fast Inter-thread communication:
                   Executors.newCachedThreadPool() (← unbounded pool, automatic reclamation)
                   Executors.newSingleThreadScheduledExecutor()
                   Executors.newScheduledThreadPool(int size)
+  ```
 
- *2: ScheduledExecutorService:  schedule tasks periodically/after (absolute/relative) delay/period
+2. ScheduledExecutorService:  schedule tasks periodically/after (absolute/relative) delay/period
+   ```
      <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
          ScheduledFuture<?> schedule(Runnable command    , long delay, TimeUnit unit)
                             · Creates + exec ScheduledFuture, enabled after delay.
@@ -370,39 +375,42 @@ See also: fast Inter-thread communication:
                                                    long delay , TimeUnit unit)
                             Wait until termination. Then wait for 'delay' until next execution.
                             Executions running longer than delay will just "shift/delay" next executions.
+  ```
+  * Example: 
+  ```
+  import java.util.concurrent.*;
+  ...
+  int numWorkers = 10;                                         EXAMPLE 1: Create Pool of Callables
+                                                               ===================================
+  ExecutorService pool = Executors.newCachedThreadPool();    ← STEP 1) create new pool
+  MyCallableThread workers[]  =  new MyCallable[numWorkers]; ← allocate array for Callables and Futures
+  Future futures[] = new Future[numWorkers];
+  for (int i = 0; i < numWorkers; ++i) {
+     workers[i] = new MyCallable(i+1);                       ← Initialize array
+     futures[i] = pool.submit(workers[i]);
+  }
+  for (int i = 0; i < numWorkers; ++i) {
+        try {
+    futures[i].get();                                        ← Wait (Blocking) on each future.
+        } catch (InterruptedException ex) { ...
+        } catch (ExecutionException ex) {   ...  }
+  }
 
-  • Example: (import java.util.concurrent.*;)
-    ...
-    int numWorkers = 10;                                         EXAMPLE 1: Create Pool of Callables
-                                                                 ===================================
-    ExecutorService pool = Executors.newCachedThreadPool();    ← STEP 1) create new pool
-    MyCallableThread workers[]  =  new MyCallable[numWorkers]; ← allocate array for Callables and Futures
-    Future futures[] = new Future[numWorkers];
-    for (int i = 0; i < numWorkers; ++i) {
-       workers[i] = new MyCallable(i+1);                       ← Initialize array
-       futures[i] = pool.submit(workers[i]);
-    }
-    for (int i = 0; i < numWorkers; ++i) {
-          try {
-      futures[i].get();                                        ← Wait (Blocking) on each future.
-          } catch (InterruptedException ex) { ...
-          } catch (ExecutionException ex) {   ...  }
-    }
+                                                              EXAMPLE 2: Create Pool of Workers
+  ExecutorService pool =  Executors.newFixedThreadPool(10);   =================================
+  MyWorker[] workers =  new MyWorker[numWorkers];
+  for (int i = 0; i < numWorkers; ++i)
+    pool.execute(new MyWorker(i+1));                        ← Schedule new worker
+  pool.shutdown();                                          ← Don't Forget
+  ```
 
-                                                                EXAMPLE 2: Create Pool of Workers
-    ExecutorService pool =  Executors.newFixedThreadPool(10);   =================================
-    MyWorker[] workers =  new MyWorker[numWorkers];
-    for (int i = 0; i < numWorkers; ++i)
-      pool.execute(new MyWorker(i+1));                        ← Schedule new worker
-    pool.shutdown();                                          ← Don't Forget
-
-  *3 ForkJoinPool (1.7+)
-     REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html]
-     • ForkJoinPool scheduler is similar to "ExecutorService" but
-       IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES
-     • Fork : Task (=="thread") that "Splits itself" into smaller subtasks, executing concurrently.
-     • Join : End children tasks (=="threads") and merge results (if any).
-
+3. ForkJoinPool (1.7+) <!-- { -->
+REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html]
+* ForkJoinPool scheduler is similar to "ExecutorService" but
+  IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES
+* Fork : Task (=="thread") that "Splits itself" into smaller subtasks, executing concurrently.
+* Join : End children tasks (=="threads") and merge results (if any).
+  ```
                                    ┌Task04··· CPU1 ·········┐end
                      ┌Task02(fork) ┤                  ┌──── ┴ ────┐
                      │             └Task05··· CPU2 ···┘end  ^     │
@@ -424,8 +432,9 @@ See also: fast Inter-thread communication:
        to how it is done in the ExecutorService. We can submit:
         -   RecursiveAction : task not returning any result.
         -   RecursiveTask   : task     returning a   result.
+  ```
 
-
+  ```
      import java.util.ArrayList;                       │import java.util.ArrayList;
      import java.util.List;                            │import java.util.List;
      import java.util.concurrent.RecursiveAction;      │import java.util.concurrent.RecursiveTask;
@@ -471,22 +480,25 @@ See also: fast Inter-thread communication:
                                                        │  long mergedResult =
        forkJoinPool   .invoke(myRecursiveAction);      │  forkJoinPool   .invoke(myRecursiveTask) ;
                                                        │  System.out.println("mergedResult = " + mergedResult);
+  ```
 
-     •  ForkJoinPool Detractors
-      @[http://coopsoft.com/ar/CalamityArticle.html]
+* ForkJoinPool Detractors
+  <http://coopsoft.com/ar/CalamityArticle.html>
+<!-- } -->
 [[}]]
 
-# Completable Future [[{async/reactive.101,02_doc_has.diagram]]
-@[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html]
-## Future:            (Java 5+) Represent an asynchronous computation result.
-  CompletableFuture: (Java 8+)
-  · Extends Future with methods to combine and handle errors
-  · Extends the CompletionStage interface
-    · Contract for an asynchronous computation step that
-      can be combined with other steps.
-  · About 50 different methods for composing/combining/executing async computations.
+# CompletableFuture [[{async/reactive.CompletableFuture,async/reactive.101,02_doc_has.diagram]]
+* REF <https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html>
 
-##       ┌ LOCAL SYSTEM (Under Control) ─────────────────────────┐
+1. Future:            (Java 5+) Represent an asynchronous computation result.
+1. CompletableFuture: (Java 8+)
+   * Extends Future with methods to combine and handle errors
+   * Extends the CompletionStage interface
+   * Contract for an asynchronous computation step that
+     can be combined with other steps.
+   * About 50 different methods for composing/combining/executing async computations.
+   ```
+         ┌ LOCAL SYSTEM (Under Control) ─────────────────────────┐
         │               ┌·······(RPE Loop)··················┐   │
         │               ↓                                   │   │
         │    Input    Parse    Create      Parse  Create  → ... │
@@ -507,14 +519,16 @@ See also: fast Inter-thread communication:
                            │REMOTE SYSTEM        │
                            │(Out of control)     │
                            └─────────────────────┘
-## A Future that may be explicitly completed (setting its value and status),
+   ```
+* A Future that may be explicitly completed (setting its value and status),
   and may be used as a CompletionStage, supporting dependent functions and
   actions that trigger upon its completion.
-## When two or more threads attempt to complete, completeExceptionally, or
+* When two or more threads attempt to complete, completeExceptionally, or
   cancel a CompletableFuture, only one of them succeeds.
 
-##  Barriers  (  allOf ):
-   CompletableFuture<Void>[] future_list = new CompletableFuture[list.size()];
+### Barriers  (  allOf ):
+  ```
+  CompletableFuture<Void>[] future_list = new CompletableFuture[list.size()];
   int idx=0;
   log.info("Connecting plugins ...");
   for (Object el : list) {
@@ -524,12 +538,14 @@ See also: fast Inter-thread communication:
     ...
   }
   return CompletableFuture.  allOf (future_list);
+  ```
 
-## Example: Using CompletableFuture as a Simple Future (no-arg constructor)
-  create CompletableFuture instance,
-  launch some computation in another thread,
-  returns Future immediately.
+### Ex: Using CompletableFuture as a Simple Future (no-arg constructor)
+1.  create CompletableFuture instance,
+2.  launch some computation in another thread,
+3.  returns Future immediately.
 
+  ```
   public Future<String> calculateAsync() throws InterruptedException {
       Future<String> result = new CompletableFuture<>(); // *1 or .
 
@@ -549,8 +565,10 @@ See also: fast Inter-thread communication:
   String result = completableFuture.get(); // .get() wait for completion/error
                                               (ExecutionException|InterruptedException)
   assertEquals("Hello", result);              until second threads "completes" the future.
+  ```
 
-## Ex: CompletableFuture with Encapsulated Computation Logic <!-- @ma -->
+### Ex: CompletableFuture with Encapsulated Computation Logic <!-- @ma -->
+  ```
    (runAsync -<<Runnable>>-, supplyAsync -<<Supplier>>-)
    <<Supplier>>: generic functional interface with single method
                  (zero arguments, returns value)
@@ -561,29 +579,36 @@ See also: fast Inter-thread communication:
   .thenAccept(/* consumer lambda */
      s -> System.out.println("Computation returned: " + s)).
   .thenRun(/* Runnable lambda*/ () -> System.out.println("Computation finished."));
+  ```
 
 ## Combining Futures (monadic design pattern in functional languages)
+  ```
   CompletableFuture<String> completableFuture
     = CompletableFuture.supplyAsync(() -> "Hello")
       .thenCompose(
             s -> CompletableFuture.supplyAsync(() -> s + " World"));
   assertEquals("Hello World", completableFuture.get());
+  ```
 
-## Ex: Execute two independent Futures and do something with their results:
+### Ex: Execute two independent Futures and do something with their results:
+  ```
   CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
       .thenCombine(CompletableFuture.supplyAsync(
         () -> " World"), (s1, s2) -> s1 + s2));
 
   assertEquals("Hello World", future.get());
+  ```
 
-## Ex: Execute two independent Futures and do nothing with result:
+### Ex: Execute two independent Futures and do nothing with result:
+  ```
   CompletableFuture future = CompletableFuture.supplyAsync(() -> "Hello")
     .thenAcceptBoth(CompletableFuture.supplyAsync(
        () -> " World"), (s1, s2) -> log(s1 + s2));
+  ```
 
-## Ex: Running Multiple Futures in Parallel:
-   -  wait for all to execute and process combined results
-
+### Ex: Running Multiple Futures in Parallel:
+1.  wait for all to execute and process combined results
+  ```
   CompletableFuture<String> future1
     = CompletableFuture.supplyAsync(() -> "Hello");
   CompletableFuture<String> future2
@@ -603,11 +628,13 @@ See also: fast Inter-thread communication:
                                                 exception if future fails.
     .collect(Collectors.joining(" "));
   assertEquals("Hello Beautiful World", combined);
+  ```
 
 ## Handling Errors: <!-- @ma -->
 
-  We can NOT try-catch.
+* We can NOT try-catch.
 
+  ```
   CompletableFuture<String> completableFuture
     =  CompletableFuture.supplyAsync(() -> {
         ...
@@ -623,104 +650,97 @@ See also: fast Inter-thread communication:
     new RuntimeException("Calculation failed!"));
   ...
   completableFuture.get();                          ← ExecutionException
+  ```
 
 ## Async Methods
-  - methods without Async-postfix run next execution blocking current thread.
-  - async* without the Executor argument runs a step using the common
-    fork/join pool implementation.
+- methods without Async-postfix run next execution blocking current thread.
+- async* without the Executor argument runs a step using the common
+  fork/join pool implementation.
 
-  - Ex.: process result of computation with a Function instance
-    CompletableFuture<String> completableFuture
-      = CompletableFuture.supplyAsync(() -> "Hello");
+- Ex.: process result of computation with a Function instance
+  CompletableFuture<String> completableFuture
+    = CompletableFuture.supplyAsync(() -> "Hello");
 
-    CompletableFuture<String> future = completableFuture
-      .thenApplyAsync(s -> s + " World"); // lambda is wrapped into ForkJoinTask instance
-    assertEquals("Hello World", future.get());
-[[}]]
+  CompletableFuture<String> future = completableFuture
+    .thenApplyAsync(s -> s + " World"); // lambda is wrapped into ForkJoinTask instance
+  assertEquals("Hello World", future.get());
+[[async/reactive.CompletableFuture}]]
 
 
-# DragonWell JDK with Coroutine Support [[{concurrency.*,scalability.jvm,02_doc_has.comparative]]
+# DragonWell JDK with Coroutine Support [[{scalability.jvm.dragonwell,concurrency.*,02_doc_has.comparative]]
 REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
-- AdoptOpenJDK and Alibaba announced that the Dragonwell JDK will be
+* AdoptOpenJDK and Alibaba announced that the Dragonwell JDK will be
   built, tested, and distributed using AdoptOpenJDK's infrastructure.
-  ...  Another interesting feature is the Wisp2 coroutine support.
-       Wips2  maps Java threads to coroutines instead of kernel-level threads: .
-       Many coroutines can be scheduled on a small number of core lines,
-       reducing scheduling overhead.
 
-     Wisp2 engine is similar in some respects to the aims of Project Loom
-     but (unlike Loom)   it works out of the box on existing code by enabling
-     it with these Java arguments:
-     $ java -XX:+UnlockExperimentalVMOptions -XX:+UseWisp2
+> Another interesting feature is the Wisp2 coroutine support.
+> Wips2  maps Java threads to coroutines instead of kernel-level threads: .
+> Many coroutines can be scheduled on a small number of core lines,
+> reducing scheduling overhead.
+> Wisp2 engine is similar in some respects to the aims of Project Loom
+> but (unlike Loom) it works out of the box on existing code by enabling
+> it with these Java arguments:
+> `$ java -XX:+UnlockExperimentalVMOptions -XX:+UseWisp2`
 
-    I/O intensive applications where tasks are blocked on events and
-  then scheduled can benefit from the coroutine support. On the other
-  side,   CPU intensive applications will probably not benefit from
-  coroutines.
+  I/O intensive applications where tasks are blocked on events and
+then scheduled can benefit from the coroutine support. On the other
+side,   CPU intensive applications will probably not benefit from
+coroutines.
 
 * See also reddit thread "Loom vs DragoWell JV:":
-@[https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3]
-<hr/>
-# Loom Project: Ligthweight threads
-@[https://developers.redhat.com/blog/2019/06/19/project-loom-lightweight-java-threads/]
-@[https://openjdk.java.net/jeps/353]
+<https://www.reddit.com/r/java/comments/ld2ame/video_loom_modern_scalable_concurrency_for_the/gm7rq7i/?context=3>
+[[scalability.jvm.dragonwell}]]
 
-- MISSION:
-  - make concurrency simple(r) again!
+# Loom Project: Ligthweight threads [[{scalability.jvm.fibers]]
+* Official support in JDK 21+
+* <https://developers.redhat.com/blog/2019/06/19/project-loom-lightweight-java-threads/>
+* <https://openjdk.java.net/jeps/353>
 
-- Threads, provided by Java from its first day, are a convenient concurrency
-  construct
-  putting aside the separate question of communication among threads
-  which is being supplanted by less convenient abstractions because their
-  current implementation as OS kernel threads is insufficient for meeting
-  modern demands, and wasteful in computing resources that are particularly
-  valuable in the cloud.
+* MISSION: **make concurrency simple(r) again!**
 
-- Project Loom will introduce   FIBERS:
-  - lightweight, JVM managed, efficient threads ,
-  - A fiber is composed of:
-    -  1 scheduler    : Already in place for Java through the excellent scheduler
-                       ForkJoinPool
-    -  1 continuation : To be implemented in Loom.
+Threads, provided by Java from its first day, are a convenient concurrency
+construct putting aside the separate question of communication among threads
+which is being supplanted by less convenient abstractions because their
+current implementation as OS kernel threads is insufficient for meeting
+modern demands, and wasteful in computing resources that are particularly
+valuable in the cloud.
 
-  https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-care/
-  ....
-  The overhead of fibers is higher but still very low even when
-  compared to async and monadic APIs, which have the disadvantage of
-  introducing a cumbersome, infectious programming style and don’t
-  interoperate with imperative control flow constructs built into a
-  language.
-  So aren’t fibers generators or async/awaits?
+* Project Loom introduce **FIBERS**:
+  * lightweight, JVM managed, efficient threads.
+  * A fiber is composed of:
+    *  **1 scheduler**    : Already in place for Java through the excellent scheduler ForkJoinPool
+    *  **1 continuation** : To be implemented in Loom.
 
-  No, as we have seen fibers are real threads: namely a continuation
-  plus a scheduler. Generators and async/awaits are implemented with
-  continuations (often a more limited form of continuation called
-  stackless, which can only capture a single stack frame), but those
-  continuations don’t have a scheduler, and are therefore not threads.
+From <https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-care/>
 
+>  The overhead of fibers is higher but still very low even when
+>  compared to async and monadic APIs, which have the disadvantage of
+>  introducing a cumbersome, infectious programming style and don’t
+>  interoperate with imperative control flow constructs built into a
+>  language.
+>  So aren’t fibers generators or async/awaits?
+> 
+>  No, as we have seen fibers are real threads: namely a continuation
+>  plus a scheduler. Generators and async/awaits are implemented with
+>  continuations (often a more limited form of continuation called
+>  stackless, which can only capture a single stack frame), but those
+>  continuations don’t have a scheduler, and are therefore not threads.
 
-RELATED:
-@[http://www.linuxplumbersconf.org/2013/ocw/system/presentations/1653/original/LPC%20-%20User%20Threading.pdf]
-
-@[https://www.infoq.com/presentations/continuations-java/]
-Ron Pressler discusses and compares the various techniques of dealing with concurrency
-and IO in both:
-- pure functional (monads, affine types)
-- imperative      (threads, continuations, monads, async/await)
-and shows why delimited continuations are a great fit for the imperative style.
-
-Bio
-Ron Pressler is the technical lead for Project Loom, which aims to add delimited
-continuations, fibers and tail-calls to the JVM
-
-# Quasar(Fibers)
-* fast threads for java and Kotlin
-@[http://docs.paralleluniverse.co/quasar/]
-
-NOTE: To be superseded by Prj. Loom?
-Extracted from @[https://github.com/puniverse/quasar/issues/305]
-My understanding is that Ron is currently busy working for/with Oracle on
-project Loom which should bring "native" Fiber/lightweight continuation
-support directly into JVM without the need of auxiliary library like Quasar.
-[[}]]
+* RELATED:
+  * <http://www.linuxplumbersconf.org/2013/ocw/system/presentations/1653/original/LPC%20-%20User%20Threading.pdf>
+  * <https://www.infoq.com/presentations/continuations-java/>
+    Ron Pressler,technical lead for Project Loom, discusses and compares the various 
+    techniques of dealing with concurrency and IO in both:
+    * pure functional (monads, affine types)
+    * imperative      (threads, continuations, monads, async/await)
+    and shows why delimited continuations are a great fit for the imperative style.
+[[scalability.jvm.fibers}]]
+   
+## Quasar(Fibers) [[{scalability.jvm.quasar]]
+* fast threads for java and Kotlin <https://docs.paralleluniverse.co/quasar/>
+* To be superseded by Prj. Loom:
+  Extracted from @[https://github.com/puniverse/quasar/issues/305]
+> My understanding is that Ron is currently busy working for/with Oracle on
+> project Loom which should bring "native" Fiber/lightweight continuation
+> support directly into JVM without the need of auxiliary library like Quasar.
+[[scalability.jvm.quasar}]]
 [[{$ Concurrent Programming}]]

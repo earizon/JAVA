@@ -76,4 +76,8 @@
     community driven books and is a long term member of the program
     committee of the JavaOne conference. He was chosen a Java Champion by
     his peers.
+
+
+- Ron Pressler is the technical lead for Project Loom, which aims to add delimited
+  continuations, fibers and tail-calls to the JVM
 [[}]]
