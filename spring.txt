@@ -1,1802 +1,1654 @@
+```
+|  ____             _               |
+| / ___| _ __  _ __(_)_ __   __ _   |
+| \___ \| '_ \| '__| | '_ \ / _` |  |
+|  ___) | |_) | |  | | | | | (_| |  |
+| |____/| .__/|_|  |_|_| |_|\__, |  |
+|       |_|                 |___/   |
+|                        Wise Book  |
+```
+## Apropos
+* This __"cheat-sheet with steroids"__ presents an always-growing set of
+  "Spring Recipes and TL'DR" well ordered&amp;classified extracted from
+  * Spring official docs.
+  * Author's own experience in different projects.
+  * Articles anywhere on the Internet
+  * ...
+* Content is versioned in git @ <https://www.github.com/earizon/JAVA>.<br/>
+  Commits, issues and pull-requests welcome!
+
 [[{spring]]
-    ● Spring
-# External Links [[{spring,02_doc_has.ext_resource]]
-https://spring.io/projects/
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/overview.html#spring-introduction']
-@[https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#resources]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/web.html#mvc]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/data-access.html]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/testing.html]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/integration.html]
-@[https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-the-Spring-Framework]
+## External Links [[{spring,doc_has.ext_resource]]
+* <https://spring.io/projects/>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/overview.html#spring-introduction>
+* <https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#resources>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/web.html#mvc>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/data-access.html>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/testing.html>
+* <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/integration.html>
+* <https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-the-Spring-Framework>
 [[}]]
 
-# Spring DONT's!!!  [[{spring.101]] #[sprint_donts]
-- If a interface has a single implementation and is going
-  to be instantiated just once in a single line of code,
-  do NOT use Spring dependency injection.
-  - All static compiler safety meassures are lost, translating
+# Spring DONT's!!!  [[{qa.donts,spring.101,]]
+* If a interface has a single implementation and is going to be
+  instantiated just once in a single line of code, do NOT use Spring
+  dependency injection:
+  * All static compiler safety meassures are lost, translating
     to runtime dangerous checks.
-  - Use injection just when you have the intention to allow
+  * Use injection just when you have the intention to allow
     complex interchangable implementations or spring boot
     simplifies code, never when code get more complex and
     unreliable.
-  - Ex: A utility class with static methods is preferred to
+  * Ex: A utility class with static methods is preferred to
     an injected spring bean  doing that same functionality.
-
+  In particular avoid dependency injection for Data-like objects.
+  Use Java Records (java 15+) or classes with final members
+  instead.<br/>
+* Use dependency injection for complex architectures for
+  which different implementations make sense. (JDBC drivers,
+  distributed session implementations, mocked business logic,
+  ...)
 [[}]]
 
-[[{spring.101]]
-# Annotations Quick Sheet
-REF:
-@[https://www.javagists.com/spring-boot-cheatsheet]  ← TODO: Testing annotations,
-@[https://groupe-sii.github.io/cheat-sheets/spring/spring-boot/index.html]
+[[{spring.101.annotations]]
+# Spring Framework Annotations Quick Sheet
+* REF:
+  * <https://groupe-sii.github.io/cheat-sheets/spring/spring-boot/index.html>
+<!-- { -->
+  TODO: Testing annotations: https://www.javagists.com/spring-boot-cheatsheet
+<!-- } -->
 
-  SPRING FRAMEWORK ANNOTATIONS
-
-    ANNOTATION      DESCRIPTION                                  LEVEL
-                  |                                            |C|F|C|M|P
-                  |                                            |L|I|O|E|A
-                  |                                            |A|E|N|T|R
-                  |                                            |S|L|S|H|A
-                  |                                            |S|D|T|O|M
-                  |                                            | | |R|D|S
-                  |                                            | | |U| |
-                  |                                            | | |C| |
-                  ------------------------------------------------------
-    @Autowired     | "autowired by type", used to inject object |  x x x
-                   | dependency implicitly .                    |
-                   | - No need to be public.                    |
-                   ------------------------------------------------------
-    @Configurable  |inject properties of domain objects.        |x
-                   |Types whose properties are injected without |
-                   |being instantiated by Spring                |
-                   ------------------------------------------------------
-    @Qualifier     | used to create more than one bean of the   |  x x x
-                   | same type and wire only one of the types   |
-                   | with a property, providing greater control |
-                   | on the dependency injection process.       |
-                   | - can be used with @Autowired annotation.  |
-                   ------------------------------------------------------
-    @Required      |mark mandatory class members.               |  x x x
-                   ------------------------------------------------------
-    @ComponentScan |Trigger scanning of package for the         |x
-                   |@Configuration clases.                      |
-                   ------------------------------------------------------
-    @Bean          |tag a method  bean producer  which will be  |      x
-                   |mananged by the Spring container.           |
-                   ------------------------------------------------------
-    @Lazy          | Init bean/component on demand              |x     x
-                   ------------------------------------------------------
-    @Value         |used to inject values into a bean's         |  x x x
-                   |attribute from a property file, indicating  |
-                   |a default value expression.                 |
-                   ------------------------------------------------------
-    @Import        |                                            |
-                   ------------------------------------------------------
-    @DependsOn     |                                            |
-                   ------------------------------------------------------
-
-
-  SPRING FRAMEWORK ANNOTATIONS
-
-    ANNOTATION      DESCRIPTION                                  LEVEL
-                  |                                            |C|F|C|M|P
-                  |                                            |L|I|O|E|A
-                  |                                            |A|E|N|T|R
-                  |                                            |S|L|S|H|A
-                  |                                            |S|D|T|O|M
-                  |                                            | | |R|D|S
-                  |                                            | | |U| |
-                  |                                            | | |C| |
-                  ------------------------------------------------------
-    @EnableAutoConfiguration                                   |
-                  ------------------------------------------------------
-    @Controller   |Allows detection of component classes in    |
-                  |the class path automatically and register   |
-                  |bean definitions for the classes            |
-                  |automatically.                              |
-                  ------------------------------------------------------
-    @RestController                                            |
-                  |tag controller as RESTful (behaviour) that  |
-                  |will behave as resources.                   |
-                  ------------------------------------------------------
-    @ResponseBody |automatically convert returned object to a  |
-                  |response body.                              |
-                  ------------------------------------------------------
-    @RequestMapping                                            |
-                  |map requests URI to handler class/method    |
-                  ------------------------------------------------------
-    @RequestParam |bind req.param to method param in controller|
-                  ------------------------------------------------------
-    @PathVariable |bind placeholder from URI to method.param   |
-[[}]]
+* Configuration Annotations:
+  ```
+  | ANNOTATION       DESCRIPTION                                  LEVEL
+  |                                                    params ··········─┐
+  |                                                   methods ········─┐ ·
+  |                                               constructor ······─┐ · ·
+  |                                                     field ····─┐ · · ·
+  |                                                     class ··─┐ · · · ·
+  |                ----------------------------------------------v v v v v
+  | @Autowired     | "autowired by type", used to inject object |  x x x
+  |                | dependency implicitly .                    |
+  |                | - No need to be public.                    |
+  |                -------------------------------------------------------
+  | @Configurable  |inject properties of domain objects.        |x
+  |                |Types whose properties are injected without |
+  |                |being instantiated by Spring                |
+  |                -------------------------------------------------------
+  | @Qualifier     | used to create more than one bean of the   |  x x x
+  |                | same type and wire only one of the types   |
+  |                | with a property, providing greater control |
+  |                | on the dependency injection process.       |
+  |                | - can be used with @Autowired annotation.  |
+  |                -------------------------------------------------------
+  | @Required      |mark mandatory class members.               |  x x x
+  |                -------------------------------------------------------
+  | @ComponentScan |Trigger scanning of package for the         |x
+  |                |@Configuration clases.                      |
+  |                -------------------------------------------------------
+  | @Bean          |tag a method  bean producer  which will be  |      x
+  |                |mananged by the Spring container.           |
+  |                -------------------------------------------------------
+  | @Lazy          | Init bean/component on demand              |x     x
+  |                -------------------------------------------------------
+  | @Value         |used to inject values into a bean's         |  x x x
+  |                |attribute from a property file, indicating  |
+  |                |a default value expression.                 |
+  |                -------------------------------------------------------
+  | @Import        |                                            |
+  |                -------------------------------------------------------
+  | @DependsOn     |                                            |
+  | ----------------------------------------------------------------------
+  ```
+* REST HTTP Annotations:
+  ```
+  |  ANNOTATION    | DESCRIPTION                                | LEVEL
+  |                                                    params ··········─┐
+  |                                                   methods ········─┐ ·
+  |                                               constructor ······─┐ · ·
+  |                                                     field ····─┐ · · ·
+  |                                                     class ··─┐ · · · ·
+  |                ----------------------------------------------v v v v v
+  |                ------------------------------------------------------
+  |  @EnableAutoConfiguration                                   |
+  |                ------------------------------------------------------
+  |  @Controller   |Allows detection of component classes in    |
+  |                |the class path automatically and register   |
+  |                |bean definitions for the classes            |
+  |                |automatically.                              |
+  |                ------------------------------------------------------
+  |  @RestController                                            |
+  |                |tag controller as RESTful (behaviour) that  |
+  |                |will behave as resources.                   |
+  |                ------------------------------------------------------
+  |  @ResponseBody |automatically convert returned object to a  |
+  |                |response body.                              |
+  |                ------------------------------------------------------
+  |  @RequestMapping                                            |
+  |                |map requests URI to handler class/method    |
+  |                ------------------------------------------------------
+  |  @RequestParam |bind req.param to method param in controller|
+  |                ------------------------------------------------------
+  |  @PathVariable |bind placeholder from URI to method.param   |
+  ```
+[[spring.101.annotations}]]
 
 # IoC Summary [[{spring.101]]
-  BASE PACKAGES of Spring IoC:
-  - org.springframework.beans
-    - @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#beans-definition]
-    - Objects managed by Spring IoC
-    - created with the configuration metadata.
-    - Represented as  BeanDefinition objects  containing:
-      - essentially "a recipe for creating one or more objects".
-      - package-qualified class name: typically the actual implementation class.
-      - behavioral configuration elements: scope, lifecycle callbacks,...)
-      - References to other dependencies (or "collaborators")
-      - Custom settings (setters).
 
-      Best Patterns
-    - Bean metadata need to be registered as early as possible.
-      (fail-fast).
-      WARN:  registration of new beans at runtime (live access to
-      factory) is not officially supported and may lead to concurrent
-      access exceptions  and/or inconsistent state in the bean container.
+## `org.springframework.beans`:
+* BASE PACKAGES of Spring IoC
+* @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#beans-definition]
+* Objects managed by Spring IoC
+* created with the configuration metadata.
+* Represented as  BeanDefinition objects  containing:
+  * essentially "a recipe for creating one or more objects".
+  * package-qualified class name: typically the actual implementation class.
+  * behavioral configuration elements: scope, lifecycle callbacks,...)
+  * References to other dependencies (or "collaborators")
+  * Custom settings (setters).
 
-  - org.springframework.context.BeanFactory (Interace)
-    - provides advanced config.mechanism for "any" type of object.
-    └ org.springframework.context.ApplicationContext (Interface)
-      - extends BeanFactory with "Enterprise Features"
-      - represents the IoC container
-      - easier integration with Spring's AOP features
-      - message resource handling (for use in i18n)
-      - event publication
-      - application-layer specific contexts such as
-        WebApplicationContext
-      └ ClassPathXmlApplicationContext
-      ·  ApplicationContext  context =
-      ·      new ClassPathXmlApplicationContext ( // Alt 1:
-      ·       "services.xml", "daos.xml");
-      ·       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-      └ FileSystemApplicationContext
-      └ ...
+##  Best Patterns
+* Bean metadata need to be registered as early as possible.
+  (fail-fast).<br/>
+  WARN:  registration of new beans at runtime (live access to
+  factory) is not officially supported and may lead to concurrent
+  access exceptions  and/or inconsistent state in the bean container.
 
-  MyBeanClass myBean = context
-         .getBean ("idBeanDef", beanClass.class);
+* `<<org.springframework.context.BeanFactory>>`
+  * provides advanced config.mechanism for "any" type of object.
+  * `org.springframework.context.ApplicationContext` (Interface)
+    * extends BeanFactory with "Enterprise Features"
+    * represents the IoC container
+    * easier integration with Spring's AOP features
+    * message resource handling (for use in i18n)
+    * event publication
+    * application-layer specific contexts such as
+      `WebApplicationContext`
+    * `ClassPathXmlApplicationContext`
+       ApplicationContext  context =
+           new ClassPathXmlApplicationContext ( // Alt 1:
+            "services.xml", "daos.xml");
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    * FileSystemApplicationContext
+    * ...
+    * Ex:j
+    ```
+    | MyBeanClass myBean = context
+    |        .getBean ("idBeanDef", beanClass.class);
+    ```
 
-  Spring History:
-  Spring 1.0+ → Spring 2.5+      → Spring 3.0+
-  XML           Annotation-based   Java-based config
+## Spring History:
+1. Spring 1.0+: XML
+2. Spring 2.5+: Annotation-based
+3. Spring 3.0+: Java-based config
 
+## Bean Metadata:
+* package-qualified class name
+* name  : (unique) "id" or (aliased) "name" in xml.
+* scope :
+  * singleton  per Spring IoC container (default)
+  * prototype  single bean definition to any number of object instances.
+  * In web-aware ApplicationContext next scopes are available:
+    *  request     : single bean for lifecycle of HTTP request
+    *  session     : single bean for lifecycle of HTTP Session.
+    *  application : Single bean for lifecycle of ServletContext.
+    *  websocket   : single bean for lifecycle of WebSocket.
+  * constructor args : (Prefered to properties -setters-):
+    ```
+    |   <bean id="id01" class="x.y.Class01"/>
+    |   <bean id="id02" class="x.y.Class02"/>
+    |
+    |   <bean id="instance03" class="x.y.Class03">
+    |     <constructor-arg ref="id01"/>                     <·· By class
+    |     <constructor-arg type="int" value="3320"/>        <·· by type
+    |     <constructor-arg name="year" value="2020"/>       <·· by param name
+    |     <constructor-arg index="4" value="Hello World"/>  <·· by param index
+    |   </bean>
+    ```
+  * Notes
+    * `<idref>` is prefered to property with value attribute (**fails-faster**)
+    * bean `depends-on` attribute can force initialization (and destruction) order.
 
-  Bean Metadata
-  - package-qualified class name
-  - name  : (unique) "id" or (aliased) "name" in xml.
-  - scope :
-    - singleton  per Spring IoC container (default)
-    - prototype  single bean definition to any number of object instances.
-    - In web-aware ApplicationContext next scopes are available:
-      -  request     : single bean for lifecycle of HTTP request
-      -  session     : single bean for lifecycle of HTTP Session.
-      -  application : Single bean for lifecycle of ServletContext.
-      -  websocket   : single bean for lifecycle of WebSocket.
-
-  - constructor args : (Prefered to properties -setters-):
-       <bean id="id01" class="x.y.Class01"/>
-       <bean id="id02" class="x.y.Class02"/>
-
-       <bean id="instance03" class="x.y.Class03">
-         <constructor-arg ref="id01"/>                   ← By class
-         <constructor-arg type="int" value="3320"/>      ← by type
-         <constructor-arg name="year" value="2020"/>     ← by param name
-         <constructor-arg index="4" value="Hello World"/>← by param index
-
-       </bean>
-         Note:-   <idref> is prefered to property with value attribute (fails-faster)
-              - bean  depends-on  attribute can force initialization (and destruction) order
-
-  - Autowiring :
-    - Let Spring resolve dependencies("collaborators") of a bean
-      by inspecting the contents of the ApplicationContext.
-    @[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#beans-factory-autowire]
-      ("ref") autowire values:
-      - no     : ref used, not recommended for complex     configs
-      - byName : IoC looks for bean with matching name
-      - byType : (in setter or constructor args)
-                 autowired if exactly one bean of the property type exists in container.
-                 throws error if more than one found
-                 WARNª: set to null if zero found.
-
-      ☞ Note: "default-autowire-candidates" attribute in beans tag can limit autowire
-              candidate globally with a CSV list of candidates: (*Repository,*Security,*Logging)
-
-  - lazy-init  : false: force resolution and instantiate at startup.(default,recomended)
-                 true : use for "big objects" to save memory.
-
-  - destroy-method
-- While weird and not recomeneded, external (to the container) objects can
+* Autowiring :
+  * Let Spring resolve dependencies("collaborators") of a bean
+    by inspecting the contents of the ApplicationContext.
+    <https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/core.html#beans-factory-autowire>.<br/>
+    ("ref") autowire values:
+    * no     : ref used, not recommended for complex configs
+    * byName : IoC looks for bean with matching name
+    * byType : (in setter or constructor args)
+               autowired if exactly one bean of the property type exists in container.
+               throws error if more than one found
+               **WARN**: set to null if zero found.
+    * ☞ Note: "default-autowire-candidates" attribute in beans tag can limit autowire
+      candidate globally with a CSV list of candidates: (*Repository,*Security,*Logging)
+  * `lazy-init`:
+    * false: force resolution and instantiate at startup.(default,recomended,fail-fast)
+    * true : use for "big objects" to save memory.
+  * `destroy-method`:
+* While weird and not recomeneded, external (to the container) objects can
   be registered like:
-  BeanFactory bFactImpl = context.getBeanFactory()
-                                  ^^^^^^^^^^^^^^
-                                 returns DefaultListableBeanFactory impl
-  bFactImpl.registerSingleton(..)
-  bFactImpl.registerBeanDefinition(..)
+  ```
+  | BeanFactory bFactImpl = context.getBeanFactory()
+  |                                 └─────┬──────┘
+  | //         returns DefaultListableBeanFactory impl
+  | bFactImpl.registerSingleton(..)
+  | bFactImpl.registerBeanDefinition(..)
+  ```
 
-  Method injection
-  - Suppose singleton A needs to use  non-singleton  bean B
-    on each method invocation on
-
-  - Alternative A: (  Discouraged, tied to Spring internals )
-    beans A implements <<ApplicationContextAware>>.
-    getBean("B") to container requesting a
-    (typically new) bean B instance.
-
-  - Alternative B: Method Injection
-    containers overrides managed bean A
-    Limitations:
-    - class and method cannot be final
-    - lookup methods won't work with factory methods
-      and in particular not with @Bean methods in configuration
-    - classes, since the container is not in charge of creating the instance
-      in that case and therefore cannot create a runtime-generated subclass
-      on the fly.
+## Method injection
+* Suppose singleton A needs to use  non-singleton  bean B
+  on each method invocation on
+* Alternative A: (  Discouraged, tied to Spring internals )
+  beans A implements <<ApplicationContextAware>>.
+  getBean("B") to container requesting a
+  (typically new) bean B instance.
+* Alternative B: Method Injection
+  containers overrides managed bean A
+  Limitations:
+  * class and method cannot be final
+  * lookup methods won't work with factory methods
+    and in particular not with @Bean methods in configuration
+  * classes, since the container is not in charge of creating the instance
+    in that case and therefore cannot create a runtime-generated subclass
+    on the fly.
 [[}]]
 
 # Nullability [[{spring.101,qa.billion_dolar_mistake]]
-  -  @NonNull        ← forces param|return value|field to be NON-null
-  -  @Nullable       ← allows param|return value|field to be     null
-  -  @NonNullApi     ← forces param|return value       to be NON-null at package level
-  -  @NonNullFields  ← forces                    field to be NON-null at package level
-      ^^^^^^^^^^^^^
-      org.springframework.lang. package
 
-  - Null and  empty string  values rules
-    - empty arguments for properties,... convert to "" empty String.
-    - <null/> element handles null values. Ex
-      <property name="email"> <null/> </property> ← email = null
-      <property name="email">         </property> ← email = ""
+   ```
+   | @NonNull        <·· forces param|return value|field to be NON-null
+   | @Nullable       <·· allows param|return value|field to be     null
+   | @NonNullApi     <·· forces param|return value       to be NON-null at package level
+   | @NonNullFields  <·· forces                    field to be NON-null at package level
+   |  └───────────┴─·· org.springframework.lang. package
+   ```
+
+* Null and empty string values rules
+  * empty arguments for properties,... convert to "" empty String.
+  * `<null/>` element handles null values. Ex
+    ```
+    <property name="email"> <null/> </property> <·· email = null
+    <property name="email">         </property> <·· email = ""
+    ```
 [[}]]
 
-# Spring+JPA+JWT summary [[{spring.101,spring.configuration,spring.troubleshooting]]   #[spring_summary]
+# Spring+JPA+OAuth summary [[{spring.101,spring.configuration,spring.troubleshooting]]
 
-- file: com/myComp/openApi/SwaggerConfig.java  [[{,architecture.api_management.OpenAPI.swagger,spring.config]]
-    package com.myComp.swagger;
+## Setting-up OpenAPI documentation.
 
-    import org.springframework.context.annotation.Bean;
-    import org.springframework.context.annotation.Configuration;
+   ```java
+   | // com/myComp/openApi/SwaggerConfig.java  [[{architecture.API_MANAGEMENT,qa.doc.OpenAPI,spring.config}]]
+   | package com.myComp.swagger;
+   |
+   | import org.springframework.context.annotation.Bean;
+   | import org.springframework.context.annotation.Configuration;
+   |
+   | import springfox.documentation.builders.ApiInfoBuilder;
+   | import springfox.documentation.builders.PathSelectors;
+   | import springfox.documentation.builders.RequestHandlerSelectors;
+   | import springfox.documentation.service.ApiInfo;
+   | import springfox.documentation.service.ApiKey;
+   | import springfox.documentation.service.Contact;
+   | import springfox.documentation.spi.DocumentationType;
+   | import springfox.documentation.spring.web.plugins.Docket;
+   | import springfox.documentation.swagger2.annotations.EnableSwagger2;
+   |
+   | @Configuration                            // <·· [configuration] spring core:
+   |                                           //     mark class as defining Spring bean
+   |                                           //     so that Spring container process
+   |                                           //     it generating app.Beans.
+   | @EnableSwagger2                           // <·· [openapi]
+   | public class SwaggerConfig {
+   |   @Bean
+   |   public Docket api() {
+   |     return new Docket(DocumentationType.SWAGGER_2)
+   |       .select()
+   |       .apis(RequestHandlerSelectors.basePackage(SWAGGER_BASE_PACKAGE))
+   |       .paths(PathSelectors.any()).build()
+   |       .apiInfo(apiEndPointsInfo())
+   |       .securitySchemes(Arrays.asList(apiKey()));
+   |   }
+   |
+   |   private ApiInfo apiEndPointsInfo() {
+   |     return new ApiInfoBuilder()
+   |       .title(SWAGGER_TITLE)
+   |       .description(SWAGGER_DESCRIPTION)
+   |       .contact(new Contact(
+   |            "name", "url", "email@myComp.com"))
+   |       .license(SWAGGER_LICENSE)
+   |       .licenseUrl(SWAGGER_LICENSE_URL)
+   |       .version(SWAGGER_VERSION)
+   |       .build();
+   |   }
+   |
+   |   private ApiKey apiKey() {
+   |     return new ApiKey(
+   |       AUTHKEY, AUTHORIZATION, HEADER);
+   |   }
+   | }
+   ```
 
-    import springfox.documentation.builders.ApiInfoBuilder;
-    import springfox.documentation.builders.PathSelectors;
-    import springfox.documentation.builders.RequestHandlerSelectors;
-    import springfox.documentation.service.ApiInfo;
-    import springfox.documentation.service.ApiKey;
-    import springfox.documentation.service.Contact;
-    import springfox.documentation.spi.DocumentationType;
-    import springfox.documentation.spring.web.plugins.Docket;
-    import springfox.documentation.swagger2.annotations.EnableSwagger2;
+[[{persistence.jpa]]
+## Persistence with JPA
 
-    @Configuration                               ← [configuration] spring core:
-                                                   mark class as defining Spring bean
-                                                   so that Spring container process
-                                                   it generating app.Beans.
-    @EnableSwagger2                              ← [openapi]
-    public class SwaggerConfig {
-      @Bean
-      public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-          .select()
-          .apis(RequestHandlerSelectors.basePackage(SWAGGER_BASE_PACKAGE))
-          .paths(PathSelectors.any()).build()
-          .apiInfo(apiEndPointsInfo())
-          .securitySchemes(Arrays.asList(apiKey()));
-      }
+WARN: JPA is a JEE standard, but alternatives like MyBatis are probably preferred:  [[{doc.has.comparative}]]
+* While in JPA the SQL database is the "slave" of the Java object model, alternatives
+  like MyBatis (or Jooq) makes the Java code "slave" of the SQL model. The second
+  alternative is much more natural an reliable in most projects.
+<!--
+  TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specifications.html
+        https://www.objectdb.com/api/java/jpa/MapsId
+        https://www.objectdb.com/api/java/jpa/Embeddable
+-->
 
-      private ApiInfo apiEndPointsInfo() {
-        return new ApiInfoBuilder()
-          .title(SWAGGER_TITLE)
-          .description(SWAGGER_DESCRIPTION)
-          .contact(new Contact(SWAGGER_CONTACT_NAME, SWAGGER_CONTACT_URL, "dev@myComp.com"))
-          .license(SWAGGER_LICENSE)
-          .licenseUrl(SWAGGER_LICENSE_URL)
-          .version(SWAGGER_VERSION)
-          .build();
-      }
+  ```
+  | // com/myComp/jpa/LocalDateTimeAttributeConverter.java
+  | package com.myComp.jpa;
+  |
+  | import java.sql.Timestamp;                         // ← SQL         friendly type
+  | import java.time.LocalDateTime;                    // ← Application friendly type
+  |
+  | import javax.persistence.AttributeConverter;
+  | import javax.persistence.Converter;
+  |
+  | @Converter(autoApply = true)
+  | public class LocalDateTimeAttributeConverter       // ← Fix impedance problems
+  | implements AttributeConverter                      //   DDBB types ←→ JAVA types
+  |            <LocalDateTime, Timestamp> {
+  |
+  |     @Override
+  |     public Timestamp convertToDatabaseColumn(      //   Java type → DDBB-column-type
+  |       LocalDateTime locDateTime) {
+  |         return Timestamp.valueOf(locDateTime);
+  |     }
+  |
+  |     @Override
+  |     public LocalDateTime convertToEntityAttribute( //   Java type ← DDBB-column-type
+  |       Timestamp sqlTimestamp) {
+  |         return sqlTimestamp.toLocalDateTime();
+  |     }
+  | }
+  ```
 
-      private ApiKey apiKey() {
-        return new ApiKey(AUTHKEY, AUTHORIZATION, HEADER);
-      }
-    }
-[[architecture.API_management.OpenAPI.swagger}]]
+  ```
+  SPRING DATA SCHEMA SUMMARY
+  | ┌─ SPRING BOOT APPLICATION ───────────────────────────────────────────────┐ [[{doc_has.diagram}]]
+  | ·                             ┌─ SPRING DATA ───────────────────────────┐ ·
+  | · ┌───────┐                   │┌───────────┐                    ┌──────┐│ ·
+  | · │Service ·· gets access to· ·> Repository| ··· manages  ······>Entity|│ ·
+  | · └───────┘    data using     │└───────────┘    operations on   └──────┘│ ·
+  | ·                             └─────────────┬───────────────────────────┘ ·
+  | ·                                           v                             ·
+  | ·                                  gets database                          ·
+  | ·                                connectivity  from                       ·
+  | ·                                           │                             ·
+  | ·                                           v                             ·
+  | ·                                    ┌────────────┐                       ·  ┌──────┐
+  | ·                                    │ DDBB driver··· defines ···············> DDBB │
+  | ·                                    └────────────┘  integration          ·  └──────┘
+  | ·                                                    With                 ·
+  | └──SPRING BOOT APPLICATION ───────────────────────────────────────────────┘
+  ```
 
-# Persistence with JPA:                     [[{persistence.jpa]]
-TODO: https://www.logicbig.com/tutorials/spring-framework/spring-data/specifications.html
-      https://www.objectdb.com/api/java/jpa/MapsId
-      https://www.objectdb.com/api/java/jpa/Embeddable
+  ```java
+  | // file: com/myComp/jpa/Entity1Repository.java
+  |
+  | /* PRE-SETUP: Maven / gradle deps:
+  |  * GROUP_ID                  ARTIFACT_ID
+  |  * org.springframework.boot  spring-boot-starter-data-jpa    Compile/implementation dependency
+  |  * org.postgresql            postgresql                      runtime dependency (provided by server,...)
+  |  */
+  | import org.springframework.data.jpa.repository.JpaRepository;
+  | import org.springframework.data.jpa.repository.Query;
+  | import org.springframework.stereotype.Repository;
+  | @Repository                               //   @Repository: Spring-Data abstraction for data storage+retrieval
+  |                                           //   independent of source (sql/nosql ddbbs, kafka, redis, message-queues, ...)
+  |                                           //   Used to isolated Domain Layer (Business logic) from data persistence
+  | @Repository                               // ← internals.
+  | public interface Entity1Repository
+  | extends JpaRepository<Entity1, Long>{     //   ← JpaRespository extends Repository with SQL like DB  *
+  |                                           //     For standard CRUD operation CrudRepository could have been used.
+  |                                           //     (JpaRespotory offers a more specialized one with extra?features) ← [TODO]
+  |                    // └────────────┴─·········  Entity1 specifies the type-of-data, Long specifies the type-of-"@Id"
+  |                                           //     When using R2DBC reactive alternative to JDBC, ReactiveCrudRepository
+  |                                           //     will be used (Note: R2DBC looks not to be compatible with JPA anotations?)
+  |
+  |   @Query(value =                          //   ← Custom query.
+  |         " SELECT * "                      //
+  |       + " FROM entity1 en1 "              //
+  |       +   " JOIN entity2 en2 ON en2.id = en1.entity2_id "
+  |       +   " JOIN entity3 en3 ON en3.id = en2.entity3_id "
+  |       + "WHERE en2column2 = :col2Value "
+  |       + "AND en3.id = :Entity3ID ", nativeQuery = true)
+  |   Entity1 query1(Long entity3Id, String col2Value);    // ← Developer's responsability is to define the interface.
+  |
+  |
+  |   @Query(value =                          //   ← Custom query.
+  |         " SELECT en2.* "
+  |       + " FROM entity2 en2 "
+  |       + " JOIN entity3 en3 ON en2.entity3_id = en3.id "
+  |       + " WHERE en3.col5 = :column5Value",
+  |       nativeQuery = true)
+  |   public List<Entity2> linkOrganization(String id);    // ←···┘
+  |
+  |
+  |   void deleteById(Long id);               // ← standard nomenclature. Autogenerated  *  .
+  |                                                standard CRUD. transactional by default.
+  |
+  |                                           //   Spring-framework declarative transaction management:
+  |                                           //   for the non-CRUD-and-mutating method we must indicate whether
+  |   @Transactional                          // ← it should be part of a transaction (single-unit-of-work).  *
+  |   void deleteByColumn2(LocalDateTime id); // ← standard nomenclature. Autogenerated  *  .
+  |
+  |
+  | }
+  ```
 
-- file: com/myComp/jpa/LocalDateTimeAttributeConverter.java
-  package com.myComp.jpa;
+* <https://spring.io/projects/spring-data><br/>
+  Spring-data auto-generates the code for standard cases by just using standard nomenclature for methods:
+  ```
+  | REPOSITORY METHOD   | EXAMPLES
+  | BUILDING BLOCK      |[TODO]: Add detailed example/s
+  | =================== | ==================================
+  | · Action            | find, exists, delete, count
+  | · Limit             | One, All, First10
+  | · By                | -
+  | · Property expr.    | findByIsbnOrTitle,  findByIsbnAndTitle
+  | · Comparison        | findByTitleContaining, findByTitleEndingWith,
+  |                     | findByDateLessThan
+  | · Ordering operator | orderByTitleAsc
+  ```
+  * @Transactional (optional) attributes can be:
+  ```
+  | * rollbackFor,         : By default rollback on RuntimeException|Error.            |
+  |   rollbackForClassName   To rollback also on CheckedExceptions do something like   |
+  |                         @Transactional (                                           |
+  |                            ...                                                     |
+  |                            rollbackForClassName={"FileNotFoundException" ,"..."}   |
+  |                                     rollbackFor={ FileNotFoundException.class,... }|
+  |                          )                                                         |
+  |                                                                                    |
+  | * noRollbackFor,       : Skip rollback / ignore exceptions indicated               |
+  |   noRollbackForClassName                                                           |
+  |                                                                                    |
+  | * readOnly             : true | *false . true triggers (Spring TX manager)         |
+  |                          optimizations  [peformance]                               |
+  | * timeout              : defaults to underlying ddbb timeout.                      |
+  | * ...                                                                              |
+  |                                                                                    |
+  |                                                                                    |
+  |                                                                                    |
+  | * isolation            : Defaults to default of underlaying database:              |
+  |                                                                                    |
+  |   * Common problems in (physically) distributed databases and/or central           |
+  |     databases with parallel updates / reads by different clients where we          |
+  |     can NOT warrant that lecture of state by a client will see the latest          |
+  |     update by a parallel update TX.                                                |
+  |                                                                                    |
+  |               (time advances up → down)                                            |
+  |                                                                                    |
+  |         DIRTY        │  NON-REPEATABLE  │  PHANTOM                                 |
+  |         READ         │    READ          │   READ                                   |
+  |     ==============   │ ==============   │ ====================================     |
+  |                      │                  │                                          |
+  |     TX 1    TX 2     │   TX 1   TX 2    │ TX 1               TX 2                  |
+  |     ·       ·        │   ·      ·       │ ·                  ·                     |
+  |     read    ·        │  •read   ·       │ ·                  SELECT * FROM T1      |
+  |     x=5     ·        │   x=5    ·       │ ·                  · WHERE num > 10      |
+  |     write   ·        │   ·     •read    │•INSERT INTO T1(num)·                     |
+  |     x=7     ·        │   ·      x=5     │ · VALUES(20);      ·                     |
+  |     ·      •read     │  •write  ·       │•COMMIT;            ·                     |
+  |     ·       x=7      │   x=7    ·       │                    SELECT * FROM T1      |
+  |     roll-   ·        │   ·     •read    │                      WHERE num > 10      |
+  |     bakc    ·        │          x=7     │                                          |
+  |                      ·                  ·                                          |
+  |                      ·                  ·                      Isolation levels    |
+  |     Read Uncomminted │ Read Uncomminted │  Read Uncomminted  ┐ where corresponding |
+  |                      │ Read    Commited │  Read    Commited  ├ read error may      |
+  |                      │                  │  Repeatable read   ┘ (randomnly) occur   |
+  |     Only the (very slow!!!) Serializable isolation level is 100% safe.             |
+  |     e.g: @Transactional (isolation=Isolation.READ_COMMITTED)                       |
+  |                                                                                    |
+  |                                                                                    |
+  | * propagation: define how (java) business methods should place in the TX.          |
+  |   · REQUIRED      : Reuse existing TX or create new. (Used for "inner" methods)    |
+  |   · REQUIRES_NEW  : Always create new.                                             |
+  |                     rollbacks will not be propagated to any calling methods with   |
+  |                     another TX in course.                                          |
+  |   · SUPPORTS      : execute within existing TX if any, otherwise  without new TX.  |
+  |   · MANDATORY     : Fail if no existing TX is in place. Method is always part of   |
+  |                     any other existing TX flow.                                    |
+  |   · NOT_SUPPORTED : "Pause" any existing transaction and execute inner code.       |
+  |                     (maybe a method for which we can not deterministically known   |
+  |                      the output).                                                  |
+  |   · NEVER         : Fail if an active TX exists.                                   |
+  |   · NESTED        : If current TX exists, executes within nested transaction       |
+  |                      otherwise behave like REQUIRED.                               |
+  ```
+  * `@application.yml` will be similar to:
+  ```
+  | server:
+  |    port: 8001
+  |    shutdown: gracefull
+  | spring:
+  |   datasource:
+  |     username: admin
+  |     password: admin
+  |     url: jdbc:postgresql://localhost:5432/ddbb1
+  |     hikari:                           <·· Spring  Boot  uses  HikariCP  for connection pooling   [performance]
+  |      connection-timeout: 5000             for details on connection pool tunning visit:
+  |      maximum-pool-size: 20                <https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing>
+  |      pool-name: app01-pool
+  |   jpa:
+  |      hibernate.ddl-auto:  create-drop <·· Just for dev.purposes . For production environments
+  |                                           database schema is kept versioned ("a la git") with
+  |                                           some tool like Flyway or Liquidbase. The spring boot
+  |                                           is changed to:  hibernate.ddl-auto:  validate
+  |                                           The start-up Spring-data will get sure that internal
+  |                                           JPA models match the externally defined SQL schema.
+  ```
 
-  import java.sql.Timestamp;                         // ← SQL         friendly type
-  import java.time.LocalDateTime;                    // ← Application friendly type
+  ```java
+  | file: com/myComp/jpa/Entity1.java
+  | import java.io.Serializable;
+  | import javax.persistence.*;
+  | import com.fasterxml.jackson.annotation.JsonIgnore;
+  |
+  |
+  | ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+  | @Entity
+  | @Table(name = "entity1")             // ← By default JPA mast to lowercase
+  | public class Entity1                 //   classname. use @Table to override def.map.
+  | @EntityListeners                     // ← Mark class to listen for:  *
+  |   (AuditingEntityListener.class)     //   ← Specify a callback listener to process event
+  | implements Serializable {            //     data (timestamps, "who did it",
+  |   private static final                            num. of modifications, ...).
+  |      long serialVersionUID = 1L;
+  |   public Entity1() { }               // ← Empty constructor required by JPA
+  |
+  |   // ---- id ----
+  |   @JsonIgnore                        // ← Class can also be used for Json
+  |   @Id                                // ← @Id required by JPA Entities
+  |   @GeneratedValue(strategy =
+  |          GenerationType.IDENTITY)
+  |   @Column(name="id", length=20)
+  |   private Long id;
+  |
+  |   public void setId(Long id) { this.id = id; }
+  |   public Long getId() { return id; }
+  |   ...
+  |
+  |   @Column(name = "column2")
+  |   private LocalDateTime column2;
+  |
+  |   @ManyToOne(fetch = FetchType.LAZY)   //  ---- entity2 ----
+  |   @JoinColumn(
+  |     name = "entity2_id",
+  |     referencedColumnName = "id",
+  |     insertable = false,
+  |     updatable = false)
+  |   private Entity2 entity2;
+  |
+  |   @JoinColumn(                         //  ---- entity3 ----
+  |     name = "entity3_id",
+  |     referencedColumnName = "id"
+  |   )
+  |   private List<Entity3> entity3List;
+  |
+  |   public List<Entity3> getEntity3List() { return entity3List; }
+  |   public void setEntity3List(List<Entity3> _entity3List;) {
+  |     this.entity3List = _entity3List;
+  |   }
+  |
+  |   public void
+  |   addEntity3(Entity3 _entity3) {
+  |     getEntity3List()                   // ← WARN: get force load from DBs
+  |       .add(_entity3);                  //         (vs entity3List)
+  |     _entity3.setEntity1(this);
+  |   }
+  |
+  |   public void
+  |   removeEntity3(Entity3 _entity3) {
+  |     getEntity3List()                   // ← WARN: get force load from DBs
+  |       .remove(_entity3);               //  (vs entity3List)
+  |     _entity3.setEntity1(null);
+  |   }
+  |
+  |   @OneToMany(                          //  ---- entity4 ----
+  |     fetch = FetchType.LAZY,
+  |     cascade = CascadeType.ALL)         // ← ALL | PERSIST | ...?
+  |   private List<Entity4> entity4List;
+  |
+  |   @Formula(value =                     //  ---- entity5 ----
+  |         "(SELECT COUNT(1) "
+  |       + "FROM entity5 en5 "
+  |       +   "JOIN entity1 en1 ON en1.id = en5.entity1_id "
+  |       + "WHERE en5.id = id AND en5.bCondition = 1)")
+  |   private Long entity5List;
+  |
+  |   @Transient                           // ← Do NOT persists.
+  |   public Long
+  |   getEntity5List() {
+  |     return entity5List;
+  |   }
+  |
+  |   @Transient                           // ← Do NOT persists.
+  |   public void
+  |   setEntity5List(Long entity5List) {
+  |      this.entity5List = entity5List;
+  |   }
+  |
+  |   @Override
+  |   public int hashCode() {              // ← Override when needed to avoid
+  |     return Objects.hash( ...);         //   hash collisions
+  |   }
+  |
+  |   @Override                            // ← Override when needed
+  |   public boolean equals(Object obj) {
+  |     Entity1 that = (Entity1) obj;
+  |     return Objects.equals(column1, that.column1)
+  |         && Objects.equals(column2, that.column2)
+  |         && ... ;
+  |   }
+  |
+  |   @CreatedDate private Long createdDate;// JPA Audit:  *
+  |   @Version      private int version;    // JPA Audit:  *
+  | }
+  ```
 
-  import javax.persistence.AttributeConverter;
-  import javax.persistence.Converter;
-
-  @Converter(autoApply = true)
-  public class LocalDateTimeAttributeConverter       // ← Fix impedance problems
-  implements AttributeConverter                      //   DDBB types ←→ JAVA types
-             <LocalDateTime, Timestamp> {
-
-      @Override
-      public Timestamp convertToDatabaseColumn(      //   Java type → DDBB-column-type
-        LocalDateTime locDateTime) {
-          return Timestamp.valueOf(locDateTime);
-      }
-
-      @Override
-      public LocalDateTime convertToEntityAttribute( //   Java type ← DDBB-column-type
-        Timestamp sqlTimestamp) {
-          return sqlTimestamp.toLocalDateTime();
-      }
-  }
-
-- SPRING DATA SCHEMA SUMMARY:
-  ┌─ SPRING BOOT APPLICATION ───────────────────────────────────────────────┐               [[{02_doc_has.diagram]]
-  ·                             ┌─ SPRING DATA ───────────────────────────┐ ·
-  · ┌───────┐                   │┌───────────┐                    ┌──────┐│ ·
-  · │Service ·· gets access to· ·> Repository| ··· manages  ······>Entity|│ ·
-  · └───────┘    data using     │└───────────┘    operations on   └──────┘│ ·
-  ·                             └─────────────┬───────────────────────────┘ ·
-  ·                                           v                             ·
-  ·                                  gets database                          ·
-  ·                                connectivity  from                       ·
-  ·                                           │                             ·
-  ·                                           v                             ·
-  ·                                    ┌────────────┐                       ·  ┌──────────┐
-  ·                                    │ DDBB driver··· defines ···············> Database │
-  ·                                    └────────────┘  integration          ·  └──────────┘
-  ·                                                    With                 ·
-  └──SPRING BOOT APPLICATION ───────────────────────────────────────────────┘                [[}]]
-
-- file: com/myComp/jpa/Entity1Repository.java
-  import org.springframework.data.jpa.repository.JpaRepository;
-  import org.springframework.data.jpa.repository.Query;
-  import org.springframework.stereotype.Repository;
-  @Repository                               //   @Repository: Spring-Data abstraction for data storage+retrieval
-                                            //   independent of source (sql/nosql ddbbs, kafka, redis, message-queues, ...)
-                                            //   Used to isolated Domain Layer (Business logic) from data persistence
-  @Repository                               // ← internals.
-  public interface Entity1Repository
-  extends JpaRepository<Entity1, Long>{     //   ← JpaRespository extends Repository with SQL like DB  *
-                                            //     For standard CRUD operation CrudRepository could have been used.
-                                            //     (JpaRespotory offers a more specialized one with extra?features) ← [TODO]
-                     // └────────────┴─·········  Entity1 specifies the type-of-data, Long specifies the type-of-"@Id"
-                                            //     When using R2DBC reactive alternative to JDBC, ReactiveCrudRepository
-                                            //     will be used (Note: R2DBC looks not to be compatible with JPA anotations?)
-
-    @Query(value =                          //   ← Custom query.
-          " SELECT * "                      //
-        + " FROM entity1 en1 "              //
-        +   " JOIN entity2 en2 ON en2.id = en1.entity2_id "
-        +   " JOIN entity3 en3 ON en3.id = en2.entity3_id "
-        + "WHERE en2column2 = :col2Value "
-        + "AND en3.id = :Entity3ID ", nativeQuery = true)
-    Entity1 query1(Long entity3Id, String col2Value);    // ← Developer's responsability is to define the interface.
-
-
-    @Query(value =                          //   ← Custom query.
-          " SELECT en2.* "
-        + " FROM entity2 en2 "
-        + " JOIN entity3 en3 ON en2.entity3_id = en3.id "
-        + " WHERE en3.col5 = :column5Value",
-        nativeQuery = true)
-    public List<Entity2> linkOrganization(String id);    // ←···┘
-
-
-    void deleteById(Long id);               // ← standard nomenclature. Autogenerated  *  .
-                                                 standard CRUD. transactional by default.
-
-                                            //   Spring-framework declarative transaction management:
-                                            //   for the non-CRUD-and-mutating method we must indicate whether
-    @Transactional                          // ← it should be part of a transaction (single-unit-of-work).  *
-    void deleteByColumn2(LocalDateTime id); // ← standard nomenclature. Autogenerated  *  .
-
-
-  }
-
- *   : Maven / gradle will contain dependencies similar to
-    GROUP_ID                  ARTIFACT_ID
-    org.springframework.boot  spring-boot-starter-data-jpa    Compile/implementation dependency
-    org.postgresql            postgresql                      runtime dependency (provided by server,...)
-
- *   :@[https://spring.io/projects/spring-data]
-    Spring-data auto-generates the code for standard cases by just using standard nomenclature for methods:
-
-      REPOSITORY METHOD   | EXAMPLES
-      BUILDING BLOCK      |[TODO]: Add detailed example/s
-      =================== | ==================================
-      · Action            | find, exists, delete, count
-      · Limit             | One, All, First10
-      · By                | -
-      · Property expr.    | findByIsbnOrTitle,  findByIsbnAndTitle
-      · Comparison        | findByTitleContaining, findByTitleEndingWith,
-                          | findByDateLessThan
-      · Ordering operator | orderByTitleAsc
-
- *   : @Transactional (optional) attributes can be:
-  ┌────────────────────────────────────────────────────────────────────────────────────┐
-  │ * rollbackFor,         : By default rollback on RuntimeException|Error.            │
-  │   rollbackForClassName   To rollback also on CheckedExceptions do something like   │
-  │                         @Transactional (                                           │
-  │                            ...                                                     │
-  │                            rollbackForClassName={"FileNotFoundException" ,"..."}   │
-  │                                     rollbackFor={ FileNotFoundException.class,... }│
-  │                          )                                                         │
-  │                                                                                    │
-  │ * noRollbackFor,       : Skip rollback / ignore exceptions indicated               │
-  │   noRollbackForClassName                                                           │
-  │                                                                                    │
-  │ * readOnly             : true | *false . true triggers (Spring TX manager)         │
-  │                          optimizations  [peformance]                               │
-  │ * timeout              : defaults to underlying ddbb timeout.                      │
-  │ * ...                                                                              │
-  │                                                                                    │
-  │                                                                                    │
-  │                                                                                    │
-  │ * isolation            : Defaults to default of underlaying database:              │
-  │                                                                                    │
-  │   * Common problems in (physically) distributed databases and/or central           │
-  │     databases with parallel updates / reads by different clients where we          │
-  │     can NOT warrant that lecture of state by a client will see the latest          │
-  │     update by a parallel update TX.                                                │
-  │                                                                                    │
-  │               (time advances up → down)                                            │
-  │                                                                                    │
-  │         DIRTY        │  NON-REPEATABLE  │  PHANTOM                                 │
-  │         READ         │    READ          │   READ                                   │
-  │     ==============   │ ==============   │ ====================================     │
-  │                      │                  │                                          │
-  │     TX 1    TX 2     │   TX 1   TX 2    │ TX 1               TX 2                  │
-  │     ·       ·        │   ·      ·       │ ·                  ·                     │
-  │     read    ·        │  •read   ·       │ ·                  SELECT * FROM T1      │
-  │     x=5     ·        │   x=5    ·       │ ·                  · WHERE num > 10      │
-  │     write   ·        │   ·     •read    │•INSERT INTO T1(num)·                     │
-  │     x=7     ·        │   ·      x=5     │ · VALUES(20);      ·                     │
-  │     ·      •read     │  •write  ·       │•COMMIT;            ·                     │
-  │     ·       x=7      │   x=7    ·       │                    SELECT * FROM T1      │
-  │     roll-   ·        │   ·     •read    │                      WHERE num > 10      │
-  │     bakc    ·        │          x=7     │                                          │
-  │                      ·                  ·                                          │
-  │                      ·                  ·                      Isolation levels    │
-  │     Read Uncomminted │ Read Uncomminted │  Read Uncomminted  ┐ where corresponding │
-  │                      │ Read    Commited │  Read    Commited  ├ read error may      │
-  │                      │                  │  Repeatable read   ┘ (randomnly) occur   │
-  │     Only the (very slow!!!) Serializable isolation level is 100% safe.             │
-  │     e.g: @Transactional (isolation=Isolation.READ_COMMITTED)                       │
-  │                                                                                    │
-  │                                                                                    │
-  │ * propagation: define how (java) business methods should place in the TX.          │
-  │   · REQUIRED      : Reuse existing TX or create new. (Used for "inner" methods)    │
-  │   · REQUIRES_NEW  : Always create new.                                             │
-  │                     rollbacks will not be propagated to any calling methods with   │
-  │                     another TX in course.                                          │
-  │   · SUPPORTS      : execute within existing TX if any, otherwise  without new TX.  │
-  │   · MANDATORY     : Fail if no existing TX is in place. Method is always part of   │
-  │                     any other existing TX flow.                                    │
-  │   · NOT_SUPPORTED : "Pause" any existing transaction and execute inner code.       │
-  │                     (maybe a method for which we can not deterministically known   │
-  │                      the output).                                                  │
-  │   · NEVER         : Fail if an active TX exists.                                   │
-  │   · NESTED        : If current TX exists, executes within nested transaction       │
-  │                      otherwise behave like REQUIRED.                               │
-  └────────────────────────────────────────────────────────────────────────────────────┘
-
-  @application.yml will be similar to:
-  server:
-     port: 8001
-     shutdown: gracefull
-  spring:
-    datasource:
-      username: admin
-      password: admin
-      url: jdbc:postgresql://localhost:5432/ddbb1
-      hikari:                    ← Spring  Boot  uses  HikariCP  for connection pooling   [performance]
-       connection-timeout: 5000    for details on connection pool tunning visit:
-       maximum-pool-size: 20     @[https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing]
-       pool-name: app01-pool
-    jpa:
-       hibernate.ddl-auto:  create-drop  ← Just for dev.purposes . For production environments
-                                           database schema is kept versioned ("a la git") with
-                                           some tool like Flyway or Liquidbase. The spring boot
-                                           is changed to:  hibernate.ddl-auto:  validate
-                                           The start-up Spring-data will get sure that internal
-                                           JPA models match the externally defined SQL schema.
-
-
-- file: com/myComp/jpa/Entity1.java
-  import java.io.Serializable;
-  import javax.persistence.*;
-  import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
-  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
-  @Entity
-  @Table(name = "entity1")             // ← By default JPA mast to lowercase
-  public class Entity1                 //   classname. use @Table to override def.map.
-  @EntityListeners                     // ← Mark class to listen for:  *
-    (AuditingEntityListener.class)     //   ← Specify a callback listener to process event
-  implements Serializable {            //     data (timestamps, "who did it",
-    private static final                            num. of modifications, ...).
-       long serialVersionUID = 1L;
-    public Entity1() { }               // ← Empty constructor required by JPA
-
-    // ---- id ----
-    @JsonIgnore                        // ← Class can also be used for Json
-    @Id                                // ← @Id required by JPA Entities
-    @GeneratedValue(strategy =
-           GenerationType.IDENTITY)
-    @Column(name="id", length=20)
-    private Long id;
-
-    public void setId(Long id) { this.id = id; }
-    public Long getId() { return id; }
-    ...
-
-    @Column(name = "column2")
-    private LocalDateTime column2;
-
-    @ManyToOne(fetch = FetchType.LAZY)   //  ---- entity2 ----
-    @JoinColumn(
-      name = "entity2_id",
-      referencedColumnName = "id",
-      insertable = false,
-      updatable = false)
-    private Entity2 entity2;
-
-    @JoinColumn(                         //  ---- entity3 ----
-      name = "entity3_id",
-      referencedColumnName = "id"
-    )
-    private List<Entity3> entity3List;
-
-    public List<Entity3> getEntity3List() { return entity3List; }
-    public void setEntity3List(List<Entity3> _entity3List;) {
-      this.entity3List = _entity3List;
-    }
-
-    public void
-    addEntity3(Entity3 _entity3) {
-      getEntity3List()                   // ← WARN: get force load from DBs
-        .add(_entity3);                  //         (vs entity3List)
-      _entity3.setEntity1(this);
-    }
-
-    public void
-    removeEntity3(Entity3 _entity3) {
-      getEntity3List()                   // ← WARN: get force load from DBs
-        .remove(_entity3);               //  (vs entity3List)
-      _entity3.setEntity1(null);
-    }
-
-    @OneToMany(                          //  ---- entity4 ----
-      fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL)         // ← ALL | PERSIST | ...?
-    private List<Entity4> entity4List;
-
-    @Formula(value =                     //  ---- entity5 ----
-          "(SELECT COUNT(1) "
-        + "FROM entity5 en5 "
-        +   "JOIN entity1 en1 ON en1.id = en5.entity1_id "
-        + "WHERE en5.id = id AND en5.bCondition = 1)")
-    private Long entity5List;
-
-    @Transient                           // ← Do NOT persists.
-    public Long
-    getEntity5List() {
-      return entity5List;
-    }
-
-    @Transient                           // ← Do NOT persists.
-    public void
-    setEntity5List(Long entity5List) {
-       this.entity5List = entity5List;
-    }
-
-    @Override
-    public int hashCode() {              // ← Override when needed to avoid
-      return Objects.hash( ...);         //   hash collisions
-    }
-
-    @Override                            // ← Override when needed
-    public boolean equals(Object obj) {
-      Entity1 that = (Entity1) obj;
-      return Objects.equals(column1, that.column1)
-          && Objects.equals(column2, that.column2)
-          && ... ;
-    }
-
-    @CreatedDate private Long createdDate;// JPA Audit:  *
-    @Version      private int version;    // JPA Audit:  *
-  }
-
-   *  : ToB enable JPA Auditing  it must also be indicated in Spring config like:
-
-    package com.myComp.jpa;
-    import org.springframework.context.annotation .Configuration ;
-    import org.springframework.data.jpa.repository.config .EnableJpaAuditing ;
-    @Configuration
-    @EnableJpaAuditing          //  ← Dump create/update/delete JPA events  [debug][jpa]
-    public class JpaConfig {}   //    for all persistent entities
-
-
-    When database auditing is enabled, next (org.springframework.data.annotation)
-    annotations can be used on entity fields  to capture audit information.
-
-      ANNOTATION          TRIGGERED ON
-      ==========          ================
-    · @CreatedBy          entity creation
-    · @CreatedDate        entity creation
-    · @LastModifiedBy     persist operation
-    · @LastModifiedDate   persist operation.
-    · @Version            updated at every op.
-                          starting by 0.
-
+* To enable JPA Auditing it must also be indicated in Spring config like:
+  ```
+  | package com.myComp.jpa;
+  | import org.springframework.context.annotation .Configuration ;
+  | import org.springframework.data.jpa.repository.config .EnableJpaAuditing ;
+  | @Configuration
+  | @EnableJpaAuditing          //  ← Dump create/update/delete JPA events  [debug][jpa]
+  | public class JpaConfig {}   //    for all persistent entities
+  ```
+* When database auditing is enabled, next (org.springframework.data.annotation)
+  annotations can be used on entity fields  to capture audit information.
+  ```
+  |   ANNOTATION          TRIGGERED ON
+  |   ==========          ================
+  | · @CreatedBy          entity creation
+  | · @CreatedDate        entity creation
+  | · @LastModifiedBy     persist operation
+  | · @LastModifiedDate   persist operation.
+  | · @Version            updated at every op.
+  |                       starting by 0.
+  ```
 [[persistence.jpa}]]
 
-# JWT (OAuth2)Support:  [[{security.aaa,security.oauth,security.cryptography,standards.oauth]]
-  com/myComp/security/OAuth2Const.java
-  public class OAuth2Const {
-      static final String
-          HEADER_AUTH_KEY     = "Authorization",
-          TOKEN_BEARER_PREFIX = "Bearer ",
-          AUTHKEY             = "authkey",
-          AUTHORIZATION       = "Authorization",
-          HEADER              = "header",
-          BEARER              = "Bearer ",
-          LOGIN_URL           = "/api/v1/user/login";
+[[{security.aaa,security.oauth,security.cryptography,standards.oauth]]
+## OAuth2(JWT) Support
 
-      static final long
-          MILISECS_TOKEN_EXPIRATION = 60*60*4*1000;
-  }
+  ```java
+  | // file: com/myComp/security/OAuth2Const.java
+  | public class OAuth2Const {
+  |     static final String
+  |         HEADER_AUTH_KEY     = "Authorization",
+  |         TOKEN_BEARER_PREFIX = "Bearer ",
+  |         AUTHKEY             = "authkey",
+  |         AUTHORIZATION       = "Authorization",
+  |         HEADER              = "header",
+  |         BEARER              = "Bearer ",
+  |         LOGIN_URL           = "/api/v1/user/login";
+  |
+  |     static final long
+  |         MILISECS_TOKEN_EXPIRATION = 60*60*4*1000;
+  | }
+  ```
 
+  <hr/>
 
-- com/myComp/security/JWTAuthorizationFilter.java
+  ```
+  | // file://com/myComp/security/JWTAuthorizationFilter.java
+  | import org.springframework.security.authentication.AuthenticationManager;
+  | import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+  | import org.springframework.security.core.context.SecurityContextHolder;
+  | import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+  |
+  |
+  | import io.jsonwebtoken.Jwts;
+  |
+  | public class JWTAuthorizationFilter
+  | extends BasicAuthenticationFilter {              // <·· Implemented as Filter
+  |   public JWTAuthorizationFilter(
+  |           AuthenticationManager authManager) {
+  |     super(authManager);
+  |   }
+  |
+  |   @Override
+  |   protected void doFilterInternal(
+  |       javax.servlet.http.HttpServletRequest req,
+  |       javax.servlet.http.HttpServletResponse res,
+  |       javax.servlet.FilterChain chain)
+  |       throws IOException, javax.servlet.ServletException {
+  |     String header = req.getHeader(HEADER_AUTH_KEY);
+  |     if (header == null || !header.startsWith(TOKEN_BEARER_PREFIX)) {
+  |       chain.doFilter(req, res);
+  |       return;
+  |     }
+  |     final UsernamePasswordAuthenticationToken
+  |         authentication = _getAuth(req);
+  |     SecurityContextHolder.getContext().setAuthentication(authentication);
+  |     chain.doFilter(req, res);
+  |   }
+  |
+  |   private
+  |   UsernamePasswordAuthenticationToken
+  |       _getAuth(javax.servlet.http.HttpServletRequest request) {
+  |     final String token = request.getHeader(HEADER_AUTH_KEY);
+  |     if (token == null) { return null; }                              // <·· Do not throw to allow next Filters
+  |     String user = Jwts.parser()
+  |           .setSigningKey(
+  |              javax.xml.bind.DatatypeConverter
+  |             .parseBase64Binary("32bytes/64hex dig.secret key")))
+  |           .parseClaimsJws(token.replace(TOKEN_BEARER_PREFIX, ""))
+  |           .getBody()
+  |           .getSubject();
+  |     if (user == null) { return null; }                               // <·· Do not throw to allow next Filters
+  |     return new
+  |       UsernamePasswordAuthenticationToken
+  |          (user, null, new ArrayList<>());
+  |   }
+  | }
+  ```
 
+  <hr/>
+  ```java
+  | // file: com/myComp/security/JWTAuthorizationFilter.java
+  | package com.myComp.security;
+  |
+  | import org.springframework.beans.factory.annotation.Autowired;
+  | import org.springframework.context.annotation.Bean;
+  | import org.springframework.context.annotation.Configuration;
+  | import org.springframework.http.HttpMethod;
+  | import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+  | import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+  | import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+  | import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+  | import org.springframework.security.config.http.SessionCreationPolicy;
+  | import org.springframework.security.core.userdetails.UserDetailsService;
+  | import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+  | import org.springframework.web.cors.CorsConfiguration;
+  | import org.springframework.web.cors.CorsConfigurationSource;
+  | import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+  |
+  | @Configuration                                 ← Mark as Spring Conf. class [configuration]
+  | @EnableWebSecurity
+  | public class WebSecurity
+  | extends WebSecurityConfigurerAdapter {         ← [AAA]
+  |
+  |   @Autowired private
+  |   UserDetailsService userDetailsService;
+  |
+  |   @Bean
+  |   public BCryptPasswordEncoder bCryptPasswordEncoder() {
+  |     return new BCryptPasswordEncoder();
+  |   }
+  |
+  |   @Override
+  |   protected void
+  |     configure(HttpSecurity httpSecurity) throws Exception {
+  |     if (true) {
+  |       httpSecurity
+  |         .sessionManagement()
+  |         .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+  |         .cors().and()
+  |         .csrf().disable()
+  |         .authorizeRequests()
+  |         .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+  |         .antMatchers(HttpMethod.POST, CREATE_URL).permitAll()
+  |         .antMatchers(
+  |             SWAGGER_API_DOCS,
+  |             SWAGGER_CONFIGURATION,
+  |             SWAGGER_URL,
+  |             SWAGGER_WEBJARS)
+  |         .permitAll()
+  |         .anyRequest()
+  |         .authenticated().and()
+  |         .addFilter(
+  |             new JWTAuthorizationFilter(
+  |                     authenticationManager()
+  |             ) );
+  |     }
+  |     if (false) { // example conf. 2
+  |       httpSecurity.httpBasic()
+  |         .disable()
+  |         .authorizeRequests()
+  |             .antMatchers(HttpMethod.GET   ,"/api/v1/service1").permitAll()
+  |             .antMatchers(HttpMethod.POST  ,"/api/v1/service1").hasRole("ADMIN")
+  |             .antMatchers(HttpMethod.PUT   ,"/api/v1/service1").hasRole("ADMIN")
+  |             .antMatchers(HttpMethod.DELETE,"/api/v1/service1").hasRole("ADMIN")
+  |             .anyRequest().authenticated()
+  |         .and()
+  |         .csrf().disable();
+  |     }
+  |
+  |   }
+  |
+  |   @Override
+  |   public void
+  |   configure(AuthenticationManagerBuilder auth) {
+  |     auth.userDetailsService(userDetailsService)
+  |        .passwordEncoder(bCryptPasswordEncoder());                       ← Algorithm used for passwords
+  |   }
+  |
+  |   @Bean
+  |   CorsConfigurationSource corsConfigurationSource() {                   ← Cross-Origin Resource Sharing
+  |     final UrlBasedCorsConfigurationSource                                 (CORS) SETUP
+  |       source = new UrlBasedCorsConfigurationSource();
+  |       source.registerCorsConfiguration(
+  |           "/**",                                                        ← Any source
+  |            new CorsConfiguration()
+  |                 .applyPermitDefaultValues() );
+  |     return source;
+  |   }
+  |
+  | }
+  ```
 
-  import org.springframework.security.authentication.AuthenticationManager;
-  import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-  import org.springframework.security.core.context.SecurityContextHolder;
-  import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+  <hr/>
+  **Authentication, Authorization and Access (AAA)**
+  ```
+  | file: com/myComp/security/AAAService.java
+  | public interface AAAService {
+  |   public String getUserByToken(String token);
+  |   public String createTokenForUsername(String userName);
+  |
+  |   Boolean checkLoginOrThrow(String username, String password);
+  |   AAAUserEntity findByUsernameOrThrow(String username);
+  | }
+  ```
 
+  ```
+  | //file: com/myComp/security/AAAServiceImpl.java
+  | @PersistenceContext
+  | public class AAAServiceImpl implements AAAService {
+  |   private Logger logger = LoggerFactory.getLogger(this.getClass());
+  |   @Autowired private AAAUserRepository userRepository;
+  |
+  |   @Value("${some.config.param}")
+  |   private String someConfigParam;                               // ← Some config param injected by Spring [configuration]
+  |   @Override
+  |   public String getUserByToken(String token) {                  // ← Used by different controllers to
+  |     return Jwts.parser()                                        //    fetch user from Header token
+  |       .setSigningKey(
+  |           DatatypeConverter.parseBase64Binary(
+  |               "32bytes/64hex dig.secret key")))
+  |       .parseClaimsJws(
+  |           token.replace(TOKEN_BEARER_PREFIX, ""))
+  |       .getBody()
+  |       .getSubject();
+  |   }
+  |
+  |   @Override
+  |   public String createTokenForUsername(String userName) {       // ← Used to create User session JWT token
+  |     final SignatureAlgorithm                                    //   upon successful login
+  |        signatureAlgorithm = SignatureAlgorithm.HS256;
+  |     final byte[] apiKeySecretBytes =
+  |        DatatypeConverter
+  |          .parseBase64Binary("32bytes/64hex dig.secret key"));
+  |     final Key signingKey = new SecretKeySpec(
+  |            apiKeySecretBytes,
+  |            signatureAlgorithm.getJcaName() );
+  |     return BEARER +
+  |         Jwts.builder().setIssuedAt(new Date())
+  |             .setIssuer(SWAGGER_CONTACT_URL)
+  |             .setSubject(userName)
+  |             .setExpiration(
+  |                new Date( System.currentTimeMillis()
+  |                        + MILISECS_TOKEN_EXPIRATION) )
+  |             .signWith( signingKey,                              // ← Setup priv.key for JWT signatures
+  |                 SignatureAlgorithm.HS256).compact();
+  |   }
+  |
+  |   @Override
+  |   public Boolean checkLoginOrThrow(String userName, String password) {
+  |     // TODO:(0) send hash of user+pass?
+  |     if (userRepository.findByLogin(userName, password) != 1) {
+  |        throw new CustomSecurityException(...);
+  |     }
+  |   }
+  |
+  |   @Override
+  |   public AAAUserEntity findByUsernameOrThrow(String username) {
+  |     try {
+  |       return userRepository.findByUsername(username);
+  |     } catch (Exception e) {
+  |       throw new CustomSecurityException(...);
+  |     }
+  |   }
+  | }
+  ```
 
-  import io.jsonwebtoken.Jwts;
-
-  public class JWTAuthorizationFilter
-  extends BasicAuthenticationFilter {                                      ← Implemented as Filter
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
-      super(authManager);
-    }
-
-    @Override
-    protected void doFilterInternal(
-        javax.servlet.http.HttpServletRequest req,
-        javax.servlet.http.HttpServletResponse res,
-        javax.servlet.FilterChain chain)
-        throws IOException, javax.servlet.ServletException {
-      String header = req.getHeader(HEADER_AUTH_KEY);
-      if (header == null || !header.startsWith(TOKEN_BEARER_PREFIX)) {
-        chain.doFilter(req, res);
-        return;
-      }
-      final UsernamePasswordAuthenticationToken
-          authentication = _getAuth(req);
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-      chain.doFilter(req, res);
-    }
-
-    private
-    UsernamePasswordAuthenticationToken
-        _getAuth(javax.servlet.http.HttpServletRequest request) {
-      final String token = request.getHeader(HEADER_AUTH_KEY);
-      if (token == null) { return null; }                                 ← Do not throw to allow next Filters
-      String user = Jwts.parser()
-            .setSigningKey(
-               javax.xml.bind.DatatypeConverter
-              .parseBase64Binary("32bytes/64hex dig.secret key")))
-            .parseClaimsJws(token.replace(TOKEN_BEARER_PREFIX, ""))
-            .getBody()
-            .getSubject();
-      if (user == null) { return null; }                                  ← Do not throw to allow next Filters
-      return new
-        UsernamePasswordAuthenticationToken
-           (user, null, new ArrayList<>());
-  }
-  }
-  ───────────────────────────────────────────────────────────────────────
-- file: com/myComp/security/JWTAuthorizationFilter.java
-  package com.myComp.security;
-
-  import org.springframework.beans.factory.annotation.Autowired;
-  import org.springframework.context.annotation.Bean;
-  import org.springframework.context.annotation.Configuration;
-  import org.springframework.http.HttpMethod;
-  import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-  import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-  import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-  import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-  import org.springframework.security.config.http.SessionCreationPolicy;
-  import org.springframework.security.core.userdetails.UserDetailsService;
-  import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-  import org.springframework.web.cors.CorsConfiguration;
-  import org.springframework.web.cors.CorsConfigurationSource;
-  import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-  @Configuration                                 ← Mark as Spring Conf. class [configuration]
-  @EnableWebSecurity
-  public class WebSecurity
-  extends WebSecurityConfigurerAdapter {         ← [AAA]
-
-    @Autowired private
-    UserDetailsService userDetailsService;
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-      return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    protected void
-      configure(HttpSecurity httpSecurity) throws Exception {
-      if (true) {
-        httpSecurity
-          .sessionManagement()
-          .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-          .cors().and()
-          .csrf().disable()
-          .authorizeRequests()
-          .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
-          .antMatchers(HttpMethod.POST, CREATE_URL).permitAll()
-          .antMatchers(
-              SWAGGER_API_DOCS,
-              SWAGGER_CONFIGURATION,
-              SWAGGER_URL,
-              SWAGGER_WEBJARS)
-          .permitAll()
-          .anyRequest()
-          .authenticated().and()
-          .addFilter(
-              new JWTAuthorizationFilter(
-                      authenticationManager()
-              ) );
-      }
-      if (false) { // example conf. 2
-        httpSecurity.httpBasic()
-          .disable()
-          .authorizeRequests()
-              .antMatchers(HttpMethod.GET   ,"/api/v1/service1").permitAll()
-              .antMatchers(HttpMethod.POST  ,"/api/v1/service1").hasRole("ADMIN")
-              .antMatchers(HttpMethod.PUT   ,"/api/v1/service1").hasRole("ADMIN")
-              .antMatchers(HttpMethod.DELETE,"/api/v1/service1").hasRole("ADMIN")
-              .anyRequest().authenticated()
-          .and()
-          .csrf().disable();
-      }
-
-    }
-
-    @Override
-    public void
-    configure(AuthenticationManagerBuilder auth) {
-      auth.userDetailsService(userDetailsService)
-         .passwordEncoder(bCryptPasswordEncoder());                       ← Algorithm used for passwords
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {                   ← Cross-Origin Resource Sharing
-      final UrlBasedCorsConfigurationSource                                 (CORS) SETUP
-        source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(
-            "/**",                                                        ← Any source
-             new CorsConfiguration()
-                  .applyPermitDefaultValues() );
-      return source;
-    }
-
-  }
-
-  ───────────────────────────────────────────────────────────────────────
-  Authentication, Authorization and Access (AAA)
-- file: com/myComp/security/AAAService.java                               [aaa][oauth]
-  public interface AAAService {
-    public String getUserByToken(String token);
-    public String createTokenForUsername(String userName);
-
-    Boolean checkLoginOrThrow(String username, String password);
-    AAAUserEntity findByUsernameOrThrow(String username);
-  }
-
-- file: com/myComp/security/AAAServiceImpl.java
-  @PersistenceContext
-  public class AAAServiceImpl implements AAAService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired private AAAUserRepository userRepository;
-
-    @Value("${some.config.param}")
-    private String someConfigParam;                               // ← Some config param injected by Spring [configuration]
-    @Override
-    public String getUserByToken(String token) {                  // ← Used by different controllers to
-      return Jwts.parser()                                        //    fetch user from Header token
-        .setSigningKey(
-            DatatypeConverter.parseBase64Binary(
-                "32bytes/64hex dig.secret key")))
-        .parseClaimsJws(
-            token.replace(TOKEN_BEARER_PREFIX, ""))
-        .getBody()
-        .getSubject();
-    }
-
-    @Override
-    public String createTokenForUsername(String userName) {       // ← Used to create User session JWT token
-      final SignatureAlgorithm                                    //   upon successful login
-         signatureAlgorithm = SignatureAlgorithm.HS256;
-      final byte[] apiKeySecretBytes =
-         DatatypeConverter
-           .parseBase64Binary("32bytes/64hex dig.secret key"));
-      final Key signingKey = new SecretKeySpec(
-             apiKeySecretBytes,
-             signatureAlgorithm.getJcaName() );
-      return BEARER +
-          Jwts.builder().setIssuedAt(new Date())
-              .setIssuer(SWAGGER_CONTACT_URL)
-              .setSubject(userName)
-              .setExpiration(
-                 new Date( System.currentTimeMillis()
-                         + MILISECS_TOKEN_EXPIRATION) )
-              .signWith( signingKey,                              // ← Setup priv.key for JWT signatures
-                  SignatureAlgorithm.HS256).compact();
-    }
-
-    @Override
-    public Boolean checkLoginOrThrow(String userName, String password) {
-      // TODO:(0) send hash of user+pass?
-      if (userRepository.findByLogin(userName, password) != 1) {
-         throw new CustomSecurityException(...);
-      }
-    }
-
-    @Override
-    public AAAUserEntity findByUsernameOrThrow(String username) {
-      try {
-        return userRepository.findByUsername(username);
-      } catch (Exception e) {
-        throw new CustomSecurityException(...);
-      }
-    }
-  }
-- file: com/myComp/config/CustomControllerAdvice.java
-
-    @RestController
-    @RequestMapping(value = "/api/v1/AAA")
-    @Api(tags = "aaa,auditing,...")
-    public class AAAController {
-      final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-      @Autowired private AAAService aaaService;
-
-      @ApiOperation(value = "Login with an user")
-      @ApiParam
-      @PostMapping( value = "/login", produces = "application/json" )
-      public ResponseEntity<String /*(Token)*/>
-        login(@RequestBody UserPassDTO login) {
-          aaaService.loginUser(login.getUsername(), login.getPassword());
-        HttpStatus responseStatus = exists ? HttpStatus.OK
-        logger.info("login success for {}", login.getUsername()) ;
-        final String token = AAAService.createTokenForUsername(login.getUsername());          // [oauth] Create token upon successful login
-        return new ResponseEntity<>(token, responseStatus);
-      }
-
-      @ApiOperation(value = "Get User")
-      @GetMapping(value = "/getDetail", produces = "application/json")
-      public ResponseEntity<AAAUserEntity>
-        getUserDetail(@RequestParam(value = "username") String username) {
-        AAAUserEntity user = userService.findByUsernameOrThrow(username);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-      }
-    }
+  **Controller**
+  ```
+  | // file: com/myComp/config/CustomControllerAdvice.java
+  |
+  |   @RestController
+  |   @RequestMapping(value = "/api/v1/AAA")
+  |   @Api(tags = "aaa,auditing,...")
+  |   public class AAAController {
+  |     final Logger logger = LoggerFactory.getLogger(this.getClass());
+  |
+  |     @Autowired private AAAService aaaService;
+  |
+  |     @ApiOperation(value = "Login with an user")
+  |     @ApiParam
+  |     @PostMapping( value = "/login", produces = "application/json" )
+  |     public ResponseEntity<String /*(Token)*/>
+  |       login(@RequestBody UserPassDTO login) {
+  |         aaaService.loginUser(login.getUsername(), login.getPassword());
+  |       HttpStatus responseStatus = exists ? HttpStatus.OK
+  |       logger.info("login success for {}", login.getUsername()) ;
+  |       final String token = AAAService.createTokenForUsername(login.getUsername());          // [oauth] Create token upon successful login
+  |       return new ResponseEntity<>(token, responseStatus);
+  |     }
+  |
+  |     @ApiOperation(value = "Get User")
+  |     @GetMapping(value = "/getDetail", produces = "application/json")
+  |     public ResponseEntity<AAAUserEntity>
+  |       getUserDetail(@RequestParam(value = "username") String username) {
+  |       AAAUserEntity user = userService.findByUsernameOrThrow(username);
+  |       return new ResponseEntity<>(user, HttpStatus.OK);
+  |     }
+  |   }
+  ```
 [[security.aaa,security.oauth}]]
 
+[[spring.101}]]
+
 [[{configuration,devops]]
-# Spring Configuration:
-- file: com/myComp/App.java
-  MAIN (entry point to Spring Boot app)
+# Spring Configuration
 
-  package com.myComp;
+  ```
+  | // file: com/myComp/App.java
+  | MAIN (entry point to Spring Boot app)  [[{doc_has.key-point}]]
+  |
+  | package com.myComp;
+  |
+  | import org.springframework.boot.SpringApplication;
+  | import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+  | import org.springframework.boot.autoconfigure.SpringBootApplication;
+  | import org.springframework.context.annotation.ComponentScan;
+  | import org.springframework.context.annotation.Configuration;
+  |
+  | @SpringBootApplication                     //  ← main class for SpringB. project.
+  |                                            //    (must be present in base path)
+  |                                            //    shortcut for
+  |                                            //         @Configuration (mark class as a src of beans definitions)
+  |                                            //       + @ComponentScan (enable component scanning to find+register
+  |                                            //                         beans in the Spring context)
+  |                                            //       + @EnableAutoConfiguration : once enable auto-configuration
+  |                                            //            is triggered by on several conditions such as:
+  |                                            //            - presence of certain classes in classpath
+  |                                            //            - existence  of  specific  beans
+  |                                            //            - value of  some properties.
+  |                                            //            e.g: If project depends on Springspring-boot-starter-web
+  |                                            //            Spring Boot will initialize an embedded Tomcat server
+  |                                            //            with minimal configuration required.
+  | @ComponentScan({ "com.myComp"})            //  ← [configuration] Package to scan for Spring components
+  | public class App {                         //    (use along with Spring @Configuration and/or
+  |   public static void main(String[] args) {        @SpringBootApplication)
+  |     SpringApplication.run(App.class, args);
+  |   }
+  | }
+  ```
 
-  import org.springframework.boot.SpringApplication;
-  import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-  import org.springframework.boot.autoconfigure.SpringBootApplication;
-  import org.springframework.context.annotation.ComponentScan;
-  import org.springframework.context.annotation.Configuration;
+  ```
+  | // file: com/myComp/config/CustomControllerAdvice.java
+  |
+  | package com.myComp.config;
+  |
+  | import java.net.HttpURLConnection;
+  |
+  | import javax.validation.ConstraintViolation;
+  | import javax.validation.ConstraintViolationException;
+  |
+  | import org.hibernate.exception.JDBCConnectionException;
+  | import org.springframework.http.*;
+  | import org.springframework.validation.FieldError;
+  | import org.springframework.validation.ObjectError;
+  | import org.springframework.web.bind.MethodArgumentNotValidException;
+  | import org.springframework.web.bind.MissingServletRequestParameterException;
+  | import org.springframework.web.bind.annotation.ControllerAdvice;
+  | import org.springframework.web.bind.annotation.ExceptionHandler;
+  | import org.springframework.web.context.request.WebRequest;
+  | import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+  | import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+  |
+  |                                                                   [[{qa.error_control]]
+  | @ControllerAdvice                                              // ← (Spring 3.2+):   handle exceptions across
+  | public class CustomControllerAdvice                            //   whole application  (vs individual controller).
+  | extends ResponseEntityExceptionHandler {                       //   "Sort of" exception-interceptor thrown by
+  |                                                                //   methods annotated with @RequestMapping.
+  |
+  |   @ExceptionHandler(xceptionClass01.class)                     //  ← Allows different exception handling by
+  |   public ResponseEntity<Object>                                //    type (Recoverable, external, internal,
+  |   connectionException(final JDBCConnectionException e) {       //    ...)
+  |     // log, notifications, ...
+  |     CustomClientErrorNotification customErr =
+  |       new CustomClientErrorNotification(error_list,,..)
+  |     return new ResponseEntity<>(
+  |       customErr,
+  |       HttpStatus.BAD_REQUEST );
+  |   }                                                            // [[qa.error_control}]]
+  |
+  |   @Override protected ResponseEntity<Object>
+  |   handleMethodArgumentNotValid(
+  |     MethodArgumentNotValidException ex,
+  |     HttpHeaders headers, HttpStatus status, WebRequest request) {
+  |     final List<String> error_list = new ArrayList<>();
+  |     for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+  |       error_list.add(error.getField() + ": " + error.getDefaultMessage());
+  |     }
+  |     CustomClientErrorNotification customErr =
+  |       new CustomClientErrorNotification(error_list,,..)
+  |     return new ResponseEntity<>(customErr,  HttpStatus.BAD_REQUEST);
+  |
+  |   }
+  |
+  |   @Override protected ResponseEntity<Object>
+  |   handleMissingServletRequestParameter(...) { ... }
+  |
+  |   @Override protected ResponseEntity<Object>
+  |   handleConstraintViolation(...) { ... }
+  | }
+  ```
 
-  @SpringBootApplication                     //  ← main class for SpringB. project.
-                                             //    (must be present in base path)
-                                             //    shortcut for
-                                             //         @Configuration (mark class as a src of beans definitions)
-                                             //       + @ComponentScan (enable component scanning to find+register
-                                             //                         beans in the Spring context)
-                                             //       + @EnableAutoConfiguration : once enable auto-configuration
-                                             //            is triggered by on several conditions such as:
-                                             //            - presence of certain classes in classpath
-                                             //            - existence  of  specific  beans
-                                             //            - value of  some properties.
-                                             //            e.g: If project depends on Springspring-boot-starter-web
-                                             //            Spring Boot will initialize an embedded Tomcat server
-                                             //            with minimal configuration required.
-  @ComponentScan({ "com.myComp"})            //  ← [configuration] Package to scan for Spring components
-  public class App {                         //    (use along with Spring @Configuration and/or
-    public static void main(String[] args) {        @SpringBootApplication)
-      SpringApplication.run(App.class, args);
-    }
-  }
+  ```
+  | // file: com/myComp/config/ConfigurationCore.java               // ← Main Config point.
+  | package com.myComp.config;                                      //   (autoscan is another possibility)
+  |
+  | import org.springframework.beans.factory.annotation.Value;
+  | import org.springframework.context.annotation.Bean;
+  | import org.springframework.context.annotation.Configuration;
+  | import org.springframework.web.client.RestTemplate;            // ← Note: RestTemplate has been deprecated by WebClient
+  | import org.springframework.web.filter.CharacterEncodingFilter;            with Spring 5.0. The new one offers async
+  | import org.web3j.protocol.admin.Admin;                                    support, while RestTemplate does NOT. webClient
+  | import org.web3j.protocol.Web3j;                                          also has support for timeouts, retry with
+  |                                                                           exponential backoff, ...
+  | @Configuration
+  | public class ConfigurationCore {
+  |   @Bean public Service1 getService1() { return new Service1Impl(); }
+  |   @Bean public Service2 getService2() { return new Service2Impl(); }
+  |   @Bean public Service3 getService3() { return new Service3Impl(); }
+  |
+  |
+  |   @Bean public Entity1Service
+  |   getEntity1Service() {  return new Entity1ServiceImpl(); }   // ← [persistence][JPA]
+  |   @Bean public Entity2Service
+  |   getEntity2Service() {  return new Entity2ServiceImpl(); }   // ← [persistence][JPA]
+  |
+  |   @Bean
+  |   CharacterEncodingFilter characterEncodingFilter() {
+  |     final CharacterEncodingFilter filter =
+  |         new CharacterEncodingFilter();
+  |     filter.setEncoding("UTF-8");
+  |     filter.setForceEncoding(true);
+  |     return filter;
+  |   }
+  |
+  |   @Bean AAAService getAAAService() {                      // ← [aaa]
+  |     return new AAAServiceImpl();
+  |   }
+  |
+  | }
+  ```
 
-- file: com/myComp/config/CustomControllerAdvice.java  [[{]]
+  ```
+  | // file: com/myComp/apirest/ControllerService1.java
+  | package com.myComp.api.serviceZ.controller;
+  |
+  | import javax.transaction.Transactional;             // ← [[{persistence.jpa,qa.error_control}]]
+  | import javax.validation.Valid;
+  |
+  | import org.slf4j.Logger;
+  | import org.slf4j.LoggerFactory;
+  | import org.springframework.beans.factory.annotation.Autowired;
+  | import org.springframework.http.HttpStatus;
+  | import org.springframework.http.ResponseEntity;
+  | import org.springframework.web.bind.annotation.PostMapping;
+  | import org.springframework.web.bind.annotation.RequestBody;
+  | import org.springframework.web.bind.annotation.RequestMapping;
+  | import org.springframework.web.bind.annotation.RequestParam;
+  | import org.springframework.web.bind.annotation.RestController;
+  |
+  | import io.swagger.annotations.Api;
+  | import io.swagger.annotations.ApiOperation;
+  | import io.swagger.annotations.ApiParam;
+  |
+  | @RestController
+  | @RequestMapping(value = "/api/v1/service1")
+  | @Api(tags = "service1,topic1,topic2")
+  | public class ControllerService1 {
+  |
+  |   final Logger logger = LoggerFactory.getLogger(this.getClass());
+  |
+  |   @Autowired private AAAService AAAService;           // [aaa]
+  |
+  |   @Autowired Service1 service1;
+  |   @Autowired Service2 service2;
+  |   @Autowired Service3 service3;
+  |
+  |   @Autowired Entity1Service entity1Service;               // Entity1Service1 uses Entity1Repository for queries
+  |                                                           // Entity1 por inserts/deletes/...
+  |
+  |   @ApiOperation(value = "human readable api summary")
+  |   @ApiParam
+  |   @PostMapping(
+  |      value = "/search/entity1",                           // ← Final URL /api/v1/service1/search/entity1
+  |      produces = "application/json")
+  |   public ResponseEntity
+  |     <List<Entity1>> searchEntity1(
+  |       @RequestBody CustomSearchRequest request)
+  |       throws IllegalAccessException {                     // ← [aaa]
+  |     final List<Entity1> response =
+  |        service1.getEntity1ListQuery1(request);             // ← Note: Throw exception on service implementation
+  |                                                                if some error arise (vs returning null).
+  |                                                                Then configure CustomControllerAdvice
+  |                                                                to handle generic errors.
+  |     return new ResponseEntity<>(response, HttpStatus.OK; );
+  |   }
+  |
+  |   @Transactional                                             // ← [jpa] declaratively control TX boundaries on
+  |                                                              //   CDI managed beans and Java EE managed beans.
+  |                                                              //   (class or method level)
+  |   @ApiOperation(value = "human readable api summary")
+  |   @PostMapping(
+  |      value = "/entity1",
+  |     produces = "application/json")
+  |   public ResponseEntity<> create(
+  |      @Valid
+  |      @RequestBody
+  |      Entity1 jsonEntity1,
+  |      @RequestParam(name = "param1", required = true) String param1,
+  |      @RequestParam(name = "param2", required = true) String param2
+  |   ) {
+  |     final String username = AAAService.getUserByToken(token);  // [aaa]
+  |     AAAService user = userService.findByUsernameOrThrow(username);
+  |     service1.insert(jsonEntity1);
+  |     return new ResponseEntity<>(HttpStatus.CREATED);
+  |   }
+  |
+  |
+  |   @ApiOperation(value = "human readable api summary")
+  |   @GetMapping(value = "/entity1/{entity1_id}")
+  |   public ResponseEntity<Entity1> getChartJson(
+  |       @PathVariable int entity1_id,
+  |       @RequestHeader (name="Authorization") String token,
+  |       @RequestParam  (name = "startIndex", required = false) Long param1,
+  |       @RequestParam  (name = "maxRows"   , required = false) Long param2)
+  |   { ... }
+  |
+  | }
+  ```
 
-    package com.myComp.config;
+  ```
+  | // file: com/myComp/service/Entity1Service.java
+  | package com.myComp.api.serviceZ.service;
+  |
+  | import java.util.List;
+  |
+  | public interface Entity1Service {
+  |
+  |   <List<Entity1>> getEntity1ListQuery1(CustomSearchRequest req);
+  |   void            insert            (Entity1 entity);
+  | }
+  ```
 
-    import java.net.HttpURLConnection;
-
-    import javax.validation.ConstraintViolation;
-    import javax.validation.ConstraintViolationException;
-
-    import org.hibernate.exception.JDBCConnectionException;
-    import org.springframework.http.*;
-    import org.springframework.validation.FieldError;
-    import org.springframework.validation.ObjectError;
-    import org.springframework.web.bind.MethodArgumentNotValidException;
-    import org.springframework.web.bind.MissingServletRequestParameterException;
-    import org.springframework.web.bind.annotation.ControllerAdvice;
-    import org.springframework.web.bind.annotation.ExceptionHandler;
-    import org.springframework.web.context.request.WebRequest;
-    import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-    import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-                                                                      [[{qa.error_control]]
-    @ControllerAdvice                                              // ← (Spring 3.2+):   handle exceptions across
-    public class CustomControllerAdvice                            //   whole application  (vs individual controller).
-    extends ResponseEntityExceptionHandler {                       //   "Sort of" exception-interceptor thrown by
-                                                                   //   methods annotated with @RequestMapping.
-
-      @ExceptionHandler(xceptionClass01.class)                     //  ← Allows different exception handling by
-      public ResponseEntity<Object>                                //    type (Recoverable, external, internal,
-      connectionException(final JDBCConnectionException e) {       //    ...)
-        // log, notifications, ...
-        CustomClientErrorNotification customErr =
-          new CustomClientErrorNotification(error_list,,..)
-        return new ResponseEntity<>(
-          customErr,
-          HttpStatus.BAD_REQUEST );
-      }                                                            // [[qa.error_control}]]
-
-      @Override protected ResponseEntity<Object>
-      handleMethodArgumentNotValid(
-        MethodArgumentNotValidException ex,
-        HttpHeaders headers, HttpStatus status, WebRequest request) {
-        final List<String> error_list = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-          error_list.add(error.getField() + ": " + error.getDefaultMessage());
-        }
-        CustomClientErrorNotification customErr =
-          new CustomClientErrorNotification(error_list,,..)
-        return new ResponseEntity<>(customErr,  HttpStatus.BAD_REQUEST);
-
-      }
-
-      @Override protected ResponseEntity<Object>
-      handleMissingServletRequestParameter(...) { ... }
-
-      @Override protected ResponseEntity<Object>
-      handleConstraintViolation(...) { ... }
-    }
-[[}]]
-
-- file: com/myComp/config/ConfigurationCore.java [[{configuration]] // ← Main Config point.
-    package com.myComp.config;                                      //   (autoscan is another possibility)
-
-    import org.springframework.beans.factory.annotation.Value;
-    import org.springframework.context.annotation.Bean;
-    import org.springframework.context.annotation.Configuration;
-    import org.springframework.web.client.RestTemplate;            // ← Note: RestTemplate has been deprecated by WebClient
-    import org.springframework.web.filter.CharacterEncodingFilter;            with Spring 5.0. The new one offers async
-    import org.web3j.protocol.admin.Admin;                                    support, while RestTemplate does NOT. webClient
-    import org.web3j.protocol.Web3j;                                          also has support for timeouts, retry with
-                                                                              exponential backoff, ...
-    @Configuration
-    public class ConfigurationCore {
-      @Bean public Service1 getService1() { return new Service1Impl(); }
-      @Bean public Service2 getService2() { return new Service2Impl(); }
-      @Bean public Service3 getService3() { return new Service3Impl(); }
-
-
-      @Bean public Entity1Service
-      getEntity1Service() {  return new Entity1ServiceImpl(); }   // ← [persistence][JPA]
-      @Bean public Entity2Service
-      getEntity2Service() {  return new Entity2ServiceImpl(); }   // ← [persistence][JPA]
-
-      @Bean
-      CharacterEncodingFilter characterEncodingFilter() {
-        final CharacterEncodingFilter filter =
-            new CharacterEncodingFilter();
-        filter.setEncoding("UTF-8");
-        filter.setForceEncoding(true);
-        return filter;
-      }
-
-      @Bean AAAService getAAAService() {                      // ← [aaa]
-        return new AAAServiceImpl();
-      }
-
-    }
-[[}]]
-
-- file: com/myComp/apirest/ControllerService1.java  [[{]]
-    package com.myComp.api.serviceZ.controller;
-
-    import javax.transaction.Transactional;             // ← [[{persistence.jpa,qa.error_control}]]
-    import javax.validation.Valid;
-
-    import org.slf4j.Logger;
-    import org.slf4j.LoggerFactory;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.http.HttpStatus;
-    import org.springframework.http.ResponseEntity;
-    import org.springframework.web.bind.annotation.PostMapping;
-    import org.springframework.web.bind.annotation.RequestBody;
-    import org.springframework.web.bind.annotation.RequestMapping;
-    import org.springframework.web.bind.annotation.RequestParam;
-    import org.springframework.web.bind.annotation.RestController;
-
-
-    import io.swagger.annotations.Api;
-    import io.swagger.annotations.ApiOperation;
-    import io.swagger.annotations.ApiParam;
-
-    @RestController
-    @RequestMapping(value = "/api/v1/service1")
-    @Api(tags = "service1,topic1,topic2")
-    public class ControllerService1 {
-
-      final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-      @Autowired private AAAService AAAService;           // [aaa]
-
-      @Autowired Service1 service1;
-      @Autowired Service2 service2;
-      @Autowired Service3 service3;
-
-      @Autowired Entity1Service entity1Service;               // Entity1Service1 uses Entity1Repository for queries
-                                                              // Entity1 por inserts/deletes/...
-
-      @ApiOperation(value = "human readable api summary")
-      @ApiParam
-      @PostMapping(
-         value = "/search/entity1",                           // ← Final URL /api/v1/service1/search/entity1
-         produces = "application/json")
-      public ResponseEntity
-        <List<Entity1>> searchEntity1(
-          @RequestBody CustomSearchRequest request)
-          throws IllegalAccessException {                     // ← [aaa]
-        final List<Entity1> response =
-           service1.getEntity1ListQuery1(request);             // ← Note: Throw exception on service implementation
-                                                                   if some error arise (vs returning null).
-                                                                   Then configure CustomControllerAdvice
-                                                                   to handle generic errors.
-        return new ResponseEntity<>(response, HttpStatus.OK; );
-      }
-
-      @Transactional                                             // ← [jpa] declaratively control TX boundaries on
-                                                                 //   CDI managed beans and Java EE managed beans.
-                                                                 //   (class or method level)
-      @ApiOperation(value = "human readable api summary")
-      @PostMapping(
-         value = "/entity1",
-        produces = "application/json")
-      public ResponseEntity<> create(
-         @Valid
-         @RequestBody
-         Entity1 jsonEntity1,
-         @RequestParam(name = "param1", required = true) String param1,
-         @RequestParam(name = "param2", required = true) String param2
-      ) {
-        final String username = AAAService.getUserByToken(token);  // [aaa]
-        AAAService user = userService.findByUsernameOrThrow(username);
-        service1.insert(jsonEntity1);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-      }
-
-
-      @ApiOperation(value = "human readable api summary")
-      @GetMapping(value = "/entity1/{entity1_id}")
-      public ResponseEntity<Entity1> getChartJson(
-          @PathVariable int entity1_id,
-          @RequestHeader (name="Authorization") String token,
-          @RequestParam  (name = "startIndex", required = false) Long param1,
-          @RequestParam  (name = "maxRows"   , required = false) Long param2)
-      { ... }
-
-    }
-[[}]]
-
-- file: com/myComp/service/Entity1Service.java     [[{]]
-    package com.myComp.api.serviceZ.service;
-
-    import java.util.List;
-
-    public interface Entity1Service {
-
-      <List<Entity1>> getEntity1ListQuery1(CustomSearchRequest req);
-      void            insert            (Entity1 entity);
-
-    }
-[[}]]
-
-- file: com/myComp/service/Service1Impl.java  [[{]]
-    package com.myComp.api.serviceZ.service;
-
-    import javax.persistence.*;
-    import javax.persistence.criteria.*;
-    import javax.transaction.Transactional;
-
-
-    @PersistenceContext
-    public class Entity1ServiceImpl implements Entity1Service {
-
-      @Autowired Entity1Repository entity1Repository;                   // [persistence][jpa]
-      @Autowired Entity2Repository entity2Repository;
-      @Autowired EntityManager em;                                      // [persistence][jpa]
-
-      @Override
-      @Transactional                                                    // [persistence][jpa]
-      public void insert(Entity1 entity1) {
-        em.persist(entity1);                                            // INSERT INTO ... [persistence][jpa]
-        // anything else (persist/update related entities, ...)
-      }
-
-      @Override
-      public <List<Entity1>> getEntity1ListQuery1(CustomSearchRequest req) {
-        final <List<Entity1>> entity1_list =  entity1Repository.query1(req.entity3Id, req.col2Value);
-        return response;
-      }
-
-      @Override
-      public <List<Entity1>> getEntity1ListQuery2(CustomSearchRequest req) {
-        final CriteriaBuilder                  cb = em.getCriteriaBuilder();            // [persistence][jpa] TODO:
-        final CriteriaQuery<Entity1> entity1_list = cb.createQuery(Entity1.class);      // [persistence][jpa] TODO:
-        final Root<Entity1>               smRoots = smartContracts                      // [persistence][jpa] TODO:
-                                                    .from(PolicyEntity.class);
-
-        final Predicate  p1 = cb.equal( ... ), // [TODO]
-                         p2 = cb.equal( ... );
-        final Predicate all = cb.and(p1, p2);
-
-        entity1_list.select(smRoots).where(all);
-        TypedQuery<Entity1> typedQuery = em.createQuery(entity1_list);
-
-        return typedQuery.getResultList();
-      }
-
-    }
-[[}]]
-
-
+  ```
+  | // file: com/myComp/service/Service1Impl.java
+  | package com.myComp.api.serviceZ.service;
+  |
+  | import javax.persistence.*;
+  | import javax.persistence.criteria.*;
+  | import javax.transaction.Transactional;
+  |
+  |
+  | @PersistenceContext
+  | public class Entity1ServiceImpl implements Entity1Service {
+  |
+  |   @Autowired Entity1Repository entity1Repository;                   // [persistence][jpa]
+  |   @Autowired Entity2Repository entity2Repository;
+  |   @Autowired EntityManager em;                                      // [persistence][jpa]
+  |
+  |   @Override
+  |   @Transactional                                                    // [persistence][jpa]
+  |   public void insert(Entity1 entity1) {
+  |     em.persist(entity1);                                            // INSERT INTO ... [persistence][jpa]
+  |     // anything else (persist/update related entities, ...)
+  |   }
+  |
+  |   @Override
+  |   public <List<Entity1>> getEntity1ListQuery1(CustomSearchRequest req) {
+  |     final <List<Entity1>> entity1_list =  entity1Repository.query1(req.entity3Id, req.col2Value);
+  |     return response;
+  |   }
+  |
+  |   @Override
+  |   public <List<Entity1>> getEntity1ListQuery2(CustomSearchRequest req) {
+  |     final CriteriaBuilder                  cb = em.getCriteriaBuilder();            // [persistence][jpa] TODO:
+  |     final CriteriaQuery<Entity1> entity1_list = cb.createQuery(Entity1.class);      // [persistence][jpa] TODO:
+  |     final Root<Entity1>               smRoots = smartContracts                      // [persistence][jpa] TODO:
+  |                                                 .from(PolicyEntity.class);
+  |
+  |     final Predicate  p1 = cb.equal( ... ), // [TODO]
+  |                      p2 = cb.equal( ... );
+  |     final Predicate all = cb.and(p1, p2);
+  |
+  |     entity1_list.select(smRoots).where(all);
+  |     TypedQuery<Entity1> typedQuery = em.createQuery(entity1_list);
+  |
+  |     return typedQuery.getResultList();
+  |   }
+  |
+  | }
+  ```
 [[configuration}]]
 
-# Spring Cloud Configuration [[{spring.cloud,cloud,architecture.distributed.service_discovery]]
-## CONTEXT:
-  2+ APIs running independently have been developed.
+# Spring Cloud Configuration [[{spring.cloud.config,cloud,architecture.distributed.service_discovery]]
 
-  We want to BOOTSTRAP NEXT THREE MICRO-SERVICES :
+* CONTEXT:
+  * 2+ APIs running independently have been developed.
+  * We want to BOOTSTRAP NEXT THREE MICRO-SERVICES :
+    * Configuration Server : centralizes micro-services configuration.
+                             (Sort of "etcd" for Spring)
+    * Discovery Server     : allow apps to find each other
+    * Gateway Server       : reverse proxy encapsulating all decoupled
+                             micro-services in a single port.
 
-  * Configuration Server : centralizes micro-services configuration.
-                           (Sort of "etcd" for Spring)
-  * Discovery Server     : allow apps to find each other
-  * Gateway Server       : reverse proxy encapsulating all decoupled
-                           micro-services in a single port.
+## Configuration Server HOW-TO
 
-  ###############################
-  # Configuration Server HOW-TO:#
-  ###############################
-   maven/gradle dependencies:
-   groupId                    artifactId
-   org.springframework.cloud  spring-cloud-config-server
-   org.springframework.cloud  spring-cloud-starter-eureka
-   org.springframework.boot   spring-boot-starter-security
+* maven/gradle dependencies:
+  ```
+  |  groupId                    artifactId
+  |  org.springframework.cloud  spring-cloud-config-server
+  |  org.springframework.cloud  spring-cloud-starter-eureka
+  |  org.springframework.boot   spring-boot-starter-security
+  ```
 
-   @SpringBootApplication            ← Spring Boot Entry point
-   @EnableConfigServer               ← Make Configuration Service discoverable
-   @Enable                           ← via EurekaClient
-   public class ConfigApplication {
-     ...
-   }
+  ```
+  |  @SpringBootApplication            ← Spring Boot Entry point
+  |  @EnableConfigServer               ← Make Configuration Service discoverable
+  |  @Enable                           ← via EurekaClient
+  |  public class ConfigApplication {
+  |    ...
+  |  }
+  ```
 
-   application.properties :                       ← Standard Spring Boot config file
-   server.port=8081
-   spring.application.name=config              ┐
-   spring.cloud.config.server.git.uri=  ←······│· set to real git path
-       file:///${user.home}/application-config ├─ Spring Cloud
-   eureka.client.region=default                │  Config.Server config
-   eureka.client.registryFetchIntervalSeconds=5│
-   eureka.client.serviceUrl.defaultZone=       ┘
-          =http://discUser:discPassword@localhost:8082/eureka/
-   security.user.name=configUser               │
-   security.user.password=configPassword       │
-   security.user.role=SYSTEM                   ┘
+  ```
+  | file   application.properties   (Standard Spring Boot config file)
+  |  server.port=8081
+  |  spring.application.name=config                    ┐
+  |  spring.cloud.config.server.git.uri=               │  set to real git path
+  |      file:///${user.home}/application-config       ├─ Spring Cloud
+  |  eureka.client.region=default                      │  Config.Server config
+  |  eureka.client.registryFetchIntervalSeconds=5      │
+  |  eureka.client.serviceUrl.defaultZone=             │
+  |         =http://discUser:discPass@...:8082/eureka/ │
+  |  security.user.name=configUser                     │
+  |  security.user.password=configPassword             │
+  |  security.user.role=SYSTEM                         ┘
+  ```
 
-  ############################
-  # Discovery Server HOW-TO: #
-  ############################
-  groupId                    artifactId
-  org.springframework.cloud  spring-cloud-starter-eureka-server
-  org.springframework.cloud  spring-cloud-starter-config
-  org.springframework.boot   artifactId>spring-boot-starter-security
+## Discovery Server HOW-TO
+  ```
+  | groupId                    artifactId
+  | org.springframework.cloud  spring-cloud-starter-eureka-server
+  | org.springframework.cloud  spring-cloud-starter-config
+  | org.springframework.boot   artifactId>spring-boot-starter-security
+  ```
 
-  @SpringBootApplication     ← Spring Boot Entry point
-  @EnableEurekaServerpublic  ← "IoT Setup"
-  class DiscoveryApplication {...}
+  ```
+  | @SpringBootApplication     ← Spring Boot Entry point
+  | @EnableEurekaServerpublic  ← "IoT Setup"
+  | class DiscoveryApplication {...}
+  ```
+### Secure Server endpoints anotattions
+  ```
+  | @Configuration
+  | @EnableWebSecurity
+  | @Order(1)                          ←  There are two security configurations for the
+  | public class SecurityConfig           Discover Serv. endpoints + dashboard.
+  | extends WebSecurityConfigurerAdapter {
+  |    @Autowired
+  |    public void configureGlobal(
+  |        AuthenticationManagerBuilder auth)
+  |    {
+  |       auth.inMemoryAuthentication()
+  |         .withUser("discUser")
+  |         .password("discPassword")
+  |         .roles("SYSTEM");
+  |    }
+  |    @Override
+  |    protected void configure(HttpSecurity http)
+  |    {
+  |      http
+  |      .sessionManagement()
+  |      .sessionCreationPolicy(
+  |          SessionCreationPolicy.ALWAYS).and()
+  |      .requestMatchers()
+  |         .antMatchers("/eureka/**").and()
+  |      .authorizeRequests()
+  |         .antMatchers("/eureka/**")
+  |             .hasRole("SYSTEM")
+  |         .anyRequest().denyAll().and()
+  |      .httpBasic().and()
+  |      .csrf().disable();
+  |    }
+  | }
+  ```
 
-    Secure Server endpoints anotattions :
-  @Configuration
-  @EnableWebSecurity
-  @Order(1)                          ←  There are two security configurations for the
-  public class SecurityConfig           Discover Serv. endpoints + dashboard.
-  extends WebSecurityConfigurerAdapter {
-     @Autowired
-     public void configureGlobal(
-         AuthenticationManagerBuilder auth)
-     {
-        auth.inMemoryAuthentication()
-          .withUser("discUser")
-          .password("discPassword")
-          .roles("SYSTEM");
-     }
-     @Override
-     protected void configure(HttpSecurity http)
-     {
-       http
-       .sessionManagement()
-       .sessionCreationPolicy(
-           SessionCreationPolicy.ALWAYS).and()
-       .requestMatchers()
-          .antMatchers("/eureka/**").and()
-       .authorizeRequests()
-          .antMatchers("/eureka/**")
-              .hasRole("SYSTEM")
-          .anyRequest().denyAll().and()
-       .httpBasic().and()
-       .csrf().disable();
-     }
-  }
+## DISCOVERY SERV.. SECURE DASHBOARD HOW-TO
 
-  DISCOVERY SERV. : SECURE DASHBOARD HOW-TO :
-  @Configuration
-  public static class AdminSecurityConfig
-  extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) {
-    http
-    .sessionManagement()
-    .sessionCreationPolicy(
-       SessionCreationPolicy.NEVER).and()
-    .httpBasic().disable()
-    .authorizeRequests()
-      .antMatchers(HttpMethod.GET, "/")
-         .hasRole("ADMIN")
-      .antMatchers("/info", "/health")
-         .authenticated()
-      .anyRequest().denyAll().and()
-    .csrf().disable();
-    }
-  }
+  ```
+  | @Configuration
+  | public static class AdminSecurityConfig
+  | extends WebSecurityConfigurerAdapter {
+  |   @Override
+  |   protected void configure(HttpSecurity http) {
+  |   http
+  |   .sessionManagement()
+  |   .sessionCreationPolicy(
+  |      SessionCreationPolicy.NEVER).and()
+  |   .httpBasic().disable()
+  |   .authorizeRequests()
+  |     .antMatchers(HttpMethod.GET, "/")
+  |        .hasRole("ADMIN")
+  |     .antMatchers("/info", "/health")
+  |        .authenticated()
+  |     .anyRequest().denyAll().and()
+  |   .csrf().disable();
+  |   }
+  | }
+  ```
 
-  DISCOVERY SERV. : CONFIG. FILES
-  └ bootstrap.properties                               Must match Discovery serv. in
-    spring.cloud.config.name=discovery               ← configuration repository.
-    spring.cloud.config.uri=http://localhost:8081    ← URL of the confi. server
-    spring.cloud.config.username=configUser
-    spring.cloud.config.password=configPassword
+## DISCOVERY SERV. : CONFIG. FILES
+  ```
+  | file://bootstrap.properties                      Must match Discovery serv. in
+  | spring.cloud.config.name=discovery               ← configuration repository.
+  | spring.cloud.config.uri=http://localhost:8081    ← URL of the confi. server
+  | spring.cloud.config.username=configUser
+  | spring.cloud.config.password=configPassword
+  ```
 
-  └ discovery.properties                             ← Add also to application-config Git repo
-    spring.application.name=discovery
-    server.port=8082
-    eureka.instance.hostname=localhost
-    eureka.client.serviceUrl.defaultZone=
-       http://discUser:discPassword@localhost:8082/eureka/
-    eureka.client.register-with-eureka=false
-    eureka.client.fetch-registry=false
-    spring.redis.host=localhost
-    spring.redis.port=6379
-
-  ##########################
-  # Gateway Server HOW-TO: #
-  ##########################
-  groupId                    artifactId
-  org.springframework.cloud  spring-cloud-starter-config
-  org.springframework.cloud  spring-cloud-starter-eureka
-  org.springframework.cloud  spring-cloud-starter-zuul
-  org.springframework.boot   spring-boot-starter-security
-
-  @SpringBootApplication     ← Spring Boot Entry Point
-  @EnableZuulProxy
-  @EnableEurekaClient
-  public class GatewayApplication {}
+  ```
+  | file://discovery.properties                      ← Add also to application-config Git repo
+  | spring.application.name=discovery
+  | server.port=8082
+  | eureka.instance.hostname=localhost
+  | eureka.client.serviceUrl.defaultZone=
+  |    http://discUser:discPassword@localhost:8082/eureka/
+  | eureka.client.register-with-eureka=false
+  | eureka.client.fetch-registry=false
+  | spring.redis.host=localhost
+  | spring.redis.port=6379
+  ```
 
 
-    GATEWAY SERVER: SECURE HOW-TO
-    @EnableWebSecurity
-    @Configuration
-    public class SecurityConfig
-    extends WebSecurityConfigurerAdapter
-    {
-      @Autowired
-      public void configureGlobal
-         (AuthenticationManagerBuilder auth)
-      throws Exception {
-        auth.inMemoryAuthentication()
-          .withUser("user").password("password").roles("USER")
-          .and()
-          .withUser("admin").password("admin").roles("ADMIN");
-      }
+## Gateway Server HOW-TO
+  ```
+  | groupId                    artifactId
+  | org.springframework.cloud  spring-cloud-starter-config
+  | org.springframework.cloud  spring-cloud-starter-eureka
+  | org.springframework.cloud  spring-cloud-starter-zuul
+  | org.springframework.boot   spring-boot-starter-security
+  ```
 
-      @Override
-      protected void configure(HttpSecurity http)
-      throws Exception {
-        http.authorizeRequests()
-          .antMatchers("/book-service/books")
-             .permitAll()
-          .antMatchers("/eureka/**")
-             .hasRole("ADMIN")
-          .anyRequest().authenticated().and()
-          .formLogin().and()
-          .logout().permitAll().and()
-          .csrf().disable();
-        }
-    }
+  ```
+  | @SpringBootApplication     ← Spring Boot Entry Point
+  | @EnableZuulProxy
+  | @EnableEurekaClient
+  | public class GatewayApplication {}
+  ```
 
-    GATEWAY SERVER: SECURE CONFIG. FILES
-    └ resources/bootstrap.properties:
-      spring.cloud.config.name=gateway
-      spring.cloud.config.discovery.service-id=config
-      spring.cloud.config.discovery.enabled=true
-      spring.cloud.config.username=configUser
-      spring.cloud.config.password=configPassword
-      eureka.client.serviceUrl.defaultZone=
-        http://discUser:discPassword@localhost:8082/eureka
+## GATEWAY SERVER: SECURE HOW-TO
+  ```
+  | @EnableWebSecurity
+  | @Configuration
+  | public class SecurityConfig
+  | extends WebSecurityConfigurerAdapter
+  | {
+  |   @Autowired
+  |   public void configureGlobal
+  |      (AuthenticationManagerBuilder auth)
+  |   throws Exception {
+  |     auth.inMemoryAuthentication()
+  |       .withUser("user").password("password").roles("USER")
+  |       .and()
+  |       .withUser("admin").password("admin").roles("ADMIN");
+  |   }
+  |
+  |   @Override
+  |   protected void configure(HttpSecurity http)
+  |   throws Exception {
+  |     http.authorizeRequests()
+  |       .antMatchers("/book-service/books")
+  |          .permitAll()
+  |       .antMatchers("/eureka/**")
+  |          .hasRole("ADMIN")
+  |       .anyRequest().authenticated().and()
+  |       .formLogin().and()
+  |       .logout().permitAll().and()
+  |       .csrf().disable();
+  |     }
+  | }
+  ```
 
-    └ gateway.properties:  (from app-config Git repo)
-      spring.application.name=gateway
-      server.port=8080
-      eureka.client.region = default
-      eureka.client.registryFetchIntervalSeconds = 5
-      management.security.sessions=always
+### GATEWAY SERVER: SECURE CONFIG. FILES
+  ```
+  | resources/bootstrap.properties:
+  | spring.cloud.config.name=gateway
+  | spring.cloud.config.discovery.service-id=config
+  | spring.cloud.config.discovery.enabled=true
+  | spring.cloud.config.username=configUser
+  | spring.cloud.config.password=configPassword
+  | eureka.client.serviceUrl.defaultZone=
+  |   http://discUser:discPassword@localhost:8082/eureka
+  ```
 
-    └ zuul.routes.book-service.path=/book-service/**    ← route /boot-service HTTP requests
-                                                             to our Book Ser.app
-      zuul.routes.book-service.sensitive-headers=Set-Cookie,Authorization
-      hystrix.command.book-service.execution.isolation.thread.timeoutInMilliseconds=600000
-      zuul.routes.rating-service.path=/rating-service/**
-      zuul.routes.rating-service.sensitive-headers=Set-Cookie,Authorization
-      hystrix.command.rating-service.execution.isolation.thread.timeoutInMilliseconds=600000
-      zuul.routes.discovery.path=/discovery/**
-      zuul.routes.discovery.sensitive-headers=Set-Cookie,Authorization
-      zuul.routes.discovery.url=http://localhost:8082
-      hystrix.command.discovery.execution.isolation.thread.timeoutInMilliseconds=600000
+  ```
+  | gateway.properties:  (from app-config Git repo)
+  | spring.application.name=gateway
+  | server.port=8080
+  | eureka.client.region = default
+  | eureka.client.registryFetchIntervalSeconds = 5
+  | management.security.sessions=always
+  ```
 
-      spring.redis.host=localhost
-      spring.redis.port=6379
+  ```
+  | zuul.routes.book-service.path=/book-service/**    ← route /boot-service HTTP requests
+  |                                                        to our Book Ser.app
+  | zuul.routes.book-service.sensitive-headers=Set-Cookie,Authorization
+  | hystrix.command.book-service.execution.isolation.thread.timeoutInMilliseconds=600000
+  | zuul.routes.rating-service.path=/rating-service/**
+  | zuul.routes.rating-service.sensitive-headers=Set-Cookie,Authorization
+  | hystrix.command.rating-service.execution.isolation.thread.timeoutInMilliseconds=600000
+  | zuul.routes.discovery.path=/discovery/**
+  | zuul.routes.discovery.sensitive-headers=Set-Cookie,Authorization
+  | zuul.routes.discovery.url=http://localhost:8082
+  | hystrix.command.discovery.execution.isolation.thread.timeoutInMilliseconds=600000
+  |
+  | spring.redis.host=localhost
+  | spring.redis.port=6379
+  ```
 
-  #########################################################################
-  # Common Dependencies. for Config Client, Eureka, JPA, Web an Security: #
-  #########################################################################
+## Common Dependencies to Config Client, Eureka, JPA, Web an Security:
+
+  ```
   GROUP ID                         ARTIFACT ID
   org.springframework.cloud        spring-cloud-starter-config
   org.springframework.cloud        spring-cloud-starter-eureka
   org.springframework.boot         spring-boot-starter-data-jpa
   org.springframework.boot         spring-boot-starter-web
   org.springframework.boot         spring-boot-starter-security
+  ```
 
 
-  ####################################
-  # (Sharing) Session Configuration: #
-  ####################################
-  └ dependencies to add to Discovery server, gateway server and micro-service 1/2/...
-    GROUP ID                       ARTIFACT ID
-    org.springframework.session    spring-session
-    org.springframework.boot       spring-boot-starter-data-redis
+### (Sharing) Session Configuration:
 
-  └ Add next IoT to DISCOVERY SERVER and REST APIs.
-    @EnableRedisHttpSession
-    public class SessionConfig
-    extends AbstractHttpSessionApplicationInitializer {  }
+* dependencies to add to Discovery server, gateway server and micro-service 1/2/...
+  ```
+  | GROUP ID                       ARTIFACT ID
+  | org.springframework.session    spring-session
+  | org.springframework.boot       spring-boot-starter-data-redis
+  ```
 
-  └ For the GATEWAY SERVER:
-    @Configuration
-    @EnableRedisHttpSession(redisFlushMode = RedisFlushMode.IMMEDIATE)
-    public class SessionConfig
-    extends AbstractHttpSessionApplicationInitializer {}
+* Add next IoT to DISCOVERY SERVER and REST APIs.
+  ```
+  | @EnableRedisHttpSession
+  | public class SessionConfig
+  | extends AbstractHttpSessionApplicationInitializer {  }
+  ```
 
-  └ For the GATEWAY SERVER add a simple filter to forward the session
-    so that authentication will propagate to another service after login:
+* For the GATEWAY SERVER:
+  ```
+  | @Configuration
+  | @EnableRedisHttpSession(redisFlushMode = RedisFlushMode.IMMEDIATE)
+  | public class SessionConfig
+  | extends AbstractHttpSessionApplicationInitializer {}
+  ```
 
-    @Component
-    public class SessionSavingZuulPreFilter
-    extends ZuulFilter {
-      @Autowired
-      private SessionRepository repository;
+* For the GATEWAY SERVER add a simple filter to forward the session
+  so that authentication will propagate to another service after login:
 
-      @Override
-      public boolean shouldFilter() {
-        return true;
-      }
+  ```
+  | @Component
+  | public class SessionSavingZuulPreFilter
+  | extends ZuulFilter {
+  |   @Autowired
+  |   private SessionRepository repository;
+  |
+  |   @Override
+  |   public boolean shouldFilter() {
+  |     return true;
+  |   }
+  |
+  |   @Override
+  |   public Object run() {
+  |     final RequestContext context   =
+  |        RequestContext.getCurrentContext();
+  |     final HttpSession httpSession  =
+  |        context.getRequest().getSession();
+  |     final Session session          =
+  |        repository.getSession(httpSession.getId());
+  |
+  |     context.addZuulRequestHeader(
+  |       "Cookie", "SESSION=" + httpSession.getId());
+  |     return   null ;
+  |   }
+  |
+  |   @Override
+  |   public String filterType() {
+  |     return "pre";
+  |   }
+  |   @Override
+  |   public int filterOrder() {return 0;}
+  | }
+  ```
+[[spring.cloud.config}]]
 
-      @Override
-      public Object run() {
-        final RequestContext context   =
-           RequestContext.getCurrentContext();
-        final HttpSession httpSession  =
-           context.getRequest().getSession();
-        final Session session          =
-           repository.getSession(httpSession.getId());
+[[{qa.testing.REST,architecture.API_MANAGEMENT]]
+# TESTING REST APIs
 
-        context.addZuulRequestHeader(
-          "Cookie", "SESSION=" + httpSession.getId());
-        return   null ;
-      }
+  ```
+  | private final String ROOT_URI = "http://localhost:8080";
+  | private FormAuthConfig formConfig
+  |    = new FormAuthConfig("/login", "username", "password");
+  |
+  | @Before
+  | public void setup() {
+  |   RestAssured.config = config().redirect(
+  |     RedirectConfig.redirectConfig().followRedirects(false)
+  |   );
+  | }
+  |
+  | @Test
+  | public void whenGetAllBooks_thenSuccess() {
+  |   Response response = RestAssured.get(ROOT_URI + "/book-service/books");
+  |   Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+  |   Assert.assertNotNull(response.getBody());
+  | }
+  |
+  | // Try to access protected resource:
+  | @Test
+  | public void protectedResourceMustRedirectToLogin() {
+  |   Response response =
+  |     RestAssured.get(ROOT_URI + "/book-service/books/1");
+  |   Assert.assertEquals(
+  |     HttpStatus.FOUND.value(), response.getStatusCode());
+  |   Assert.assertEquals(
+  |     "http://localhost:8080/login", response.getHeader("Location"));
+  | }
+  ```
+[[qa.testing.REST}]]
 
-      @Override
-      public String filterType() {
-        return "pre";
-      }
-      @Override
-      public int filterOrder() {return 0;}
-    }
+# "Cloudify" [[{spring.cloud,cloud.spring,architecture.distributed.service_discovery,PM.WiP]]
 
-  ####################
-  # TESTING Rest API #
-  ####################
-  private final String ROOT_URI = "http://localhost:8080";
-  private FormAuthConfig formConfig
-     = new FormAuthConfig("/login", "username", "password");
+<http://files.zeroturnaround.com/pdf/zt_spring_annotations_cheat_sheet.pdf>
 
-  @Before
-  public void setup() {
-    RestAssured.config = config().redirect(
-      RedirectConfig.redirectConfig().followRedirects(false)
-    );
-  }
-
-  @Test
-  public void whenGetAllBooks_thenSuccess() {
-    Response response = RestAssured.get(ROOT_URI + "/book-service/books");
-    Assert.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-    Assert.assertNotNull(response.getBody());
-  }
-
-  // Try to access protected resource:
-  @Test
-  public void protectedResourceMustRedirectToLogin() {
-    Response response =
-      RestAssured.get(ROOT_URI + "/book-service/books/1");
-    Assert.assertEquals(
-      HttpStatus.FOUND.value(), response.getStatusCode());
-    Assert.assertEquals(
-      "http://localhost:8080/login", response.getHeader("Location"));
-  }
+  ```
+  |  ┌········> @SpringBootApplication      HTTP Request                      CLOUD
+  |provides
+  |beans to      ┌··like···┐
+  |  │           │  these  │        ┌───────────────────┐ ask config    ┌─────────┐
+  | ┌────────────┴──┐      v        │ @RestController   ················> Config. │
+  | │@Configuration │  ┌────────┐   │                   │ config.props. │ Server  │
+  | │               │  │@Service│   │                   │<··············└─────────┘
+  | │               │  └──────┬─┘   │  @Autowired       │
+  | │ @Bean         │         └──┬──>  Service service; │register itself as service
+  | │ public MyBean │  ┌─────────┴┐ │                   ├················>──────────┐
+  | │ providerBean()│  │@Component│ │                   │ask for service │  Service │
+  | │               │  └──────────┘ │  @RequestMapping  ├················> Discovery│
+  | └───────────────┘               │  public Map       │<·············· └──────────┘
+  |                                 │   serverRequest() │ URL response
+  |                                 └───────────────────┘
+  |
+  | @EnableConfigServer   turns app into a server that other apps can get
+  |                       their configuration from.
+  |                       Use spring.application.cloud.config.uri in the
+  |                       client @SpringBootApplication
+  |                       to point to the config server.
+  |
+  |
+  | @EnableEurekaServer   turns your app into an Eureka discovery service
+  |
+  | @EnableDiscoveryClient  makes your app register in the service discovery
+  |                        server and discover other services through it.
+  |
+  | @EnableCircuitBreaker - configures Hystrix circuit breaker protocols.
+  |                         Note: Hystrix looks to be discontinued. Replaced by
+  |                         Resilince4j
+  |
+  | @HystrixCommand(fallbackMethod = “fallbackMethodName”)
+  |  marks methods to fall back to another method if they cannot succeed normally.
+  ```
 [[}]]
 
-# "Cloudify" [[{spring.cloud,cloud.spring,architecture.distributed.service_discovery,01_PM.WiP]]
-@[http://files.zeroturnaround.com/pdf/zt_spring_annotations_cheat_sheet.pdf]
-
-  ┌────────→ @SpringBootApplication      HTTP Request                         CLOUD
-provides
-beans to      ┌──like─  ─┐
-  │           │  these   │         ┌───────────────────┐ ask config       ┌───────────────┐
- ┌────────────┴──┐       v         │ @RestController   ───────────────────→ Configuration │
- │@Configuration │   ┌────────┐    │                   │ config.propert.  │    Server     │
- │               │   │@Service│    │                   │←──────────────── └───────────────┘
- │               │   └──────┬─┘    │  @Autowired       │
- │ @Bean         │          └──┬────→ Service service; │register itself as service
- │ public MyBean │   ┌─────────┴┐  │                   ├──────────────────→──────────┐
- │ providerBean()│   │@Component│  │                   │ask for service   │  Service │
- │               │   └──────────┘  │  @RequestMapping  ├─────────────────→  Discovery│
- └───────────────┘                 │  public Map       │←──────────────── └──────────┘
-                                   │   serverRequest() │ URL response
-                                   └───────────────────┘
-
- @EnableConfigServer   turns app into a server that other apps can get
-                       their configuration from.
-                       Use spring.application.cloud.config.uri in the
-                       client @SpringBootApplication
-                       to point to the config server.
-
-
- @EnableEurekaServer   turns your app into an Eureka discovery service
-
- @EnableDiscoveryClient  makes your app register in the service discovery
-                        server and discover other services through it.
-
- @EnableCircuitBreaker - configures Hystrix circuit breaker protocols.
-                         Note: Hystrix looks to be discontinued. Replaced by
-                         Resilince4j
-
- @HystrixCommand(fallbackMethod = “fallbackMethodName”)
-  marks methods to fall back to another method if they cannot succeed normally.
-[[}]]
-
-# Spring Batch [[{spring.batch,architecture.batch,01_PM.TODO.NOW]]
-  FROM https://stackoverflow.com/questions/33188368/spring-batch-vs-quartz-jobs
-  Quartz is a scheduling framework. Like "execute something every hour
+[[{spring.batch,architecture.batch,PM.TODO.NOW]]
+# Spring Batch 
+* FROM <https://stackoverflow.com/questions/33188368/spring-batch-vs-quartz-jobs>
+  ... Quartz is a scheduling framework. Like "execute something every hour
   or every last friday of the month"
-
-  Spring Batch is a framework that defines that "something" that will
+    Spring Batch is a framework that defines that "something" that will
   be executed. You can define a job, that consists of steps. Usually a
   step is something that consists of item reader, optional item
   processor and item writer, but you can define a custom stem. You can
   also tell Spring batch to commit on every 10 items and a lot of other
   stuff.  From Spring 2 , it can also schedule tasks
-  (See also https://jcp.org/en/jsr/detail?id=352, Batch applications
-    for the Java Platform)
-[[}]]
+  (See also <https://jcp.org/en/jsr/detail?id=352>, Batch applications
+   for the Java Platform)
+[[spring.batch}]]
 
-# Reactive (5.0+) [[{spring.async/reactive,async/reactive.spring]]
-@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/web-reactive.html#webflux]
-- Note: Servlet 3.1+ API for non-blocking I/O leads away from
-  the rest of the Servlet API where contracts are synchronous
-  (Filter, Servlet) or blocking (getParameter, getPart).
-- fully non-blocking, handling concurrency with a small number of threads
-- supports Reactive Streams non-blocking back pressure:
-  In synch/imperative code, blocking calls serve as a natural form
-  of back pressure that forces the caller to wait.
-  In non-blocking code it becomes important to control the rate
-   of events so that a fast producer does not overwhelm its destination.
-  Spring Reactive Streams is a small spec, also adopted in Java 9,
-  that defines the interaction between asynchronous components
-  with back pressure. Ex: a data repository (Publisher),
-  produces data that an HTTP server (Subscriber), can then "forward"
-  to the response. Main purpose of Reactive Streams is to allow
-  the subscriber to control how fast or how slow the publisher
-  will produce data.
-  If a publisher can’t slow down then it has to decide whether
-  to buffer, drop, or fail.
-- As a general rule WebFlux APIs accept a plain Publisher as input,
-  adapt it to Reactor types internally, use those, and then return
-  either Flux or Mono as output.
-- runs on Netty, Undertow, Servlet 3.1+ containers
-- TODO: WebClient
-- TODO: WebTestClient
-- TODO: WebSocket
-- The spring-web module contains the reactive building block:  
-  HTTP abstractions, Reactive Streams server adapters, reactive codecs,
-  and a core Web API.
-- public spring-web APIs Server support is organized in two layers:
-  - HttpHandler and server adapters : the most basic, common API for HTTP
-    request handling with Reactive Streams back pressure running on different
-    servers.
-  - WebHandler API : slightly higher level but still general purpose server
-    web API with exception handlers (WebExceptionHandler), filters (WebFilter),
-    and a target handler (WebHandler)
-    All components work on ServerWebExchange — a container for the HTTP
-    request and response that also adds request attributes, session attributes,
-    access to form data, multipart data, and more.
-- Codecs: The spring-web module provides
-  HttpMessageReader(DecoderHttpMessageReader) and
-  HttpMessageWriter(EncoderHttpMessageWriter) for encoding and decoding the
-  HTTP request and response body with Reactive Streams.
-  Basic Encoder and Decoder implementations exist in spring-core but
-  spring-web adds more for JSON, XML, and other formats.
-
-  DispatcherHandler :
-- central controller
-- discovers delegate components from Spring configuration
-  If declared with the bean name "webHandler" it is in turn
-  discovered by WebHttpHandlerBuilder which puts together a
-  request processing chain as described in WebHandler API
-- typical WebFlux application Spring configuration:
-  - DispatcherHandler named "webHandler"
-  - WebFilters
-  - WebExceptionHandlers
-  - DispatcherHandler special beans
-  - Others
-- The configuration is given to WebHttpHandlerBuilder to
-  build the processing chain:
- (The resulting HttpHandler is ready for use with a server adapter)
-  ApplicationContext context = ...
-  HttpHandler handler = WebHttpHandlerBuilder.
-      applicationContext(context);
-- "special beans":  Spring-managed instances implementing one of the contracts listed:
-
-  Bean type            | Explanation
-  ---------------------+------------------------------------
-  HandlerMapping       | Map a request to a handler.
-                       | mapping is based on some criteria
-                       | the details of which vary by
-                       | HandlerMapping implementation 
-                       | (annotated controllers,
-                       | simple URL pattern mappings,...)
-  ---------------------+------------------------------------
-  HandlerAdapter       | Helps the DispatcherHandler to
-                       | invoke a handler mapped to a
-                       | request regardless of how the
-                       | handler is actually invoked.
-                       | For example invoking an annotated
-                       | controller requires resolving
-                       | various annotations. The main
-                       | purpose of a HandlerAdapter
-                       | is to shield the DispatcherHandler
-                       | from such details.
-  ---------------------+------------------------------------
-  HandlerResultHandler | Process the HandlerResult returned
-                       | from a HandlerAdapter
-
-- request flow:
-  for map in HandlerMapping_list:
-    //  (continue is map doesn't match request)
-    handler = first handler in map matching request
-    HandlerResult res = handler()
-    HandlerResultHandler(res)
-
-  Rules
-  1) Each HandlerMapping is asked to find a
-     matching handler and the first match is used
-  2) If a handler is found, it is executed through
-     an appropriate HandlerAdapter which exposes
-     the return value from the execution as
-     HandlerResult.
-  3) The HandlerResult is given to an appropriate
-     HandlerResultHandler to complete processing
-     by writing to the response directly or using
-     a view to render.
-
-  Processing Chain
-- The processing chain can be put together with WebHttpHandlerBuilder which builds an
-HttpHandler that in turn can be run with a server adapter.
-To use the builder either add components individually or point to an ApplicationContext
-to have the following detected:
-
- ┌──────────────────────────────────────────────────────────────────────────────────────────
- │Bean name             │Bean type            │Count│ Description
- ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
- │webHandler            │WebHandler           │1    │ Target handler after filters
- ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
- │"any"                 │WebFilter            │0..N │ Filters
- ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
- │"any"                 │WebExceptionHandler  │0..N │ Exception handlers after filter chain
- ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
- │webSessionManager     │WebSessionManager    │0..1 │ Custom session manager
- │                      │                     │     │ DefaultWebSessionManager by default
- ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
- │serverCodecConfigurer │ServerCodecConfigurer│0..1 │ Custom form and multipart data decoders
- │                      │                     │     │ ServerCodecConfigurer.create() by default
- ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
- │localeContextResolver │LocaleContextResolver│0..1 │ Custom resolver for LocaleContext;
- │                      │                     │     │ AcceptHeaderLocaleContextResolver by default
- └──────────────────────┴─────────────────────┴─────┴───────────────────────────────────────
-
-  Required dependencies
-Server name     │  Group id              │ Artifact name      │  Code snippet
-────────────────┼────────────────────────┼────────────────────┼────────────────
-Reactor Netty   │ io.projectreactor.ipc  │ reactor-netty      │ HttpHandler handler = ...
-                │                        │                    │ ReactorHttpHandlerAdapter adapter =
-                │                        │                    │     new ReactorHttpHandlerAdapter(handler);
-                │                        │                    │ HttpServer.create(host, port).
-                │                        │                    │     newHandler(adapter).block();
-────────────────┼────────────────────────┼────────────────────┼────────────────
-Undertow        │ io.undertow            │ undertow-core      │ HttpHandler handler = ...
-                │                        │                    │ UndertowHttpHandlerAdapter adapter =
-                │                        │                    │      new UndertowHttpHandlerAdapter(handler);
-                │                        │                    │ Undertow server = Undertow.builder().
-                │                        │                    │      addHttpListener(port, host).
-                │                        │                    │      setHandler(adapter).build();
-                │                        │                    │ server.start();
-────────────────┼────────────────────────┼────────────────────┼────────────────
-Tomcat          │ org.apache.tomcat.embe │ omcat-embed-core   │ HttpHandler handler = ...
-                │                        │                    │ Servlet servlet = new
-                │                        │                    │     TomcatHttpHandlerAdapter(handler);
-                │                        │                    │
-                │                        │                    │ Tomcat server = new Tomcat();
-                │                        │                    │ File base = new File(
-                │                        │                    │    System.getProperty("java.io.tmpdir"));
-                │                        │                    │ Context rootContext = server.
-                │                        │                    │    addContext("", base.getAbsolutePath());
-                │                        │                    │ Tomcat.addServlet(rootContext, "main", servlet);
-                │                        │                    │ rootContext.addServletMappingDecoded("/", "main");
-                │                        │                    │ server.setHost(host);
-                │                        │                    │ server.setPort(port);
-                │                        │                    │ server.start();
-────────────────┼────────────────────────┼────────────────────┼────────────────
-Jetty           │ org.eclipse.jetty      │ etty-server        │ HttpHandler handler = ...
-                │                        │ etty-servlet       │ Servlet servlet =
-                │                        │                    │     new JettyHttpHandlerAdapter(handler);
-                │                        │                    │
-                │                        │                    │ Server server = new Server();
-                │                        │                    │ ServletContextHandler contextHandler =
-                │                        │                    │     new ServletContextHandler(server, "");
-                │                        │                    │ contextHandler.addServlet(
-                │                        │                    │     new ServletHolder(servlet), "/");
-                │                        │                    │ contextHandler.start();
-                │                        │                    │
-                │                        │                    │ ServerConnector connector =
-                │                        │                    │     new ServerConnector(server);
-                │                        │                    │ connector.setHost(host);
-                │                        │                    │ connector.setPort(port);
-                │                        │                    │ server.addConnector(connector);
-                │                        │                    │ server.start();
-────────────────┴────────────────────────┴────────────────────┴────────────────
-[[}]]
-
-# STOMP: WebSockets [[{spring,async/reactive.web_sockets,01_PM.backlog]]
-@[https://www.toptal.com/java/stomp-spring-boot-websocket]
-[[}]]
-
-# JHipster [[{spring.101,01_PM.low_code,architecture.frontend]]
-@[https://www.jhipster.tech/]
-* JHipster is a development platform to generate, develop and deploy
-  Spring Boot + Angular / React / Vue Web applications and Spring
-  microservices.
-* Created by Julien Dubois, currently (2021-06) Java Developer Advocacy
-  manager at Microsoft
-[[}]]
-
-[[{spring,101.securityContext,01_PM.TODO]]
-##  Spring SecurityContext*
-https://www.javacodegeeks.com/spring-interview-questions-and-answers.html
-https://www.javacodegeeks.com/java-interview-questions.html
-https://www.javacodegeeks.com/2014/11/multithreading-concurrency-interview-questions-answers.html
-https://www.javacodegeeks.com/2013/02/40-java-collections-interview-questions-and-answers.html
-https://www.javacodegeeks.com/spring-batch-tutorial.html
-https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/  spring.boot,cli:
-[[}]]
-
-## https://spring.io/tools/ (Integration with Visual Studio Code, Eclipse, Theia IDE)
-
-## https://hantsy.github.io/spring-r2dbc-sample/auditing.html
-
-## Spring Cloud Function promotes the implementation of business [[{]]
-  logic via functions based on the standard interfaces introduced by Java   :
-  Supplier: A supplier is a function with only output, no input.
-            It’s also known as a 'producer', 'publisher' or 'source'.
-  Function :A function has both input and output.
-            It’s also known as a processor.
-  Consumer. A consumer is a function with input but no output.
-            It’s also known as a 'subscriber' or 'sink'
-[[}]]
-
-## "The Netflix Domain Graph Service framework - OSS GraphQL for Spring Boot by Paul Bakker"
-  https://youtu.be/WfK44fDuijI
-
-* VMware Overhauls Spring 6 & Spring Boot 3 for Another Decade  [[{01_PM.TODO.now]]
-  https://www.infoq.com/news/2021/09/spring-6-spring-boot-3-overhaul/ [[}]]
-
-* Java: Spring Boot 2.7.0 Released With Support for GraphQL, Podman and Cache2k
-  https://www.infoq.com/news/2022/06/spring-boot-2-7/
-* Java: Spring Boot 2.6 Improves Docker Images and Metrics, Version 2.4 Is EOL
-  https://www.infoq.com/news/2021/12/spring-boot-2-6/
-* Extending Swagger and Spring Doc Open API
-  https://dzone.com/articles/extending-swagger-and-spring-doc-open-api?edition=699391 
-* Spring for GraphQL Version 1.0 Released
-  https://www.infoq.com/news/2022/06/spring-graphql/ 
-  Still in its infancy, Spring for GraphQL will most likely evolve with
-  new features and bug fixes, and could become an alternative to the
-  popular DGS framework, developed at Netflix in the last three years.
-* JAVA, Soft Arch: REST Query Language with Spring Data JPA and Querydsl
-  " The Holy Grail - a REST Query Language"
-  https://www.baeldung.com/rest-api-search-language-spring-data-querydsl
-
-* Spring GraalVM issues [[{spring,jvm.graalvm,01_PM.backlog]]
-REF:
-@[https://github.com/spring-projects/spring-framework/wiki/GraalVM-native-image-support]
-Working toward GraalVM native image support without requiring additional
-configuration or workaround is one of the themes of upcoming Spring Framework
-5.3. The main missing piece for considering GraalVM as a suitable deployment
-target for Spring applications is providing custom GraalVM Feature
-implementation at Spring Framework level to automatically register classes
-used in the dependency mechanism or Spring factories, see the related issue #
-22968 for more details.
-[[}]]
-
-# JobRunr [[{architecture.batch,02_doc_has.comparative,01_PM.TODO]]
-@[https://www.infoq.com/news/2021/09/jobrunr-4-released/]
+## JobRunr [[{architecture.batch,doc_has.comparative,PM.TODO]]
+* <https://www.infoq.com/news/2021/09/jobrunr-4-released/>
 * JobRunr 4.0 Delivers Improved Integration with Spring Starter, Quarkus and Micronaut.
-
 * Spring Batch or Quartz frameworks force to implement custom interfaces and
   they add a lot of overhead whereas I just want to run some long-running
   tasks in the background. JobRunr solves all of this by just
@@ -1823,15 +1675,274 @@ used in the dependency mechanism or Spring factories, see the related issue #
 
 
 
+# Reactive (5.0+) [[{spring.async/reactive,async/reactive.spring]]
+@[https://docs.spring.io/spring/docs/5.0.0.RELEASE/spring-framework-reference/web-reactive.html#webflux]
+* Note: Servlet 3.1+ API for non-blocking I/O leads away from
+  the rest of the Servlet API where contracts are synchronous
+  (Filter, Servlet) or blocking (getParameter, getPart).
+* fully non-blocking, handling concurrency with a small number of threads
+* supports Reactive Streams non-blocking back pressure:
+  In synch/imperative code, blocking calls serve as a natural form
+  of back pressure that forces the caller to wait.
+  In non-blocking code it becomes important to control the rate
+   of events so that a fast producer does not overwhelm its destination.
+  Spring Reactive Streams is a small spec, also adopted in Java 9,
+  that defines the interaction between asynchronous components
+  with back pressure. Ex: a data repository (Publisher),
+  produces data that an HTTP server (Subscriber), can then "forward"
+  to the response. Main purpose of Reactive Streams is to allow
+  the subscriber to control how fast or how slow the publisher
+  will produce data.
+  If a publisher can’t slow down then it has to decide whether
+  to buffer, drop, or fail.
+* As a general rule WebFlux APIs accept a plain Publisher as input,
+  adapt it to Reactor types internally, use those, and then return
+  either Flux or Mono as output.
+* runs on Netty, Undertow, Servlet 3.1+ containers
+* TODO: WebClient
+* TODO: WebTestClient
+* TODO: WebSocket
+* The spring-web module contains the reactive building block:  
+  HTTP abstractions, Reactive Streams server adapters, reactive codecs,
+  and a core Web API.
+* public spring-web APIs Server support is organized in two layers:
+  * HttpHandler and server adapters : the most basic, common API for HTTP
+    request handling with Reactive Streams back pressure running on different
+    servers.
+  * WebHandler API : slightly higher level but still general purpose server
+    web API with exception handlers (WebExceptionHandler), filters (WebFilter),
+    and a target handler (WebHandler)
+    All components work on ServerWebExchange — a container for the HTTP
+    request and response that also adds request attributes, session attributes,
+    access to form data, multipart data, and more.
+* Codecs: The spring-web module provides
+  HttpMessageReader(DecoderHttpMessageReader) and
+  HttpMessageWriter(EncoderHttpMessageWriter) for encoding and decoding the
+  HTTP request and response body with Reactive Streams.
+  Basic Encoder and Decoder implementations exist in spring-core but
+  spring-web adds more for JSON, XML, and other formats.
 
-
-
+  DispatcherHandler :
+* central controller
+* discovers delegate components from Spring configuration
+  If declared with the bean name "webHandler" it is in turn
+  discovered by WebHttpHandlerBuilder which puts together a
+  request processing chain as described in WebHandler API
+* typical WebFlux application Spring configuration:
+  * DispatcherHandler named "webHandler"
+  * WebFilters
+  * WebExceptionHandlers
+  * DispatcherHandler special beans
+  * Others
+* The configuration is given to WebHttpHandlerBuilder to
+  build the processing chain:
+ (The resulting HttpHandler is ready for use with a server adapter)
+  ApplicationContext context = ...
+  HttpHandler handler = WebHttpHandlerBuilder.
+      applicationContext(context);
+* "special beans":  Spring-managed instances implementing one of the contracts listed:
+  ```
+  | Bean type            | Explanation
+  | ---------------------+------------------------------------
+  | HandlerMapping       | Map a request to a handler.
+  |                      | mapping is based on some criteria
+  |                      | the details of which vary by
+  |                      | HandlerMapping implementation 
+  |                      | (annotated controllers,
+  |                      | simple URL pattern mappings,...)
+  | ---------------------+------------------------------------
+  | HandlerAdapter       | Helps the DispatcherHandler to
+  |                      | invoke a handler mapped to a
+  |                      | request regardless of how the
+  |                      | handler is actually invoked.
+  |                      | For example invoking an annotated
+  |                      | controller requires resolving
+  |                      | various annotations. The main
+  |                      | purpose of a HandlerAdapter
+  |                      | is to shield the DispatcherHandler
+  |                      | from such details.
+  | ---------------------+------------------------------------
+  | HandlerResultHandler | Process the HandlerResult returned
+  |                      | from a HandlerAdapter
+  ```
+* request flow:<br/>
+  for map in HandlerMapping_list:
+  ```
+  //  (continue is map doesn't match request)
+  handler = first handler in map matching request
+  HandlerResult res = handler()
+  HandlerResultHandler(res)
+  ```
+* Rules
+  1. Each HandlerMapping is asked to find a
+     matching handler and the first match is used
+  2. If a handler is found, it is executed through
+     an appropriate HandlerAdapter which exposes
+     the return value from the execution as
+     HandlerResult.
+  3. The HandlerResult is given to an appropriate
+     HandlerResultHandler to complete processing
+     by writing to the response directly or using
+     a view to render.
+* Processing Chain:<br/>
+    The processing chain can be put together with WebHttpHandlerBuilder 
+  which builds an HttpHandler that in turn can be run with a server 
+  adapter.<br/>
+    To use the builder either add components individually or point to an ApplicationContext
+  to have the following detected:
+  ```
+  | ┌──────────────────────────────────────────────────────────────────────────────────────────
+  | │Bean name             │Bean type            │Count│ Description
+  | ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
+  | │webHandler            │WebHandler           │1    │ Target handler after filters
+  | ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
+  | │"any"                 │WebFilter            │0..N │ Filters
+  | ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
+  | │"any"                 │WebExceptionHandler  │0..N │ Exception handlers after filter chain
+  | ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
+  | │webSessionManager     │WebSessionManager    │0..1 │ Custom session manager
+  | │                      │                     │     │ DefaultWebSessionManager by default
+  | ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
+  | │serverCodecConfigurer │ServerCodecConfigurer│0..1 │ Custom form and multipart data decoders
+  | │                      │                     │     │ ServerCodecConfigurer.create() by default
+  | ├──────────────────────┼─────────────────────┼─────┼───────────────────────────────────────
+  | │localeContextResolver │LocaleContextResolver│0..1 │ Custom resolver for LocaleContext;
+  | │                      │                     │     │ AcceptHeaderLocaleContextResolver by default
+  | └──────────────────────┴─────────────────────┴─────┴───────────────────────────────────────
+  ```
+* Required dependencies:
+  ```
+  | Server name     │  Group id              │ Artifact name      │  Code snippet
+  | ────────────────┼────────────────────────┼────────────────────┼────────────────
+  | Reactor Netty   │ io.projectreactor.ipc  │ reactor-netty      │ HttpHandler handler = ...
+  |                 │                        │                    │ ReactorHttpHandlerAdapter adapter =
+  |                 │                        │                    │     new ReactorHttpHandlerAdapter(handler);
+  |                 │                        │                    │ HttpServer.create(host, port).
+  |                 │                        │                    │     newHandler(adapter).block();
+  | ────────────────┼────────────────────────┼────────────────────┼────────────────
+  | Undertow        │ io.undertow            │ undertow-core      │ HttpHandler handler = ...
+  |                 │                        │                    │ UndertowHttpHandlerAdapter adapter =
+  |                 │                        │                    │      new UndertowHttpHandlerAdapter(handler);
+  |                 │                        │                    │ Undertow server = Undertow.builder().
+  |                 │                        │                    │      addHttpListener(port, host).
+  |                 │                        │                    │      setHandler(adapter).build();
+  |                 │                        │                    │ server.start();
+  | ────────────────┼────────────────────────┼────────────────────┼────────────────
+  | Tomcat          │ org.apache.tomcat.embe │ omcat-embed-core   │ HttpHandler handler = ...
+  |                 │                        │                    │ Servlet servlet = new
+  |                 │                        │                    │     TomcatHttpHandlerAdapter(handler);
+  |                 │                        │                    │
+  |                 │                        │                    │ Tomcat server = new Tomcat();
+  |                 │                        │                    │ File base = new File(
+  |                 │                        │                    │    System.getProperty("java.io.tmpdir"));
+  |                 │                        │                    │ Context rootContext = server.
+  |                 │                        │                    │    addContext("", base.getAbsolutePath());
+  |                 │                        │                    │ Tomcat.addServlet(rootContext, "main", servlet);
+  |                 │                        │                    │ rootContext.addServletMappingDecoded("/", "main");
+  |                 │                        │                    │ server.setHost(host);
+  |                 │                        │                    │ server.setPort(port);
+  |                 │                        │                    │ server.start();
+  | ────────────────┼────────────────────────┼────────────────────┼────────────────
+  | Jetty           │ org.eclipse.jetty      │ etty-server        │ HttpHandler handler = ...
+  |                 │                        │ etty-servlet       │ Servlet servlet =
+  |                 │                        │                    │     new JettyHttpHandlerAdapter(handler);
+  |                 │                        │                    │
+  |                 │                        │                    │ Server server = new Server();
+  |                 │                        │                    │ ServletContextHandler contextHandler =
+  |                 │                        │                    │     new ServletContextHandler(server, "");
+  |                 │                        │                    │ contextHandler.addServlet(
+  |                 │                        │                    │     new ServletHolder(servlet), "/");
+  |                 │                        │                    │ contextHandler.start();
+  |                 │                        │                    │
+  |                 │                        │                    │ ServerConnector connector =
+  |                 │                        │                    │     new ServerConnector(server);
+  |                 │                        │                    │ connector.setHost(host);
+  |                 │                        │                    │ connector.setPort(port);
+  |                 │                        │                    │ server.addConnector(connector);
+  |                 │                        │                    │ server.start();
+  | ────────────────┴────────────────────────┴────────────────────┴────────────────
+  ```
 [[}]]
 
+[[{PM.TODO]]
+# Non-Classified/TODO
 
+# STOMP: WebSockets [[{spring,async/reactive.web_sockets,PM.backlog]]
+* <https://www.toptal.com/java/stomp-spring-boot-websocket>
+[[}]]
 
+# JHipster [[{PM.low_code.jhipster,spring.101,architecture.frontend]]
+* HomePage: <https://www.jhipster.tech/>
+* Development platform to generate, develop and deploy
+  Spring Boot + Angular / React / Vue Web applications and 
+  Spring microservices.
+* Created by Julien Dubois, currently (2021-06) Java Developer Advocacy
+  manager at Microsoft
+[[PM.low_code.jhipster}]]
 
-[[spring,01_PM.TODO}]]
+[[{spring,101.securityContext,PM.TODO]]
+# Spring *SecurityContext*:
+* <https://www.javacodegeeks.com/spring-interview-questions-and-answers.html>
+* <https://www.javacodegeeks.com/java-interview-questions.html>
+* <https://www.javacodegeeks.com/2014/11/multithreading-concurrency-interview-questions-answers.html>
+* <https://www.javacodegeeks.com/2013/02/40-java-collections-interview-questions-and-answers.html>
+* <https://www.javacodegeeks.com/spring-batch-tutorial.html>
+* <https://docs.spring.io/spring-cloud-cli/docs/current/reference/html/> [[{spring.cloud.cli}]]
+[[}]]
+
+## <https://spring.io/tools/> 
+* (Integration with Visual Studio Code, Eclipse, Theia IDE)
+
+## Auditing
+* <https://hantsy.github.io/spring-r2dbc-sample/auditing.html>
+
+## Spring Cloud Function promotes the implementation of business [[{]]
+  logic via functions based on the standard interfaces introduced by Java:
+  * Supplier:  A supplier is a function with only output, no input.
+              It’s also known as a 'producer', 'publisher' or 'source'.
+  * Function : A function has both input and output.
+              It’s also known as a processor.
+  * Consumer.: A consumer is a function with input but no output.
+              It’s also known as a 'subscriber' or 'sink'
+[[}]]
+
+[[{architecture.api_management.graphql,]]
+## Netflix Domain Graph Service framework 
+* OSS GraphQL for Spring Boot by Paul Bakker
+  https://youtu.be/WfK44fDuijI
+[[}]]
+
+## VMware Overhauls Spring 6 [[{PM.TODO.now}]]
+  https://www.infoq.com/news/2021/09/spring-6-spring-boot-3-overhaul/
+
+## Spring Boot 2.7 
+* Support for GraphQL, Podman and Cache2k
+  <https://www.infoq.com/news/2022/06/spring-boot-2-7/>
+## Spring Boot 2.6
+* Improves Docker Images and Metrics, Version 2.4 Is EOL
+  <https://www.infoq.com/news/2021/12/spring-boot-2-6/>
+## Extending Swagger and Spring Doc Open API
+  <https://dzone.com/articles/extending-swagger-and-spring-doc-open-api?edition=699391>
+## Spring GraphQL Version 1.0 Released:
+  <https://www.infoq.com/news/2022/06/spring-graphql/ >
+  Still in its infancy, Spring for GraphQL will most likely evolve with
+  new features and bug fixes, and could become an alternative to the
+  popular DGS framework, developed at Netflix in the last three years.
+## REST Query Language with Spring Data JPA and Querydsl  [[{PM.TODO.now,PM.low_code}]]
+  " The Holy Grail - a REST Query Language"
+  https://www.baeldung.com/rest-api-search-language-spring-data-querydsl
+## Spring GraalVM issues [[{spring,jvm.graalvm,PM.backlog]]
+* REF: <https://github.com/spring-projects/spring-framework/wiki/GraalVM-native-image-support>
+  Working toward GraalVM native image support without requiring additional
+  configuration or workaround is one of the themes of upcoming Spring Framework
+  5.3. The main missing piece for considering GraalVM as a suitable deployment
+  target for Spring applications is providing custom GraalVM Feature
+  implementation at Spring Framework level to automatically register classes
+  used in the dependency mechanism or Spring factories, see the related issue #
+  22968 for more details.
+[[}]]
+
+[[PM.TODO}]]
 
 
 [[spring}]]

@@ -1,34 +1,34 @@
 # Who-is-Who [[{]]
 (Forcibly incomplete but still quite pertinent list of core developers and companies)
-- James Arthur Gosling:  Founder and lead-designer of the Java Programming Language
+* James Arthur Gosling:  Founder and lead-designer of the Java Programming Language
   @[https://en.wikipedia.org/wiki/James_Gosling]
 
-- Joshua J. Bloch:
+* Joshua J. Bloch:
   @[https://en.wikipedia.org/wiki/Joshua_Bloch]
-  - Author of the book "Effective Java" (a must read)
+  * Author of the book "Effective Java" (a must read)
     and co-author of two other books:
-    - Java Puzzlers (2005)
-    - Java Concurrency in Practice (2006)
-  - Led the design and implementation of numerous
+    * Java Puzzlers (2005)
+    * Java Concurrency in Practice (2006)
+  * Led the design and implementation of numerous
     Java platform features, including the
     Java Collections Framework, the java.math package,
     and the assert mechanism.
 
-- Julien Viet:
+* Julien Viet:
  @[http://www.julienviet.com/]
   Core developer of VertX, crash (http://www.crashub.org/),
   and many other interesting Java software.
   @[https://github.com/vietj?utf8=%E2%9C%93&tab=repositories&q=&type=source]
 
-- Ben Evans:
-  - jClarity Co-founder.
-  - Java Champion, author, speaker, consultant
-  - voting member on Java’s governing
-  - Author of 5 books
-    - “The Well-Grounded Java Developer”,
-    - new editions of “Java in a Nutshell”,
-    - “Java: The Legend” and “Optimizing Java”.
-    - Track lead for Java / JVM at InfoQ.
+* Ben Evans:
+  * jClarity Co-founder.
+  * Java Champion, author, speaker, consultant
+  * voting member on Java’s governing
+  * Author of 5 books
+    * “The Well-Grounded Java Developer”,
+    * new editions of “Java in a Nutshell”,
+    * “Java: The Legend” and “Optimizing Java”.
+    * Track lead for Java / JVM at InfoQ.
   @[https://www.jbcnconf.com/2019/infoTalk.html?id=5c64983638da16483151bb37]
   IMPLEMENTING A SIMPLE JVM IN JAVA AND RUST
   ... I will explain how we might start to implement a JVM from scratch.. then
@@ -38,7 +38,7 @@
    JVM that is much cleaner and easier to understand, even if you've never
    seen Rust code before!"""
 
-- Emmanuel Bernard: Distinguished Engineer and Chief Architect Data at
+* Emmanuel Bernard: Distinguished Engineer and Chief Architect Data at
   Red Hat (middleware). His work is Open Source. He is most well known for his
   contributions and lead of the Hibernate projects as well as his contribution
   to Java standards. His most recent endeavour is Quarkus (A Kubernetes Native
@@ -46,38 +46,42 @@
   breed Java libraries and standards).
 
 
-- Chad Arimura, vice president of Java Developer Relations at Oracle.
+* Chad Arimura, vice president of Java Developer Relations at Oracle.
 
-- https://community.oracle.com/community/groundbreakers/java/java-champions
-- https://blogs.oracle.com/java/new-java-champions-in-2017
+* https://community.oracle.com/community/groundbreakers/java/java-champions
+* https://blogs.oracle.com/java/new-java-champions-in-2017
 
-- A N M Bazlur Rahman works at Contrast Security as a Sr. Software Engineer.
- - Recently (2023) he was named a Java Champion.
+* A N M Bazlur Rahman works at Contrast Security as a Sr. Software Engineer.
+ * Recently (2023) he was named a Java Champion.
    mentor, writer, speaker at conferences, and open-source contributor.
- - founder and current moderator of the Java User Group in Bangladesh.
- - Named Most Valuable Blogger (MVP) at DZone.
- - editor for the Java Queue at InfoQ
- - editor at Foojay.io: a place for friends of OpenJDK.
- - He has published four books about the Java programming language in Bengali.
- - bachelor's degree from the Institute of Information Technology, University of
+ * founder and current moderator of the Java User Group in Bangladesh.
+ * Named Most Valuable Blogger (MVP) at DZone.
+ * editor for the Java Queue at InfoQ
+ * editor at Foojay.io: a place for friends of OpenJDK.
+ * He has published four books about the Java programming language in Bengali.
+ * bachelor's degree from the Institute of Information Technology, University of
    Dhaka, Bangladesh, in Information Technology, majoring in Software
    Engineering. He currently (2023) lives in Toronto, Canada
 
-- Sven Reimers
+* Sven Reimers
   https://qconlondon.com/speakers/svenreimers
-  - System Engineer @Airbus Defence & Space
-  - over 25 years of experience in designing and implementing
+  * System Engineer @Airbus Defence & Space
+  * over 25 years of experience in designing and implementing
     distributed systems which have a focus in the engineering domain.
-  - lead software architect for a system and network management
+  * lead software architect for a system and network management
     solution for satellite communication networks, which received the
     Duke'c Choice award.
-  - He currently works on ground segment software for earth observation satellite systems.
-  - author of several scientific articles, co-author of some Java
+  * He currently works on ground segment software for earth observation satellite systems.
+  * author of several scientific articles, co-author of some Java
     community driven books and is a long term member of the program
     committee of the JavaOne conference. He was chosen a Java Champion by
     his peers.
 
+* Ron Pressler is the technical lead for Project Loom, which aims to add delimited
+  continuations, fibers and tail-calls to the JVM.
 
-- Ron Pressler is the technical lead for Project Loom, which aims to add delimited
-  continuations, fibers and tail-calls to the JVM
+* David Delabassée
+  * Java Platform Group - Oracle
+  * <https://inside.java/u/delabassee>
+  * <https://delabassee.com>
 [[}]]

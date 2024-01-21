@@ -5,8 +5,8 @@
 ## Dump Exception stack trace 
 (to STDERR)
   ```
-  StringWriter writer = new StringWriter();
-  PrintWriter printWriter = new PrintWriter( writer );
+  StringWriter writer = new StringWriter();   // StringWriter char.stream collecting output to string buffer, which can then be used to construct a string.
+  PrintWriter printWriter = new PrintWriter( writer ); // PrintWriter prints formatted representations of objects to a text-output stream.
   e.printStackTrace( printWriter );
   printWriter.flush();
   System.err.println(writer); 
@@ -22,21 +22,21 @@
 * Example ussage:
   
   ```
-  public class ExceptionDemo {
-    
-    public static void main(String[] args) {
-       Thread
-         .setDefaultUncaughtExceptionHandler(
-           new Thread.UncaughtExceptionHandler() {
-             public void uncaughtException(Thread t, Throwable e) {
-               ...
-               // logger.log(Level.SEVERE, t + " ExceptionDemo threw an exception: ", e);
-             };
-           });
-       final Thread t = new Thread(
-          () -> { throw new RuntimeException(); }).start();
-    }
-  }
+  | public class ExceptionDemo {
+  |   
+  |   public static void main(String[] args) {
+  |      Thread
+  |        .setDefaultUncaughtExceptionHandler(
+  |          new Thread.UncaughtExceptionHandler() {
+  |            public void uncaughtException(Thread t, Throwable e) {
+  |              ...
+  |              // logger.log(Level.SEVERE, t + " ExceptionDemo threw an exception: ", e);
+  |            };
+  |          });
+  |      final Thread t = new Thread(
+  |         () -> { throw new RuntimeException(); }).start();
+  |   }
+  | }
   ```
 <!-- } -->
 
@@ -47,18 +47,18 @@
 (or container process)
 1. inject next ENV.VAR into app JVM:
   ```
-  JAVA_TOOL_OPTIONS=""
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS}-agentlib:jdwp=transport=dt_socket"
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},server=y"
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},suspend=n"
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},address=*:8001"
-                                      ┌──┬──────────┴──┘
-         Export debugging port (e.g.: 8001)
+  | JAVA_TOOL_OPTIONS=""
+  | JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS}-agentlib:jdwp=transport=dt_socket"
+  | JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},server=y"
+  | JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},suspend=n"
+  | JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS},address=*:8001"
+  |                                     ┌──┬──────────┴──┘
+  |        Export debugging port (e.g.: 8001)
   ```
 2. In the JAVA IDE configure debugger to attach to remote machine.<br/>
    For example in IntelliJ , add a **remote debugger** in 
    ```
-   Run/Debug Configurations
+   | Run/Debug Configurations
    ```
 [[}]]
 
