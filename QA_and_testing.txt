@@ -698,7 +698,7 @@ deprecated should be "No replacement".
 <!-- } -->
 [[qa.101.javadoc}]]
 
-# Junit [[{qa.junit.101,qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
+# Junit [[{qa.junit.101,qa.101,doc_has.comparative,01_PM.WiP]] @[testing_summary]
 
 * Junit 5 is the sum of next modules:
   ```

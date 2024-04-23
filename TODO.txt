@@ -438,20 +438,16 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 
 # JVM Journey to Cloud-native [[{cloud.101,01_PM.TODO]]
 (by BellSoft)
-## JDK 9 : Compact Strings
-          HTTP/2 client
-## JDK 10: Docker awareness
-## JDK 11: ZGC
-## JDK 12: Return unused memory
-          Shenandoah GC
-## JDK 13: Uncommit unused memory for ZGC
-## JDK 14: JFR Event Streaming
-## JDK 15: Reimplement Datagram Socker API
-          Hidden Classes
-
-## JDK 16: Elastic metaspace
-          Alpine Linux port
-
+```
+## JDK 9 : Compact Strings, HTTP/2 client.
+## JDK 10: Docker awareness.
+## JDK 11: ZGC.
+## JDK 12: Return unused memory, Shenandoah GC.
+## JDK 13: Uncommit unused memory for ZGC.
+## JDK 14: JFR Event Streaming.
+## JDK 15: Reimplement Datagram Socker API, Hidden Classes.
+## JDK 16: Elastic metaspace, Alpine Linux port
+```
 [[}]]
 
 # JPA Summary [[{01_PM.TODO]]
@@ -488,7 +484,7 @@ $ $ jdeps sh-2.6.3.jar       ←  -verbose:class will list dependencies between 
 
 
 
-# Quarkus (GraalVM) Framework [[{jvm.graalvm,cloud.k8s,scalability.jvm,01_PM.TODO]]
+# Quarkus (GraalVM) Framework [[{jvm.graalvm,devops.k8s,scalability.jvm,01_PM.TODO]]
 @[https://quarkus.io/guides/]
 @[https://quarkus.io/guides/kogito-guide]
 @[https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle]
@@ -770,7 +766,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
   $ jenv shell oracle64-1.6.0.39 Configure shell instance version
 [[}]]
 
-# SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,qa,01_PM.TODO]]
+# SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,doc_has.comparative,qa,01_PM.TODO]]
 @[https://smallrye.io/smallrye-mutiny/]
 
 ## SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
@@ -787,7 +783,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 
 
 
-# Netty [[{async/reactive.io.network,02_doc_has.comparative,01_PM.radar,01_PM.backlog]]
+# Netty [[{async/reactive.io.network,doc_has.comparative,01_PM.radar,01_PM.backlog]]
 - One Framework to rule them all by Norman Maurer
 @[https://www.youtube.com/watch?v=DKJ0w30M0vg]
 ──────────────────────────────────────────────
@@ -848,7 +844,7 @@ TODO:
 @[https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4]
 [[}]]
 
-[[{java_lang.configuration,standards.JSR330,qa,02_doc_has.comparative,Spring,standards.JSR330]]
+[[{java_lang.configuration,standards.JSR330,qa,doc_has.comparative,Spring,standards.JSR330]]
 # Spring vs Google Guice
 @[https://www.baeldung.com/guice-spring-dependency-injection]
 ────────────────────────
@@ -922,7 +918,7 @@ is.close();
   Spring Framework for example).
 [[}]]
 
-# Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,02_doc_has.comparative,01_PM.TODO]]
+# Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,doc_has.comparative,01_PM.TODO]]
 @[https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html]
 @[https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm]
 @[https://spring.io/guides/gs/async-method/]
@@ -1027,7 +1023,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
   changes to deprecation.
 [[}]]
 
-# Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,cloud.k8s]]
+# Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,devops.k8s]]
 @[https://developers.redhat.com/blog/2020/07/27/deploy-your-java-web-application-into-the-cloud-using-eclipse-jkube/]
 
 ## JKube Maven  converts war (dependent of a container) into cloud-native app.
@@ -1338,7 +1334,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
 
-# Dekorate k8s annotations [[{cloud.k8s,01_PM.backlog]]
+# Dekorate k8s annotations [[{devops.k8s,01_PM.backlog]]
 @[https://developers.redhat.com/blog/2021/03/17/using-dekorate-to-generate-kubernetes-manifests-for-java-applications/]
 ## ex:
   JAVA ANOTATION INPUT
@@ -1471,28 +1467,29 @@ REF: @[http://tribe.ow2.org/]
 - Powered by IA.
 - CodeGuru consists of two components
 – Amazon CodeGuru Profiler:
-helps developers find an application’s most expensive lines
-of code along with specific visualizations and recommendations
-on how to improve code to save money.
+  helps developers find an application’s most expensive lines
+  of code along with specific visualizations and recommendations
+  on how to improve code to save money.
 - Amazon CodeGuru Reviewer:
-helps enhance the quality of code by scanning for critical issues,
-identifying bugs, and recommending how to remediate them.
-
-  ┌→ Write Code
-  |    |
-  |    v
-  |  Review Code  ← CodeGuru Reviewer
-  |    |
-  |    v
-  |  Test App     ← CodeGuru Profiler
-  |    |
-  |    v
-  |  Deploy App
-  |    |
-  |    v
-  |  Run App      ← CodeGuru Profiler
-  |    |
-  └----┘
+  helps enhance the quality of code by scanning for critical issues,
+  identifying bugs, and recommending how to remediate them.
+  ```
+  ┌> Write Code
+  ·    |
+  ·    v
+  ·  Review Code  ← CodeGuru Reviewer
+  ·    |
+  ·    v
+  ·  Test App     ← CodeGuru Profiler
+  ·    |
+  ·    v
+  ·  Deploy App
+  ·    |
+  ·    v
+  ·  Run App      ← CodeGuru Profiler
+  ·    |
+  └····┘
+  ```
 
 - Profiler supports application written
 in Java virtual machine (JVM) languages such as Clojure,

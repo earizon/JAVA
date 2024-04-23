@@ -107,7 +107,7 @@ Content is versioned in git.  commits, issues and pull-requests welcome!
 * <https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.ConsumableConfiguration.html>
   A Configuration which can be consumed via Publishing and Dependency Management.
 
-*Project Coordinates  [[{02_doc_has.comparative}]]
+*Project Coordinates  [[{doc_has.comparative}]]
 ```
 | 'group   :module     :version' <- gradle terminology for libraries.
 | 'groupId :artifactId :version' <- maven  terminology (also used in gradle
@@ -162,7 +162,7 @@ Content is versioned in git.  commits, issues and pull-requests welcome!
 ### Projects, ProjectDescriptors, Build, Tasks
 
 ```
-| [[{gradle.101,02_doc_has.diagram.UML.ER]]
+| [[{gradle.101,doc_has.diagram.UML.ER]]
 |
 |
 |                                   Simple tasks are registered in build.gradle(.kt) with
@@ -221,7 +221,7 @@ Content is versioned in git.  commits, issues and pull-requests welcome!
 | project(path)         Returns the project with given path.
 |  (REF: https://docs.gradle.org/5.6/dsl/org.gradle.api.initialization.Settings.html)
 |
-| WARN: [[{02_doc_has.comparative]]
+| WARN: [[{doc_has.comparative]]
 | Gradle’s build phases != Maven’s phases [[}]]
 ```
 * Gradle FIXED BUILD PHASES include:
@@ -235,7 +235,7 @@ Content is versioned in git.  commits, issues and pull-requests welcome!
 * Custom properties can be added to projects and tasks.
 * Custom models to represent  concepts (other than tasks, files and dependencies)
 can be created adding the concept of "source-sets" to a build.
-[[{KEYPOINT]]: Appropriate modeling of a build process can greatly improve
+[[{doc_has.KEYPOINT]]: Appropriate modeling of a build process can greatly improve
 a build's ease of use and its efficiency. [[}]]
 * Logic must be delegated to plugins and custom models  [[{qa.BEST_PATTERN]]
 (vs build scripts)                                    [[}]]
@@ -269,7 +269,7 @@ a build's ease of use and its efficiency. [[}]]
 │  ├─ ...
 │
 ├─ gradlew               <·· macOS/Linux script to launch  Gradle Wrapper.
-│                            [[{KEYPOINT]]  once in place, replace OS system-wide gradle
+│                            [[{doc_has.KEYPOINT]]  once in place, replace OS system-wide gradle
 │                            (with random version) with `$ ./gradlew build` to ensure
 │                            **reproducible builds**  [[}]]
 │                            It can be called from children projects as usual (../../gradlew ...)
@@ -421,7 +421,7 @@ graddle components will interpret or ignore in different ways.
 * Customize build/project settings.
 * Customize Gradle components runtime behaviour.
 * Customize Kotlin/Android/Java/... builds.
-*[[{KEY-POINT]]: You should **NOT** add a setting to `gradle.propeties` before
+*[[{doc_has.KEYPOINT]]: You should **NOT** add a setting to `gradle.propeties` before
 having read the docs to understand what any (collateral/direct) effect.
 [[}]]
 *Properties can also be defined in build.gradle or as parameters on

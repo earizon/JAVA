@@ -174,7 +174,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
  ```
 [[}]]
 
-# Flight Recorder [[{monitoring.flight_recorder,monitoring.101,java_lang.profiling,02_doc_has.comparative]]
+# Flight Recorder [[{monitoring.flight_recorder,monitoring.101,java_lang.profiling,doc_has.comparative]]
 
 * REF: <https://www.youtube.com/watch?v=azshjd5Vsv0>
 
@@ -512,7 +512,7 @@ Flame Graph Interpretation:
 
 * Focus on the widest functions, which were present in the profile the most. [[{DOC_HAS.KEY-POINT}]] 
 
-* There have historically been two types of profilers used on Java:  [[02_doc_has.comparative]]
+* There have historically been two types of profilers used on Java:  [[doc_has.comparative]]
   * System profilers: eg: Linux perf_events, profiling system code paths, including libjvm
     internals, GC, and the kernel, but not Java methods.
   * JVM profilers: such as hprof, Lightweight Java Profiler (LJP), and commercial profilers.

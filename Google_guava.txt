@@ -7,7 +7,7 @@
   personally avoid it now. Their attitude of breaking APIs is simply not something
   that's fun to deal with especially when you start getting larger projects.
 
-# Guava ListenableFuture [[{async/reactive.101,02_doc_has.comparative,qa]]
+# Guava ListenableFuture [[{async/reactive.101,doc_has.comparative,qa]]
 @[https://github.com/google/guava/wiki/ListenableFutureExplained]
 - Concurrency is a hard problem, but it is significantly simplified by
   working with powerful and simple abstractions. To simplify matters,

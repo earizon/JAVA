@@ -1,4 +1,4 @@
-# Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,cloud.k8s,02_doc_has.diagram,_PM.TODO]]
+# Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,devops.k8s,doc_has.diagram,_PM.TODO]]
 
 * Example Dockerfile
 ```

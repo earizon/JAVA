@@ -1,6 +1,6 @@
 JAVA persistence: [[{]]
 
-# Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,cloud.*,spring.*,persistence.jpa,01_PM.TODO]]
+# Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,spring.*,persistence.jpa,01_PM.TODO]]
 * tool providing version control for database (SQL) schemas
   and automated schema (tables, columns, sequences), data, views, procedures
   and packages evolution.

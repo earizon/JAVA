@@ -16,7 +16,7 @@
   Many others :@[https://github.com/eclipse-vertx/vert.x/graphs/contributors]
 [[}]]
 
-# Vert.X Summary [[{vertx.101,async/reactive.*,02_doc_has.diagram]]
+# Vert.X Summary [[{vertx.101,async/reactive.*,doc_has.diagram]]
 REF:
 - Vert.X guide for java devs @[https://github.com/vert-x3/vertx-guide-for-java-devs]
 - VertX maven starter        @[https://github.com/vert-x3/vertx-maven-starter]
@@ -390,7 +390,7 @@ $ java -jar target/project01-SNAPSHOT-fat.jar
 [[}]]
 
 Non-Classified / TODO [[{01_PM.TODO]]
-## RxJava Integration: [[{vertx.101,async/reactive.rxjava,cloud.k8s,architecture.frontend]]
+## RxJava Integration: [[{vertx.101,async/reactive.rxjava,devops.k8s,architecture.frontend]]
 @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
   Refactoring some code to use reactive programming with the
   popular RxJava library and its Vert.x integration.

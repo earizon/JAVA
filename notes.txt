@@ -2573,14 +2573,14 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
 <!-- } -->
 
-## jOOλ functional extensions to Java 8 [[{java_lang.functional.jOOλ,PM.TODO,]]
+## jOOλ functional extensions to Java 8 [[{java_lang.functional.jOOλ,troubleshooting.checked_exceptions,PM.TODO,]]
 
 * [jOOλ](https://github.com/jOOQ/jOOL)
 
 **Problem Context**: "Pains with checked exceptions and lambdas"  [[{java_lang.101]]
-* http://stackoverflow.com/q/18198176/521799
-* http://stackoverflow.com/q/19757300/521799
-* http://stackoverflow.com/q/14039995/521799                      [[java_lang.101}]]
+* <http://stackoverflow.com/q/18198176/521799>
+* <http://stackoverflow.com/q/19757300/521799>
+* <http://stackoverflow.com/q/14039995/521799>                      [[java_lang.101}]]
 **Solution**: `org.jooq.lambda.Unchecked`
 
 * Standard Java 8
@@ -3591,7 +3591,7 @@ Map<String, Double> map01 = new HashMap<>();
 
 # Non-Classified / TODO [[{ $non_classified]]
 
-[[{async/reactive.javalite,PM.low_code,messaging.jms,messaging.activemq,architecture.batch,architecture.distributed]]
+[[{async/reactive.javalite,PM.low_code,messaging.jms,messaging.activemq,architecture.async,architecture.batch,architecture.distributed]]
 ## JavaLite lightweight async.job processing
 
 * Use Cases:
@@ -3691,7 +3691,7 @@ Map<String, Double> map01 = new HashMap<>();
 * See also filequeue. It's faster but doesn't support Queue to DDBBs.
 [[async/reactive.javalite}]]
 
-[[{async/reactive.FileQueue,PM.low_code,messaging.jms,messaging.activemq,scalability.101]]
+[[{async/reactive.FileQueue,PM.low_code,messaging.jms,messaging.activemq,architecture.async,scalability.101]]
 ## FileQueue
 @[https://github.com/stimulussoft/filequeue]
 * KISS alternative using MVStore
