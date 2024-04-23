@@ -72,11 +72,21 @@ JAVA persistence: [[{]]
     Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
   """
 * Alternatives to Flyway include LiquidBase, ... [TODO]
+
+* As a reference Spring Boot includes auto-configuration support for both Flyway and Liquibase.
 [[}]]
+
+# QueryDSL [[{persistence.sql.querydsl,PM.TODO]]
+* https://www.baeldung.com/intro-to-querydsl
+
+* Compile safe SQL like domain specific language compatible with JPA.
+
+[[persistence.sql.querydsl}]]
 
 # Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
 @[https://www.jooq.org/]
 * WARN: Free for OOSS databases, requires licence for Oracle and others.
+* ¿Deprecated in favor of QueryDSL?
 
 # Vertx+Jooq
 @[https://github.com/jklingsporn/vertx-jooq]

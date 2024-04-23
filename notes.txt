@@ -574,7 +574,72 @@
   ```
   [[jvm.101.autoclosable}]]
 
+## Lombok  [[{QA.inmutability,PM.low_code]]
+
+* REF: <https://projectlombok.org/features/>
+
+  ```
+  | compileOnly 'org.projectlombok:lombok'
+  | runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+  | 
+  | @Data                   : @ToString+@EqualsAndHashCode+@Getter(on all fields)+@Setter(on all non-final fields)+@RequiredArgsConstructor!
+  | @Value                  : Immutable instances!!!. (@Data + inmutability once constructed)
+  |                           @Value == @ToString + @EqualsAndHashCode + @AllArgsConstructor
+  |                                     + @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE) + @Getter.
+  |                           Not to be confused with Spring @Value to configure a member from Env.Var, yaml or properties.
+  | Example:
+  |
+  | import lombok.AccessLevel;
+  | import lombok.experimental.NonFinal;
+  | import lombok.experimental.Value;
+  | import lombok.experimental.With;
+  | import lombok.ToString;
+  | 
+  | @Value public class ValueExample {
+  |   String name;                                       <·· all fields are made private and final by default.
+  |                                                          with (default) constructor covering all argument 
+  |   @With(AccessLevel.PACKAGE) @NonFinal int age;      <·· Clones new object but with one changed field.
+  |   @With(AccessLevel.PACKAGE) @NonFinal int age;           ValueExample withAge(int age) {
+  |                                                             return this.age == age 
+  |                                                                ? this 
+  |                                                                : new ValueExample(name, age, score, tags);
+  |                                                           }
+  |   double score;
+  |   protected String[] tags;
+  |                                     
+  |   @ToString(includeFieldNames=true)
+  |   @Value(staticConstructor="of")
+  |   public static class Exercise<T> {
+  |     String name;
+  |     T value;
+  |   }
+  | }
+  | 
+  | 
+  | @val: final   Hassle-free local variables.
+  | @var: Mutably Hassle-free local variables.
+  | @NonNull: Runtime check (vs Kotlin compile safe)
+  | @Cleanup:     Hassle-free close() methods safely.
+  | @Getter/@Setter/@Getter(lazy=true): "Macros" for getters and setters.
+  | 
+  | @ToString: "Macro"
+  | @EqualsAndHashCode: "Macro" for equality.
+  | 
+  | @NoArgsConstructor      : Macro for no argument constructo., 
+  | @RequiredArgsConstructor: one argument per final / non-nullfield.
+  | @AllArgsConstructor     : one argument for every field.
+  | @Builder
+  | 
+  | @SneakyThrows:  boldly throw checked exceptions where no one has thrown them before!
+  | @Synchronized: synchronized done right: Don't expose your locks.
+  | @Locked      : Pop it and lock it! ReentrantLock, now with less hassle.
+  | 
+  | @Log         : 
+```
+[[QA.inmutability}]]
+
 [[{java_lang.records,java_lang.data_structure,QA.101]]
+
 ## RECORDS!!! v15+
 
 * Java classes have a bloated syntax when we just want to declare data-like

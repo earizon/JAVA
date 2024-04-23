@@ -1,6 +1,21 @@
 # `WEB-INF/web.xml` [[{]]
 
 ```
+ $ mvn archetype:generate \
+   -DgroupId=com.mycomp.myprj \
+   -DartifactId=mylib -Dversion=1-SNAPSHOT 
+ output will be similar to:
+ mylib/pom.xml
+ mylib/src/main/resources/
+ mylib/src/main/resources/static     <·· Spring and others will "pick up" all the content and put
+                                         it in the base path of the web application.
+ mylib/src/main/java/
+ mylib/src/webapp/WEB-INF/           <·· Anything inside WEB-INF is not visible to external apps
+ mylib/src/webapp/WEB-INF/web.xml ¹ 
+ mylib/src/webapp/WEB-INF/index.jsp      <·· Not even index.jsp
+ 
+ 
+  ¹ mylib/src/webapp/WEB-INF/web.xml    <·· Anything inside WEB-INF is not visible to external apps
   WEB-INF/web.xml
   <web-app>
      <servlet>
@@ -143,7 +158,7 @@
    │   Read at startup. Changes require          │     **WARN: tags are sensible to order**
    │   server restart                            │        <filter>·><servlet>·><servlet-mapping>
    │   server.xml   <·· main conf.file *1        ├─ /WEB-INF/lib/     Java class files
-   │   web.xml                         ├─ /WEB-INF/classes/ with restricted access
+   │   web.xml                                   ├─ /WEB-INF/classes/ with restricted access
    │                                             │
    ├─logs/                                       └─ /META─INF/context.xml
    ├─lib/                                           Tomcat non-standard Context Descriptor for

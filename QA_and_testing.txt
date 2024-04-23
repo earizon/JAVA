@@ -375,9 +375,8 @@ $500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
 * Works from GUI+cli, maven/gradle/eclipse integration.
 * Plugin extension support (just download plugin jar and
   it will be detected and included):
-  • fb-contrib:
-  • Security Audits for Java Web applications:
-  @[https://find-sec-bugs.github.io/]
+  * fb-contrib: Security Audits for Java Web applications:
+   <https://find-sec-bugs.github.io/> <br/>
     It can detect 141 different vulnerability types with
     over 823 unique API signatures.
 * When compared with SonarCube, SpotBugs emmits fewer false
@@ -632,41 +631,71 @@ Salesforce.com Apex and Visualforce, PLSQL, Apache Velocity, XML and XSL.
 
 # JavaDoc [[{qa.101.javadoc,qa.documentation]]
 
-Example:
+  Note:  Check <https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html>
+to customize the HTML template used in rendered HTML. 
+
+Example: <!-- { -->
   ```
   | /**
-  |  * Short one line description.
-  |  * <p>
-  |  * Longer description. ...
-  |  * ...here.
-  |  * <p>
-  |  * And even more explanations to follow
-  |  * in consecutive paragraphs
-  |  *                                           Applies to:
-  |  * @author John Bla                          Class, Interface, Enum
-  |  * @param  varname Description ....                                         Method
-  |  * @return description                                                      Method
-  |  * @version  1.2.3                           Class, Interface, Enum (Max: 1 per Class|Interface)
-  |  * @since  1.1.1                             Class, Interface, Enum, Field, Method
-  |  * @seereference  link_to_another_element    Class, Interface, Enum, Field, Method
-  |  * @exceptionclass desc                                                     Method
-  |  * @throwsclass desc                                                        Method
-  |  * @deprecated description_of_outdated Elem. Class, Interface, Enum, Field, Method
-  |  * {@inheritDoc}     Copies desc. from parent
-  |  * {@linkreference}  Link to other symbol    Class, Interface, Enum, Field, Method
-  |  * {@value#STATIC_FIELD}  Return the value of static field.                         Static Field
-  |  * {@codeliteral}    (Formats literal text   Class, Interface, Enum, Field, Method
-  |  *                  in the code font. It is
-  |  *                  equivalent to  {@literal}
-  |  * {@literalliteral} Denotes literal text.                           Field, Method
-  |  *                   The enclosed text is interpreted as not
+  |  * Short one line description.                ┐
+  |  * <p>                                        │
+  |  * Longer description. ...                    │
+  |  * ...here.                                   ├ Description (HTML)
+  |  * <p>                                        │
+  |  * <ul>                                       │
+  |  * <li>...</li>                               │
+  |  * <li>...</li>                               │
+  |  * </ul>                                      │
+  |  * And even more explanations to follow       │
+  |  * in consecutive paragraphs                  ┘
+  |  *                                            <·· white line to separate descrip & "tags"
+  |  * @author John Bla                                         <··  C,I,E
+  |  * @param  varname Description ....                                      M     
+  |  * @return description                                                   M     
+  |  * @serial (or @serialField or @serialData)
+  |  * @version  1.2.3                                               C,I,E    (Max: 1)
+  |  * @since    1.1.1                                               C,I,E,F,M
+  |  * @exception some description                                           M
+  │    └─────┬──┴ Best-pattern: Document also unchecked exceptions 
+  |  * @throws   (synonym for @exception in Javadoc 1.2+)                    M 
+  |  * @throwsclass desc                                                     M
+  |  * {@inheritDoc}     Copies desc. from parent                    
+  |  * @deprecated As of version 2.3. Replaced by                    C,I,E,F,M
+  |  *    {@link #methodName(EntityB ...)}                           C,I,E,F,M
+  |                                                                  C,I,E,F,M
+If the member has no replacement, the argument to  
+deprecated should be "No replacement".
+  |  * {@value#STATIC_FIELD}  Return the value of static field.               ,SF
+  |  * {@codeliteral}    (Formats literal text                       C,I,E,F,M
+  |  *                  in the code font. It is    
+  |  *                  equivalent to  {@literal}                    
+  |  * {@literalliteral} Denotes literal text.                             F,M
+  |  *                   The enclosed text is inte preted as not
   |  *                   containing HTML markup or nested javadoc tags.
-  |  *
-  |  */
-  | public int methodName (...) {
-  |     // method body with a return statement
+  |  * @see Component#EntityC()                                      C,I,E,F,M
+  |  * @See EntityA                                                 
+  |  * @see #field
+  |  * @see #Constructor(Type, Type...)
+  |  * @see #Constructor(Type id, Type id...)
+  |  * @see #method(Type, Type,...)
+  |  * @see #method(Type id, Type, id...)
+  |  * @see Class#method(Type, Type,...)
+  |  * @see package.Class#Constructor(Type, Type...)
+  |  * @see package.Class#Constructor(Type id, Type id)
+  |  * @see package.Class#method(Type, Type,...)
+  |  * @see package.Class#method(Type id, Type, id)
+  |  * @see package
+  |  *                                                              
+  |  *                                                              Lecture:
+  |  *                                                              C=Class, I=Interface, E=Enum,
+  |  *                                                              F=Field, SF=Static Field, 
+  |  *                                                              M=Method 
+  |  */                                                             
+  | public int methodName (EntityA ...) {
+  |   // method body with a return statement
   | }
   ```
+<!-- } -->
 [[qa.101.javadoc}]]
 
 # Junit [[{qa.junit.101,qa.101,02_doc_has.comparative,01_PM.WiP]] @[testing_summary]
@@ -3026,6 +3055,24 @@ session management, logging etc.
 @[https://spotbugs.readthedocs.io/en/latest/filter.html]
 
 ## Mockito [[{qa.testing.101,01_PM.TODO]]
+* It does not substitute other testing frameworks but complements 
+  them.
+* Mockito allows to create "mocked" objects that other components
+  can use even if the real implementation hasn't yet been developed
+  yet or is irrelevant to the test. For example, it allows to 
+  define a "ComplexBusinessLogicMock" class that returns a given
+  value after first invocation, and raises after calling another
+  method with incorrect parameters and so on.
+* It's specially useful when tesing projects in which a complex
+  component A is being developed by a team A and another compoment
+  using such component B is being developed by team B. 
+   Then team A or B can create a mocked component A with the 
+  expected "future" behaviour.
+* It's also useful is setting up component A during testing is 
+  "hard" but we are not really interesing on it. We just need to
+  get sure that our code integrates properly with it in a given
+  flow. Just having a few well designed mocked responses is "good
+  enough".
 * Top voted Java testing framework in StackOverflow
 * Top 10 most-widely used Java amongt 30.000 inspected projects.
 [[}]]

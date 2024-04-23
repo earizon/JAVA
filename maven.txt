@@ -515,15 +515,51 @@ But in the end, you choose what's best for your project/environment.
 [[}]]
 
 # POM BEST PRACTICES:  [[{qa.best_practices]]
-REF: @[http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/]
 
-  ```
-  $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
-      -Dincludes="org.checkerframework:*"
+* REF: <http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/>
 
-  $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
-      -Dincludes="com.google.guava:*"
-  ```
+* Update project dependencies to latest versions with the versions plugin:
+  * `versions:use-latest-versions`: searches and replace in pom.xml with newer versions.
+     ```
+     $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
+         -DincludesList="org.apache.logging.log4j:*,org.checkerframework:*,com.google.guava:*"
+         -DexcludesList="io.cucumber:*" 
+         -DallowMajorUpdates=false \
+         -DallowMinorUpdates=true \
+         -DignoredVersions="0\.*,*-SNAPSHOT"
+      See <https://www.mojohaus.org/versions/versions-maven-plugin/use-latest-releases-mojo.html> for details.
+     ```
+  * `versions:use-latest-releases`: searches pom for all non-SNAPSHOT versions which have been a newer release.
+    (RELEASE has been deprecated in maven but it is still supported)
+  * `versions:update-properties`: updates properties defined in a project to the latest available version of
+     specific dependencies. This can be useful if a suite of dependencies must all be locked to one version.
+  * `**versions:display-dependency-updates**`: scan dep.tree and reports dependencies with newer versions available.
+  * `versions:display-plugin-updates`: scans project's plugins and reports plugins with newer versions available.
+  * `versions:update-parent`: updates parent section of a project to reference the newest available version.
+    Useful for example, when updating a corporate root POM.
+  * `versions:update-child-modules`: updates parent section of child modules so that version matches the version
+    of the current project. 
+    Useful when using an aggregator pom that is also the parent for the projects that it aggregates and the
+    children and parent versions get out of sync.<br/>
+    Note: you may need to invoke Maven with the -N option in order to run this goal if your project is 
+    broken so badly that it cannot build because of the version miss-match.
+  * `versions:lock-snapshots`: searches the pom for all -SNAPSHOT versions and replaces them with current
+    timestamp version: ej: `-SNAPSHOT  -> -20090327.172306-4`
+  * `versions:unlock-snapshots`: searches pom for all timestamp locked snapshot versions and replaces them
+    with -SNAPSHOT.
+  * `versions:resolve-ranges`: finds dependencies using version ranges and resolves the range to the specific
+    version being used.
+  * `versions:use-releases`: searches pom for -SNAPSHOT versions which have been released and replaces them
+    with the corresponding release version.
+  * `versions:use-next-releases`: searches the pom for all non-SNAPSHOT versions which have been a newer release 
+    and replaces them with the next release version.
+  * `versions:use-next-versions`: searches the pom for all versions which have been a newer version and replaces
+    them with the next version.
+  * `versions:commit` removes the pom.xml.versionsBackup files. <br/>
+    Forms one half of the built-in "Poor Man's SCM".
+  * `versions:revert` restores the pom.xml files from the pom.xml.versionsBackup files. 
+    Forms one half of the built-in "Poor Man's SCM".
+<!-- } -->
 
 * Prefer `${project.artifactId}` vs `${artifactId}` or `${pom.artifactId}`
   following XML document structure.

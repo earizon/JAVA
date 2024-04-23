@@ -6,11 +6,113 @@ Content is versioned in git.  commits, issues and pull-requests welcome!
 
 #Gradle Summary [[{devops.gradle.101,devops.gradle.troubleshooting]]
 
+## gradle tasks
+   Everything executed in gradle end ups being a task, even internal gradle commands.
+   Example: On an empty (non-initialized) folder:
+   ```
+   | $ mkdir tmp && cd tmp 
+   | $ ls build.gradle.kts
+   | ls: cannot access 'build.gradle.kts': No such file or directory
+   | $ gradle --quiet tasks   # 
+   | ------------------------------------------------------------
+   | Tasks runnable from root project 'tmp'
+   | ------------------------------------------------------------
+   | 
+   | Build Setup tasks
+   | -----------------
+   | init - Initializes a new Gradle build.   <·· Init new: 
+   |                                              - project of type basic/application/library/gradle plugin 
+   |                                              - for stack:  Java/Kotlin/Scala/C++/Groovy/Swift
+   |                                              - Monoproject / Multiproject.
+   |                                              - Using build.gradle.kts (Kotlin) or build.gradle (Groovy)
+   | wrapper - Generates Gradle wrapper files.
+   | 
+   | Help tasks
+   | ----------
+   | buildEnvironment - Displays all buildscript dependencies declared in root project 'tmp'.
+   | dependencies - Displays all dependencies declared in root project 'tmp'.
+   | dependencyInsight - Displays the insight into a specific dependency in root project 'tmp'.
+   | help - Displays a help message.
+   | tmpToolchains - Displays the detected tmp toolchains.
+   | outgoingVariants - Displays the outgoing variants of root project 'tmp'.
+   | projects - Displays the sub-projects of root project 'tmp'.
+   | properties - Displays the properties of root project 'tmp'.
+   | resolvableConfigurations - Displays the configurations that can be resolved in root project 'tmp'.
+   | tasks - Displays the tasks runnable from root project 'tmp'.
+   | 
+   | To see all tasks and more detail, run gradle tasks --all
+   | 
+   | To see more detail about a task, run gradle help --task <task>
+   ```
+
+## Gradle Core types
+
+* <https://docs.gradle.org/current/dsl/org.gradle.api.Project.html>
+  main API to interact with Gradle from build.gradle.kt, having programmatic access to all of Gradle's features.
+* <https://docs.gradle.org/current/dsl/org.gradle.api.Task.html><br/>
+  Single atomic piece of work for a build, such as compiling classes or generating javadoc.
+  Each task belongs to a Project
+* <https://docs.gradle.org/current/dsl/org.gradle.api.invocation.Gradle.html><br/>
+  Represents an invocation of Gradle.
+  ```
+  val gradle = Project.getGradle()
+  gradle.extensions
+  gradle.gradle
+  gradleHomeDir, gradleUserHomeDir, gradleVersion, includedBuilds,
+  parent, pluginManager, plugins, rootProject, startParameter
+  · (  add|      )BuildListener
+  ·               before
+  · (  add|remove)Listener
+  · (  add|remove)ProjectEvaluationListener
+  · (before|after)Project(closure|action)
+  · (before|     )Settings(closure|action)
+  · allprojects(action)
+  · apply(closure|options|action)
+  · buildFinished(closure|action)
+  · projectsEvaluated(closure|action)
+  · projectsLoaded   (closure|action)
+  · rootProject(action)
+  · settingsEvaluated(closure|action)
+  · useLogger(logger)
+  ```
+* <https://docs.gradle.org/current/dsl/org.gradle.api.initialization.Settings.html><br/>
+  Declares the configuration required to instantiate and configure the hierarchy of Project instances which are to participate in a build.
+* <https://docs.gradle.org/current/dsl/org.gradle.api.initialization.IncludedBuild.html><br/>
+  A build that is included in the composite.
+* <https://docs.gradle.org/current/dsl/org.gradle.api.file.ProjectLayout.html><br/>
+  Provides access to (buildDirectory, projectDirectory) locations to be used in tasks, plugins, ...
+  ```
+  Project.getLayout()
+  Methods
+  dir(file)     Creates a Directory provider whose location is calculated from the given Provider.
+  file(file)    Creates a RegularFile provider whose location is calculated from the given Provider.
+  files(paths)  Creates a read-only FileCollection containing the given files, as defined by Project.files(java.lang.Object[]).
+  ```
+* <https://docs.gradle.org/current/dsl/org.gradle.api.file.BuildLayout.html><br/>
+  Provides access to important locations for a Gradle build. (rootDirectory, settingsDirectory)
+* <https://docs.gradle.org/current/dsl/org.gradle.api.Script.html><br/>
+  Interface implemented by all Gradle Groovy DSL scripts to add in some Gradle-specific methods.
+  ```
+  buildscript logger logging resources
+  ```
+* <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html><br/>
+  A SourceSet represents a logical group of Java source and resource files.
+* <https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSetOutput.html>
+  extends FileCollection. Collection of all output directories (compiled classes, processed resources, etc.)
+* <https://docs.gradle.org/current/dsl/org.gradle.api.file.SourceDirectorySet.html><br/>
+  A SourceDirectorySet represents a set of source files composed from a set of source directories,
+  along with associated include and exclude patterns.
+* <https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.Configuration.html><br/>
+  Represents a group of artifacts and their dependencies.
+* <https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.ConsumableConfiguration.html>
+  A Configuration which can be consumed via Publishing and Dependency Management.
+
 *Project Coordinates  [[{02_doc_has.comparative}]]
 ```
 | 'group   :module     :version' <- gradle terminology for libraries.
 | 'groupId :artifactId :version' <- maven  terminology (also used in gradle
-|                                   for java like projects).
+|                                   for java like projects to differentiate from
+|                                   java 9+ modules.
 | 'id      :version              <- gradle terminology for gradle plugins
 |                                   (Set of 'complex' related tasks, ussualy
 |                                   provided and pre-packaged by the community
@@ -37,13 +139,16 @@ Content is versioned in git.  commits, issues and pull-requests welcome!
   ```
   | build.gradle.kt:
   |   ...
-  |   /----v-·
-  |   ·    ·
-  | + tasks.registrer("Hi") {
-  | +   doFirst { println "Hello" }
-  | +   doLast { println "World!" }
-  | +   onlyIf { "EARTH".equals(System.getenv("PLANET")) }
-  | + }
+  | + tasks.registrer("hello") {          // <·· $ ./gradlew app:tasks --all  will list it now
+  | +   dependsOn("taskY")                //     <·· Optional. Place in DAG "after" taskY.
+  | +   onlyIf {                          //     Run it isolated from build like: 
+  |      "EARTH".equals(                  //     $ export PLANET=...
+  |         System.getenv("PLANET"))      //     $ ./gradlew hello
+  |     } 
+  | +   doFirst { println "Hello" }       
+  | +   doLast { println "World!" }    
+  | +   description = "...."              // <·· description value will be dumped by:
+  | + }                                   //     $./gradlew help --task hello
   ```
 * pre-defined tasks are distributed in Gradle Plugins. Each plugin contains a set of
   related tasks (Java related tasks, Android related tasks, documentation related tasks, ...).
@@ -149,7 +254,7 @@ a build's ease of use and its efficiency. [[}]]
 |                               YYY := application|library|gradle-plugin
 | --test-framework ... \   <·· := junit|junit-jupiter|kotlintest|...
 |                             Further details:
-|                             $ gradle -q help --task init
+|                             $ gradle --quiet help --task init
 ```
 (Output layout will be similar to ..)
 ```
@@ -200,7 +305,7 @@ a build's ease of use and its efficiency. [[}]]
 │  ·  │     mainClassName = 'tmp.App'
 │  ·  │ }
 │  ·  │
-│  ·  │ task customTask01 {  // <·· run ··> $ gradle -q customTask01
+│  ·  │ task customTask01 {  // <·· run ··> $ gradle --quiet customTask01
 │  ·  │     doLast {
 │  ·  │         println 'Hello Baeldung!'
 │  ·  │     }
@@ -260,7 +365,7 @@ a build's ease of use and its efficiency. [[}]]
 |    --args="arg1 arg2"                       <·· CLI arguments for running app
 |
 | $ ./gradlew build                     <···· Test build (bundling jar)
-|
+|                                             -x test to skip test related phases.
 | $ ./gradlew build --scan              <···· Publish a build-scan
 | ...
 | Publishing build scan...
@@ -437,12 +542,13 @@ provides fixes for these issues:
 | version = '1.2.1'
 |
 | java {
-|   sourceCompatibility = '17'
-|   withJavadocJar()
-|   withSourcesJar()
-|   toolchain {
+|   toolchain {                                    // <·· 1. JDK to use.
 |     languageVersion.set(JavaLanguageVersion.of(17))
 |   }
+|   sourceCompatibility = JavaVersion.VERSION_17   // <·· 2. must be supported by the toolchain
+|   targetCompatibility = '17'                     // <·· 3. must be compatible with source version
+|   withJavadocJar()
+|   withSourcesJar()
 | }
 |
 | compileJava {                   // <·· Changing compiler options
@@ -494,7 +600,15 @@ provides fixes for these issues:
 |   }
 | }
 |
+| //          ┌────────────────┬─ Kotlin type safety: Creates start scripts for launching **JVM app**
+| //          ·                ·   ┌──────────┬─ Matching tasks.register("startScripts")
+| //          ·                ·   ·          ·  (in this case pre-configured when adding the 
+| //          ·                ·   ·          ·   "application" plugin)
 | tasks.named<CreateStartScripts>("startScripts") {
+|   // outputDir = file("build/sample")
+|   // mainClass = "org.gradle.test.Main"
+|   // applicationName = "myApp"
+|   classpath.files.add(File("""DevOps/${System.getenv("TARGET_ENV")}"""))
 |   doLast {
 |     windowsScript.writeText(
 |       windowsScript.readText().replace(
@@ -918,6 +1032,9 @@ $ gradle --stop  # <·· explicitly stop running Daemon processes.
   ```
 <!-- } version catalogs  -->
 
-
+## TODO:
+* Java Modules support:
+  https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_modular
+* https://docs.gradle.org/current/userguide/configuration_cache.html
 
 [[$devops.gradle}]]
