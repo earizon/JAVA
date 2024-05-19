@@ -1010,7 +1010,8 @@ AsynchronousFileChannel fileChannel =
      Converters can be added to support other types. Six sibling 
    modules adapt popular serialization libraries for your convenience.
    
-   Gson: com.squareup.retrofit2:converter-gson
+   Gson: com.squareup.retrofit2:converter-gson         <·· WARN: Deprecated. Prefer Moshi,..
+                                                           <https://proandroiddev.com/goodbye-gson-hello-moshi-4e591116231e>
    Jackson: com.squareup.retrofit2:converter-jackson
    Moshi: com.squareup.retrofit2:converter-moshi
    Protobuf: com.squareup.retrofit2:converter-protobuf
@@ -1022,6 +1023,7 @@ AsynchronousFileChannel fileChannel =
      Here's an example of using the GsonConverterFactory class to 
    generate an implementation of the GitHubService interface which uses 
    Gson for its deserialization.
+   WARN: Gson is deprecated. Use Moshi, ...
    
    Retrofit retrofit = new Retrofit.Builder()
        .baseUrl("https://api.github.com/")

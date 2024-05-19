@@ -1256,7 +1256,12 @@ RELATED:
 
 ### v.17 2021-09 <!-- { -->
 * 1st long-term support (LTS) release after JDK 11 (2018).
-* 14 JEPs includes:
+* Algebraic Data Types (Records and Sealed Types -JEP 409-) is now complete.
+  This is a major step forward in terms of data modeling and enhancing
+  the OO capabilities of the Java language.
+  WARN: Pattern Matching, complementing and built upon algebraic data 
+  types is not available until JDK 21.
+   
   * 409: Sealed Classes
     ```
     | package com.example.geometry;
@@ -3836,7 +3841,7 @@ perform resource availability pre-checks (e.g. disk space check).
   @[https://www.infoq.com/news/2017/03/json-processing-public-review]
 
 * JSR 374, API for JSON Processing (JSON-P) version 1.1.
-  * Java 8 streams and lambdas alternative to Gson and Jackson.
+  * Java 8 streams and lambdas alternative to Moshi and Jackson.
   * expected to be included in J2EE 8 .
   * compatible with JSON IETF standards.
   * It includes support for:
@@ -3847,25 +3852,26 @@ perform resource availability pre-checks (e.g. disk space check).
   * Designed to parse/generate/query standard JSON documents.
 [[}]]
 
-## JSON-B vs GSON vs ... [[{persistence.JSON,performance,io]]
+## JSON-B vs GSON vs Moshi vs ... [[{persistence.JSON,performance,io]]
 * https://www.reddit.com/r/javahelp/comments/bx6ded/jsonb_vs_jackson/
    ... I've had issues with nested types (example: List<X>) when
   decoding Json with most libraries (see usage examples [here](https://www.baeldung.com/java-json),
   since they request a class as a parameter, which would be a raw type (in
   this example, List.class).<br/>
-  Gson offers a helper class called TypeToken to circumvent this through
-  the usage of type instead of class (ex: https://www.baeldung.com/gson-json-to-map).
-  It's very complicated but at the same time very elegant.<br/>
-  I don't know if other Json libraries offer something equivalent, I
-  found Google's code to be concise and easy to understand so I didn't
-  edit: I did a quick search about Json-B (never really read much about
-  it before) and it doesn't seem to provide any way to handle the
-  scenario described above. You would still need a library at least to
-  obtain the type.
+  * Gson: deprecated as of 2024. <https://proandroiddev.com/goodbye-gson-hello-moshi-4e591116231e>
+    Gson offers a helper class called TypeToken to circumvent this through
+    the usage of type instead of class (ex: https://www.baeldung.com/gson-json-to-map).
+    It's very complicated but at the same time very elegant.<br/>
+    I don't know if other Json libraries offer something equivalent, I
+    found Google's code to be concise and easy to understand so I didn't
+    edit: I did a quick search about Json-B (never really read much about
+    it before) and it doesn't seem to provide any way to handle the
+    scenario described above. You would still need a library at least to
+    obtain the type.
 [[}]]
 
 ## JSON-B / JSR-367 [[{persistence.json,io,]]
-  @[https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/]
+<https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/>
 - B stands for Ojbect binding
   - Standard binding layer for converting
     Java objects to/from JSON messages, defining a default mapping algorithm

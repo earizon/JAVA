@@ -215,13 +215,21 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
     1. identifying what to improve
     2. realize when tunning GC is the wrong solution.
 
-##  Java Mission Control (JMC):
+##  Java Mission Control (JMC)  
 - <http://www.oracle.com/technetwork/java/javaseproducts/mission-control/java-mission-control-1998576.html>
 - UI to analyze data collected by Flight Recorder and head dumps  built on top of Eclipse IDE.
+- Automatically analyse a JFR recording and check for potential
+  performance bottlenecks.  [[{troubleshooting}]]
 - overview of all locally running Java processes, statistics,
   heap dumps, flame view ( show the aggregate of stack traces for the selected events ),
 
-## WHAT'S NEW
+## WHAT'S NEW 
+* [What's new in JMC 9](https://inside.java/2024/04/21/sip096/)
+  - Depends on JDK 17
+  - Allow searching by Event Type Id. 
+  - Support for native GraalVM Images.
+  - Updated bottlenecks analysis with new rules in rules engine.
+* <https://foojay.io/today/jdk-mission-control-8-1-0-released/> [[{PM.TODO}]]
 * JMC 8+ RoadMap:
   * New allocation event (introduced in JDK 16).
   * Improve Flame Graph and Graph Views for memory ussage (vs CPU ussage).
@@ -624,5 +632,12 @@ https://www.baeldung.com/spring-debugging
   ```
 [[}]]
 
-## jhat 
-
+## Eclipse Memory Analyzer  [[{troubleshooting.memory.mat,JVM.GC]]
+<https://www.eclipse.org/mat/>
+* OOSS fast and feature-rich Java heap analyzer to find
+  memory leaks and reduce memory consumption.
+* analyze heap dumps with hundreds of millions of objects, 
+  quickly calculate the retained sizes of objects, and see 
+  who is preventing the Garbage Collector from collecting 
+  objects. Run a report to automatically extract leak suspects.
+[[troubleshooting.memory.mat}]]

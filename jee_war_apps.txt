@@ -1,4 +1,7 @@
-# `WEB-INF/web.xml` [[{]]
+# JEE WARs
+
+
+## `WEB-INF/web.xml` [[{]]
 
 ```
  $ mvn archetype:generate \
@@ -118,23 +121,42 @@
 
 # Tomcat [[{ $tomcat ]]
 ## External Links:
-* @[https://tomcat.apache.org/tomcat-9.0-doc/index.html]
-* @[https://wiki.apache.org/tomcat/FAQ]
-* @[https://wiki.apache.org/tomcat/]
-* @[http://www.jguru.com/faq/home.jsp?topic=Tomcat]
-* @[https://www.google.com/search?q=tomcat+mailing+list+archives]
-* @[https://tomcat.apache.org/lists.html]
+* <https://tomcat.apache.org/tomcat-9.0-doc/index.html>
+* <https://wiki.apache.org/tomcat/FAQ>
+* <https://wiki.apache.org/tomcat/>
+* <http://www.jguru.com/faq/home.jsp?topic=Tomcat>
+* <https://www.google.com/search?q=tomcat+mailing+list+archives>
+* <https://tomcat.apache.org/lists.html>
 
-- Servlets 4.0 Spec: [[io.http.servlets]]
-@[https://jcp.org/aboutJava/communityprocess/final/jsr369/index.html]
+## Servlets 4.0 Spec: [[standards.jee,io.http.servlets]]
+<https://jcp.org/aboutJava/communityprocess/final/jsr369/index.html>
  "... In particular, you will need to understand the web application
   directory structure and deployment file (Chapter 10), methods of
   mapping request URIs to servlets (Chapter 12), container managed
   security (Chapter 13), and the syntax of the web.xml
   Web Application Deployment Descriptor (Chapter 14). "
 
+## Tomcat Logical Componentes [[{standards.jee,io.http.servlets]]
+embedded servers usually comprise two logical components:
 
-# General Schema [[{]]
+  ```
+  | ┌───────────────────────────────────┬─────────────────────────────────┐
+  | │  LOGICAL COMPONENT                │  TOMCAT equivalent              │
+  | ├───────────────────────────────────┼─────────────────────────────────┤
+  | │  a web server component           │  Coyote                         │
+  | │  listening for HTTP requests and  │                                 │
+  | │  returning HTTP responses         │                                 │
+  | ├───────────────────────────────────┼─────────────────────────────────┤
+  | │  an execution context to make     │  Catalina, based on Servlet API │
+  | │  a Java web application interact  │  (usually called the Servlet    │
+  | │  with the web server.             │  Container)                     │
+  | └───────────────────────────────────┴─────────────────────────────────┘
+  ```
+[[}]]
+
+
+
+## General Schema [[{]]
 
   ```
   ┌> 1 │INSTALLATION│
@@ -184,9 +206,9 @@
                 - Ant, Maven, custom scripts
                 - Tomcat Client Deployer (TCD):
                   cli tool that also compiles/validates/packages the app-,...
-     @[https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html]
+     <https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html>
  
-  *1 @[https://tomcat.apache.org/tomcat-9.0-doc/config/index.html]
+  *1 <https://tomcat.apache.org/tomcat-9.0-doc/config/index.html>
   ```
 [[}]]
 
@@ -265,69 +287,42 @@ the following steps must be performed:
 
 [[}]]
 
-# TODO [[{DevOps]]
-## Tomcat Manager
-  https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html
-  https://tomcat.apache.org/tomcat-9.0-doc/host-manager-howto.html
+## TODO
+* Tomcat Manager 
+  <https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html>
+  <https://tomcat.apache.org/tomcat-9.0-doc/host-manager-howto.html>
   deployed by default on context path /manager,
   - deploy/undeploy apps without tomcat restarting
-## Tomcat Specifications
-* https://cwiki.apache.org/confluence/display/tomcat/Specifications
-## Example war for testing:
-* https://tomcat.apache.org/tomcat-9.0-doc/appdev/sample/
-## Advanced IO on Tomcat
-* https://tomcat.apache.org/tomcat-9.0-doc/aio.html
-## APache Portable Runtime (APR)
-* https://tomcat.apache.org/tomcat-9.0-doc/apr.html
-## Deployer Howto:
-* @[https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html]
-## Realm howto:
-* @[https://tomcat.apache.org/tomcat-9.0-doc/realm-howto.html]
-## security manager howto:
-* https://tomcat.apache.org/tomcat-9.0-doc/security-manager-howto.html
-## JNDI resouces
-* https://tomcat.apache.org/tomcat-9.0-doc/jndi-resources-howto.html
-* https://tomcat.apache.org/tomcat-9.0-doc/jndi-datasource-examples-howto.html
-## class loader howto
-  https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html
-## jasper-howto.html
-*  https://tomcat.apache.org/tomcat-9.0-doc/jasper-howto.html
-## SSL how-to
-*https://tomcat.apache.org/tomcat-9.0-doc/ssl-howto.html
-## CGI- howto
-*  https://tomcat.apache.org/tomcat-9.0-doc/cgi-howto.html
-## Proxy Howto
-*  https://tomcat.apache.org/tomcat-9.0-doc/proxy-howto.html
-## Mbeans descriptors howto
-*  https://tomcat.apache.org/tomcat-9.0-doc/mbeans-descriptors-howto.html
-## Default servlet
-*  https://tomcat.apache.org/tomcat-9.0-doc/default-servlet.html
-## Cluster-HowTo
-https://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html
-## Balancer HowTo
-* https://tomcat.apache.org/tomcat-9.0-doc/balancer-howto.html
-## Connectors:
-* https://tomcat.apache.org/tomcat-9.0-doc/connectors.html
-## Monitoring
-*  https://tomcat.apache.org/tomcat-9.0-doc/monitoring.html
-## Logging
-* https://tomcat.apache.org/tomcat-9.0-doc/logging.html
-## Virtual Hosting
-* https://tomcat.apache.org/tomcat-9.0-doc/virtual-hosting-howto.html
-## Extras:
-https://tomcat.apache.org/tomcat-9.0-doc/extras.html
-## Maven jars
-* https://tomcat.apache.org/tomcat-9.0-doc/maven-jars.html
-## Security howto
-* https://tomcat.apache.org/tomcat-9.0-doc/security-howto.html
-## JDBC Pool
-* https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html
-## Web Sockets 
-* https://tomcat.apache.org/tomcat-9.0-doc/web-socket-howto.html
-## Rewrite
-* https://tomcat.apache.org/tomcat-9.0-doc/rewrite.html
-## Config
-* https://tomcat.apache.org/tomcat-9.0-doc/config/index.html
-## PSI-probe: Advanced manager and monitor for Tomcat
-* https://github.com/psi-probe/psi-probe
+* Tomcat Specifications <https://cwiki.apache.org/confluence/display/tomcat/Specifications>
+* Example war for testing <https://tomcat.apache.org/tomcat-9.0-doc/appdev/sample/>
+* Advanced IO on Tomcat <https://tomcat.apache.org/tomcat-9.0-doc/aio.html>
+* APache Portable Runtime <https://tomcat.apache.org/tomcat-9.0-doc/apr.html>
+* Deployer Howto <https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html>
+* Realm howto: <https://tomcat.apache.org/tomcat-9.0-doc/realm-howto.html>  
+* security manager howto: <https://tomcat.apache.org/tomcat-9.0-doc/security-manager-howto.html>
+* JNDI resouces <https://tomcat.apache.org/tomcat-9.0-doc/jndi-resources-howto.html>,
+  <https://tomcat.apache.org/tomcat-9.0-doc/jndi-datasource-examples-howto.html>
+* class loader howto: <https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html>
+* jasper-howto.html <https://tomcat.apache.org/tomcat-9.0-doc/jasper-howto.html>
+* SSL how-to <https://tomcat.apache.org/tomcat-9.0-doc/ssl-howto.html>
+* CGI how-to <https://tomcat.apache.org/tomcat-9.0-doc/cgi-howto.html>
+* Proxy Howto <https://tomcat.apache.org/tomcat-9.0-doc/proxy-howto.html>
+* Mbeans descriptors howto <https://tomcat.apache.org/tomcat-9.0-doc/mbeans-descriptors-howto.html>
+* Default servlet <https://tomcat.apache.org/tomcat-9.0-doc/default-servlet.html>
+* Cluster-HowTo <https://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html>
+* Balancer HowTo <https://tomcat.apache.org/tomcat-9.0-doc/balancer-howto.html>
+* Connectors <https://tomcat.apache.org/tomcat-9.0-doc/connectors.html>
+* Monitoring <https://tomcat.apache.org/tomcat-9.0-doc/monitoring.html>
+* Logging <https://tomcat.apache.org/tomcat-9.0-doc/logging.html>
+* Virtual Hosting <https://tomcat.apache.org/tomcat-9.0-doc/virtual-hosting-howto.html>
+* Extras <https://tomcat.apache.org/tomcat-9.0-doc/extras.html>
+* Maven jars: <https://tomcat.apache.org/tomcat-9.0-doc/maven-jars.html>
+* Security howto <https://tomcat.apache.org/tomcat-9.0-doc/security-howto.html>
+* JDBC Pool <https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html>
+* Web Sockets <https://tomcat.apache.org/tomcat-9.0-doc/web-socket-howto.html>
+* Rewrite <https://tomcat.apache.org/tomcat-9.0-doc/rewrite.html>
+* Config <https://tomcat.apache.org/tomcat-9.0-doc/config/index.html>
+
+## PSI-probe: Advanced manager&monitor for Tomcat
+<https://github.com/psi-probe/psi-probe>
 [[ $tomcat }]]

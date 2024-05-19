@@ -1024,9 +1024,8 @@ $ gradle --stop  # <·· explicitly stop running Daemon processes.
   |      + 'spring-boot-dependencies:1.5.8.RELEASE')
   |     implementation enforcedPlatform(             // <·· BOMs also override version in DAG
   |        'org.springframework.boot:'               //     this enable overriding too.
-  |      + 'spring-boot-dependencies:1.5.8.RELEASE')                    //     Use with care!! Consider rich ver.
+  |      + 'spring-boot-dependencies:1.5.8.RELEASE') //     Use with care!! Consider rich ver.
   |                                                  //     declaration instead.
-  |     implementation 'com.google.code.gson:gson'   // <·· Use it now
   |     implementation 'dom4j:dom4j'
   | }
   ```
