@@ -1,0 +1,181 @@
+[[{security.101,PM.low_code,spring,security.jvm]]
+# Security 101
+
+* REF: <https://snyk.io/blog/10-java-security-best-practices/>
+## Make code immutable
+* Tag variables as 'final' by default.
+  (a final variable is not variable but constant)
+* Try to initialize all classes in constructors. and centralize
+  all input checks in the constructor. Raise a runtime exception
+  if the constructor is not happy with input data.
+  (vs using getters and setters).
+   Doing so warrants that a class is properly instantiated and
+  safe upon constructor exit.
+   This also warrants fail-fast applications. If something is
+  undefined at startup time constructors will not be able to
+  initialize and the application will fail to start: This is
+  life-saving for DevOps and normal deployments.
+
+## Parameterize SQL
+
+   ```
+   | query = "SELECT ... WHERE lastname = "  + parameter ;  // ← Incorrect:
+   | Statement         stm01 = con.createStatement();
+   | 
+   | query = "SELECT ... WHERE lastname = ?";               // ← Correct
+   | PreparedStatement stm01 = con.prepareStatement(query);
+   | statementB .setString(1, parameter);
+   | 
+   | ...  stm01.executeQuery(query);
+   ```
+
+## Use OpenID Connect with 2FA
+
+* OAuth 2.0: Identity delegation. N applications delegate login
+  authentication to a third service that emmits signed tokens
+  with claims about authorization for a given authenticated
+  user.
+* OpenID: OAuth 2.0 extension providing user information
+  claims to the signed OAuth 2.0 token.
+  It adds an ID token in addition to an access token plus
+  a /userinfo endpoint to retrieve additional information
+  plus endpoint discovery and dynamic client registration.
+* Example low-code OpenID in Spring:
+  STEP 1: Addd next dependencies:
+  ```
+  | org.springframework.boot:spring-boot-starter-oauth2-client
+  | org.springframework.boot:spring-boot-starter-security
+  ```
+  STEP 2: Spring Configuration
+  ```
+  | spring:
+  |  ...
+  |  security:
+  |    oauth2:
+  |      client:
+  |        registration:
+  |          github:
+  |            client─id: ...
+  |            client─secret: ....
+  |          okta:
+  |            client─id: ...
+  |            client─secret: ...
+  |            client─name: ...
+  |          google:
+  |            ...
+  |        provider:
+  |          okta:
+  |            issuer─uri: https://.....okta.com/oauth2/default
+  ```
+
+## Scan dependencies for known vulnerabilities
+
+* Ej.: Use a service like  <https://snyk.io/test/> !!!
+
+## Handle secrets with care
+
+* Use secrets on-demand and remove from memory as soon as possible.
+  Ideally manage secrets through HSM. Secrets (signature keys, password,
+  ...) must never leave the HSM.
+
+## Sanitize all input
+
+* Example 1, sanitizing HTML<br/>
+  Add dependency: `org.owasp.encoder:encoder:vX.Y.Z`
+  ```
+  | final String
+  |    untrustedInput = "<script> alert(1); </script>",
+  |      trustedInput = StEncode.forHtml(untrustedInput));
+  ```
+
+## disable XXE (eXternal Entity) in XML parsers
+
+   ```
+   | <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+   |  <!DOCTYPE bar [
+   |       <!ENTITY xxe SYSTEM   "file:///etc/passwd" >] >      <·· attack vector
+   |       <song>
+   |          <artist>  &xxe; </artist>
+   |          ...
+   |       </song>
+   ```
+   * e.g. In xerces 1/2 disable external entities and doctypes like:
+   ```
+   | ...
+   | factory   = SAXParserFactory.newInstance();
+   | saxParser = factory.newSAXParser();
+   | factory.setFeature(
+   |   "https://xml.org/sax/features/external-general-entities", false );
+   | saxParser.getXMLReader().setFeature(
+   |   "https://xml.org/sax/features/external-general-entities", false );
+   | factory.setFeature(
+   |   "https://apache.org/xml/features/disallow-doctype-decl" , true );
+   | ...
+   ```
+
+## Avoid Java serialization (as much as possible)
+
+* If really needed check some professional serialization tool (vs 
+  JDK 1.0+ serialization), for example: eclipse-serializer
+
+* Java serialization is also called  "the gift that keeps on giving".
+  Oracle is planning to eventually remove Java serialization as part
+  of Project Amber.
+
+* If you really need to implement serializable on your domain entities,
+  implement its own readObject().
+  ```
+  | private final void
+  | readObject(ObjectInputStream in) throws java.io.IOException {
+  |   // check 1
+  |   // check 2
+  |   ...
+  |   throw new java.io.IOException("Deserialized not allowed");
+  | }
+  ```
+* If you need to Deserialize an inputstream yourself, you should use an
+  ObjectsInputStream with restrictions.<br/>
+  e.j Apache Commons IO ValidatingObjectInputStream, that checks whether
+      the object being deserialized is allowed or not.
+      ```
+      | final FileInputStream fileInput = new FileInputStream(fileName);
+      | ValidatingObjectInputStream in = new ValidatingObjectInputStream(fileInput);
+      | in.accept(Foo.class);
+      | Foo foo_ = (Foo) in.readObject();
+      ```
+* Object deserialization can also apply to JSON, XML, ...
+  [REF@snyk.io](https://snyk.io/blog/jackson-deserialization-vulnerability/)
+
+## Use strong encryption and hashing algorithms.<br/>              [[{security.cryptography}]]
+   TIP: Prefer Google Tink  (vs Low Level Java crypto libraries)
+
+## Enable the Java Security Manager                               [[{security.jvm]]
+* By default, JVM imposes no restrictions to running apps.
+  (file system, network, ..)
+* Ex. By default the Attach API is active allowing to easely
+  change bytecode of running apps. (from inside the machine).
+* Activate it like:
+  ```
+  | $ java ... -Djava.security.manager            <·· Use default policy
+  |
+  | $ java ... -Djava.security.manager \          <·· Use custom  policy
+  |   -Djava.security.policy==.../custom.policy       <·· == : replace default
+  |                                                        = :  expand  default
+  ```
+* More info at [oracle.com](https://docs.oracle.com/en/java/javase/11/security/permissions-jdk1.html)
+  ```
+  | java.awt.AWTPermission                      java.sql.SQLPermission
+  | java.io.FilePermission                      java.util.logging.LoggingPermission
+  | java.io.SerializablePermission              java.util.PropertyPermission
+  | java.lang.RuntimePermission                 javax.management.MBeanPermission
+  | java.lang.management.ManagementPermission   javax.management.MBeanServerPermission
+  | java.lang.reflect.ReflectPermission         javax.management.MBeanTrustPermission
+  | java.net.NetPermission                      javax.management.remote.SubjectDelegationPermission
+  | java.net.URLPermission                      javax.net.ssl.SSLPermission
+  | java.net.SocketPermission                   javax.security.auth.AuthPermission
+  | java.nio.file.LinkPermission                javax.security.auth.PrivateCredentialPermission
+  | java.security.AllPermission                 javax.security.auth.kerberos.DelegationPermission
+  | java.security.SecurityPermission            javax.security.auth.kerberos.ServicePermission
+  | java.security.UnresolvedPermission          javax.sound.sampled.AudioPermission [[}]]
+  ```
+[[security.101}]]

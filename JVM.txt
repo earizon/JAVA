@@ -1,0 +1,391 @@
+# JVM
+
+[[{JVM,java_lang.profiling,architecture.real-time]]
+## JVM Safepoints
+* <http://psy-lob-saw.blogspot.com/2015/12/safepoints.html>    [[{PM.TODO}]]
+
+* Definition: Mutator threads: threads which manipulate the JVM heap.
+  all Java Threads are mutators, Non*Java (native?) threads may also be
+  regarded as mutators when they call into JVM APIs which interact with the heap.
+* Safepoint:
+  * range of execution where the state of the executing thread
+    is well described since thread is NOT interacting with the heap:
+  * used to put mutator threads on hold while the JVM 'fixes stuff up'
+  * particularly useful to let JVM examine|change the heap (GC, ...)
+    (no objects still alive and referenced from the stack)
+* thread is at safepoints when:
+  * thread de-scheduling events: thread blocked on lock/synch.lock, waiting on a monitor, parked,
+    or blocked on blocking*IO.
+  * thread is executing JNI code.
+* thread is NOT at safepoints when:
+  * executing bytecode (maybe, but not for sure).
+  * thread interrupted (by the OS) while not at a safepoint.
+* JVM cannot force any thread into a safepoint state but ...
+  JVM can stop threads from leaving a safepoint state.
+  * Q: How then bring ALL threads into a safepoint?
+    A: Java threads poll a 'safepoint flag' (global or thread level) at 'reasonable' intervals
+       and transition into a safepoint state (thread is blocked at a safepoint) when active.
+    * Q: how to avoid waste time checking if C1/C2 (client/server) JIT compilers need to stop?
+         how to keep safepoint polls to a minimum.
+      A: considerations combined lead to the following locations for safepoint polls:
+         ```
+         | - Between any 2 bytecodes while running in the interpreter (effectively)
+         | - On 'non-counted' loop back edge in C1/C2 compiled code
+         | - Method entry (Zing,...) or exit (OpenJDK,...) in C1/C2 compiled code.
+         ```
+  * Ex:
+    ```
+    | public class WhenWillItExit {
+    |   public static void main(String[] argc)
+    |     throws InterruptedException {
+    |     const UP = Integer.MAX_VALUE;
+    |     final Thread t = new Thread(() -> {
+    |       long l = 0;
+    |       for (int i = 0; i < UP ; i++) {     ┐  Result:
+    |         for (int j = 0; j < UP ; j++) {   │
+    |           if ((j & 1) == 1) l++;          ├ long-type loops: 'uncounted' code.    safepoints injected at each loop.
+    |         }                                 │  int-type loops:   'counted' code. No safepoints injected.
+    |       }                                   ┘                  -   (Much) Better performance   BUT ...
+    |       System.out.println("How Odd:" + l);                        other threads forced to suspend at their
+    |     });                                                          next safepoint operation.
+    |     t.setDaemon(true);                    ┐
+    |     t.start();                            ├  Expected: exit in ~5 seconds.
+    |     Thread.sleep(5000);                   ┘  Result  : no safepoints means threads, JMX connections, ...
+    |   }                                                    will have to expect to daemon thread to exits to
+    | }                                                      be able to reach a global safepoint. Use -Xint to
+    |                                                        disable C1/C2 compilation or replace int → long
+    |                                                        in loop index to respect the 5 second behaviour.
+    ```
+    (See original source for many interesing details on safepoint tunning)
+
+### SUMMARY
+- Safepoint polls are dispersed at fairly arbitrary points and depending
+  on execution mode, mostly at uncounted loop back edge or method return/entry.
+- Bringing the JVM to   GLOBAL safepoint is high cost
+- ☞ For real-time applications,  it's critical to know about safepoints
+   avoiding 'counted' code.
+-XX:+PrintApplicationStoppedTime will log contained safepoint pauses.
+
+##  Problems with (most) Sampling Profilers
+([REF]<http://psy-lob-saw.blogspot.com/2016/02/why-most-sampling-java-profilers-are.html>)
+* A large number of samples needed to get statistically significant results.
+* profiler should sample all points in a program run with equal probability
+* Generic profilers rely on the JVMTI spec:
+  * JVMTI offers   only safepoint sampling stack trace collection options :
+    * only the safepoint polls in the running code are visible  skipping optimized
+      (counted-code) for-loops!!!
+    * samples are biased towards the next available safepoint poll location
+    * A sample profiler can blame a "cheap method" 9 levels down the stack when the
+      real culprit is the topmost method loop.
+[[}]]
+
+## Inside the JVM [[{jvm.101,PM.WiP]]
+* <https://www.artima.com/insidejvm/ed2/index.html>
+
+* JVM anatomy Park
+  * <https://shipilev.net/jvm-anatomy-park/>
+  * <https://shipilev.net/jvm-anatomy-park/22-safepoint-polls/>
+
+    ```
+    |  ┌────────────────────┐
+    |  │ JVM StartUp thread │
+    |  └─────────┬──────────┘
+    |   ┌────────┼───────────┐
+    |   v        v           v
+    |   GC      Compiler   JAVA
+    | Threads   Thread    Threads
+    | ┌┐┌┐┌┐┌┐    ┌┐      ┌┐┌┐┌┐┌┐┌┐┌┐┌┐...
+    | ││││││││    ││      ││││││││││││││
+    | ││││││││    ││      ││││││││││││││
+    | ││││││││    ││      ││││││││││││││
+    | ││││││││    ││      ││││││││││││││
+    | ││││││││    ││      ││││││││││││││
+    | ········    ··      ··············
+    ```
+  * JIT compiler optimization levels:
+    ```
+    | - cold
+    | - warm
+    | - hot
+    | - very hot (with profiling)
+    | - scorching.
+    |   ^^^^^^^^
+    | The hotter the optimization level, the better the
+    | expected performance, but the higher the cost in terms of
+    | CPU and memory.  See also <#jvm_app_checkpoint>
+    ```
+[[}]]
+
+[[{jvm.101,scalability.jvm,monitoring.jvm]]
+## JVM Memory
+* REF: <https://dzone.com/articles/java-memory-management>
+* JAVA MEMORY MODEL:
+  ```
+  |          │    STACK ("SMALL")          │ HEAP  ("HUGE")
+  |          │ private to each Thread      │ Shared by Threads
+  | ─────────┼─────────────────────────────┼──────────────────
+  | Contain  │ - references to heap objects│ - objects
+  |          │ - value types               │ - instance fields
+  |          │ - formal method params      │ - static fields
+  |          │ - exception handler params  │ - array elements
+  | * 1: Ref(erence) types on the stack point to real object in HEAP memory.
+  ```
+
+* Reference Types regarding how the object on the heap is eligible for garbage collection
+
+  ```
+  |┌─────────┬───────────────────────────────────────────────────────────────────────────
+  |│ STRONG  │ - Most popular.
+  |│         │ - The object on the heap it is not garbage collected
+  |│         │   while there is a strong reference pointing to it, or if it is
+  |│         │   strongly reachable through a chain of strong references.
+  |├─────────┼───────────────────────────────────────────────────────────────────────────
+  |│ WEAK    │ - most likely to not survive after the next garbage collection process.
+  |│         │ - Is created like
+  |│         │    WeakReference<StringBuilder> reference =
+  |│         │     = new WeakReference<>(new StringBuilder());
+  |│         │ -  Ex.use case: caching:
+  |│         │   We let the GC remove the object pointed to by the weak reference,
+  |│         │   after which a null will be returned
+  |│         │   See JDK implementation at
+  |│         │   <https://docs.oracle.com/javase/7/docs/api/java/util/WeakHashMap.html>
+  |├─────────┼───────────────────────────────────────────────────────────────────────────
+  |│ SOFT    │ - used for more memory-sensitive scenarios
+  |│         │ - Will be garbage collected only when the application is running low on memory.
+  |│         │ -  Java guarantees that all soft referenced objects
+  |│         │   are cleaned up before throwing OutOfMemoryError
+  |│         │ - is created as follows:
+  |│         │   SoftReference<StringBuilder> reference = new SoftReference<>(new StringBuilder());
+  |├─────────┼───────────────────────────────────────────────────────────────────────────
+  |│ PHANTOM │ - Used to schedule post-mortem cleanup actions, since we know for
+  |│         │   sure that objects are no longer alive.
+  |│         │ - Used only with a reference queue, since the .get() method of
+  |│         │   such references will always return null.
+  |│         │ -  These types of references are considered preferable to finalizers
+  |└─────────┴───────────────────────────────────────────────────────────────────────────
+  ```
+[[}]]
+
+[[{jvm.memory,scalability.cache,scalability.jvm]]
+## Mark&Sweep GC:
+* JVM analyzes the variables from the stack and "marks" all the objects that need to be kept alive.
+  Then, all the unused objects are cleaned up.
+* The more garbage there is, and the fewer that objects are marked alive, the faster the process is.
+* To optimize even more heap memory actually consists of multiple parts (Java 8+):
+  ```
+  | ──────────┬────────────────────────────────────────────────────
+  |  HEAP     │
+  |  SPACES   │
+  | ──────────┼────────────────────────────────────────────────────
+  |  Eden     │ * object are place here upon creation.
+  |           │ * "small" ··> gets full quite fast.
+  |           │ * GC runs on the Eden space and marks objects as alive
+  | ──────────┼────────────────────────────────────────────────────
+  |  S0       │ * Eden Objects surviving 1st GC are moved here
+  |           │
+  | ──────────┼────────────────────────────────────────────────────
+  |  S1       │ * Eden Objects surviving 2nd GC are moved here
+  |           │ * S0   Objects surviving     GC are moved here
+  | ──────────┼────────────────────────────────────────────────────
+  |  Old      │ * Object survives for "N" rounds of GC (N depends on
+  |           │   implementation), most likely that it will survive
+  |           │   forever, and get moved here
+  |           │ * Bigger than Eden and S0,S1. GC doesn`t run so often
+  | ──────────┼────────────────────────────────────────────────────
+  |  Metaspace│ * metadata about loaded classes
+  |           │   (PermGen Before Java 8)
+  | ──────────┼────────────────────────────────────────────────────
+  |  String   │
+  |    pool   │
+  | ──────────┴────────────────────────────────────────────────────
+  ```
+[[}]]
+
+## GC Types [[{jvm.memory]]
+* default GC type is based on the underlying hardware
+* programmer can choose which one should be used
+* ```
+  |                ┌─────────────────────────────────────────────────────────────────────────────┐
+  |    GC TYPE     │ Description  / Use-Cases                                                    │
+  | ┌──────────────┼─────────────────────────────────────────────────────────────────────────────┤
+  | │Serial GC     │ · Single thread collector.                                                  │
+  | │              │ ·  Halt all app threads while executing                                     │
+  | │              │ · Mostly applies to  small apps with small data usage                       │
+  | │              │ · Can be enabled through :   -XX:+UseSerialGC                               │
+  | ├──────────────┼─────────────────────────────────────────────────────────────────────────────┤
+  | │Parallel GC   │ · Multiple threads used for GC                                              │
+  | │              │ ·  Halt all app threads while executing                                     │
+  | │              │ · Also known as throughput collector                                        │
+  | │              │ · Can be enabled through :   -XX:+UseParallelGC                             │
+  | ├──────────────┼─────────────────────────────────────────────────────────────────────────────┤
+  | │Mostly        │ · works concurrent to the application, "mostly" not halting threads         │
+  | │Concurrent GC │ · "mostly": There is a period of time for which the threads are paused.     │
+  | │              │    Still, the pause is kept as short as possible to achieve the best GC per.│
+  | │              │ · 2 types of mostly concurrent GCs:                                         │
+  | │              │   * Garbage First · high throughput with a reasonable application pause time│ 
+  | │              │                   · Enabled with the option:   -XX:+UseG1GC                 │
+  | │              │     Concurrent Mark Sweep: app pause is kept to minimum.  Deprecated Java9+*│
+  | │              │                   · Enabled with the option:   -XX:+UseConcMarkSweepGC      │
+  | └──────────────┴─────────────────────────────────────────────────────────────────────────────┘
+  ```
+* [See also](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/sizing.html)
+[[}]]
+
+
+## sysctl/ulimit+JAVA [[{performance.jvm.linux]]
+
+Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
+<https://docs.sonarqube.org/latest/requirements/requirements/>.
+
+* ```
+  | $ sysctl vm.max_map_count     <·· Ensure it's greater than or equal to 524288
+  | $ sysctl fs.file-max          <·· Ensure it's greater than or equal to 131072
+  | $ ulimit -n                   <·· Ensure at least 131072 file descriptors
+  | $ ulimit -u                   <·· Ensure at least 8192 threads
+  ```
+* To Modify Kernel limits (permanently) add next lines to `/etc/sysctl.conf`
+  (or `/etc/sysctl.d/99-sonarqube.conf`)
+  ```
+  | + sysctl -w vm.max_map_count=524288
+  | + sysctl -w fs.file-max=131072
+  ```
+* To modify temporarelly (changes lost at system restart)
+  ```
+  | $ ulimit -n 131072
+  | $ ulimit -u 8192
+  ```
+* To modify user limits permanently Add next lines to:
+  * Alt 1:  /etc/security/limits.conf  (non SystemD)
+  ```
+  | + sonarqube   -   nofile   131072       ←
+  | + sonarqube   -   nproc    8192
+  ```
+  * Alt 2: SystemD unit definition (SystemD)
+  ```
+  |  [Service]
+  |  ...
+  |+ LimitNOFILE=131072                      .
+  |+ LimitNPROC=8192
+  |  ...
+  ```
+[[}]]
+
+## JVM Implementations [[{jvm,PM.WiP]]
+<https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html>
+
+In practical terms, there is only one set of source code for the JDK.
+
+* Anyone can take that source code,build and publish it.
+* The certification process ensures that the build is valid.
+* Certification run by the Java Community Process, which provides a
+  Technology Compatibility Kit (TCK, sometimes referred to as the JCK).
+  If build passes the TCK then it is described as "Java SE compatible".
+  Note: Built can NOT be referred to as "Java SE" without paying a commercial
+        license from Oracle.
+        Ex: AdoptOpenJDK passing TCK are "Java SE compatible" (vs "Java SE").
+  * WARN : certification is currently on a trust-basis: results are
+           not submitted to the JCP/Oracle for checking, neither can
+           be made public.
+
+* Existing builds include:
+  * Oracle Java
+  * OpenJ9      (Eclipse "IBM")
+    ```
+    · https://en.wikipedia.org/wiki/OpenJ9
+    · Pre-built binaries available at AdoptOpenJDK
+    · Compared to Oracle's HotSpot VM, i touts higher
+      start-up performance and lower memory consumption
+      at a similar overall throughput.
+    · JIT with all optimization levels.
+    ```
+  * OpenJDK
+  * GraalVM
+  * Bellsoft Liberica:
+    - $free TCK verified OpenJDK distribution for x86, ARM32 and ARM64.
+  * Azul Systems
+  * Sap Machine
+    JDK for Java 10 and later under the GPL+CE license.
+    They also have a commercial closed-source JVM
+  * Amazon Corretto:
+    zero-cost build of OpenJDK with long-term support that passes the
+    TCK. It is under the standard GPL+CE license of all OpenJDK builds.
+    Amazon will be adding their own patches and running Corretto on AWS
+[[}]]
+
+## Jabba JDK Version Management [[{]]
+<https://github.com/shyiko/jabba>
+* pain-free JDK installing on Linux x86/x86_64/ARMv7+, macOS, Windows x86_64.
+* Support for:
+  ```
+  · Oracle JDK (latest-version only)
+  · Oracle Server JRE (latest-version only),
+  · Adopt OpenJDK (jabba >=0.8.0 is required)
+        Hotspot
+        Eclipse OpenJ9
+  · Zulu OpenJDK (jabba >=0.3.0 is required)
+  · IBM SDK, Java Technology Edition (jabba >=0.6.0 is required)
+  · GraalVM CE
+  · OpenJDK
+  · OpenJDK Reference Implementation
+  · OpenJDK with Shenandoah GC (jabba >=0.10.0 is required)
+  · Liberica JDK
+  · Amazon Corretto
+  ```
+
+### INSTALL/UPGRADE:
+```
+$ $ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash
+$ $. ~/.jabba/jabba.sh
+
+   Use $ ... | bash --skip-rc   to avoid modifying common rc files.
+   In that case add next lines to .bashrc / ...
+ + export JABBA_VERSION=...
+ + [ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
+```
+
+* Daily use:
+  ```
+  | $ jabba ls-remote                   ←  list available JDK's
+  | $ jabba ls-remote zulu@~1.8.60      ← Narrow results
+  | $ jabba ls-remote --latest=minor\   ← semver allowed
+  |        "*@>=1.6.45 <1.9"
+  | 
+  | $ jabba ls                          ← list all installed JDK's
+  | $ jabba use adopt@1.8
+  | $ jabba use zulu@~1.6.97
+  | $ echo "1.8" > .jabbarc             ← switch to JDK in .jabbarc
+  |                                       It must be a valid YAML file.
+  |                                       'jdk: 1.8' or simply '1.8' are valid
+  | $ jabba alias default 1.8           ← set def.java ver. on shell (since 0.2.0)
+  |                                       automatically used on new terminals
+  | 
+  | $ jabba install 1.15.0                      ← install Oracle JDK
+  | $ jabba install sjre@1.8                    ← install Oracle Server JRE
+  | $ jabba install adopt@1.8-0                 ← install Adopt OpenJDK (Hotspot)
+  | $ jabba install adopt-openj9@1.9-0          ← install Adopt OpenJDK (Eclipse OpenJ9)
+  | $ jabba install zulu@1.8                    ← install Zulu OpenJDK
+  | $ jabba install ibm@1.8                     ← install IBM SDK, Java Technology Edition
+  | $ jabba install graalvm@1.0-0               ← install GraalVM CE
+  | $ jabba install openjdk@1.10-0              ← install OpenJDK
+  | $ jabba install openjdk-shenandoah@1.10-0   ← install OpenJDK with Shenandoah GC
+  |         └──┬──┘
+  |  everything is installed under ~/.jabba. Removing this directory clean install
+  | $ jabba uninstall zulu@1.6.77               ← uninstall JDK
+  | $ jabba link system@1.8.72 \                ← link system JDK
+  |   /usr/lib/jvm/jdk1.8.0_72.jdk
+  ```
+* To modify JDK system-wide:
+  ```
+  | $ sudo update-alternatives \
+  |   --install /usr/bin/java java \
+  |   ${JAVA_HOME%*/}/bin/java 20000
+  | $ sudo update-alternatives \
+  |   --install /usr/bin/javac javac \
+  |   ${JAVA_HOME%*/}/bin/javac 20000
+  ```
+* To swith among GLOBAL JDK system-wide:
+  ```
+  | $ sudo update-alternatives --config java
+  ```
+[[}]]
+

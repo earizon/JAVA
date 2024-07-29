@@ -1,6 +1,6 @@
 debugging]]
 [[scalability.profiling,PM.WiP]]
-# SonarQube
+# QA: SonarQube
 * SonarQube empowers all developers to write cleaner and safer code.
 * Comunity with 200K+ dev. teams.
 * Easely integrates with CI/CD pipelines.
@@ -59,7 +59,7 @@ debugging]]
 
 [[qa.101.snarqube}]]
 
-# JavaDoc [[{qa.101.javadoc,qa.documentation]]
+# QA: JavaDoc [[{qa.101.javadoc,qa.documentation]]
 
   Note:  Check <https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html>
 to customize the HTML template used in rendered HTML. 
@@ -128,7 +128,7 @@ deprecated should be "No replacement".
 <!-- } -->
 [[qa.101.javadoc}]]
 
-# Junit [[{qa.junit.101,qa.101,doc_has.comparative,PM.WiP]] <testing_summary>
+# QA: Junit [[{qa.junit.101,qa.101,doc_has.comparative,PM.WiP]] <testing_summary>
 
 * Junit 5 is the sum of next modules:
   ```
@@ -633,7 +633,7 @@ See also: <https://www.infoq.com/news/2018/01/VSCodeJunit>
 [[PM.TODO,qa.junit.assertj}]]
 
 [[{qa.testing.property]]
-# Property Testing
+# QA: Property Testing
 
  A property testing is just something like:
  ```
@@ -728,11 +728,11 @@ Extracted from <https://en.wikipedia.org/wiki/QuickCheck><br/>
 [[qa.testing.property}]]
 
 
-# JSR Annotations for Defect Detection [[{qa.error_control,qa.billion_dolar_mistake]]
+# QA: JSR Annotations for Defect Detection [[{qa.error_control,qa.billion_dolar_mistake]]
 <https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard>
 [[}]]
 
-# TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,PM.TODO]]
+# QA: TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,PM.TODO]]
 <https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type>
 ( TODO: Compare how it compares/overlaps CheckerFramework )
   ```
@@ -778,7 +778,7 @@ Extracted from <https://en.wikipedia.org/wiki/QuickCheck><br/>
   ```
 [[}]]
 
-# Behavior Driven Development (BDD)
+# QA: Behavior Driven Development (BDD)
 ## BDD KEYPOINTS  <!-- { -->
   C&P&Summarized from "The Cucumber For Java Book" (by Seb Rose, Matt Wynne and Aslak Hellesøy)
 * Help developers, project managers, product owners and testers
@@ -811,7 +811,7 @@ Extracted from <https://en.wikipedia.org/wiki/QuickCheck><br/>
   those commitments.
 <!-- } -->
 
-# Cucumber BDD [[{]]
+# QA: Cucumber BDD [[{]]
 * Multilanguage (Java, Ruby, Go, Python,...)
 
 * Cucumber test flow:
@@ -1036,7 +1036,7 @@ Extracted from <https://en.wikipedia.org/wiki/QuickCheck><br/>
 [[}]]
 
 [[{qa.testing.bdd.serenity,qa.documentation,PM.TODO]]
-# BDD Serenity Testing
+# QA: BDD Serenity Testing
 <https://serenity-bdd.github.io/theserenitybook/latest/index.html>
 
 * Serenity BDD provides strong support for different
@@ -1626,8 +1626,8 @@ Requirements page of the output report.
   Serenity configuration options.
 [[qa.testing.bdd.serenity}]]
 
-[[{async/reactive.testing,qa.testing.async/reactive,PM.TODO]]
-# Awaitility(Async->Sync) Tests
+[[{architecture.async.reactive.testing,qa.testing.async.reactive,PM.TODO]]
+# QA: Awaitility(Async->Sync) Tests
 <https://github.com/awaitility/awaitility>
 * Awaitility: DSL allowing to express async results (test expectations) easely.
   removing complexity of handling threads, timeouts, concurrency issues, ...
@@ -1646,7 +1646,7 @@ Requirements page of the output report.
 [[}]]
 
 [[{qa.testing.REST_API,persistence.json]]
-# RESTAssured: REST API Full Journey testing
+# QA: RESTAssured: REST API Full Journey testing
 
 ## Maven setup
 
@@ -2450,9 +2450,46 @@ session management, logging etc.
   |       Integer::parseInt,  // <··· Map Header to Integer
   |       lessThan(1000) );   // <··· Then check that is is smaller than 1000
   ```
-
 [[}]]
 
+[[{enterprise_patterns,qa.error_control,architecture.distributed,PM.WiP]]
+# QA: FailSafe
+
+<https://github.com/failsafe-lib/failsafe>
+* Fault tolerance and resilience patterns for the JVM
+* lightweight, zero-dependency library for handling failures in Java 8+.
+* It works by wrapping executable logic with one or more resilience policies,
+  which can be combined and composed as needed.
+* Current policies include:
+  ```
+  Retry
+  CircuitBreaker
+  RateLimiter
+  Timeout
+  Fallback
+  ```
+* Current features include: 
+  ```
+  Async Execution         [[{architecture.async}]]
+  Event Listeners         [[{architecture.async.reactive}]]
+  Execution Context
+  Execution Cancellation
+  Standalone Execution
+  Strong Typing
+  Extension Points
+  ```
+[[enterprise_patterns}]]
+
+# QA: JDepend [[{qa.reporting,qa.versioning,security.auditing,DevOps.101]]
+<https://github.com/clarkware/jdepend>
+<https://htmlpreview.github.io/?https://github.com/clarkware/jdepend/blob/master/docs/JDepend.html>
+* JDepend traverses Java class and source file directories and
+   generates design-quality-metrics for each Java package in terms of
+  its extensibility, reusability, and maintainability to effectively
+  manage and control package dependencies.
+[[}]]
+
+# QA Non-Classified
 [[{PM.TODO]]
 ## Facebook Infer <https://fbinfer.com/> (Static analysis Java/C/...)
 * Static analysis tool for Java/C/C++/Objective-C code returning a list of potential bugs.  Example:
@@ -2548,3 +2585,11 @@ session management, logging etc.
 [[qa.testing.assertj}]]
 
 [[PM.TODO}]]
+
+## QA: Resilience4j [[{architecture.distributed,java_lang.functional,qa.error_control,PM.TODO]]
+* higher-order functions (decorators) to enhance any functional interface,
+  lambda expression or method reference with a Circuit Breaker, Rate
+  Limiter, Retry or Bulkhead.
+* more than one decorator on any functional interface, lambda or method ref
+  can be stacked.
+[[}]]

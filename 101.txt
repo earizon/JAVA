@@ -1,0 +1,1160 @@
+## Apropos
+* Content is versioned in git.  commits, issues and pull-requests welcome!
+  <https://www.github.com/earizon/JAVA>
+* This __"cheat-sheet with steroids"__ presents an always-growing set of
+  "TOP Java recipes" well ordered&amp;classified extracted from
+  * DZone
+  * InfoQ
+  * Redhat Developers
+  * Medium
+  * baeldung
+  * github
+  * Author's own experience in different projects.
+  * ...
+
+## External Links [[{]]
+* <https://openjdk.java.net/jeps/0> JAVA Enhancements proposals
+* <https://docs.oracle.com/javase/specs/> Lang & VM specs
+* <https://docs.oracle.com/javase/17/docs/api/>
+* <https://docs.oracle.com/javase/11/docs/api/>
+* <https://docs.oracle.com/javase/8/docs/api/>
+* <https://adoptopenjdk.net/>
+* <https://hg.openjdk.java.net/jdk/jdk> OpenJDK@Mercurial
+* <https://wiki.openjdk.java.net/>
+* <https://openjdk.java.net/>
+* <https://en.wikipedia.org/wiki/List_of_Java_virtual_machines>
+* Eclipe Tools for [QA]
+  * <https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-improve_code_quality.htm&cp=1_3_9>
+* <https://github.com/douglascraigschmidt/LiveLessons> Douglas Craigs Schmidt Java Lessons
+* <https://java-source.net/> Production-ready software developed with Java, from DDBBs, caches, servers, ...
+
+## Bibliography
+
+- Effective Java 3rd Edition, Joshua Bloch (Must READ)
+  ```
+  ISBN-10: 0134685997
+  ISBN-13: 978-0134685991
+  ```
+- Java Performance: The Definitive Guide, by Scott Oaks
+  ```
+  ISBN-10: 1449358454
+  ISBN-13: 978-1449358457
+  ```
+[[}]]
+
+# JAVA LANGUAGE 101 [[{java_lang.101]]
+
+## Hello World
+  ```
+  | import static java.lang.System.out;
+  | public class HelloWorld {
+  |   public static void main(String[] args){
+  |     if ( args == null || args.length != 1 ){
+  |        throw RuntimeException("Try again!");
+  |     }
+  |     out.printf("Hello %s !!", args[0]);
+  |   }
+  | }
+  |                                   BEFORE JAVA 11:
+  | $ javac ./HelloUniverse.java      <·· compile (./HelloUniverse.class generated)
+  | $ java  ./HelloUniverse  arg1     <·· start up JVM, load class, execute code
+  | $ java  SomeClass.class           <·· Java launcher 1.0+
+  | $ java  SomeLib.jar               <·· Java launcher 1.0+: Run    JAR's main class
+  | $ java  SomeLib.jar               <·· Java launcher 9.0+: Run Module's main class
+  |
+  |                                   AFTER JAVA 11 (JEP 330)
+  | $ java HelloUniverse.java arg1    <·· compile, start up JVM, load class, execute code
+  |   --add-modules=ALL-DEFAULT           (no *.class generated on disk). Options include:
+  |   └─────────┬─────────────┘           --source ${version}: Mandatory if '.java' extension
+  |             ·                             is missing or to set a specific version
+  |             ·
+  |             └···················· By default compiled code is part of an 'unnamed' module.
+  |                                   This provides access to ALL standard modules in JDK.
+  |
+  | $ cat script.java
+  | #!/path/to/java --source $version  <·· UNIX scripting using "Shebang notation"
+  | public class HelloUniverse{
+  |   ...
+  | }
+  ```
+
+## JBang: Simplified Java [[{]]
+* [Official Doc](https://www.jbang.dev/documentation/guide/latest/debugging.html)
+* <https://www.youtube.com/watch?v=X4x2jM3Y0uE>
+
+* Install JDKs:
+  ```
+  $ jbang jdk list         <·· List installed JDKs
+  $ jbang jdk install 17   <·· Install JDK 17
+  $ jbang jdk home         <·· Show installation path
+  ```
+ 
+  Daily ussage:
+  ```
+  | $ cat helloworld.java     <··· Exec like:
+  |                                $ jbang helloworld.java
+  |                                $ jbang --jfr helloworld.java    # Run with Flight Recorder
+  |                                $ jbang --debug helloworld.java  # Suspend execution and
+  |                                                                 # wait until you connect
+  |                                                                   # a debugger
+  |
+  | ///usr/bin/env jbang "$0" "$@" ; exit $?
+  |
+  | //DEPS ch.qos.reload4j:reload4j:1.2.19     <·· gradle style locator to compiled repository
+  | //DEPS com.github.jbangdev:jbang:v1.2.3    <·· Git link like dependency "a la Go".
+  | //DEPS my.comp.proj:mypck:${VER}           <·· OS Enviromental variables allowed
+  |
+  | //JAVA 17+                                 <·· Force Java 17 or higher.
+  |                                                           //JAVA 17 <·· Force 17 version
+  |
+  | //REPOS id=https://maven.google.com/       <·· Add custom repository
+  |
+  | //FILES resource.properties                <·· Add resource
+  | //FILES META-INF/index.html=index.html     <·· Add resource "mounted" on META-INFO/resource/index.html
+  |
+  | class helloworld {
+  |   public static void main(String[] args) {
+  |     if(args.length==0) {
+  |         System.out.println("Hello World!");
+  |     } else {
+  |         System.out.println("Hello " + args[0]);
+  |     }
+  |   }
+  | }
+  ```
+[[}]]
+
+## Strings  [[{java_lang.strings,java_lang.101,PM.WiP]]
+  ```
+  | final String
+  |    output1 = String .format ("%s = %d", "joe", 35), // <·· Format string
+  |    output2 = String .format ("%4d",100);
+  | See also notes about "Format String Checker"
+  |
+  | final String[] args = ...
+  | final String s1 = String.join(List.of(args),"'" )); // ← alt 1: String array to CSV
+  | final String s1 = String.join(","          ,args)); // ← alt 2: String array to CSV
+  |
+  | s1.isBlank()                  <·· Java 11+, true for Empty | only-white-spaces
+  | s1.lines()                    <·· Java 11+, returns string[] collecting all substrings split by lines.
+  |                                   System.out.println(
+  |                                      "JD\nJD\nJD".str.lines().collect(Collectors.toList())
+  |                                   );
+  | s1.strip()                    <·· Java 11+, like trim() but unicode-aware
+  | s1.stripLeading()
+  | s1.stripTrailing()
+  | s1.repeat(int n)              <·· Java 11+: repeats string  n times.
+  |
+  | final String textBlock = """  <·· Java 15+: https://openjdk.org/jeps/378
+  |                                   Rules:
+  |                                   - \r\n is converted to \n.
+  |      line1                        - Indent (spaces, tabs) are removed by default.
+  |      line2                        - Traling whitespace is removed by default.
+  |      line3    \s                  <·· \s: Avoid removing trailing white-spaces
+  | |1234                             <·· from here on, indent with 4 white-spaces.
+  |      """
+  |
+  | java.util.StringJoiner  (1.8+) Concatenate Strings
+  | https://docs.oracle.com/javase/8/docs/api/java/util/StringJoiner.html
+  ```
+- Ex: `"[George:Sally:Fred]"` may be constructed as follows:
+  ```
+  | final StringJoiner sj = new StringJoiner(
+  |            ":" /* Delimiter */,
+  |            "[" /* prefix */,
+  |            "]" /* sufix */ );
+  | sj.add("George").add("Sally").add("Fred");
+  | String desiredString = sj.toString();
+  |
+  | Collectors.joining(CharSequence):
+  |
+  | List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
+  | String commaSeparatedNumbers = numbers.stream()
+  |     .map(i -> i.toString())
+  |     .collect( Collectors.joining(", ") );
+  ```
+
+## String vs StringBuffer vs StringBuilder [[{101]]
+
+* String is inmutable. Safests (and slowest alternative).
+* StringBuffer is much faster when concatenating strings at runtime.
+  (See also java.io.StringWriter: 'character stream' collecting output to StringBuffer).
+* StringBuffer   is thread-safe.
+* StringBuilder  is NOT thread-safe but is still faster than StringBuffer. 
+  NOTE: Most of the time, string building is single-thread and so Stringbuilder is
+  the fastest while still being safe.
+  ```
+  | for (int i = 0; i < 0 ; i++)
+  |   { str01 = str01 + ""; } // ← 32410 millisec
+  | for (int i = 0; i < 0 ; i++)
+  |   { sbuffer.append(""); } // ←  2241 millisec
+  | for (int i = 0; i < 0 ; i++)
+  |   { sbuildr.append(""); } // ←   753 millisec  ~3.0x faster!!!
+  ```
+* For complex string manipulation `String` must be seen as just an inmutable
+  view of StringBuilder and StringBuffer instances.
+[[101}]]
+
+### forcing String pool reuse [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
+
+- Strings are immutable and stored on the heap.
+- Java manages a string pool in memory, reusing strings whenever possible.
+  ```
+  | String string01 = "297",                       // <·· string01 == string02 : true
+  |        string02 = "297",                       //     string01 == string03 : false
+  |        string03 = new Integer(297).toString(), //     string01 == string04 : true
+  |        string04 = new Integer(297).toString()  //     string05 == string01 : false
+  |                   .intern() ; // ¹  
+  |        string05 = new String("297")
+  |
+  |  ¹: Pool reuse does not work for dynamically created strings.
+  |     If we consider that the computed String will be used quite often,
+  |     we can force the JVM to add it to the string pool by adding the
+  |     .intern() method at the end of computed string.
+  ```
+[[performance.memory}]]
+[[java_lang.strings}]]
+
+## Loading a resource: [[{]]
+ ```
+| URL u = this.getClass().getResource("foo.txt");      // Alt 1.1. Attemp to load foo.txt relative to "this" package
+| InputStream i = this.getClass().                        and with class-loader of "this". Use "/x/y/foo.txt" for
+|                        .getResourceAsStream("foo.txt")  <·· Fetch as stream.
+|
+| Thread.currentThread()                          // Alt 2.  Use context-class-loader. It will NOT resolve
+|    .getContextClassLoader()                                the name according to any package (it must be absolutely referenced)
+|    .getResource("foo.txt");
+|
+| System.class.getResource(name);                 // Alt 3.  Use system-class-loader. It will NOT resolve
+|                                                            the name according to any package.
+|                                                            you won't be able to put anything into the java.lang package .
+```
+[[}]]
+
+[[{scalability.101,jvm.101,java_lang.101.best_patterns]]
+## Optimization Tips
+
+- To minimize the memory footprint, limit scope-of-variables as much as possible.
+- Explicitly refer to null obsolete references making them eligible for GC.
+- Avoid finalizers. They slow down the process and they do not guarantee anything.
+  Prefer phantom references for cleanup work.
+- Do not use strong references where weak or soft references apply.
+  The most common memory pitfalls are caching scenarios,when data
+  is held in memory even if it might not be needed.
+- Explicitly specify heap size for the JVM when running the application:
+  * allocate a reasonable initial and maximum amount of memory for the heap.
+    ```
+    | Initial heap size -Xms512m   – set initial heap     size to  512 megabytes
+    | Maximum heap size -Xmx1024m  – set maximum heap     size to 1024 megabytes
+    | Thread stack size -Xss128m   – set thread stack     size to  128 megabytes
+    | Young genera.size -Xmn256m   – set young generation size to  256 megabytes
+    ```
+  * REF: <https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_source=www.oficina24x7.com>
+    ```
+   |- Initial Heap Size: -Xms: >= 1/64th of physical memory || reasonable minimum.
+   |- Maximum Heap Size: -XmX: <= 1/4 th of physical memory || 1GB.
+   |                     ^^^^^
+   |              - Set -Xms equal to -Xmx to prevent pauses caused by heap expansion
+   |              ☞  Setting Xms/Xmx increase GC predictability
+    ```
+  * JVM settings are recommended for:
+    ```
+    | PRODUCTION TIER       REPLICA SERVERS           STANDALONE
+    | -server               -server                   -server
+    | -Xms24G -Xmx24G        -Xms4G -Xmx4G            -Xms32G -Xmx32G
+    | └───────────────────────────┬─────────────────────────────────┘
+    |                   PRODUCTION/REPLICA/STANDALONE:
+    |
+    |                   -XX:PermSize=512m
+    |                   -XX:+UseG1GC
+    |                   -XX:MaxGCPauseMillis=200     ← soft goal (JVM) best effort
+    |                   -XX:ParallelGCThreads=20     ← value depends on hosting hardware
+    |                   -XX:ConcGCThreads=5          ← value depends on hosting hardware
+    |                   -XX:InitiatingHeapOccupancyPercent=70 ← Use 0 to force constant
+    |                                                           GC cycles
+    |
+    |    WARN, WARN, WARN:
+    |    There are 600+ arguments that you can pass to JVM to fine-tune GC and memory
+    |    If you include other aspects, the number of JVM arguments will easily cross
+    |    1000+.
+    |    (Or why Data Scientist end up using Python)
+    ```
+* If app OutOfMemoryError-crashes, extra info about memory leak can be obtained through
+    ```
+    | –XX:HeapDumpOnOutOfMemory , creating a heap dump file
+    ```
+* Use `-verbose:gc`  to get the garbage collection output.
+* See also [Eclipse Memory Analyzer Manual:
+  <https://help.eclipse.org/2019-06/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fwelcome.html&cp=62>
+
+### Commom Memory Leaks pitfalls
+
+* [REF@jiderhamn.se](http://java.jiderhamn.se/2012/02/26/classloader-leaks-v-common-mistakes-and-known-offenders/)
+* Logging frameworks (Apache Commons Logging/log4j/java.util.logging/...)
+  trigger classloader leaks if   logging framework is supplied outside of
+  the web application, such as within the Application Server.
+  *  Add next cleanup code to ServletContextListener :
+     ```
+     | org.apache.commons.logging.LogFactory.                    // Alt.1
+     |   release(Thread.currentThread().getContextClassLoader());
+     |
+     | org.apache.commons.logging.LogFactory.release(            // Alt.2
+     |     this.getClass().getClassLoader()  );
+     ```
+[[scalability.101}]]
+
+[[{java_lang.101.modules]]
+## Module JDK 9+
+
+* foundational JDK APIs of Java SE
+* [REF@Oracle.com](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html)
+* The JDK implementation of this module provides an implementation of the jrt file system provider to
+  enumerate and read the class and resource files in a run-time image.
+* The jrt file system can be created by calling `FileSystems.newFileSystem(URI.create("jrt:/"))`
+
+### Packages <!-- { -->
+ ```
+ | java.io 	       Provides for system input and output through data streams,
+ |                       serialization and file system.
+ | java.lang 	       core classes to the design of the Java programming language.
+ | java.lang.annotation  Library support for annotations.
+ | java.lang.invoke      low-level primitives for interacting with the JVM.
+ | java.lang.module      Classes to support module descriptors and creating configurations
+ |                       of modules by means of resolution and service binding.
+ | java.lang.ref 	       Provides reference-object classes, with a limited degree of
+ |                       interaction with the garbage collector.
+ | java.lang.reflect     classes and interfaces for obtaining reflective information
+ | java.math 	       BigInteger and BigDecimal
+ | java.net 	       Classes for implementing networking applications.
+ | java.net.spi 	       Service-provider classes for the java.net package.
+ | java.nio 	       Defines buffers: containers for data, and an overview of the
+ |                       other NIO packages.
+ | java.nio.channels     Defines channels, representing connections to entities capable
+ |                       of performing I/O operations, such as files and sockets;
+ |                       selectors, for multiplexed, non-blocking I/O operations.
+ | java.nio.channels.spi Service-provider classes for the java.nio.channels package.
+ | java.nio.charset      charsets, decoders, and encoders, for translating bytes <··> Unicode
+ | java.nio.charset.spi  Service-provider classes for the java.nio.charset package.
+ | java.nio.file 	       interfaces and classes for the JVM to access files, attributes and FS.
+ | java.nio.file.attribute Interfaces and classes providing access to file+FS attributes.
+ | java.nio.file.spi     Service-provider classes for the java.nio.file package.
+ | java.security 	       Classes+interfaces for the security framework.
+ | java.security.acl     deprecated.
+ | java.security.cert    Classes+interfaces for parsing and managing certificates,
+ |                       certificate revocation lists (CRLs), and certification paths.
+ | java.security.interfaces  Interfaces for generating RSA (Rivest, Shamir and Adleman
+ |                       AsymmetricCipher algorithm) keys as defined in the RSA Laboratory
+ |                       Technical Note PKCS#1, and DSA (Digital Signature Algorithm) keys
+ |                       as defined in NIST's FIPS-186.
+ | java.security.spec    Classes+interfaces for key specifications and algorithm parameter
+ |                       specifications.
+ | java.text 	       library to manage text, dates, numbers, and messages in a manner
+ |                       independent of natural languages.
+ | java.text.spi 	       Service provider classes for the classes in the java.text package.
+ | java.time 	       Main API for dates, times, instants, and durations.
+ | java.time.chrono      Generic API for calendar systems other than the default ISO.
+ | java.time.format      Provides classes to print and parse dates and times.
+ | java.time.temporal    Access to date and time using fields and units, and date time adjusters.
+ | java.time.zone        Support for time-zones and their rules.
+ | java.util 	       Contains the collections framework, i18n support, a service loader,
+ |                       properties, random number generation, string parsing and scanning classes,
+ |                       base64 encoding and decoding, a bit array, and several miscellaneous
+ |                       utility classes.
+ | java.util.concurrent Utility classes commonly useful in concurrent programming.
+ | java.util.concurrent.atomic  Small toolkit of classes that support lock-free thread-safe
+ |                       programming on single variables.
+ | java.util.concurrent.locks Interfaces and classes providing a framework for locking
+ |                       and waiting for conditions that is distinct from built-in
+ |                       synchronization and monitors.
+ | java.util.function    Functional interfaces for lambda expressions and method references.
+ | java.util.jar 	       lib. for reading and writing the JAR (Java ARchive) file format,
+ | java.util.regex       lib for matching character sequences against patterns specified by
+ |                       regular expressions.
+ | java.util.spi 	       Service provider classes for the classes in the java.util package.
+ | java.util.stream      Support for functional-style operations on streams of elements, such
+ |                       as map-reduce transformations on collections.
+ | java.util.zip 	       lib for reading and writing ZIP and GZIP file formats.
+ | javax.crypto 	       lib for cryptographic operations.
+ | javax.crypto.interfaces interfaces for Diffie-Hellman keys as defined in RSA Laboratories' PKCS #3.
+ | javax.crypto.spec     Classes and interfaces for key specifications and algorithm parameter specifications.
+ | javax.net 	       Provides classes for networking applications.
+ | javax.net.ssl 	       Provides classes for the secure socket package.
+ | javax.security.auth   Framework for authentication and authorization.
+ | javax.security.auth.callback classes necessary for services to interact with applications in order
+ |                       to retrieve information (authentication data including usernames or passwords,
+ |                       for example) or to display information (error and warning messages, for example).
+ | javax.security.auth.login Pluggable authentication framework.
+ | javax.security.auth.spi Interface to be used for implementing pluggable authentication modules.
+ | javax.security.auth.x500 classes that should be used to store X500 Principal and X500 Private
+ |                       Credentials in a Subject.
+ | javax.security.cert   classes for public key certificates.
+ ```
+<!-- } -->
+
+[[java_lang.101.modules}]]
+
+## JAVA DONT's [[{java_lang.101.donts,scalability.101,qa.101,PM.WiP]]
+
+* Avoid Nulls, prefer final:
+  ```
+  | WRONG:
+  | ========================
+  | SomeClass instance = null;
+  | if (condition1) {   ← Initialization depends on runtime checks (condition1/2/...).
+  |     instance = val1;   We can forget to add some condition wrongly leaving
+  | }                     instance to a false null. (Probably in a later
+  | if (condition2) {   ← interaction, weeks or months after first implementatio
+  |     instance = val2;   when instance is not fresh in our memory)
+  | }
+  |                     ← At this point we forgot to check for condition3, or maybe
+  |                       condition3 didn't apply at code writing, but appear later on
+  |                       after some unrelated change.
+  | ...
+  | serviceX.functionN(..., instance, ...) ← At this point instance can be undefined
+  |
+  | RIGHT:
+  | ========================
+  | final SomeClass instance;  ← "final" keywords force compiler to check every possible execution
+  | if (condition1) {     condition and fail to compile is some branch does not initiliaze
+  |     instance = val1;   instance properly.
+  | }                     - Final values are safer (to and developer mistakes concurent code).
+  | if (condition2) {
+  |     instance = val2;   - Final values makes JIT happier.
+  | }
+  | ...
+  | servX.funcN(instance) ← At this point compiler will abort if there is some
+  |                         execution branch where instance rest un-initialized.
+  ```
+
+* See also:
+  * Inmmutable Objects are faster (and safer)
+  <https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html>
+  (A final variable is the simplest example of an immutable object)
+* Catch blocks must rethrow if the exception can not be fixed on the catch block.
+  HINT: 99% of times it can NOT be fixed on the catch block.
+  ```
+  | WRONG                        RIGHT
+  | ========================     ========================
+  | try { ...                    try { ...
+  |   // try to update data        // try to update data
+  | } catch (IOException e) {    } catch (IOException e) {
+  |     e.printStackTrace();         throw new RuntimeException("Data couldn't be updated", e);
+  | }                            }
+  ```
+   The correct "right" code looks weaker, since the exception is propagated ... <br/>
+  and that's a good thing, because the error has not been fixed, but some other piece
+  of code (or maybe final user or system operator) will be notified.<br/>
+    In the "wrong" code **the original bug is just hidden and unreported**.<br/>
+   This will trigger undefined behaviour, null pointers, nightmares and developer's
+   non-paid extra hours.<br/>
+   This way is of thinking can look counter-intuitive to newcommers, but that's how
+  real world works. errors are ... errors, and they can not be fixed, they just can be
+  reported:<br/>
+   In the example above, an IOException is always caused by a full disk, a hardware error,
+  a network error, a bug in the OS, ... There is nothing our code can do other than
+  report back to the IT department to fix it.<br/>
+  Erlang is a language designed for 99.99999% uptime systems,
+  [makes it clear](https://amplab.github.io/cs262a-fall2016/notes/18-Go-and-Erlang.pdf).
+  * **Crash early**:
+    * Let some other process do the error recovery.
+    * Do not program defensively.
+    * **If you cannot handle the error, don’t try to recover**
+* **Avoid Strings as much as possible**. You are converting an strongly typed
+  language in a weak runtime one.
+  If forced to use strings, try to protect them with (Checker framework) `@Fenum("country")`
+  More info [here](./QA_and_testing.txt#Checkerframework).
+* **Avoid huge interfaces**. Prefer small, decoupled ones, with few exposed methods
+  decoupled interfaces related to security from storage from cache from ...
+  (This is unfortunatelly not the case if standard interfaces designed in the
+  original Java libraries, just don't imitate wrong design).
+* Avoid interfaces that will ever be implemented by a single class, specially if such
+  class is a data-like one with all inmutable (final) fields. Data classes can be
+* **Avoid checked exceptions**, specially avoid them to signal the non happy path in
+  business operation. As a thumb of rule, each time a checked exception is found
+  convert to a runtime (subclass) exception.  More info at:
+  * <https://phauer.com/2015/checked-exceptions-are-evil/>
+  * <https://dzone.com/articles/introduction-to-pragmatic-functional-java>
+[[java_lang.101.donts}]]
+
+## JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]
+
+- (compiler) checked vs unchecked (Error, RuntimeException and their subclasses).
+- Checked: All except Error, RuntimeException and their subclasses
+- Error: Exceptional conditions external to the application.
+  ```
+  | java.lang.Object
+  | │
+  | └─ java.lang.Throwable   ← Only instances of this (sub/)class are thrown
+  |    │                       in JVM, can be thrown in throw statement or can
+  |    │                       be an argument in catch clause.
+  |    │
+  |    ├─ java.lang.Exception
+  |    │  │
+  |    │  ├─  java.lang.RuntimeException (nonfchecked) <·· Most common error raised by
+  |    │  │                                                developer code
+  |    │  │
+  |    │  └─  java.lang.Exception        (    checked) <·· Don't use . checked exceptions end up
+  |    │                                                   being converted to Runtime Excep.
+  |    │                                                   and bloats the code.
+  |    │
+  |    └─ java.lang.Error                (non-checked) <·· serious problems that app code
+  |                                                        should not try to catch.
+  |                                                        ThreadDeath error, though a "normal" condition,
+  |                                                        is also a subclass of Error because most apps
+  |                                                        should not try to catch it.
+  ```
+[[java_lang.101.exceptions}]]
+
+## "Optional": Avoid Nulls [[{QA.BILLION_DOLAR_MISTAKE]]
+
+- [REF@zeroturnaround.com](http://files.zeroturnaround.com/pdf/zt_java8_best_practices.pdf)
+  ```
+  | import java.util.Optional;
+  | Optional<Sgtring> optional = Optional.ofNullable(a); // <·· Create an optional
+  | optional.map    ( s -> "RebelLabs:" + s);            // <·· Process the optional
+  | optional.flatMap( s -> Optional.ofNullable(s));      // <·· map a function that returns Optional
+  | optional.ifPresent(System.out::println);             // <·· run if the value is ther
+  | 
+  | optional.get();                                      // <·· Alt 1: get the value or throw an exception
+  | optional.orElse("Hello world!");                     // <·· Alt 2: get the value or default
+  | 
+  | optional.filter( s -> s.startsWith("RebelLabs"));    // <·· return empty Optional if not satisfied
+  ```
+- A much better alternative for values not known at compile time, but just
+  at some **future time at runtime** is to initialize the variable with some
+  arbitrary "future" value and provide for the possibility of a "future" value,
+  a set of "error values" (timeouts, I/O errors) and final valid "values".
+  This simplifies debugging in complex software, speed up execution and
+  protects against some sort of race conditions.
+
+[[}]]
+
+## <<AutoClosable>> (1.7+) [[{jvm.101.autoclosable,IO.101,JVM.GC,qa.101]]
+
+- Reminder: The java garbage collector can not automatically clean any other
+  resource appart from memory (objects not referenced anywhere else in code).
+   All resources related to I/O (virtual/physical devices) must be closed
+  programatically, specially those that are related to remote machines like
+  sockets, http connections, database connections, ...  since neither the
+  compiler, not the runtime can take control of such (non-controlled)
+  devices/resources. Under the hood, closing such resource, usually means
+  sending a network message and wait for an ACK response or a timeout.
+- `<<java.lang.AutoClosable>>` simplifies resource cleaning.
+  When a class representing an external resource implement this
+  interface and is used inside a try-with-resources , its close
+  method will be invoqued automatically (the compiler will add
+  the required code).
+- Most core java I/O classes already implement this interface.  Ex:
+  ```
+  | public class MyClassWithExternalResources
+  | implements  java.lang.AutoCloseable , ... {
+  |    private final MyExternalEventListener listener;
+  |    private final MyIODevice device;
+  |    private final MyHTTPConnection connection;
+  |    ...
+  |    public void close() {
+  |        listener  .close();
+  |        device    .close();
+  |        connection.close();
+  |    }
+  |    ...
+  | }
+  |
+  | public class SomeLongRunningClass {
+  |   ...
+  |   void useManyResourcesManyTimes(String path)  {
+  |
+  |     for (int repeat=0; repeat<100; repeat++) {
+  |       try (MyClassWithExternalResources i =
+  |             new MyClassWithExternalResources(...))  {
+  |             ...
+  |       } catch( ... ) {
+  |         //
+  |       }
+  |
+  |       // At this point all resouces have been closed.
+  |       // If a runtime exception exits the function the
+  |       // resource is also closed.
+  |     }
+  |   }
+  | }
+  ```
+  [[jvm.101.autoclosable}]]
+
+## Lombok  [[{QA.inmutability,PM.low_code]]
+
+* REF: <https://projectlombok.org/features/>
+
+  ```
+  | compileOnly 'org.projectlombok:lombok'
+  | runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+  | 
+  | @Data                   : @ToString+@EqualsAndHashCode+@Getter(on all fields)+@Setter(on all non-final fields)+@RequiredArgsConstructor!
+  | @Value                  : Immutable instances!!!. (@Data + inmutability once constructed)
+  |                           @Value == @ToString + @EqualsAndHashCode + @AllArgsConstructor
+  |                                     + @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE) + @Getter.
+  |                           Not to be confused with Spring @Value to configure a member from Env.Var, yaml or properties.
+  | Example:
+  |
+  | import lombok.AccessLevel;
+  | import lombok.experimental.NonFinal;
+  | import lombok.experimental.Value;
+  | import lombok.experimental.With;
+  | import lombok.ToString;
+  | 
+  | @Value public class ValueExample {
+  |   String name;                                       <·· all fields are made private and final by default.
+  |                                                          with (default) constructor covering all argument 
+  |   @With(AccessLevel.PACKAGE) @NonFinal int age;      <·· Clones new object but with one changed field.
+  |   @With(AccessLevel.PACKAGE) @NonFinal int age;           ValueExample withAge(int age) {
+  |                                                             return this.age == age 
+  |                                                                ? this 
+  |                                                                : new ValueExample(name, age, score, tags);
+  |                                                           }
+  |   double score;
+  |   protected String[] tags;
+  |                                     
+  |   @ToString(includeFieldNames=true)
+  |   @Value(staticConstructor="of")
+  |   public static class Exercise<T> {
+  |     String name;
+  |     T value;
+  |   }
+  | }
+  | 
+  | 
+  | @val: final   Hassle-free local variables.
+  | @var: Mutably Hassle-free local variables.
+  | @NonNull: Runtime check (vs Kotlin compile safe)
+  | @Cleanup:     Hassle-free close() methods safely.
+  | @Getter/@Setter/@Getter(lazy=true): "Macros" for getters and setters.
+  | 
+  | @ToString: "Macro"
+  | @EqualsAndHashCode: "Macro" for equality.
+  | 
+  | @NoArgsConstructor      : Macro for no argument constructo., 
+  | @RequiredArgsConstructor: one argument per final / non-nullfield.
+  | @AllArgsConstructor     : one argument for every field.
+  | @Builder
+  | 
+  | @SneakyThrows:  boldly throw checked exceptions where no one has thrown them before!
+  | @Synchronized: synchronized done right: Don't expose your locks.
+  | @Locked      : Pop it and lock it! ReentrantLock, now with less hassle.
+  | 
+  | @Log         : 
+```
+[[QA.inmutability}]]
+
+[[{java_lang.records,java_lang.data_structure,QA.101]]
+
+## RECORDS!!! v15+
+
+* Java classes have a bloated syntax when we just want to declare data-like
+  objects. Objects whose only purpose is to "transport" data in an structured
+  way.  In that sense, even the "old" C from the 70's provided a much better
+  support until the appearence of `record` in Java 15.
+
+* `record` provides a non-verbose inmutable way to declare inmutable classes.
+  ```
+  | record Person (String name, int age) { } <·· Alt 1: short writing
+  |
+  | record Person (String name, int age) {   <·· Alt 2: Validating constructor
+  |   Person {                                   ←  (optional) constructor: can NOT compute state,
+  |     if (age < 0)                                                        only validate or throw
+  |       throw new IllegalArgumentException("Too young");
+  |   }
+  | }
+  | 
+  | var john = new Person ("john", 76);
+  ```
+
+### `record` Basic Rules
+- can NOT have any additional (internally computed) private or public instance
+  fields.
+- can NOT extend classes.
+- are ALWAYS FINAL (cannot be extended).
+
+- **WARN:** Until the release of Hibernate 6, records could NOT be mapped to
+  "anything" in JPA/Hibernate. The could only be used as DTO projections in
+  queries. In Hibernate 6 they CAN'T be used to model entity classes but can
+  be used as embeddables.
+- **TODO**: Can they be used in MyBatis?
+[[}]]
+
+[[{java_lang.101.annotations,qa]]
+## Annotations
+<http://docs.oracle.com/javase/tutorial/java/annotations/>
+
+-  predefined annotation types in java.lang include:
+  ```
+  - @Deprecated
+  - @Override
+  - @SuppressWarnings
+  - @SafeVarargs (SDK 1.? +) applied to a method/constructor,
+                             asserts that the code does not perform
+                             potentially unsafe operations
+                             on its varargs parameter.
+                             removing  related warnings
+  ```
+
+- Annotation types are a form of interface. They are declared like:
+  ```
+  | @Documented
+  | @interface ClassPreamble {
+  |    String   author        ()              ;
+  |    String   date          ()              ;
+  |    int      currentRev    () default 1    ;
+  |    String   lastModified  () default "N/A";
+  |    String   lastModifiedBy() default "N/A";
+  |    String[] reviewers     ()              ;
+  | }
+  ```
+  and ussed like:
+  ```
+  | @ClassPreamble (
+  |    author         = "John Doe"      ,
+  |    date           = "3/17/2002"     ,
+  |    currentRev     = 6               ,
+  |    lastModified   = "4/12/2004"     ,
+  |    lastModifiedBy = "Jane Doe"      ,
+  |    reviewers      = {"Alice", "Bob"}
+  | )
+  | public class Generation3List extends Generation2List {
+  |     // ...
+  | }
+  ```
+### Annotation examples:
+  ```
+  | new @Interned MyObject();              // <·· Class instance creation expression
+  |
+  | myString = (@NonNull String) str;      // <·· Type cast (1.8+)
+  |
+  | class UnmodifiableList<T> implements   // <·· implements clause
+  |       @Readonly List<@Readonly T>
+  |       { ... }
+  |
+  | void monitorTemperature() throws       // <·· throws exception declaration
+  | @Critical TemperatureException { ... }
+  |
+  | @SuppressWarnings(value = "unchecked") ← Predefined standard annotations
+  | void myMethod() { ... }
+  | @SuppressWarnings({"unchecked", "deprecation"})
+  | void myMethod() { ... }
+  ```
+[[}]]
+
+## Meta-annotattons [[{java_lang.101,qa]]
+
+- Meta-annotattons == Annotations applying to other annotations.
+
+- Meta-annotattons `@Retention`:
+  ```
+  | RetentionPolicy.SOURCE    <·· retained only in source (ignored by the compiler)
+  | RetentionPolicy.CLASS     <·· retained by compiler    (ignored by the JVM)
+  | RetentionPolicy.RUNTIME   <·· retained by JVM, can be queried at Runtime
+  | 
+  | @Documented                       @Repeatable
+  | - indicates that whenever the     - (1.8+)
+  |   specified annotation is used    - targeted annotation can be applied
+  |   those elements should be          more than once to the same
+  |   documented using the Javadoc      declaration or type use.
+  |   tool. (By default, annotations    Ex:
+  |   are not included in Javadoc.)     @Author(name = "Jane Doe")
+  |                                     @Author(name = "John Smith")
+  |                                     class MyClass { ... }
+  | 
+  | @Target                            @Inherited
+  | (field,type,class..)              - targeted annotation type can be inherited
+  | - restrict targeted java-language   from the super class. (false by default.)
+  |  elements where the annotation      When the user queries the annotation type
+  |  can be applied:                    and the class has no annotation for this
+  |  - ElementType.ANNOTATION_TYPE      type, the class'superclass is queried for
+  |  - ElementType.CONSTRUCTOR          the annotation type.
+  |  - ElementType.FIELD
+  |  - ElementType.LOCAL_VARIABLE
+  |  - ElementType.METHOD
+  |  - ElementType.PACKAGE
+  |  - ElementType.PARAMETER
+  |  - ElementType.TYPE (1.8+)
+  ```
+[[}]]
+
+[[{java_lang.date_time,java_lang.101,concurrency]]
+## `java.time.*` (1.8+)
+* JDK 1.8+, "deprecates" `java.util.(Date|Calendar|TimeZome)`
+  New classes are IMMUTABLE and THREAD-SAFE.
+
+### Ussage:
+  ```
+  | import java.time.Instant;
+  | import java.time.ZonedDateTime;
+  | import java.time.ZoneId;
+  | import java.util.concurrent.TimeUnit;
+  | ...
+  | Instant   timestamp  =   Instant .now();              // Create from system clock
+  |           timestamp .plus(Duration.ofSeconds(10));    // Add 10 seconds
+  ```
+* Instant <··> String:
+  ```
+  | │  Instant  to String                 │   Instant  from String
+  | │(format with time-zone)              │ (parse string)
+  | ├─────────────────────────────────────┼───────────────────────────────────────────────────
+  | │  ZonedDateTime  zdt1 =              │
+  | │       ZonedDateTime .of             │ String sExpiresAt="2013-05-30T23:38:23.085Z";
+  | │       (                             │   ZonedDateTime zdt2 =   ZonedDateTime .parse(sExpiresAt);
+  | │         2017, 6, 30           ,     │
+  | │         1, 2, 3               ,     │   Instant i1 =   Instant .from(zdt1),
+  | │         (int) TimeUnit.             │           i2 =   Instant .from(zdt2);
+  | │               MILLISECONDS.         │
+  | │               toNanos(100),         │
+  | │         ZoneId.of("Europe/Paris")   │
+  | │       );          ^^^               │
+  | │     Ex: "Z","-02:00","Asia/Tokyo",..│
+  | │String s1 = zdt1.toString();         │
+  |         ^^
+  | 2017-06-30T01:02:03.100+02:00[Europe/Madrid]
+  ```
+
+* `java.text.DateFormat` API summary:
+  ```
+  | java.text.DateFormat:
+  | ---------------------
+  | FIELDS ───────────────────────────────────
+  | protected Calendar         calendar       instance used for calculating date-time fields & instant-of-time
+  | protected NumberFormat     numberFormat   formatter used to format numbers in dates and times.
+  | 
+  | STYLE PATTERN CONSTANTS ─────────────
+  | DEFAULT   SHORT     MEDIUM    LONG      FULL
+  | 
+  | ALIGNMENT CONSTANTS ────────────  
+  | AM_PM_FIELD                   HOUR_OF_DAY0_FIELD    MONTH_FIELD
+  | DATE_FIELD                    HOUR_OF_DAY1_FIELD    SECOND_FIELD
+  | DAY_OF_WEEK_FIELD             HOUR0_FIELD           TIMEZONE_FIELD
+  | DAY_OF_WEEK_IN_MONTH_FIELD    HOUR1_FIELD           WEEK_OF_MONTH_FIELD
+  | DAY_OF_YEAR_FIELD             MILLISECOND_FIELD     WEEK_OF_YEAR_FIELD
+  | ERA_FIELD                     MINUTE_FIELD          YEAR_FIELD
+  | 
+  | date  (none)           DateFormat.getDateInstance(DateFormat.DEFAULT, getLocale())
+  |       short            DateFormat.getDateInstance(DateFormat.SHORT, getLocale())
+  |       medium           DateFormat.getDateInstance(DateFormat.DEFAULT, getLocale())
+  |       long             DateFormat.getDateInstance(DateFormat.LONG, getLocale())
+  |       full             DateFormat.getDateInstance(DateFormat.FULL, getLocale())
+  |       SubformatPattern new SimpleDateFormat(subformatPattern, getLocale())
+  | 
+  | time  (none)           DateFormat.getTimeInstance(DateFormat.DEFAULT, getLocale())
+  |       short            DateFormat.getTimeInstance(DateFormat.SHORT, getLocale())
+  |       medium           DateFormat.getTimeInstance(DateFormat.DEFAULT, getLocale())
+  |       long             DateFormat.getTimeInstance(DateFormat.LONG, getLocale())
+  |       full             DateFormat.getTimeInstance(DateFormat.FULL, getLocale())
+  |       SubformatPattern new SimpleDateFormat(subformatPattern, getLocale())
+  | java.text.SimpleDateFormat  ───────────────────────────────────────────────────
+  | (inherits from java.text.DateFormat)
+  | **WARN:** Date formats are not synchronized.
+  |           It is recommended to create separate format 
+  |           instances for each thread.
+  | 
+  | CONSTRUCTORS                 Contruct using ...
+  | ──────────────────────────── ──────────────────────────────────────────────────────
+  | SimpleDateFormat()           <·· Def pattern, def date format for def.FORMAT locale
+  | SimpleDateFormat(String pat) <·· set pattern, def date format for def.FORMAT locale
+  | SimpleDateFormat(String pat, <·· set pattern, set date format symbols.
+  |   DateFormatSymbols fs)
+  | SimpleDateFormat(String pat, <·· set pattern, def date format symbols for set locale
+  |   Locale l)
+  | 
+  | INSTANCE USSAGE 
+  | ─────────────── 
+  | StringBuffer format(Date date,   <··  Date ··> String                        
+  |    StringBuffer toAppendTo,           Formats date into date/time string,   
+  |    FieldPosition pos)                 appends result to StringBuffer         
+  | 
+  | Date parse(String txt,           <·· String ··> Date
+  |       ParsePosition pos)              Parses text, returns Date
+  |                                         
+  | (See original doc for full API ref)
+  | 
+  | PATTERN FORMAT:  ───────────────────────────────────────────
+  | Letter Date or Time       Presentation  Examples
+  |        Component     
+  | G      Era designator     Text           AD
+  | y      Year               Year           1996; 96
+  | Y      Week year          Year           2009; 09
+  | M      Month in year      Month          July; Jul; 07
+  |        (context sensitive)
+  | L      Month in year      Month          July; Jul; 07
+  |        (standalone form)
+  | w      Week in year       Number          27
+  | W      Week in month      Number          2
+  | D      Day in year        Number          189
+  | d      Day in month       Number          10
+  | F      Day of week        Number          2
+  |              in month
+  | E      Day name in week   Text            Tuesday; Tue
+  | u      Day num. of week   Number          1
+  |        (1=Mon,...7=Sun)
+  | a      Am/pm marker       Text            PM
+  | H      0-23               Number          0
+  | k      1-24               Number          24
+  | K      am/pm(0-11)        Number          0
+  | h      am/pm(1-12)        Number          12
+  | m      Minute             Number          30
+  | s      Second             Number          55
+  | S      Millisecond        Number          978
+  | z      Time zone          General  TZ     PST¹ (GMT-08:00)
+  | Z      Time zone          RFC 822  TZ     -0800
+  | X      Time zone          ISO 8601 TZ     -08 -0800 -08:00
+  | ¹ Pacific Standard Time; 
+  | 
+  | Pattern Examples:
+  | Date and Time Pattern          Result
+  | "yyyy.mm.dd g 'at' hh:mm:ss z"  2001.07.04 ad at 12:08:56 pdt
+  | "eee, mmm d, ''yy"              wed, jul 4, '01
+  | "h:mm a"                        12:08 pm
+  | "hh 'o''clock' a, zzzz"         12 o'clock pm, pacific daylight time
+  | "k:mm a, z"                     0:08 pm, pdt
+  | "yyyyy.mmmmm.dd ggg hh:mm aaa"  02001.july.04 ad 12:08 pm
+  | "eEE, d MMM yyyy HH:mm:ss Z"    Wed, 4 Jul 2001 12:08:56 -0700
+  | "yyyy-MM-dd'T'HH:mm:ss.SSSZ"    2001-07-04T12:08:56.235-0700
+  | "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"  2001-07-04T12:08:56.235-07:00
+  | "YYYY-'W'ww-u"                  2001-W27-3
+  ```
+
+* java.time.LocalTime ··> String using `java.time.format.DateTimeFormatter`:
+  ```
+  | String time = STR."The time is \{
+  |     // The java.time.format package is very useful
+  |     DateTimeFormatter.ofPattern("HH:mm:ss")
+  |                      .format(LocalTime.now())
+  | \} right now";
+  | "The time is 12:34:56 right now"`
+  ```
+
+### Compatibility with Java <=1.8
+
+* (java.util.) Date, Calendar and TimeZone
+  "buggy" classes/subclasses were used:
+  * Calendar class was NOT type safe.
+  * Mutable non-threadsafe classes.
+  * Favored programming errors (unusual numbering of months,..)
+
+* Next compatibility conversion methods were added in 1.8:
+  ```
+  | Calendar.toInstant()
+  | GregorianCalendar.toZonedDateTime()
+  | GregorianCalendar.from(ZonedDateTime) (Using default local)
+  | Date.from(Instant)
+  | Date.toInstant()
+  | TimeZone.toZoneId()
+  ```
+
+* `java.time.` Package summary
+  ```
+  |                    Description
+  | -----------------------------------------------------------------------------------
+  | Clock              A clock providing access to the current instant, date and
+  |                    time using a time-zone.
+  | -----------------------------------------------------------------------------------
+  | Duration           A time-based amount of time, such as '34.5 seconds'.
+  | -----------------------------------------------------------------------------------
+  | Instant            An instantaneous point on the time-line.
+  | -----------------------------------------------------------------------------------
+  | LocalDate          A date without a time-zone in the ISO-8601 calendar system,
+  |                    such as 2007-12-03.
+  | -----------------------------------------------------------------------------------
+  | LocalDateTime      A date-time without a time-zone in the ISO-8601 calendar
+  |                    system, such as 2007-12-03T10:15:30.
+  | -----------------------------------------------------------------------------------
+  | LocalTime          A time without a time-zone in the ISO-8601 calendar system,
+  |                    such as 10:15:30.
+  | -----------------------------------------------------------------------------------
+  | MonthDay           A month-day in the ISO-8601 calendar system, such as --12-03.
+  | -----------------------------------------------------------------------------------
+  | OffsetDateTime     A date-time with an offset from UTC/Greenwich in the ISO-8601
+  |                    calendar system, such as 2007-12-03T10:15:30+01:00.
+  | -----------------------------------------------------------------------------------
+  | OffsetTime         A time with an offset from UTC/Greenwich in the ISO-8601
+  |                    calendar system, such as 10:15:30+01:00.
+  | -----------------------------------------------------------------------------------
+  | Period             A date-based amount of time in the ISO-8601 calendar system,
+  |                     such as '2 years, 3 months and 4 days'.
+  | -----------------------------------------------------------------------------------
+  | Year               A year in the ISO-8601 calendar system, such as 2007.
+  | -----------------------------------------------------------------------------------
+  | YearMonth          A year-month in the ISO-8601 calendar system, such as 2007-12
+  | -----------------------------------------------------------------------------------
+  | ZonedDateTime      A date-time with a time-zone in the ISO-8601 calendar system,
+  |                    such as 2007-12-03T10:15:30+01:00 Europe/Paris.
+  | -----------------------------------------------------------------------------------
+  | ZoneId             A time-zone ID, such as Europe/Paris.
+  | -----------------------------------------------------------------------------------
+  | ZoneOffset         A time-zone offset from Greenwich/UTC, such as +02:00.
+  | -----------------------------------------------------------------------------------
+  ```
+
+  ```
+  | Enum               Description
+  | -----------------------------------------------------------------------------------
+  | DayOfWeek          A day-of-week, such as 'Tuesday'.
+  | -----------------------------------------------------------------------------------
+  | Month              A month-of-year, such as 'July'.
+  | -----------------------------------------------------------------------------------
+  |
+  | Exception          Description
+  | -----------------------------------------------------------------------------------
+  | DateTimeException  Exception used to indicate a problem while calculating a date-time.
+  ```
+
+* Note: Java 9 [REF](https://www.infoq.com/news/2017/02/java9-cldr-ldml)
+
+> A number of parsing and formatting changes have been incorporated in Java 9 to
+> bring the functionality closer to Unicode Locale Data Markup Language (LDML).
+> providing better interoperability with non-Java systems.
+> ... supervised by Stephen Colebourne (JodaTime), precursor of java.time,
+> LDML is used by the Unicode Common Locale Data Repository (CLDR) project,
+> (Unicode Consortium) to gather and store locale data from different parts of
+> the world ... Among others, LDML deals with date formatting and parsing.
+* New features coming in Java 9 that bring java.time:
+  * DateTimeFormatter: letter ‘g’, as specified in LDML, indicates a
+    “Modified Julian day” ... different from a normal Julian day in the sense
+    that:
+    a) it depends on local time, rather than GMT,
+    b) it demarcates days at midnight, as opposed to noon.
+  * Add date-time patterns 'v' and 'vvvv’: LDML formats to indicate
+    “generic non-location format”, e.g. “Pacific Time”, as opposed to
+    the “generic location format” with specifies a city, like “Los Angeles Time”.
+  * DateTimeFormatter pattern letters ‘A’, ’n’, ’N’: although LDML
+    doesn’t specify formats ’n’ and ’N’, it does specify ‘A’, but the current
+    behaviour in Java doesn’t match that of the spec. ‘A’ is meant to represent the
+    total number of milliseconds elapsed in the day, with variable width, but
+    currently Java treats this as fixed with: if ‘AA’ is specified as a pattern, it
+    will fail to parse any value that is further than 99 milliseconds in the day.
+    ’n’ and ’N’ are just Java extensions to the standard to represent nanoseconds
+    within the second, and nanoseconds within the day, respectively.
+  * JDK-8079628, java.time DateTimeFormatter containing "DD" fails on three-digit
+    day-of-year value: similar to the previous problem, but with ‘D’ representing
+    days within a year. If one specifies “DD” as a pattern, it will fail to parse
+    “123” as the 123th day of the year.
+
+### TimeUnit (JDK 1.5+)
+<https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html>
+* Represents time durations at a given unit of granularity and
+  provides utility methods to convert across units, and to perform
+  timing and delay operations in these units.
+* Enums:
+  ```
+  | DAYS HOURS MICROSECONDS MILLISECONDS MINUTES NANOSECONDS SECONDS
+  |
+  | void       sleep(long timeout)
+  | void   timedJoin(Thread thread, long timeout)
+  | void   timedWait(Object obj, long timeout)
+  | ...
+  ```
+[[java_lang.date_time}]]
+
+[[{java_lang.modules,java_lang.101]]
+## JPMS Modules (1.9+)
+* JPMS == Java Platform Module System
+* <https://www.oracle.com/corporate/features/understanding-java-9-modules.html>
+By Paul Deitel
+
+A module is a uniquely named, **reusable group of related packages and resources**.
+
+`/module-info.class` (module descriptor located in the module root's folder)
+is a compiled version of module-info.java specifying:
+* The module name
+* dependencies of this module in other modules.
+* packages explicitly marked as available by this 
+  module to other modules
+  (by default all packages are implicitly unavailable)
+* services offered:<br/>
+   A service is an object instance implementing the interface
+   or extending the abstract class specified in the `uses` directive
+   (See below)
+* services consumed
+* list of modules this modules allows reflection
+
+### Module's Rules
+1. Each module must explicitly state its dependencies.
+2. provide explicit mechanism to declare dependencies between
+  modules in a manner that’s recognized both at compile time
+  and execution time.
+* The java platform is now modularized into ~ 95 modules
+  ```
+  | $ java --list-modules  ←  List modules in SE, JDK, Oracle, ...
+  | ( custom runtimes can be created )
+  ```
+
+* Module Declarations
+  ```
+  |$ cat module-info.java
+  | ┌─·································· prefix with open to make all packages available for
+  | |                                    instrospection at runtime (discouraged)
+  | v      ┌──────┬─···················· module name
+  | module com.modA {                <·· body can be empty
+  |    requires com.modB;            <·· com.modA depends on com.modB.
+  |                                      module com.modA read module B
+  |                                      module com.modB is read by com.modA.
+  |    requires static com.modC;     <·· required just at compile time (vs runtime)
+  |    requires transitive java.xml; <·· if a com.compA method returns a type
+  |                                      from the java.xml module, and com.modZ requires
+  |                                      ourt com.compA modules, then it also requires
+  |                                      the java.xml module.  Without 'transitive'
+  |                                      compilation it will fail.
+  |                                      (not needed for Java SE standard modules,
+  |                                       granting implied readability to other modules).
+  |    exports ...                   <·· declares module’s packages whose `public` types
+  |                                      (and their nested `public` and `protected` types)
+  |                                      are accessible to code in all other modules.
+  |    exports to ...                <·· fine grained export using comma-separated list
+  |                                      specifying which other module's or module's code
+  |                                      can access the exported package (known as
+  |                                      **qualified** export).
+  |    uses  ClassServiceN           <·· Our module consume a service of this type.
+  |    provides...with ClassSrvQ     <·· Out module provides a service of this type.
+  |                                      After Java 9, modules are not allowed to introspect
+  |                                      (learn about public and private members at runtime)
+  |                                      any more. For compatibility we have open/opens to ..
+  |    open 'package01'              <·· package01's public types (and nested public/protected
+  |                                      types) are accessible to code in other modules
+  |                                      at runtime only. Also, all the types are accessible
+  |                                      via reflection. (discouraged).
+  |    opens 'pck02' to modB,modC    <·· Allow  only to those two modules.
+  | }
+  ```
+
+* Related:
+  ```
+  | - JEP 200: THE MODULAR JDK
+  | - JEP 201: MODULAR SOURCE CODE
+  | - JEP 220: MODULAR RUN-TIME IMAGES
+  | - JEP 260: ENCAPSULATE MOST INTERNAL APIS
+  | - JEP 261: MODULE SYSTEM
+  | - JEP 275: MODULAR JAVA APPLICATION PACKAGING
+  | - JEP 282: JLINK: THE JAVA LINKER
+  | - JSR 376: JAVA PLATFORM MODULE SYSTEM
+  | - JSR 379: JAVA SE 9
+  ```
+
+[[{DEVOPS.101,troubleshooting.modules]]
+### Troubleshooting 
+
+#### `--release $version` compiler flag (JDK 9+)
+
+**CONTEXT**: We are using JDK9, and we want to compile for JDK8 runtimes.
+
+1. Before JDK 9:
+   ```
+   | $ /jdk9path/bin/javac SomeCode.java \
+   |    -source 8 \
+   |    -target 8 \
+   |    -Xbootclasspath ${JDK8_PATH}/jre/lib/rt.jar
+   ```
+   The `-Xbootclasspath` is ussually forgoten.
+2. After JDK 9:
+   ```
+   | $ /jdk9path/bin/javac SomeCode.java -release 8
+   ```
+   The `-release` flag replace the previous -source, -target and -Xbootclasspath
+[[}]]
+[[java_lang.modules}]]
+[[java_lang.101}]]

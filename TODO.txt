@@ -1,5 +1,84 @@
 # TODO 
-* Java 9 to 13 in a Nutshell!!!: [[{PM.TODO.NOW}]]
+
+## BascomTask Lib: 'CompletableFutures' Complement  [[{architecture.async.reactive.101,qa,PM.TODO.NOW]]
+* [REF@dzone](https://dzone.com/articles/lightweight-parallel-tasks-in-java-microservices)
+* lightweight task-orchestration library providing frictionless thread-level
+  parallelization.
+* by design, use is very close to pure Java code, including use of
+  CompletableFutures (where they can be used effectively), but without
+  having to rely solely on them for task-level organization of a
+  codebase.
+* BascomTask aims to compliment rather than replace 'CompletableFutures'
+  and freely integrates with them.
+[[}]]
+
+## Amdahl's law [[{concurrency.101,PM.TODO]]
+- Amdahl's law provides a formula to compute the theoretical maximum
+  speed up by providing multiple processors to an application like:
+  ```
+  S(n) = 1 / (B + (1-B)/n)  : n == number-of-processors
+                              B == fraction of non-paralellizable code
+
+  S(n) ~  1 / B when big 'n' <·· maximum speedup is reciprocal to
+                                 fraction of non-paralellizable code
+  ```
+[[}]]
+
+## Sub-processes [[{concurrency.101,PM.TODO,PM.low_cost]]
+* Concurrency can be greately simplified by using OS processes
+  (vs in-process threads).  This automatically avoid many/most of the problems
+  with thread concurrency.
+* When context switching among OS process is not an issue multi-process
+  architecture is a safer, easier and faster (fewer locks) approach.
+  Note for example how all modern web browser have switched to a
+  multi-process (one per-tab) approach to gain estability and safety.
+* Invoquing sub-processes from java, curl example:
+  https://www.baeldung.com/java-curl
+[[}]]
+
+## jLine [[{qa.UX,java_lang.repl,java_lang.101,PM.low_code,PM.TODO]]
+* [Github](https://github.com/jline/jline3)
+* jLine: GNU/readline alike library for JAVA.
+- Builtin support for console variables, scripts, custom pipes, widgets and object printing.
+- Autosuggestions
+- Language REPL Support
+[[}]]
+
+## PicoCli UX Cli apps [[{qa.UX,]]
+<https://github.com/remkop/picocli>
+<https://picocli.info/>
+  Picocli is a one-file framework for creating Java user-friendly
+ (autocompletion, subcommands, ...)  command line  , GraalVM-enabled
+  applications with almost zero code. It supports a variety of command
+  line syntax styles including POSIX, GNU, MS-DOS and more. It
+  generates highly customizable usage help messages that use ANSI
+  colors and styles to contrast important elements and reduce the
+  cognitive load on the user.
+  - 1 source file so apps can include as source and avoid adding a dependency!!!
+[[}]]
+
+### Clig.Dev: Command Line Interface Guidelines [[{qa.UX]]
+<https://clig.dev/>
+* An open-source guide to help you write better command-line
+  programs, taking traditional UNIX principles and updating them for
+  the modern day.
+  · ...
+  · Use a command-line argument parsing library where you can. Either
+     your language’s built-in one, or a good third-party one. They will
+     normally handle arguments, flag parsing, help text, and even spelling
+     suggestions in a sensible way.
+
+* Note: Alternatives in other languajes:
+  · Go: Cobra, cli
+  · Node: oclif
+  · Python: Click, Typer
+  · Ruby: TTY
+  · Rust: clap, structopt
+  · PHP: console
+[[}]]
+
+
+## Java 9 to 13 in a Nutshell!!!: [[{PM.TODO.NOW}]]
   https://bentolor.github.io/java9to13/#/_preview_features_preview_12
 
 
@@ -2690,11 +2769,6 @@ https://www.baeldung.com/java-override-system-time
 [[storage}]]
 
 JAVA GOLang
-## jsoniter (Much) faster JSON iterator en/de-coder [[{io.json.jsoniter]]
-* <https://github.com/json-iterator>
-* available in Java and Go.
-* Up to 3x times faster than jackson/gson/fastjson. [[{doc_has.comparative}]]
-[[io.json.jsoniter}]]
 
 [[io.json.jsoniter}]] 
 
@@ -2799,3 +2873,9 @@ https://spring.io/projects/spring-shell
 [[security.AAA}]]
 
 ## Java 9+ Multi-Release JARs
+
+## Snippets Collection [[{]]
+https://github.com/topics/snippets-collection
+[[}]]
+
+

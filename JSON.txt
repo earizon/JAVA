@@ -1,0 +1,171 @@
+# JSON Processing
+
+## JSON-P(rocessing) /JSR-374 [[{persistence.JSON.json-p,security.TLS/X509,security.aaa,PM.TODO]]
+* Patterns of JSON Matching:
+  * Streaming based, binding based, expression based.
+  <https://dzone.com/articles/patterns-of-reading-json?edition=598293>
+
+* REF:JSON processing public review:
+  <https://www.infoq.com/news/2017/03/json-processing-public-review>
+
+* JSR 374, API for JSON Processing (JSON-P) version 1.1.
+  * Java 8 streams and lambdas alternative to Moshi and Jackson.
+  * expected to be included in J2EE 8 .
+  * compatible with JSON IETF standards.
+  * It includes support for:
+    * JSON Pointer
+    * JSON Patch
+    * JSON Merge Patch
+    * Query and transformation operations
+  * Designed to parse/generate/query standard JSON documents.
+[[persistence.JSON.json-p}]]
+
+## JSON-B(binding) / JSR-367 [[{persistence.json,io,]]
+<https://itsallbinary.com/jackson-vs-gson-vs-json-b-vs-json-p-vs-org-json-vs-jsonpath-java-json-libraries-features-comparison/>
+- B stands for Ojbect binding
+  - Standard binding layer for converting
+    Java objects to/from JSON messages, defining a default mapping algorithm
+    for converting existing Java classes to JSON, while enabling developers
+    to customize it through annotations.
+
+- Real World REST APIT Example:
+  ```
+  package com.mycomp.project1;
+
+  import java.io.BufferedReader;
+  import java.io.DataOutputStream;
+  import java.io.IOException;
+  import java.io.InputStreamReader;
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.security.KeyManagementException;
+  import java.security.NoSuchAlgorithmException;
+
+  import javax.net.ssl.HttpsURLConnection;
+  import javax.net.ssl.SSLContext;
+  import javax.net.ssl.SSLSocketFactory;
+  import javax.net.ssl.HostnameVerifier;
+  import javax.net.ssl.SSLSession;
+  import javax.net.ssl.TrustManager;
+  import javax.net.ssl.X509TrustManager;                    [security.aaa]
+  import java.security.cert.X509Certificate;
+
+  import org.json.JSONObject; ←··············· https://github.com/stleary/JSON-java/
+                                               - reference implementation demonstrating:
+                                                 - how to parse    JSON docs to Java objects
+                                                 - how to generate JSON documents from the Java objects.
+                                               - Project goals include:
+                                                 - Adherence to the JSON spec.
+                                                 - No external dependencies
+                                                 - Fast execution and low memory footprint
+                                               - It can also convert to/from:
+                                                 JSON, XML, HTTP headers, Cookies, Comma Delimited Text
+                                                 (org.json.CDT or CSV).
+  import java.util.Date;
+  import java.util.Scanner;
+
+  public class TestAPI<JSONArray> {
+      static String userpass = "operator1:ecllqy";
+      private static SSLSocketFactory sslSocketFactory = null;
+
+      private JSONObject sendPost(String url, String post_body, String token) throws Exception
+      {
+          URL obj = new URL(url);
+          String basicAuth = "Basic " +
+              javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
+
+          HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+          setAcceptAllVerifier((HttpsURLConnection)con); // TODO: WARN Add certificate validation.
+
+          con.setRequestMethod("POST"); //add request header
+          con.setRequestProperty("Content-Type", "application/json");
+          con.setRequestProperty("Cache-Control", "no-cache");
+          if (token.isEmpty()) { con.setRequestProperty("Authorization", basicAuth);
+          } else               { con.setRequestProperty("Authorization", "Bearer "+token);
+          }
+          con.setDoOutput(true);
+          DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+          wr.writeBytes(post_body);
+          wr.flush();
+          wr.close();
+          int responseCode = con.getResponseCode();
+
+          BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+          StringBuffer response = new StringBuffer();
+          String inputLine; while ((inputLine = in.readLine()) != null) { response.append(inputLine); }
+          in.close();
+          return new JSONObject(response.toString()); //String myJSONStr
+      }
+
+      /*                                                                              */
+      /**
+       * Overrides the SSL TrustManager and HostnameVerifier to allow
+       * all certs and hostnames.
+       * WARNING: This should only be used for testing, or in a "safe" (i.e. firewalled)
+       * environment.
+       *
+       * @throws NoSuchAlgorithmException
+       * @throws KeyManagementException
+       */
+      protected static void setAcceptAllVerifier(HttpsURLConnection connection) throws NoSuchAlgorithmException, KeyManagementException {
+          // Create the socket factory.
+          // Reusing the same socket factory allows sockets to be
+          // reused, supporting persistent connections.
+          if( null == sslSocketFactory) {
+              SSLContext sc = SSLContext.getInstance("SSL");
+              sc.init(null, ALL_TRUSTING_TRUST_MANAGER, new java.security.SecureRandom());
+              sslSocketFactory = sc.getSocketFactory();
+          }
+
+          connection.setSSLSocketFactory(sslSocketFactory);
+
+          // Since we may be using a cert with a different name, we need to ignore
+          // the hostname as well.
+          connection.setHostnameVerifier(ALL_TRUSTING_HOSTNAME_VERIFIER);
+      }
+
+      private static final TrustManager[] ALL_TRUSTING_TRUST_MANAGER = new TrustManager[] {
+          new X509TrustManager() {
+              public X509Certificate[] getAcceptedIssuers() {
+                  return null;
+              }
+              public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+              public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+          }
+      };
+
+      private static final HostnameVerifier ALL_TRUSTING_HOSTNAME_VERIFIER  = new HostnameVerifier() {
+          public boolean verify(String hostname, SSLSession session) {
+              return true;
+          }
+      };
+  }
+  ```
+
+## JSON-B vs GSON vs Moshi vs ... [[{persistence.JSON,performance,io]]
+* https://www.reddit.com/r/javahelp/comments/bx6ded/jsonb_vs_jackson/
+   ... I've had issues with nested types (example: List<X>) when
+  decoding Json with most libraries (see usage examples [here](https://www.baeldung.com/java-json),
+  since they request a class as a parameter, which would be a raw type (in
+  this example, List.class).<br/>
+  * Gson: deprecated as of 2024. <https://proandroiddev.com/goodbye-gson-hello-moshi-4e591116231e>
+    Gson offers a helper class called TypeToken to circumvent this through
+    the usage of type instead of class (ex: https://www.baeldung.com/gson-json-to-map).
+    It's very complicated but at the same time very elegant.<br/>
+    I don't know if other Json libraries offer something equivalent, I
+    found Google's code to be concise and easy to understand so I didn't
+    edit: I did a quick search about Json-B (never really read much about
+    it before) and it doesn't seem to provide any way to handle the
+    scenario described above. You would still need a library at least to
+    obtain the type.
+[[persistence.JSON}]]
+
+
+
+## jsoniter (Much) faster JSON iterator en/de-coder [[{io.json.jsoniter]]
+* <https://github.com/json-iterator>
+* available in Java and Go.
+* Up to 3x times faster than jackson/gson/fastjson [[{doc_has.comparative}]]
+[[io.json.jsoniter}]]
+

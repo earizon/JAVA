@@ -197,7 +197,7 @@ Document status: Draft/WiP
     public void setId(Integer id) { this.id = id; }
   }
   ```
-### File Caching:
+#### File Caching:
 If there is the need to cache a file to disk or perform resource
 availability checks prior to items being placed on the queue,
 implement availableSlot() on the QueueCallback interface. This method
@@ -207,4 +207,19 @@ perform resource availability pre-checks (e.g. disk space check).
 
 [[architecture.async.reactive.FileQueue}]]
 
-
+## java.util.concurrent.Flow(1.9+) [[{java_lang.functional,architecture.async.reactive.io,io.101,PM.TODO]]
+<https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html>
+* JDK 1.9+
+* Reactive Streams was adopted by the JDK in the form of the java.util.concurrent.Flow API.
+* It allows two different libraries that support asynchronous
+  streaming to connect to each other, with well specified semantics
+  about how each should behave, so that backpressure, completion,
+  cancellation and error handling is predictably propagated between the
+  two libraries.
+* There is a rich ecosystem of open source libraries that support
+  Reactive Streams, and since its inclusion in JDK9, there are a few in
+  development implementations that are targetting the JDK, including
+  the incubating <a href="http://openjdk.java.net/jeps/321">JDK9 HTTP Client</a>,
+  and the [Asynchronous Database Adapter (ADBA)](https://twitter.com/brunoborges/status/915302682939711488)
+* See also <http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php>
+[[}]]

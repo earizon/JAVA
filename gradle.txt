@@ -1,8 +1,4 @@
-##Apropos:
-Content is versioned in git.  commits, issues and pull-requests welcome!
-<https://www.github.com/earizon/gradle.md>
-
-[[{$devops.gradle]]
+# DevOps: Gradle
 
 #Gradle Summary [[{devops.gradle.101,devops.gradle.troubleshooting]]
 
@@ -1044,5 +1040,3 @@ $ gradle --stop  # <·· explicitly stop running Daemon processes.
 * Java Modules support:
   https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_modular
 * https://docs.gradle.org/current/userguide/configuration_cache.html
-
-[[$devops.gradle}]]

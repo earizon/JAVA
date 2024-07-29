@@ -1,0 +1,110 @@
+# Functional Programming
+
+[[{java_lang.101,java_lang.functional.lambdas,architecture.async.reactive,java_lang.101]]
+## Lambdas 1.8+
+* simplifies development of non-blocking style APIs
+  (low-level CompletableFuture or higher level ReactiveX).
+
+
+### Sytnax  <!-- { -->
+  ```
+  | (parameters) -> expression
+  | (parameters) -> { statements; }
+  | 
+  | Function<Long, String> f = (l) -> l.toString();    // <·· takes a Long, returns a String
+  | 
+  | Supplier<Thread> s = Thread::currentThread;        // <·· takes nothing, gives you Thread
+  | 
+  | Consumer<String> c = System.out::println;          // <·· takes a string as the parameter
+  | 
+  | new ArrayList<String>().stream()....               // <·· use lambdas in streams
+  | 
+  | peek ( e -> System.out.println(e)). ...            // <·· peek: Debug streams without changes
+  | 
+  | map ( e -> e.hashCode())...                        // <·· map: Convert every element into something
+  | 
+  | // filter (hc -> (hc % 2) == 0) ...
+  | 
+  | collect(Collectors.toCollection(TreeSet::new))    // <·· collect all values from the stream
+  ```
+<!-- } -->
+
+## jOOλ functional extensions to Java 8 [[{java_lang.functional.jOOλ,java_lang.functional.101,troubleshooting.checked_exceptions,PM.TODO,]]
+
+* [jOOλ](https://github.com/jOOQ/jOOL)
+
+**Problem Context**: "Pains with checked exceptions and lambdas"  [[{java_lang.101]]
+* <http://stackoverflow.com/q/18198176/521799>
+* <http://stackoverflow.com/q/19757300/521799>
+* <http://stackoverflow.com/q/14039995/521799>                      [[java_lang.101}]]
+**Solution**: `org.jooq.lambda.Unchecked`
+
+* Standard Java 8
+
+  ```
+  | Arrays
+  | .stream(dir.listFiles())
+  | .forEach(file -> {
+  |       try {
+  |   System.out.println(
+  |        file.getCanonicalPath());
+  |       } catch (IOException e) {
+  |   throw new RuntimeException(e);
+  |       }
+  | });
+  ```
+* using jooq labmda wrapper
+
+  ```
+  | using jooq labmda wrapper:
+  | ==========================
+  | Arrays
+  | .stream(dir.listFiles())
+  | .forEach(
+  |   Unchecked.consumer(file -> {
+  |     System.out.println(
+  |       file.getCanonicalPath());
+  |   })
+  | );
+  ```
+* Even simpler
+  ```
+  | Arrays
+  | .stream(dir.listFiles())
+  | .map(Unchecked.function(
+  |      File::getCanonicalPath))
+  | .forEach(System.out::println);
+  ```
+[[java_lang.functional.jOOλ}]]
+
+[[java_lang.functional.lambdas}]]
+
+## Monads in Java [[{java_lang.functional.monads,java_lang.101,PM.TODO]]
+<https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394>
+* two of the most commonly known Java 8 features are monad
+  implementations, namely Stream and Optional.
+* Monad is a concept:  we can view it as a wrapper which puts our
+  value in some context and allows us to perform operations on the
+  value. In this context, the output of an operation at any step is the
+  input to the operation at the next step.
+[[java_lang.functional.monads}]]
+
+## Unix4j [[{101,PM.low_code.unix4j,java_lang.functional]]
+* [Link@Github](https://github.com/tools4j/unix4j)
+
+> ...Working in the finance industry in Melbourne, the authors of
+> Unix4j spent a lot of time writing complex text processing
+> applications in bash. Frustrated with the inherent limitations of the
+> bash language; lack of language support, IDEs, test frameworks etc,
+> the authors decided to try and bring the convenience of some of the
+> Unix commands into the Java language.
+> You may notice that the implemented commands are more bent towards
+> text processing rather than OS and file manipulation. This is
+> intended as we see text processing to be the real benefit of Unix4j.
+> Not to say that this will always be the case.
+
+* Example Ussage:
+  ```
+  | Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
+  ```
+[[PM.low_code.unix4j}]]

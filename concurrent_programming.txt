@@ -1,11 +1,13 @@
-Concurrent Programming [[{$ Concurrent Programming]]
+# Concurrent Programming
 [[{concurrency.101]]
-# External Links
+
+## External Links
 - Youtube Concurrency Classes:
 <https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4> [  ES lang ]
 [[}]]
 [[{concurrency.101,scalability.101,01_PM.low_code]]
-# 1uSec Thread sync
+
+## 1uSec Thread sync  [[{101]]
 REF:
 <https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/>
 """
@@ -40,9 +42,9 @@ See also: fast Inter-thread communication:
   queues, messages, events or any other concurrency specific words or
   tools.
   Just get POJOs communicating behind plain old Java interfaces.
-[[}]]
+[[101}]]
 
-# Concurrency Basics [[{concurrency.101]]
+## Concurrency Basics [[{concurrency.101]]
 - Concurrency problems arise from the desire to use CPU resources more efficiently. Non concurrent
   applications (single threaded/single process) are complete Touring machines that can potentially
   solve any problem with enough time and memory. In practice having a CPU assigned to single thread
@@ -93,7 +95,7 @@ See also: fast Inter-thread communication:
   threads waiting for certain condition). They are implemented as thread-safe classes.
 [[}]]
 [[{concurrency.101.monitors]]
-# monitors
+## monitors
 - Object providing Mutual exclusion of threads to shared resources
 - simplest form of synchronization:
   alternatives include:
@@ -157,7 +159,7 @@ See also: fast Inter-thread communication:
 [[concurrency.101.monitors}]]
 
 [[{concurrency.barrier]]
-# CountDownLatch
+## CountDownLatch
 * In `java.util.concurrent` Since JDK 1.5
 <https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html>
 * Object allowing 1+ threads to wait until a 1+ operations are completed in other threads.
@@ -271,7 +273,7 @@ See also: fast Inter-thread communication:
 <https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67>
 [[concurrency.barrier}]]
 
-# Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,doc_has.diagram]]
+## Scheduling: Runnables/Callables Executors [[{concurrency.101,concurrency.scheduling,doc_has.diagram]]
 <https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html>
 * Basic Thread objects
   ```
@@ -487,7 +489,7 @@ REF: <http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjo
 <!-- } -->
 [[}]]
 
-# CompletableFuture [[{architecture.async.reactive.CompletableFuture,architecture.async.reactive.101,doc_has.diagram]]
+## CompletableFuture [[{architecture.async.reactive.CompletableFuture,architecture.async.reactive.101,doc_has.diagram]]
 * REF <https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html>
 
 1. Future:            (Java 5+) Represent an asynchronous computation result.
@@ -526,7 +528,7 @@ REF: <http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjo
 * When two or more threads attempt to complete, completeExceptionally, or
   cancel a CompletableFuture, only one of them succeeds.
 
-### Barriers  (  allOf ):
+## CompletableFuture Barriers (  allOf ):
   ```
   CompletableFuture<Void>[] future_list = new CompletableFuture[list.size()];
   int idx=0;
@@ -541,26 +543,23 @@ REF: <http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjo
   ```
 
 ### Ex: Using CompletableFuture as a Simple Future (no-arg constructor)
-1.  create CompletableFuture instance,
-2.  launch some computation in another thread,
+1.  create CompletableFuture instance.
+2.  launch some computation in another thread.
 3.  returns Future immediately.
 
   ```
   public Future<String> calculateAsync() throws InterruptedException {
-      Future<String> result = new CompletableFuture<>(); // *1 or .
-
+      final Future<String> futureResult =   // <·· If the result of computation is known:
+        new CompletableFuture<>();    //   CompletableFuture.completedFuture("Hello");
       Executors.newCachedThreadPool().submit(() -> {
-          Thread.sleep(500);
-          completableFuture.complete("Hello"); // alt.: completableFuture.cancel(false);
-          return null;
+          Thread.sleep(5000);
+          completableFuture.complete("Hello"); // <·· alt.: completableFuture.cancel(false);
+          return;
       });
-
-      return completableFuture;
+      return futureResult;
   }
-  *1: when the result of computation is known:
-      Future<String> result = CompletableFuture.completedFuture("Hello");
 
-  Future<String> completableFuture = calculateAsync();
+  final Future<String> completableFuture = calculateAsync();
   ...
   String result = completableFuture.get(); // .get() wait for completion/error
                                               (ExecutionException|InterruptedException)

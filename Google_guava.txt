@@ -1,4 +1,7 @@
-# https://www.reddit.com/r/java/comments/kgykrq/which_is_best_java_collectoon_vs_eclipse/
+# Google Guava
+
+## Collection Library Comparative 
+* <https://www.reddit.com/r/java/comments/kgykrq/which_is_best_java_collectoon_vs_eclipse/>
 
   Which is best? Java Collectoon vs Eclipse Collections, Guava or Apache Collections?
   ...
@@ -7,44 +10,46 @@
   personally avoid it now. Their attitude of breaking APIs is simply not something
   that's fun to deal with especially when you start getting larger projects.
 
-# Guava ListenableFuture [[{async/reactive.101,doc_has.comparative,qa]]
-<https://github.com/google/guava/wiki/ListenableFutureExplained>
-- Concurrency is a hard problem, but it is significantly simplified by
+## Guava ListenableFuture [[{architecture.async.ListenableFuture,doc_has.comparative,qa]]
+
+* <https://github.com/google/guava/wiki/ListenableFutureExplained>
+* Concurrency is a hard problem, but it is significantly simplified by
   working with powerful and simple abstractions. To simplify matters,
   Guava extends the Future interface of the JDK with ListenableFuture.
-
-- """We strongly advise that you always use ListenableFuture instead
+* """We strongly advise that you always use ListenableFuture instead
   of Future in all of your code, because:
-  - Most Futures methods require it.
-  - It's easier than changing to ListenableFuture later.
-  - Providers of utility methods won't need to provide Future and ListenableFuture
+  * Most Futures methods require it.
+  * It's easier than changing to ListenableFuture later.
+  * Providers of utility methods won't need to provide Future and ListenableFuture
       variants of their methods.
 
-# Listenable vs CompletableFutures
-<https://stackoverflow.com/questions/38744943/listenablefuture-vs-completablefuture>
-          ListenableFuture                           │               CompletableFuture
-─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
-                                                     │ It is different from ListenableFuture in that it
-                                                     │ can be completed from any thread
-─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
-ListenableFuture listenable = service.submit(...);   │ CompletableFuture completableFuture =
-  Futures.addCallback(listenable,                    │     new CompletableFuture();
-                      new FutureCallback<Object>() { │ completableFuture.whenComplete(new BiConsumer() {
-    @Override                                        │   @Override
-    public void onSuccess(Object o) {                │   public void accept(Object o, Object o2) {
-        //handle on success                          │       //handle complete
-    }                                                │   }
-                                                     │ }); // complete the task
-    @Override                                        │ completableFuture.complete(new Object())
-    public void onFailure(Throwable throwable) {     │
-       //handle on failure                           │ When a thread calls complete on the task,
-    }                                                │ the value received from a call to get() is
-  })                                                 │ set with the parameter value if the task is
-                                                     │ not already completed.
-
-  ..."CompletableFuture is dangerous because it exposes  complete  methods."
-  ..."CompletableFuture would have been good if it extended Future
-     and did not expore toCompletableFuture,... and they could have named
-     it something meaningful like ChainableFuture "
-[[}]]
+## Listenable vs CompletableFutures
+  ```
+  <https://stackoverflow.com/questions/38744943/listenablefuture-vs-completablefuture>
+            ListenableFuture                           │               CompletableFuture
+  ─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
+                                                       │ It is different from ListenableFuture in that it
+                                                       │ can be completed from any thread
+  ─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
+  ListenableFuture listenable = service.submit(...);   │ CompletableFuture completableFuture =
+    Futures.addCallback(listenable,                    │     new CompletableFuture();
+                        new FutureCallback<Object>() { │ completableFuture.whenComplete(new BiConsumer() {
+      @Override                                        │   @Override
+      public void onSuccess(Object o) {                │   public void accept(Object o, Object o2) {
+          //handle on success                          │       //handle complete
+      }                                                │   }
+                                                       │ }); // complete the task
+      @Override                                        │ completableFuture.complete(new Object())
+      public void onFailure(Throwable throwable) {     │
+         //handle on failure                           │ When a thread calls complete on the task,
+      }                                                │ the value received from a call to get() is
+    })                                                 │ set with the parameter value if the task is
+                                                       │ not already completed.
+  
+    ..."CompletableFuture is dangerous because it exposes  complete  methods."
+    ..."CompletableFuture would have been good if it extended Future
+       and did not expore toCompletableFuture,... and they could have named
+       it something meaningful like ChainableFuture "
+  ```
+[[architecture.async.ListenableFuture}]]
 

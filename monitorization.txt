@@ -1,0 +1,580 @@
+[[{monitoring.logging]]
+# JAVA Logging
+
+## Logging Ecosystem Overview <!-- { -->
+* Logging Frameworks offer different features, but they all offer the same
+  global structure
+  * LogRecords "data objects" with Log levels.
+  * Loggers:
+  * Handlers (also called Appenders).
+  * Formatters (Layouts).
+  ```
+  | app ·(LogRecord)·> Logger ··> Handler ··> Formatter ··> Output
+  ```
+
+* Common Logging Frameworks include:
+  * java.utils.logging : Offers a basic logging API. It used a java properties
+    file for configuration. Supports txt and XML formats by default.
+  * Log4j(Apache): solid performance, extremely configurable.
+    In big projects, consider using it on top of SLF4J with Log4j binding.
+    Supports text, XML, JSON and YAML output.
+    * At startup, Log4j searches for a log4j2.$format file. If not found,
+      it will default to console output.
+  * Logback: Designed as successor to Log4jv1 before Log4jv2 was released.
+  * tinylog:
+  * SLF4J(QOS.ch) and Commons Login: Abstraction layers around other frameworks
+    allowing to change logging frameworks on demand at runtime based on
+    frameworks available on the application's classpath.
+
+* Compared:
+  * Log4j and Logback have native support for Syslog.
+  * Log4j has an SMTPAppender to send mail.
+  * Log4j has a FailoverAppender, that automatically switches to a
+    different Appender in case one or more fails.
+  * java.util.logging provides two Layouts/Formatters:
+    SimpleFormatter (def for console) and XMLFormatter (def. for files)
+  * Log4jv2 looks to be faster than Logback and more stable.
+    according to [performance comparative](https://www.loggly.com/blog/benchmarking-java-logging-frameworks/)
+    **WARN**: logback dropped arount 36% of logs in Async mode (vs 0% for Log4jv2).
+
+
+* Some stacks are tied to a given framework. (java.util.logging for Tomcat)
+
+
+     * Config through logback.xml file. (XML config syntax similar to Log4j).
+<!-- } -->
+
+## `java.util.logging.*`  <!-- java.util.logging { -->
+https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B652C-17EA-48D9-93D2-563AE1FF8EDA
+
+* core package includes support for delivering text or XML log records
+  to memory, output streams, consoles, files, and sockets.
+* The core API is are capable of interacting with logging services
+  on the host operating system.
+
+* Loggin Control Flow:
+  ```
+  |  |App| ··> Creates LogRecord
+  |    ·               ---------
+  |    ·               1 log level object: "rough guide to the importance and urgency of a log message"
+  |    ·                 Log Level objects encapsulate an integer value: higher value => higher priority
+  |    ·                 Level.FINEST (lowest priority/value) ... Level.SEVERE (highest priority/value).
+  |   logger.log    (Level.WARNING, String srcClass, String srcMethod, String msg) ²
+  |   logger.warning(Level.WARNING, String srcClass, String srcMethod, String msg)
+  |   logger.log    (                                                  String msg) ¹
+  |    ·
+  |    ·            ¹: Logging framework will make a "best effort" to determine
+  |    ·               which class and method called into the logging framework
+  |    ·            ²: In other frameworks logp() (log precise) is used to set  source class/method
+  |    ·
+  | (calls to) <·· calls are "cheap" when logging is disabled for a given log level.
+  |    ·           Logger test and return "fast" with no ops.
+  |    ·                                  ┌─ Also called Appender in other frameworks.
+  |    v                                  v
+  | │Logger  │ ·········>(LogRecord)····>│Handler│ ··(publish to) ··>│Outside World│
+  |                                                                   (│Handler│, I/O stream,
+  |  ^^^^^^^^                             ^^^^^^^                      console, file, socket,...)
+  |  0+ LogRecords
+  |  0+ Filters                           0+ Filters         <·· Filters and Logging Level objects decide
+  |  1+ Logging Level                     0+ Logging Level       if they are interested in a particular
+  |     (Log request below level                                 LogRecord object.
+  |      are discarded)                   0+ Formatters      <·· localize and format message before publishing
+  |  1  "dot-separated" name                  └────────┴─ == "Layouts" in other Log frameworks.
+  |    in a hierarchical namespace,
+  |    managed by │LogManager│,           LogManager <·· Singleton object.
+  |    typically aligned with package     ----------     (Retrieve it with LogManager.getLogManager)
+  |    namespace, but not required to.    1 hierarchical namespace of named Loggers
+  |  1+ Handler object                    1 control properties (read from configuration file)
+  |  1 Reference to parent Logger                                         └───────┬────────┘
+  |    (except for root "" logger)        ┌───────────────────────────────────────┘
+  |    By default, loggers inherit next   java.util.Properties file including config for:
+  |    attributes from their parent:      - root-level handlers to install during at startup.
+  |    · Minimum Logging level. Ex:       - levels for particular named loggers.
+  |      logger.setLevel(Level.WARNING);  - arbitrary properties for use by any handler.
+  |    · Handlers from parent             - Ej:
+  |    · Resource bundle names              handlers=java.util.logging.ConsoleHandler, java.util.logging.FileHandler
+  |    · Resource bundle names              java.util.logging.FileHandler.pattern = %h/java%u.log
+  |                                         java.util.logging.FileHandler.limit = 50000
+  |                                         java.util.logging.FileHandler.count = 1
+  |                                         java.util.logging.FileHandler.formatter = java.util.logging.XmlFormatter
+  |                                         java.util.logging.MemoryHandler.size=... # <·· default size for ring buffer
+  |                                         └─────────────┬───────────────┘
+  |                                         Convention, handler props. start with handler class name
+  |
+  |  Default Java SE Handlers                                      Default Java SE Formatters:
+  |  ------------------------                                      ---------------------------
+  |  StreamHandler : writes formatted-record to OutputStream       SimpleFormatter: Writes brief "human-readable" summaries
+  |  ConsoleHandler: writes formatted-record to System.err                          of log records
+  |     FileHandler: writes formatted-log records to:                 XMLFormatter: Writes detailed XML-structured record.
+  |                  - alt 1: single file                          (Creating new formatters is straightforward)
+  |                  - alt 1: set of rotating log files
+  |   SocketHandler: writes formatted-log records to TCP ports
+  |   MemoryHandler: buffers log records in memory
+  |   (Writting new handlers is straightforward)
+  ```
+  
+  * By default all Logger objects also send their output to their parent Logger.
+    but can be set to ignore Handler objects higher up the tree.
+  * Handlers may direct output to other Handler objects. Ex:
+  ```
+  | MemoryHandler (SDK) ·······> (publish to) ··> Target Handler
+  | -------------                 @trigger-events
+  | 1 ring buffer<LogRecords>
+  | 0+filters
+  | 0 formatters   <·· no format applied to intermediate handlers
+  ```
+* In addition to named Logger objects, it is also possible to create anonymous Logger
+  objects that do NOT appear in the shared namespace. (See the Security section).
+  Anonymous loggers have root as their parent.
+* Java logging APIs (java.util.logging) default loads logging.properties from:
+  ```
+  | $JAVA_HOME/jre/lib/logging.properties <·· Java up to 8
+  | $JAVA_HOME/conf/logging.properties    <·· Java 9+
+  |
+  | A different file can be set through system properties:
+  | java -Djava.util.logging.config.file=myfile
+  ```
+* Example custom `logging.properties`:
+  ```
+  | .../src/main/resources/logging.properties
+  |
+  | handlers = java.util.logging.ConsoleHandler, java.util.logging.FileHandler
+  | 
+  | # Set default logging level for root logger
+  | .level = ALL
+  | 
+  | # Set default logging level for handler instances
+  | java.util.logging.ConsoleHandler.level = INFO
+  | java.util.logging.FileHandler.level = ALL
+  | 
+  | # Set default formatter for new ConsoleHandler instances
+  | java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
+  | 
+  | # Set default logging level for a given logger.
+  | com.mycompany.level = ALL
+  ```
+
+### Examples
+
+* logging with default configuration:
+
+  ```
+  | /* code relies on root handlers established by
+  |  * LogManager based on configuration file. */
+  | 
+  | package com.wombat;
+  | import java.util.logging.*;
+  | 
+  | public class Nose {
+  |     private static Logger logger =
+  |        Logger.getLogger("com.wombat.nose");
+  | 
+  |     public static void main(String argv[]) {
+  |         logger.fine("doing stuff");           // Obtain a suitable logger.
+  |         try ( stream = ...) {
+  |           ...
+  |         } catch(IOException e1) {
+  |           logger.log(Level.WARNING, "...", e1);
+  |           throw
+  |         }
+  |         logger.fine("done");
+  |     }
+  | }
+  ```
+* Ex: Change config to send output to file.
+  ```
+  | public static void main(String[] args) {
+  |     Handler fh = new FileHandler("%t/wombat.log"); // %t == system temporary directory
+  |     Logger.getLogger(""/*root*/  ).addHandler(fh);
+  |     Logger.getLogger("com.wombat")
+  |       .setLevel(Level.WARNING); // Ignore all Logs below WARNING level
+  |                 └───────────┴─··· := FINEST < FINER < FINE < CONFIG < INFO < WARNING < SEVERE
+  |                                      ALL: log all messages regardless of level
+  |                                      OFF: disable logging.
+  |     ...
+  | }
+  ```
+* use custom Handler ignoring Global Configuration
+  ```
+  | package com.wombat;
+  | import java.util.logging.*;
+  |
+  | public class Nose {
+  |   private static Logger logger = Logger.getLogger("com.wombat.nose");
+  |   private static FileHandler fh = new FileHandler("mylog.txt");
+  |   public static void main(String argv[]) {
+  |       logger.addHandler(fh);              // Send logger output to our FileHandler.
+  |       logger.setLevel(Level.ALL);         // Request that every detail gets logged.
+  |       logger.info("doing stuff");         // Log a simple INFO message.
+  |       try {
+  |           ...
+  |       } catch (Exception e1) {
+  |           logger.log(Level.WARNING, "...", e1);
+  |       }
+  |       logger.fine("done");
+  |   }
+  | }
+  ```
+* Sample XML Output:
+  ```
+  | <log>
+  |   <record>
+  |     <date>2015-02-27T09:35:44.885562Z</date>
+  |     <millis>1425029744885</millis>
+  |     <nanos>562000</nanos>
+  |     <sequence>1256</sequence>
+  |     <logger>kgh.test.fred</logger>
+  |     <level>INFO</level>
+  |     <class>kgh.test.XMLTest</class>
+  |     <method>writeLog</method>
+  |     <thread>10</thread>
+  |     <message>Hello world!</message>
+  |   </record>
+  ```
+
+* Format(Layout) config:
+  ```
+  | Handler ch = new ConsoleHandler();
+  | ch.setFormatter(new XMLFormatter()); // <·· Use XMLFormatter (txt by default in console)
+  | logger.addHandler(ch);
+  ```
+<!-- } -->
+
+[[{monitoring.logging.slf4j]]
+## SLF4j Logging
+* <https://www.slf4j.org/>
+* Simple Log Facade or abstraction for various logging frameworks
+  (e.g. java.util.logging, logback, log4j) allowing the end user
+  to plug in the desired logging framework at deployment time.
+
+
+* maven configuration for slf4j + logback. <!-- { -->
+  ```
+  | pom.xml
+  | <dependency>*
+  |   <groupId>org.slf4j</groupId>
+  |   <artifactId>slf4j-api</artifactId>
+  |   <version>1.7.21</version>
+  | </dependency>
+  | ...
+  | <dependency>
+  |   <groupId>ch.qos.logback</groupId>
+  |   <artifactId>logback-classic</artifactId>            ← add   logback  facade
+  |   <version>1.1.7</version>
+  |   <exclusions>
+  |     <exclusion>
+  |       <groupId>org.slf4j</groupId>                    ←  Avoid error next start-up:
+  |       <artifactId>slf4j-jdk14</artifactId>               "SLF4J: Class path contains multiple SLF4J bindings."
+  |     </exclusion>                                         "   slf4j-jdk14-1.7.21.jar!...StaticLoggerBinder.class"
+  |   </exclusions>                                          "logback-classic-1.1.7.jar!...StaticLoggerBinder.class"
+  | </dependency>
+  ```
+<!-- } -->
+
+* Example Ussage
+
+  ```
+  | import org.slf4j.Logger;
+  | import org.slf4j.LoggerFactory;
+  | ...
+  |   class MyClass {
+  |     private static final Logger log =
+  |        LoggerFactory.getLogger(AbstractRequestHandler.class);
+  |     ...
+  |     if (log.isDebugEnabled()) {  ←······················· composed string "Lorem ipsum..."is built
+  |         log.debug("Lorem ipsum... @{} {}",  ←············ before calling log.debug.
+  |            "param1", "param2");                           "wrapper" if(log.isDebugEnabled())  avoid
+  |     }                                                     unnecesary string processing (saving can
+  |     ...                                                   be "huge" if log.debug is inside a loop.
+  |   }                                                     unnecesary string processing (saving can
+  ```
+[[monitoring.logging.slf4j}]]
+
+[[{monitoring.logging.log4j,monitoring.logging.logback]]
+## Log4j2/Logback config
+ ```
+ | log4j2.xml  (must be located in classpath at runtime. eg: WEB-INF/classes/log4j2.xml)
+ | logback.xml (must be located in classpath at runtime. eg: WEB-INF/classes/logback.xml)
+ | <xml version="1.0" encoding="UTF-8"?>
+ | <Configuration status="warn" name="MyApp">
+ | 
+ |   <Appenders> ¹
+ |     <Console name="MyAppender1" target="SYSTEM_OUT">  <·· Console is the default in most frameworks
+ |       <PatternLayout pattern="%m%n"/>
+ |     </Console>
+ |     <File name="MyFileAppender2"
+ |        fileName="myLog.log" append="true" locking="true">
+ |       <PatternLayout pattern="%m%n"/>
+ |     </File>
+ |   </Appenders>
+ | 
+ |   <Loggers>   ²
+ |     <Root level="error"> ³                            <·· Only root logger is defined in the example.
+ |       <AppenderRef ref="MyAppender1"/>                    which accepts all messages by default, and
+ |     </Root>                                               logs only about ERROR level.
+ |   </Loggers>
+ | </Configuration>
+ | ¹ STEP 1) Configure Appender/Handlers
+ | ² STEP 2) Configure Loggers
+ | ³
+ ```
+
+### LogBack Config Example <!-- { -->
+ ```
+ | <configuration>
+ |   <appender name="MyAppender"
+ |     class="ch.qos.Logback.core.ConsoleAppender">
+ |     <encoder>
+ |       <pattern>%m%n</pattern>
+ |     </encoder>
+ |   </appender>
+ |
+ |   <appender name="FileAppender"
+ |     class="ch.qos.Logback.core.FileAppender">
+ |     <file>myLog.log</file>
+ |     <append>true</append>
+ |     <prudent>true</prudent>                   <·· true => increases cost of writing but safely manages
+ |                                                   file writes from multiple FileAppenders and/or Java programs
+ |     <encoder>
+ |       <pattern>%m%n</pattern>
+ |     </encoder>
+ |   </appender>
+ |
+ |   <root level="error">
+ |     <appender-ref ref="MyAppender" />
+ |   </root>
+ |  </configuration>
+ ```
+<!-- } -->
+
+### Format/Layout config in Log4j/Logback <!-- { -->
+* one of the most common Layouts in Log4j and Logback is the PatternLayout.
+  ```
+  | <PatternLayout
+  |   pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+  |                                                             └┴─ append new line
+  |                                                          └─┴─·· message
+  |                                            └────┴─············· logger name (up to 36 chars width)
+  |                                    └────┴─····················· severity of the log event.
+  |                              └─┴─······························ current thread
+  |            └──────────────┴─··································· timestamp format
+  | Example output:
+  | 16:42:14.271 [main] INFO main: initializing worker threads
+  | 16:42:15.990 [worker] DEBUG worker: listening on port 12222
+  | 16:42:20.010 [worker] INFO worker: received request from 192.168.1.200
+  | 16:42:20.100 [worker] ERROR worker: unknown request ID from 192.168.1.200
+  ```
+<!-- } -->
+
+### Logging Stack Traces With PatternLayout
+
+* Supported by Log4j/Logback:
+  ```
+  | [%p] %t: %m<b>%xEx</b>
+  |               └──┴─·········  full stacktrace with packaging information for each call in the stack
+  |                               [ERROR] main: ... java.io.FileNotFoundException: foo.file
+  |                                  at java.io.FileInputStream.open(Native Method) ~[?:1.7.0_79]
+  |                                  ...
+  |                                  at FooClass.main(FooClass.java:47)
+  | [%p] %t: %m<b>%ex</b>
+  |               └─┴─ ·········· request only the stack trace for exceptions.
+  | [%p] %t: %m<b>%xEx{none}</b>  <·· exclude exception info. altogether (Log4j   only)
+  | [%p] %t: %m<b>%nopex</b>      <·· exclude exception info. altogether (logback only)
+  ```
+
+[[{monitoring.logging.NDC,monitoring.logging.MDC,monitoring.101,qa.best_patterns,devops]]
+### ThreadContext (Log4j2 "upgrade" to NDC and MDC)
+* built on earlier Nested Diagnostic Context (NDC) and Mapped Diagnostic Context (MDC)
+* ThreadContext adds unique data stamps ("fish tags") to individual log entries
+  on a per-thread basis.
+* ThreadContext enhances over Log4jv1 and Logback NDC and MDC.
+
+### Log4j2 ThreadContext and Nested Diagnostic Context(NDC) <!-- { -->
+* NDC is based on the idea of a stack. Information can be
+  pushed/popped from the stack.  The values in the stack can then be
+  accessed by a Logger without having to pass a value to the logging
+  method explicitly.
+* Example with Log4j+NDC: Associate username with log entry<br/>
+  ```
+  | import org.apache.logging.Log4j.ThreadContext;
+  | ...
+  | try {
+  |   ThreadContext.push("admin" /*user*/     );
+  |   ThreadContext.push("1234"  /*sessionID*/);
+  |   logger.info("Login successful");
+  |   ThreadContext.pop();
+  |   ...
+  | } final {
+  |   // Reclaim memory used by the stack, prevent memory-leaks
+  |   ThreadContext.removeStack()
+  | }
+  | ─────────────────────────────────────────────────────────────
+  | <PatternLayout pattern="%x %-5p - %m%n" />
+  |                         └┘
+  | extract values from the NDC. Output will be similar to:
+  | "admin 1234 INFO - Login successful."
+  ```
+<!-- } -->
+
+### Log4jv2 ThreadContext and Mapped Diagnostic Context (MDC) <!-- { -->
+* MDC stores data as key-value pairs (vs a stack).
+  ```
+  | import org.apache.logging.Log4j.ThreadContext;
+  | ...
+  | try {
+  |   ThreadContext.put("username",  "admin"); // ThreadContext.remove("username") to remove.
+  |   ThreadContext.put("sessionID", "1234");
+  |   logger.info("Login successful");
+  | } final {
+  |   ThreadContext.clearMap();  // clean map. Avoid memory-leaks.
+  | }
+  ```
+  Logging configuration will be similar to:
+  ```
+  | <PatternLayout
+  |    pattern="%X{username} %X{sessionID} %-5p - %m%n" />
+  | Output will be similar to:
+  | admin 1234 INFO - Login successful
+  | <PatternLayout pattern="%X %-5p - %m%n" />
+  |                         └┘
+  | If no key is specified, output will be in the form {{key, value}, {key, value}}
+  |
+  | When using a JSONFormatter the output will be like:
+  | {
+  |   "timestamp":"1431970324945",
+  |   "level":"INFO",
+  |   "thread":"main",
+  |   "mdc":{ "username":"admin", "sessionID":"1234" },
+  |   "logger":"MyClass",
+  |   "message":"Login successful",
+  |   "context":"default"
+  | }
+  ```
+<!-- } -->
+
+### Logback (and SLF4j-ext) NDC and MDC  <!-- { -->
+
+* Not supported natively but indirectly through SLF4j and the slf4j-ext package:
+  ```
+  | import org.slf4j.MDC;
+  | ...
+  | Logger logger = LoggerFactory.getLogger(MDCLogback.class);
+  | try {
+  |   ...
+  |   MDC.put("username", "admin");
+  |   MDC.put("sessionID", "1234");
+  |   logger.error("Unable to open file.");
+  | } finally {
+  |   MDC.clear(); // Clean, avoid memory-leaks
+  | }
+  |
+  | Logback.xml configuration:
+  | Add next to the Appender:
+  | <Pattern>[%X{username}] %X{sessionID} %-5p - %m%n</Pattern>
+  |
+  | Output will be similar to
+  | [admin] 1234 Info - Login successful
+  ```
+<!-- } -->
+[[monitoring.logging.NDC,monitoring.logging.MDC}]]
+
+### Log4j/Logback Filtering on ThreadContext
+
+  ```
+  | <Configuration name="MyApp">
+  |   <DynamicThresholdFilter
+  |       key="trace-logging-enabled"       <·· automatically adjusts log level if key matches value
+  |       onMatch="ACCEPT"                      <·· := ACCEPT | DENY | NEUTRAL
+  |       onMismatch="NEUTRAL">                        NEUTRAL: defer to next filter
+  |     <KeyValuePair key="true" value="TRACE" /> <·· Appender will log TRACE-level messages
+  |   </DynamicThresholdFilter>                       if trace-logging-enabled=true, even if
+  | ...                                               root Logger is set to a higher level.
+  | </Configuration>
+  ```
+
+### Log4j/Logback? ThreadContextMapFilter ("filter")
+
+  ```
+  | <Console name="ConsoleAppender" target="SYSTEM_OUT">
+  |   <ThreadContextMapFilter                   <·· filter log in Appender/Handle
+  |       onMatch="ACCEPT" onMismatch="DENY">
+  |     <KeyValuePair                           <·· Log if username==admin , drop otherwise
+  |         key="username" value="admin" />
+  |   </ThreadContextMapFilter>
+  | ...
+  | </Console>
+  ```
+
+### logback.xml full config example <!-- { -->
+
+* [REF@nurkiewicz.com](https://www.nurkiewicz.com/2011/09/logging-exceptions-root-cause-first.html),
+  [REF@qos.ch](http://logback.qos.ch/manual/layouts.html)
+* logback.xml is more verbose than log4j(v2).
+  ```
+  | (.../src/main/resources/)logback.xml
+  |
+  | <?xml version="1.0" encoding="UTF-8"?>
+  | <configuration>
+  |   <root level="ALL">                      <·· Apply to all packages/levels
+  |     <appender                             <·· Add file appender.
+  |        name="APPENDER_FILE"
+  |        class="ch.qos.logback.core.rolling.RollingFileAppender">
+  |        <file>log</file>
+  |        <rollingPolicy
+  |           class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  |           <fileNamePattern>%d{yyyy-MM-dd}.log.zip</fileNamePattern> <!-- daily rollover -->
+  |             <maxFileSize>1MB</maxFileSize>
+  |             <!-- keep 2 days' worth of history capped at 1MB total size -->
+  |             <maxHistory>2</maxHistory>
+  |             <totalSizeCap>2MB</totalSizeCap>
+  |         </rollingPolicy>
+  |         <encoder>
+  |           ..(see below encoder for APPENDER_STDOUT ..)
+  |         </encoder>
+  |     </appender>
+  |
+  |     <appender
+  |         name="APPENDER_STDOUT"
+  |         class="ch.qos.logback.core.ConsoleAppender">
+  |       <encoder>                                                           [[{troubleshooting]]
+  |         <pattern>%d{HH:mm:ss.SSS} | %-5level | %thread | %logger{1} |
+  |   %m%n%rEx{full,                                      <·· filter "Noise" in stack trace.
+  |             java.lang.reflect.Method,                 <·· remove Java reflection
+  |             sun.reflect,
+  |             org.apache.catalina,                      <·· remove catalina engine (in tomcat)
+  |             org.springframework.aop,                  <·· remove "almost" whole Spring framework
+  |             org.springframework.security,
+  |             org.springframework.transaction,
+  |             org.springframework.web,
+  |             net.sf.cglib,                             <·· remove CGLIB classes.
+  |             ByCGLIB
+  |           }
+  |           </pattern>
+  |       </encoder>                                                         [[}]]
+  |     </appender>
+  |   </root>
+  |
+  |   <root level="WARN">                                 <·· Aply to all packages/WARN+ logs
+  |       <appender-ref   ref="APPENDER_FILE"   />
+  |       <appender-ref   ref="APPENDER_STDOUT" />
+  |   </root>
+  |
+  |   <logger name="my.company."          level="INFO" /> <·· Detail level for packages
+  |   <logger name="my.company.package01" level="DEBUG"/>
+  |   <logger name="org.eclipse.jetty"    level="WARN" />
+  |
+  | </configuration>
+  ```
+<!-- } -->
+
+[[monitoring.logging.log4j,monitoring.logging.logback}]]
+
+### About Syslog <!-- { -->
+* syslog server running on a local/central server collecting logs
+  from the device's OS, processes, and services.
+* Syslog events are categorized by facility, which specifies the
+  type of event being logged (auth, ...).
+* Natively supported in Log4j and Logback by just indicating
+  the host number, port number, and protocol.
+<!-- } -->
+[[monitoring.logging}]]

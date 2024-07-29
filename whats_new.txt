@@ -1,0 +1,371 @@
+[[{PM.WHATS_NEW,doc_has.ext_resource,architecture.async.reactive,troubleshooting.debugging]]
+## What's new
+
+RELATED:
+* <https://docs.openrewrite.org/>  [[{troubleshooting,PM.low_code,qa}]]
+  OpenRewrite enables large-scale distributed source code refactoring 
+  for framework migrations, vulnerability patches, and API migrations. 
+  While the original focus was on the Java language, OpenRewrite is 
+  continuously expanding languages and frameworks.
+* <https://www.infoq.com/news/2023/12/amazon-q-code-transformation/>
+    service designed to simplify the process of upgrading existing Java 
+  application code through generative artificial intelligence. The new 
+  feature aims to minimize legacy code and automate common language 
+  upgrade tasks required to move off older language versions.
+  * Currently, Code Transformation supports the upgrade to Java 17 of 
+    Java 8 and 11 applications built with Maven
+  """Amazon Q Code Transformation uses OpenRewrite to accelerate Java 
+    upgrades for customers (...) Our internal experiments with 
+    OpenRewrite have been extremely positive, but there are situations 
+    where additional iterative debugging is needed to get to a fully 
+    building application. The iterative AI-powered debugging has me 
+    excited about Amazon Q Code Transformation."""<br/>
+  """ An internal Amazon team of five people successfully upgraded 
+    one thousand production applications from Java 8 to 17 in 2 days. It 
+    took, on average, 10 minutes to upgrade applications, and the longest 
+    one took less than an hour.
+  """
+  * it requires the CodeWhisperer Professional Tier (USD 
+    19/user/month) in the AWS Toolkit for IntelliJ IDEA or the AWS 
+    Toolkit for Visual Studio Code.
+
+### v.22 
+* JEP 461, Stream Gatherers (Preview) enhances Stream API with custom intermediate operations.
+ ```
+|          ┌─······· input elements
+|          ·  ┌─···· optionally mutating intermediate state 
+|          ·  ·  ┌·· transformed type output  
+|          v  v  v
+| Gatherer<I, S, R> Interface 
+|
+| This operation is defined by four key functions:
+| 1st. Optional initializer, providing a private state for processing stream elements.
+| 2nd. integrator, responsible for integrating new elements from the input stream.
+|      It may emit elements into the output stream or terminate processing early.
+| 3rd. Optional combiner, which facilitates parallel evaluation. 
+| 4th. Optional finisher, invoked when there are no more input elements,  potentially
+|      emitting additional output elements. 
+|      Depending on the use of a combiner function, the entire 
+|      operation can be executed either sequentially or in parallel.
+ ```
+
+### v.21 2023-09 <!-- { -->
+
+* JEP 453 (Preview): Structured Concurrency, simplifying concurrent
+  programming by introducing an API for structured concurrency.
+  Structured concurrency treats groups of related tasks running in 
+ different threads as a single unit of work, thereby streamlining 
+ error handling and cancellation, improving reliability, and enhancing 
+ observability. This is a preview API.
+
+
+* JEP 430: String Templates (Preview). <https://openjdk.org/jeps/430><br/>
+  ```
+  | val name = "Joan";
+  | String info = STR."My name is \{name}"; // <·· STR: Template processor.
+  | > My name is Joan"
+  |
+  | int x = 10, y = 20;
+  | String s = STR."\{x} + \{y} = \{x + y}"; // <·· Embedded expression is OK!
+  | > "10 + 20 = 30"
+  |
+  | val filePath = "somePath.txt"; 
+  | val fileExists = true; 
+  | String msg = STR."The file \{filePath} \{fileExists} ? "does" : "does not"} exist";
+  |                                                        ^    ^   ^        ^
+  |                                                    No need to scape '"'
+  ```
+* JEP 431: Sequenced Collections
+* JEP 439: Generational ZGC
+* JEP 440: Record Patterns
+* JEP 441: Pattern Matching for switch
+* JEP 442: Foreign Function & Memory API (Third Preview)
+* JEP 443: Unnamed Patterns and Variables (Preview)
+* JEP 444: **Production ready Virtual Threads**. Now we can reserve a full 
+           thread for a connected client, even if we have 100.000 simultaneous
+           users with long connections, since Threads are virtual (vs OS backed).
+           No need anymore for complex asynchronous processing and pooling in
+           servlets and related code.
+* JEP 445: Unnamed Classes and Instance Main Methods (Preview)
+* JEP 446: Scoped Values (Preview)
+* JEP 448: Vector API (Sixth Incubator)
+* JEP 449: Deprecate the Windows 32-bit x86 Port for Removal
+* JEP 451: Prepare to Disallow the Dynamic Loading of Agents
+* JEP 452: Key Encapsulation Mechanism API
+  <https://openjdk.org/jeps/452>
+* JEP 453: Structured Concurrency (Preview)
+
+<!-- } -->
+
+### v.17 2021-09 <!-- { -->
+* 1st long-term support (LTS) release after JDK 11 (2018).
+* Algebraic Data Types (Records and Sealed Types -JEP 409-) is now complete.
+  This is a major step forward in terms of data modeling and enhancing
+  the OO capabilities of the Java language.
+  WARN: Pattern Matching, complementing and built upon algebraic data 
+  types is not available until JDK 21.
+   
+  * 409: Sealed Classes
+    ```
+    | package com.example.geometry;
+    | 
+    | public abstract sealed class Shape           ← Syntax 1: Permitted classes in
+    |     permits com.example.polar.Circle,                    different file
+    |             com.example.quad.Rectangle,
+    |             com.example.quad.simple.Square { ... }
+    | 
+    | abstract sealed class Root { ...             ← Syntax 2: Permitted classed inside
+    |     final class A extends Root { ... }                   parent class.
+    |     final class B extends Root { ... }
+    |     final class C extends Root { ... }
+    | }
+    ```
+* 412: Foreign Function& Memory API (Incubator):
+  API to efficiently interoperate with native code through foreign
+  functions while safely accessing foreign memory (not managed by
+  the JVM). Future replacement for the brittleness and danger of JNI.
+  Easy of use and able to work with different kinds of foreign memory
+  (native memory, persistent memory, managed heap memory,..).
+* 306: Restore Always-Strict Floating-Point Semantics for
+  numerically-sensitive libraries, including `java.lang.Math` and
+  `java.lang.StrictMath`.
+* 356: Enhanced Pseudo-Random Number Generators [[{security.cryptography,PM.TODO}]]
+* 403: **Strongly Encapsulate JDK Internals**. it will no longer be
+        possible to bypass strong encapsulation via --illegal-access flag.
+* 406: Pattern Matching for switch (Preview)
+* 407: Remove RMI Activation
+* 410: Remove the Experimental AOT and JIT Compiler
+* 411: Deprecate the Security Manager for Removal
+* 414: Vector API (Second Incubator)
+* 415: Context-Specific Deserialization Filters
+* 382: New macOS Rendering Pipeline
+* 391: macOS/AArch64 Port
+* 398: Deprecate the Applet API for Removal
+<!-- } -->
+
+### v.15 2020-09-15 <!-- { -->
+<https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features>
+
+* **RECORDS!!!**: non-verbose inmutable classes.  [[{java_lang.records}]]
+* production ready ZGC low-latency garbage collector, expected to be
+  quite impactful for a multitude of workloads.
+* text blocks (JEP 378): strings spanning several lines ("templates", ...)
+* JEP 360: Sealed Classes (Preview): Avoid extending class designed to NOT
+  be extended by third parties.
+* JEP 383: Foreign (C/Assembler) Memory Access API (Preview) (Project Panama).
+<!-- } -->
+
+### v.14 2020-03-??  <!-- { -->
+* [REF@infoq.com](https://www.infoq.com/news/2019/12/java14-feature-freeze/)
+  * More container awareness...
+  * NUMA container support added to hotspot (JDK-8198715)
+  * Add Container MBean to JMX (JDK-8199944)
+* Record-types (Preview)
+* Shenandoah GC:
+  [REF1@redhat.com](https://developers.redhat.com/blog/2020/03/04/shenandoah-gc-in-jdk-14-part-1-self-fixing-barriers/)
+  """ ... self-fixing barriers aims to reduce local latencies
+  spent in barrier mid-and slow paths. The second will cover
+  concurrent root processing and concurrent class unloading. """
+  [REFw@redhat.com](https://developers.redhat.com/blog/2020/03/09/shenandoah-gc-in-jdk-14-part-2-concurrent-roots-and-class-unloading/)
+  """... concurrent roots processing and concurrent class unloading,
+         aim to reduce GC pause time by moving GC work from the pause
+         to a concurrent phase."""
+<!-- } -->
+
+### v 12,13  <!-- { -->
+* REFs:
+  * <https://www.infoq.com/news/2019/06/java13-feature-freeze/>
+  * <https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/>
+  * <https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/>
+  * <https://developers.redhat.com/blog/2019/07/01/shenandoah-gc-in-jdk-13-part-3-architectures-and-operating-systems/>
+* add container support to jhsdb command (JDK-8205992)
+* Impove systemd slice memory limit suppot (JDK-8217338)
+* More container awareness:  [[{devops.containarization]]<br/>
+  * Flight Recorder impovements for containers (JDK-8203359)
+  * Improve container support when Join Contollers option is used (JDK-8217766)
+  * JFR jdk.CPUInformation event epots incorrect info. when running in
+    Docker container (JDK-8219999) [[}]]
+<!-- } -->
+
+### v.11(LTS) 2018/09 <!-- { -->
+* REFs:
+  * <https://www.journaldev.com/24601/java-11-features>
+  * <https://www.infoq.com/news/2018/09/java11-released>
+* More container awareness...                                             [[{devops.containarization]]
+  * Remove -XX:+UnlockExperimentalVMOptions, -XX:+UseGroupMemoryLimitFoHeap (JDK-8194086)
+  * jcmd -l & jps: do not list JVMs in Docker containers (JDK-8193710)
+  * Container Metrics (-XshowSettings:system) (JDK-8204107)
+  * Update CPU count algorithm when both cpu shares and quotas are used (JDK-8197867)
+    --XX:+PrefectContainerQuotaForCPUCount                              [[}]]
+
+* Flight Recorder, ZGC, CDS, ... opensourced : Oracle JDK "==" OpenJDK
+#### New major features:
+* Autocompilation(JEP 330)
+  ```
+  $ java someFile.java
+  ```
+* New string methods.
+* Local-Variable Syntax for Lambda Parameters (JEP 323)
+  ```
+  (var s1, var s2) -> s1 + s2
+  ```
+  (While it's possible to  just skip the type in the lambda
+   it becomes a need when for annotations like @Nullable )
+* Nested Based Access Control: fix some issues when using (**discouraged**) reflection.
+* Dynamic Class-File Constants(JEP 309):<br/>
+  `class-file` format now extends support a new constant pool form:
+  CONSTANT_Dynamic , reduce the cost and disruption of developing
+  new forms of materializable class-file constraints.
+
+* Epsilon: A No-Op Garbage Collector(JEP 318): [[{performance,architecture.batch]]<br/>
+  (Experimental)
+  Unlike the JVM GC which is responsible for allocating memory
+  and releasing it, Epsilon only allocates memory. Useful for:
+  * Extremely short lived jobs
+  * Performance testing
+  * Memory pressure testing
+  * VM interface testing
+  * Last-drop latency improvements
+  * Last-drop throughput improvements        [[}]]
+
+* Remove JavaEE and CORBA Modules(JEP 320)
+
+* New HTTP/1.1, HTTP/2 and WebSockets Client (JEP 321)  [[{io.http]]
+  designed to improve overall performance.          [[}]]
+* TLS 1.3                                           [[{SECURITY.CRYPTOGRAPHY]]
+* ChaCha20,Poly1305 Crypto (JEP 329) implemented in
+  the SunJCE provider.
+                                                    [[}]]
+
+* Convenient Reading/Writing Strings to/from Files  [[{PM.TODO}]]
+
+* ZGC: (JEP 333) Experimental (Production in 15+)
+  - Scalable Low-Latency Garbage Collector.
+  - low latency GC.
+  - sub-10ms pause times, less than 15% perf.penalty.
+<!-- } -->
+
+### v.10 (2018/03)  <!-- { -->
+
+#### More container awareness...                                 [[{devops.containarization]]
+* Improve heap memory allocations (JDK-8196595):
+  ```
+  | --XX:InitialRAMPercentage, --X:MaxRAMPercentage and -XX:MinRAMPercentage
+  | --XX:InitialRAMFraction  , --X:MaxRAMFraction   and -XX:MinRAMFraction   deprecated
+  ```
+* Total number of CPUs available to the Java Process calculated from
+  ```
+  | --cpus, --cpu-shares, --cpu-quota (JDK-8146115)
+  ```
+  (Use --XX:-UseContainerSupport to return to the old behaviour)
+* Attach in linux became elative to `/proc/pid/root` and namespace aware (jcmd, jstack,...)
+* See [REF@aboullaite.me](https://aboullaite.me/docker-java-10/)
+  JVMs before 10 had been implemented before cgroups, hence not
+  optimized for executing inside a container.
+ [[}]]
+
+* Application Data-Class Sharing extends                    [[{devops,performance]]
+  Class-Data Sharing ("CDS") allowing application classes
+  to be placed in the shared archive in order to improve
+  startup and footprint.                                    [[}]]
+* Parallel Full GC for G1: improves G1 worst-case latencies  [[{JVM.GC}]]
+* Consolidate JDK Forest into a Single Repository  !!!!
+* Local-Variable Type Inference: var a = ....;
+* javah superseded by functionality in javac.
+* Thread-Local Handshakes allows to execute a callback on   [[{JVM,performance]]
+  threads without performing a global VM safepoint.
+   Makes it both possible and cheap to stop individual
+  threads and not just all threads or none. [[}]]
+* default set of Root Certificates CA in the JDK.
+* Heap Allocation on Alternative Memory Devices
+  enables the HotSpot VM to allocate the Java object
+  heap on an alternative memory device, such as an
+  NV-DIMM, specified by the user.
+<!-- } -->
+
+### v.9(2017/09)  <!-- { -->
+* Containerization work [[{devops.containarization]]
+  ```
+  | └ --XX:ParallerGCThreads and --XX:CICompilerCount are set based on
+  |   Containers CPU limits (can be overriden)
+  |   - Calculated from --cpuset-cpus
+  |
+  | └ Memory Configuration for containers
+  |   -XX:+UnlockExperimentalVMOptions
+  |   -XX:+UseGroupMemoryLimitFoHeap
+  |   - set -XX:MaxRAMFraction to 2 (default is 4)   [[}]]
+  ```
+* jshell
+* jlink -release
+* Multi-release JARs
+
+#### **Java Platform Module System ("Jigsaw")** [[{]]
+* JPMS divides the JDK into a set of modules for combining at run, compile, or build time.
+* enabling understanding of dependencies across modules.
+* allows developers to more easily assemble and maintain sophisticated applications.
+* allows to scale down to smaller devices.
+* improves security and performance.
+* aspects include:
+  * application packaging
+  * JDK modularization
+  * reorganizing source code into modules.
+  * Build system is enhanced to compile modules
+    and enforce module boundaries at build time.
+    (Java 9 allows illegal reflective access to help migration)
+[[}]]
+
+
+
+* ahead-of-time (AoT) compilation (experimental)                [[{performance]]
+  improve startup time, with limited impact on peak performance.[[}]]
+* **REPL (read-eval-print loop) jShell:**<br/>
+  jShell: interactively evaluates statements "a la script" with
+  tab completion, automatic terminal semicolons and API for IDE integration.
+
+[[{java_lang.functional]]
+* Reactive Streams<br/>
+(https://github.com/reactive-streams/reactive-streams-jvm/blob/v1.0.1/README.md#specification)
+  Small spec, also adopted in Java 9, that defines the interaction
+  between asynchronous components with back pressure. For example a
+  data repository — acting as Publisher, can produce data that an
+  HTTP server — acting as Subscriber, can then write to the
+  response. The main purpose of Reactive Streams is to allow the
+  subscriber to control how fast or how slow the publisher will produce
+  data.
+* Streams API Enhancements:<br/>
+  * Java 8 Stream API allows processing data declaratively
+    while leveraging multicore architectures.
+  * Java 9 adds methods to conditionally take and drop items
+    from Stream, iterate over Stream elements, and create a
+    stream from a nullable value while **expanding the set of
+    Java SE APIs that can serve as Streams sources**.
+[[java_lang.functional}]]
+
+* Code cache can be divided into segments to improve performance
+  and allow extensions such as fine-grained locking resulting in improved sweep
+  times.
+
+* (Datagram Transport Layer Security) DTLS security API,     [[{security]]
+  preventing eavesdropping, tampering, and message forgery
+  in client/server communications.                           [[}]]
+
+#### Java 9 deprecates and removes ....
+* Applet API and appletviewer (alternative: Java Web Start)
+* Concurrent Mark Sweep (CMS) GC.
+* JVM TI (Tool Interface) hprof (Heap Profiling) agent, superseded in the JVM.
+* jhat tool, obsoleted by superior heap visualizers and analyzers.
+<!-- } -->
+
+### Java 8 <!-- { -->
+
+* First version to support Containers. **WARN**: Do not use any version below that.
+
+* [[{PM.TODO]]
+  <https://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html>
+  <https://www.qwant.com/?q=what+new+java+8>
+  [[}]]
+
+* TLS enhancements backported to 1.8 (HTTP2)
+  <https://www.infoq.com/news/2020/04/tls-alpn-java8/>
+<!-- } -->
+[[PM.WHATS_NEW}]]
