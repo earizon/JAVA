@@ -1,0 +1,210 @@
+# Async/Reactive Arch in Java Summary
+
+```
+Document status: Draft/WiP
+```
+
+* NOTE: Reactive (to events) programming is just an oppinionated (but efficient and bug "free") way 
+  to implement asyncronous architectures.
+
+[[{architecture.async.reactive.javalite,PM.low_code,messaging.jms,messaging.activemq,architecture.async,architecture.batch,architecture.distributed]]
+## JavaLite lightweight async job processing
+
+* Use Cases:
+  * website that needs to run batch process in background
+  * We receive batch of inputs to be processed in a "best-effort"
+    but replay as-soon-as-possible to client that we have the
+    input batch ready for processing.
+* easy-to-use "Wrapper" on top o Apache Artemis (ActiveMQ "next Gen")
+  the Async adds an abstraction layer based on a Command Pattern,
+  which makes it trivial to add asynchronous processing.
+* Embedded broker instance with reasonable defaults
+* Ex:
+  ```
+  Async async = new Async(            ←  CREATE one or more Queues
+            "/opt/project1",          ← place to store persistent messages
+            false,
+            new QueueConfig(
+               "MESSAGES_QUEUE",      ← queue 1 name
+               new CommandListener(),
+               5)                     ← number of listeners(threads) to
+            ,
+            new QueueConfig(
+                  "ERRORS_QUEUE",     ← queue 2 name (No limit in the number o
+                  new ErrorListener(),                queues)
+               5)
+            );
+        async .start();
+
+   public class HelloCommand             ←  Create a command
+       extends Command {
+       private String message;
+
+       public HelloCommand(String message) {
+         this.message = message;
+       }
+
+       public HelloCommand() {}          ←   necessary (forbid finals)
+
+       @Override
+       public void execute() {
+           System.out.println(message);
+       }
+   }
+
+   for(int i = 0; i < 100; i++){         ←  sending commands async
+      async.send(
+        "MESSAGES_QUEUE",
+        new HelloCommand("Hello Number "+ i));
+   }
+   Output will be similar to
+   → Hello Number 0
+   → Hello Number 1
+   → ...
+
+   List<Command> topCommands             ←  Peek (vs Consume) 3 "top"
+      =  async .getTopCommands(            commands from "ERROR_QUEUE"
+           3, "ERROR_QUEUE");
+  ```
+* Commands can be read and processed synchronously (one-by-one)
+  from an individual queue one at the time without a listener.<br/>
+  Ex:   you do not want to process errors automatically . To do so:
+  ```
+  ErrorCommand errorCommand =           ←  Consume message
+       (ErrorCommand)receiveCommand("ERROR_QUEUE");
+  ... // Process manually
+  ```
+
+* Text vs Binary messages
+  * To be compatible with JMS the  communication protocol is limited to
+    ```
+    - javax.jms.TextMessage   ← Default mode.
+    - javax.jms.BytesMessage  ← async.setBinaryMode(true);
+    ```
+    In both cases, the   serialization of a command is first done to XML
+    with the use of XStream.
+  * If a given command has transient field that must NOT  be serialized,
+    use the field annotation @XStreamOmitField to ignore it.
+  *  WARN:  Do not switch from mode to mode while having persistent
+            messages stored in your queues.
+* Commands with DB access
+  * If queue processing requires a database connetion, DBCommandListener
+    can be used:
+    ```
+    Async async = new Async(filePath, false, new
+        QueueConfig("MESSAGES_QUEUE", new
+        DBCommandListener(                 ← If JNDI connection is setup, the
+         "java:comp/env/jdbc/conn01"), 5)    listener will find and open it
+    );                                        Use your tomcat/Jboss/... container
+    ```
+
+* (Artemis) Config API: For complex app configuration, the underlying Artemis API
+  can be used:
+  ```
+    org.apache.activemq.artemis.core.config.Condifuration
+       artemisCOnfig = async.getConfig();
+  ```
+* See also filequeue. It's faster but doesn't support Queue to DDBBs.
+[[architecture.async.reactive.javalite}]]
+
+[[{architecture.async.reactive.FileQueue,PM.low_code,messaging.jms,messaging.activemq,architecture.async,scalability.101]]
+## FileQueue
+<https://github.com/stimulussoft/filequeue>
+* KISS alternative using MVStore
+<http://www.h2database.com/html/mvstore.html>
+* All producers and consumers run within a JVM.
+* H2 MVStore DB used for storage.
+* Queue items are   POJOs serialized into Json using jackson .
+* faster than JavaLite due to performance shortcut :
+  *  File Queue will transfer queued items directly to consumers
+     without hitting the database provided there are consumers
+     available, otherwise, message will be persisted
+*  Doesn't support persistence to JNDI DDBB
+* fixed and exponential back-off retry is present.
+
+* PRE-SETUP :
+  * maven/gradle package dependency:
+    `com.stimulussoft:filequeue:1.1.4`
+
+* Usage:
+  * Implement POJO extending FileQueueItem
+  * Implement consume(FileQueueItem) on <<Consumer>> to process items
+  * Instantiate a FileQueue object and call config() to configure
+  * Call startQueue() to start the queue
+  * Call stopQueue() to stop the queue processing
+  * Call FileQueue.destroy() to shutdown all static threads (optional)
+
+* Queue Ussage example:
+  ```
+  FileQueue queue = FileQueue.fileQueue();
+  FileQueue.Config config = FileQueue.
+      config(
+        queueName,
+        queuePath,
+        TestFileQueueItem.class,
+        new TestConsumer()
+      )
+      .maxQueueSize(MAXQUEUESIZE)           // ← queueItem will block until an slot becomes
+                                                 available or ExceptionTimeout thrown
+      .retryDelayAlgorithm(
+         QueueProcessor.RetryDelayAlgorithm.EXPONENTIAL)
+      .retryDelay(RETRYDELAY)
+      .maxRetryDelay(MAXRETRYDELAY)
+      .maxRetries(0);                       // ← Infinite retries
+      .persistRetryDelay(                   // ← delay between DDBB scans.
+         PERSISTENTRETRYDELAY);
+  queue.startQueue(config);                 // ← Start queue
+  for (int i = 0; i < ROUNDS; i++)
+    queue.queueItem(                        // ← Submit items
+      new TestFileQueueItem(i)
+    );
+  queue.stopQueue();                        // ← stopQueue
+  ```
+* Consumer example implementation:
+  ```
+  static class TestConsumer implements Consumer<FileQueueItem> {
+    public TestConsumer() { }
+
+    @Override
+    public Result consume(FileQueueItem item)
+    throws InterruptedException {
+                    try {
+    TestFileQueueItem retryFileQueueItem =
+        (TestFileQueueItem) item;
+    if (retryFileQueueItem.getTryCount() == RETRIES )
+        return Result.SUCCESS;
+    return Result.FAIL_REQUEUE;
+                    } catch (Exception e) {
+    logger.error(e.getMessage(), e);
+    return Result.FAIL_NOQUEUE;
+                    }
+    }
+  }
+  ```
+* FileQueueItem implementation:
+  ```
+  import com.stimulussoft.filequeue.*;
+
+  static class TestFileQueueItem extends FileQueueItem {
+    Integer id;
+    public TestFileQueueItem() { super(); };
+    private TestFileQueueItem(Integer id) {
+        this.id = id;
+    }
+    @Override
+    public String toString() { return String.valueOf(id); }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+  }
+  ```
+### File Caching:
+If there is the need to cache a file to disk or perform resource
+availability checks prior to items being placed on the queue,
+implement availableSlot() on the QueueCallback interface. This method
+is called as soon as a slot becomes available, just before the item
+is place on the queue. It may be used to cache a file to disk, or
+perform resource availability pre-checks (e.g. disk space check).
+
+[[architecture.async.reactive.FileQueue}]]
+
+

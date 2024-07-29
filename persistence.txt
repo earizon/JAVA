@@ -1,6 +1,6 @@
-JAVA persistence: [[{]]
+# JAVA persistence [[{]]
 
-# Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,spring.*,persistence.jpa,01_PM.TODO]]
+## Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,spring.*,persistence.jpa,01_PM.TODO]]
 * tool providing version control for database (SQL) schemas
   and automated schema (tables, columns, sequences), data, views, procedures
   and packages evolution.
@@ -41,8 +41,8 @@ JAVA persistence: [[{]]
     ALTER TABLE table01
       ADD COLUMN column5 VARCHAR(255);
 
-# Obevo: DDBB change manager
-@[https://github.com/goldmansachs/obevo]
+## Obevo: DDBB change manager
+<https://github.com/goldmansachs/obevo>
 - Obevo: ddbb deployment tool handling enterprise scale schemas and complexity.
 - By Goldman Sachs.
 - Obevo is a database deployment tool that helps teams manage database
@@ -76,27 +76,27 @@ JAVA persistence: [[{]]
 * As a reference Spring Boot includes auto-configuration support for both Flyway and Liquibase.
 [[}]]
 
-# QueryDSL [[{persistence.sql.querydsl,PM.TODO]]
+## QueryDSL Compile safe SQL [[{persistence.sql.querydsl,PM.TODO]]
 * https://www.baeldung.com/intro-to-querydsl
 
 * Compile safe SQL like domain specific language compatible with JPA.
 
 [[persistence.sql.querydsl}]]
 
-# Jooq: SQL made simple [[{persistence.sql,vertx.*,async/reactive.*,01_PM.low_code,qa.data,01_PM.TODO]]
-@[https://www.jooq.org/]
+## Jooq: SQL made simple [[{persistence.sql,vertx.*,architecture.async.reactive,01_PM.low_code,qa.data,01_PM.TODO]]
+<https://www.jooq.org/>
 * WARN: Free for OOSS databases, requires licence for Oracle and others.
 * ¿Deprecated in favor of QueryDSL?
 
-# Vertx+Jooq
-@[https://github.com/jklingsporn/vertx-jooq]
+### Vertx+Jooq
+<https://github.com/jklingsporn/vertx-jooq>
   jOOQ-CodeGenerator to create vertxified DAOs and POJOs.
   Now with JDBC, async and reactive support!
-@[https://github.com/jklingsporn/vertx-jooq]
+<https://github.com/jklingsporn/vertx-jooq>
 
 [[}]]
 
-# MyBatis: [[{]]
+## MyBatis [[{]]
 C&P https://www.infoq.com/articles/SQL-relevance-NoSQL/
 
 SQL is everywhere in data processing, ... Humble detected an increasing discomfort
@@ -141,8 +141,8 @@ Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
 [[}]]
 
 
-# Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
-@[https://quarkus.io/guides/hibernate-orm-panache-guide]
+## Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
+<https://quarkus.io/guides/hibernate-orm-panache-guide>
 
 - Hibernate Gotchas:
   https://github.com/theotherian/hibernate-gotchas
@@ -153,8 +153,8 @@ Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
   https://thorben-janssen.com/hibernate-exceptions/
 [[}]]
 
-# speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
-@[https://github.com/speedment/speedment]
+## speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
+<https://github.com/speedment/speedment>
 - Stream ORM toolkit and runtime.
 - The toolkit analyzes the metadata of an existing SQL database and
   automatically creates a Java representation of the data model.
@@ -203,8 +203,8 @@ Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
       (`length` > 120)
 [[}]]
 
-# Other ORM/DSL SQL frameworks
-## Excluded ORM Framework Comparative [[{]]
+## Other ORM/DSL SQL frameworks
+### Excluded ORM Framework Comparative [[{]]
 https://dzone.com/articles/best-java-orm-frameworks-for-postgresql
 
 .... The following frameworks have been excluded from the test due to lack
@@ -220,7 +220,7 @@ for one or more reasons.
 * Speedment does not support transactions in its current stable version.
 
 [[}]]
-## frameworks no longer developed or maintained: [[{]]
+### frameworks no longer developed or maintained: [[{]]
 * ActiveJPA seems like it never reached stable release, with the last commits from 2014.
 * Apache Torque had its last commit in 2013.
 * Carbonado is an inactive project.
@@ -234,8 +234,8 @@ for one or more reasons.
 * TJDO Project's last commit is from 2008.
 [[}]]
 
-## reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
-@[https://github.com/goldmansachs/reladomo]
+### reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
+<https://github.com/goldmansachs/reladomo>
   - Enterprise grade ORM framework featuring:
     - Strongly typed   compile-time  checked query language
     - Bi-temporal chaining
@@ -245,19 +245,19 @@ for one or more reasons.
 
 [[$div}]]
 
-# Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
-@[https://github.com/xerial/snappy-java]
-- Java port of the snappy @[http://code.google.com/p/snappy/]
+## Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
+<https://github.com/xerial/snappy-java>
+- Java port of the snappy <http://code.google.com/p/snappy/>
 [[}]]
 
-# JCache [[{scalability.cache,01_PM.TODO]]
+## JCache [[{scalability.cache,01_PM.TODO]]
 - Map-Like API optimized for caching.
 - 1.0 drawbacks:
   - No async operations.
 - Implemented by Hazelcast and others
 [[}]]
 
-# HikariCP JDBC "zero-overhead" production ready JDBC connection pool [[{]]
+## HikariCP JDBC "zero-overhead" production ready JDBC connection pool [[{]]
 https://github.com/brettwooldridge/HikariCP
 https://www.baeldung.com/hikaricp
 
@@ -274,10 +274,9 @@ https://www.baeldung.com/hikaricp
 *
 [[}]]
 
-# Other related projects:
-## c3p0 (abandoned) [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
+### c3p0 (abandoned) [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
 Ver HikariCP como alternativa  https://github.com/brettwooldridge/HikariCP
-@[https://www.mchange.com/projects/c3p0/#what_is]
+<https://www.mchange.com/projects/c3p0/#what_is>
 * c3p0: easy-to-use library for making traditional JDBC drivers
         "enterprise-ready" augmenting them with jdbc3 functionality,
         , optional jdbc2 extensions and jdbc4 (v 0.9.5+).

@@ -3,6 +3,7 @@ input_output.txt
 QA_and_testing.txt
 containerization.txt
 persistence.txt
+async_reactive.txt
 concurrent_programming.txt
 debug_and_profiling.txt
 gradle.txt

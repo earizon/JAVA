@@ -15,20 +15,20 @@
     threads, etc.
   * Spring Boot 2.0.0.M5+: Micrometer used as instrumentation library powering
     the delivery of application metrics from Spring.
-  @[https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-metrics]
+  <https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-metrics>
     2 simple steps setup: [low_code]
     * Declare maven dependency.
     * Add config. to application.yml
 
-* @[https://micrometer.io/docs/ref/spring/1.5] (legacy support)
+* <https://micrometer.io/docs/ref/spring/1.5> (legacy support)
 drop-down support for Spring Boot 1.5.x.
   * Cache instrumentation for most popular caching frameworks.
   * OkHttpClient Instrumentation
 
 * Guides: [TODO]
-  * @[https://micrometer.io/docs/guide/consoleReporter]
-  * @[https://micrometer.io/docs/guide/httpSenderResilience4jRetry]
-  * @[https://micrometer.io/docs/guide/customMeterRegistry]
+  * <https://micrometer.io/docs/guide/consoleReporter>
+  * <https://micrometer.io/docs/guide/httpSenderResilience4jRetry>
+  * <https://micrometer.io/docs/guide/customMeterRegistry>
 [[}]]
 
 [[monitoring}]]

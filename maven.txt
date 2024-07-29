@@ -1,15 +1,16 @@
 [[{DEVOPS.MAVEN]]
+
 # Maven Summary [[{101,_PM.WiP]]
 
 * External Links
-  * PUBLIC REPOSITORY:      @[https://mvnrepository.com/]
-  * Artifact Search Engine: @[http://search.maven.org/]
-  * Online doc from Maven : @[https://www.mvndoc.com]
+  * PUBLIC REPOSITORY:      <https://mvnrepository.com/>
+  * Artifact Search Engine: <http://search.maven.org/>
+  * Online doc from Maven : <https://www.mvndoc.com>
     Ex: Show Bouncy Castle doc by:
-    * full index   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index-all.html]
-    * by package   : @[https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index.html]
+    * full index   : <https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index-all.html>
+    * by package   : <https://www.mvndoc.com/c/org.bouncycastle/bcpg-jdk15/index.html>
 
-# maven lifecycle : execute a set of goals IN ORDER:
+## maven lifecycle : execute a set of goals IN ORDER:
   ```
   mvn   package   ┌ resources:resources     ←··· goal: unit of work. plugins implementing differet goals
         └──┬──┘   │ compiler:compile             accept parametrization customizing its run-time behavior:
@@ -18,7 +19,7 @@
                   └ surefire:test jar:jar
   ```
 
-## mvn Usssage :
+## mvn Usssage
  All mvn commands take the pom.xml project definition as input.
 First time mvn is executed will be slow, since lot of libraries must be downloaded.
 
@@ -179,7 +180,7 @@ dependency on snapshots                                                      [[d
   </repository>
   ```
 
-# pom utils (Cleaner/Updater/...) <[[{qa]]
+## pom utils (Cleaner/Updater/...) <[[{qa]]
 
 * REF: <https://github.com/kdgregory/pomutil>
 
@@ -198,7 +199,7 @@ Utilities to clean, organize, and restructure Maven POMs.
   * find dependencies used but unspecified (TRANSITIVE DEPENDENCIES THAT SHOULD BE DIRECT).
 
 ## MVND(aemon) 
-* @[https://www.infoq.com/news/2020/12/mvnd-mavens-speed-daemon/]
+* <https://www.infoq.com/news/2020/12/mvnd-mavens-speed-daemon/>
 * Study driven by Gradle shows Maven as being
   up to 100 times slower than gradle builds .
 * JIT compiled classes are cached.
@@ -217,7 +218,7 @@ Utilities to clean, organize, and restructure Maven POMs.
 [[qa}]]
 
 
-# pom.xml Summary
+## pom.xml Summary
 
 * REF: <https://maven.apache.org/pom.html>
 
@@ -232,11 +233,11 @@ Utilities to clean, organize, and restructure Maven POMs.
 
     <groupId>com.mycomp.groupid</groupId>  ┐    PROJECT COORDINATES:  Reusable in pom as
     <artifactId>myArtifactId</artifactId>  ├ ←  ${project.groupId}, ${project.artifactId}, ${project.version}
-    <version>1.0─SNAPSHOT</version>        ┘    version follows: MAJOR.MINOR.PATCH REF: @[https://semver.org/]
+    <version>1.0─SNAPSHOT</version>        ┘    version follows: MAJOR.MINOR.PATCH REF: <https://semver.org/>
 
     <packaging>jar</packaging>              ← := jar│war│ear│pom│maven─plugin│ejb│rar│par│aar│apklib│...
   ┌ <properties> ←··························· Reusable propeties:
-  │   ...                                     @[https://maven.apache.org/pom.html#Properties]
+  │   ...                                     <https://maven.apache.org/pom.html#Properties>
   │   <junit.ver>3.8.1</junit.ver>              ← Best pattern. Group all dependency versions in properties
   │   <guava.ver>21.0</guava.ver>                 (in parent pom if parent─children apply)
   │   <......ver>19.2</guava.ver>
@@ -292,8 +293,9 @@ Utilities to clean, organize, and restructure Maven POMs.
   </project>
   ```
 
-# Parent+Children Multiproject  [[{]]
-## parent vs aggregator
+## Parent+Children Multiproject  [[{]]
+
+### parent vs aggregator
 * An aggregator is a pom.xml containing a <modules> section with a list of
   aggregated projects. It can also be a parent when aggregated projects point
   back to it as parent project, ussually because parent project includes
@@ -384,7 +386,7 @@ shared.  Otherwise modifying the parent can break children.
   [INFO] BUILD SUCCESS
   ```
 
-## Parent and Aggregator best-practices:
+### Parent and Aggregator best-practices:
 
 - Split parents and aggregators in separate files like:
   ```
@@ -482,7 +484,7 @@ But in the end, you choose what's best for your project/environment.
   3. imported version in import scope.
   4. (automatic) dependency mediation.
 
-### Real case example:
+### BOM Real case example:
 * ensure that all Spring dependencies are at the same version:
 1. Step One. Import spring-framework-bom in our dependencyManagement to ensure that
    all Spring dependencies are at the same version:
@@ -514,7 +516,7 @@ But in the end, you choose what's best for your project/environment.
    ```
 [[}]]
 
-# POM BEST PRACTICES:  [[{qa.best_practices]]
+## POM BEST PRACTICES  [[{qa.best_practices]]
 
 * REF: <http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/>
 
@@ -584,10 +586,10 @@ But in the end, you choose what's best for your project/environment.
   artifact.
 
 - TODO:
-@[http://www.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/]
+<http://www.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/>
 [[qa.best_practices}]]
 
-# Package Dependency Management  [[{qa.101]]
+## Package Dependency Management  [[{qa.101]]
   ```
   $ mvn dependency:analyze       ← Inform about:
                                    - Dependencies used but not declared.
@@ -628,13 +630,13 @@ But in the end, you choose what's best for your project/environment.
   ```
 [[qa.101}]]
 
-# Publishing to Maven Central [[{]]
+## Publishing to Maven Central [[{]]
 * External references:
-  * @[https://www.apache.org/dev/publishing-maven-artifacts.html]
-  * @[http://maven.apache.org/repository/guide-central-repository-upload.html]
-  * @[/General/cryptography_map.html?id=pgp_summary]
+  * <https://www.apache.org/dev/publishing-maven-artifacts.html>
+  * <http://maven.apache.org/repository/guide-central-repository-upload.html>
+  * </General/cryptography_map.html?id=pgp_summary>
 
-* Requirements @[http://central.sonatype.org/pages/requirements.html]
+* Requirements <http://central.sonatype.org/pages/requirements.html>
   Prepare pom.xml properly:
   ```
   <?xml version="1.0" encoding="UTF-8"?>
@@ -696,7 +698,7 @@ But in the end, you choose what's best for your project/environment.
                                        ²: Verify sign. like   $ gpg2 --verify ...asc ────┘
   ```
 
-## Build tool integration @[http://pgp.mit.edu]  [TODO]
+### Build tool integration <http://pgp.mit.edu>  [TODO]
 * <http://central.sonatype.org/pages/working-with-pgp-signatures.html#using-build-tools-for-signing>
 
 ## PUBLISH BEST PATTERNS
@@ -710,13 +712,13 @@ But in the end, you choose what's best for your project/environment.
 * User automatic publication in "forges" providing hosting services.
 
 * OSS Repository Hosting
-  @[http://central.sonatype.org/pages/ossrh-guide.html]
+  <http://central.sonatype.org/pages/ossrh-guide.html>
   * Approved repository provided by Sonatype for OOSS Projects that want to
     get their artifacts into Central Repository.
   * Open an account as explained at
-   @[http://central.sonatype.org/pages/ossrh-guide.html]
+   <http://central.sonatype.org/pages/ossrh-guide.html>
 
-## POST-NAMESPACE REGISTRATION:
+## POST-NAMESPACE REGISTRATION
 
 * e-mail received after Namespace correct registration
   ```
@@ -726,21 +728,21 @@ But in the end, you choose what's best for your project/environment.
   │                                                                  │
   │ Configuration has been prepared, now you can:                    │
   │ → Deploy snapshot artifacts into repository                      │
-  │   @[https://oss.sonatype.org/content/repositories/snapshots]     │
+  │   <https://oss.sonatype.org/content/repositories/snapshots>     │
   │ → Deploy release artifacts into the staging repository           │
-  │   @[https://oss.sonatype.org/service/local/staging/deploy/maven2]│
+  │   <https://oss.sonatype.org/service/local/staging/deploy/maven2>│
   │ → Promote staged artifacts into repository 'Releases'            │
   │ → Download snapshot and release artifacts from group             │
-  │   @[https://oss.sonatype.org/content/groups/public]              │
+  │   <https://oss.sonatype.org/content/groups/public>              │
   │ → Download snapshot, release and staged artifacts from           │
   │   staging group                                                  │
-  │   @[https://oss.sonatype.org/content/groups/staging]             │
+  │   <https://oss.sonatype.org/content/groups/staging>             │
   │  please comment on this ticket when you promoted                 │
   │  your first release, thanks                                      │
   └──────────────────────────────────────────────────────────────────┘
   ```
 
-## pre-deployment Tests:
+## pre-deployment Tests
 
 1. Verify that all pom.xml files have an SCM definition.
 1. Diff original 'pom.xml' with 'pom.xml.tag' to check if license,...
@@ -764,14 +766,14 @@ But in the end, you choose what's best for your project/environment.
   ```
 [[}]]
 
-# OWASP (maven) Plugin [[{security.101.owasp,01_PM.TODO]]
-@[https://maven.apache.org/plugins/]
+## OWASP (maven) Plugin [[{security.101.owasp,01_PM.TODO]]
+<https://maven.apache.org/plugins/>
 * OWASP Dependency-Check identifies project dependencies and checks
   if there are any known, publicly disclosed, vulnerabilities.
-@[https://www.owasp.org/index.php/OWASP_Dependency_Check]
+<https://www.owasp.org/index.php/OWASP_Dependency_Check>
 [[}]]
 
-# Un-ordered recipes [[{]]
+## mvn: Un-ordered recipes [[{]]
 
 * "Mavenize" a jar (copy and add coordinates into local .m2/repository)
   ```

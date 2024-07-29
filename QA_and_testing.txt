@@ -1,575 +1,5 @@
-## Apropos
-* JAVA .
-* Content is versioned in git.  commits, issues and pull-requests welcome!
-  @[https://www.github.com/earizon/JAVA]
-* This __"cheat-sheet with steroids"__ presents an always-growing set of
-  Quality Assurance and Testing "Zipped" notes well ordered&amp;classified 
-  extracted from many, many places and author's own experience in different
-  projects.
-
-# Cost of software failures [[{qa.billion_dolar_mistake]]
-$312 billion per year: global cost of software bug (2013)
-$300 billion dealing with the Y2K problem
-
-$440 million loss by Knight Capital group Inc. in 30 minutes, August 2012
-$650 million loss by NASA Mars missions in 1999; unit conversion bug
-$500 million Arian 5 maiden flight in 1996; 64-bit to 16-bit conversion bug
-"$Nightmare" billion Boeing 737Max
-
-2011: Software caused 25% of all medical device recalls.
-[[}]]
-
-[[{qa.101.checker_fw,qa.error_control,qa.billion_dolar_mistake]]
-# Checker framework 
-
-* (Java 8+)
-* fix errors at compile time  (vs later on at execution/runtime)
-  * <https://github.com/typetools/checker-framework>
-  * <https://checkerframework.org/manual/>
-  * <https://www.youtube.com/watch?v=6E1CSydgzQc>
-  * <https://www.baeldung.com/checker-framework>
-
-* COMPARED TO ALTERNATIVES (SpotBugs, Infer  Jlint, PMD,...)
-  ```
-  |                ┌─────────────┬────────┬────────┐                 ┌──────────────────┬─────────────────────┐
-  |                │ Null Pointer│        │        │                 │ Verification     │ Bug─Finding         │
-  |                │    errors   │ False  │Annotat.│                 │ ( Checker FW ,)  │ (Infer,StopBugs,    │
-  |                │             │        │        │                 │                  │  SonarQube,...      │
-  |                │Found│ Missed│warnings│written │  ┌──────────────┼──────────────────┼─────────────────────┤
-  | ┌──────────────┼─────┼───────┼────────┼────────┤  │Goal          │ prove that       │ find some bugs      │
-  | │ Checker FW.  │9    │ 9     │  4     │  35    │  │              │ no bug exits     │ at "low cost"       │
-  | ├──────────────┼─────┼───────┼────────┼────────┤  ├──────────────┼──────────────────┼─────────────────────┤
-  | │StopBugs      │0    │ 9     │  1     │  0     │  │Check specifis│ user provided    │ infer likely specs  │
-  | ├──────────────┼─────┼───────┼────────┼────────┤  │specificat    │                  │                     │
-  | │Jlint         │0    │ 9     │  8     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
-  | ├──────────────┼─────┼───────┼────────┼────────┤  │False         │ None!!!          │ acceptable          │
-  | │PMD           │0    │ 9     │  0     │  0     │  │negatives     │                  │                     │
-  | ├──────────────┼─────┼───────┼────────┼────────┤  ├──────────────┼──────────────────┼─────────────────────┤
-  | │Eclipse 2017  │0    │ 9     │  8     │  0     │  │False         │ manually supress │ heuristics focus on │
-  | ├──────────────┼─────┼───────┼────────┼────────┤  │positives     │ warnings         │ most important bugs │
-  | │IntelliJ      │0    │ 9     │  1     │  0     │  ├──────────────┼──────────────────┼─────────────────────┤
-  | │+@NotNull 2017│3    │ 6     │  1     │ 925+8  │  │Downside      │ user burden      │ missed bugs         │
-  | └──────────────┴─────┴───────┴────────┴────────┘  └──────────────┴──────────────────┴─────────────────────┘
-  ```
-
-* **PROBLEM**: STANDARD JAVA TYPE SYSTEM IS NOT GOOD ENOUGH  
-  Next examples compile properly, but fail at runtime:
-  ```
-  | System.console().readLine()       ; <·· Ex.1 NullPointer
-  |
-  | Collections.emptyList().add("one"); <·· Ex.2 Unsupported Operation
-  |
-  | Date key1 = new Date();             <·· Ex.3
-  | myMap.put(key1, "now");
-  | myMap.get(key1);                        <··  returns "now"
-  | key1.setSeconds(0);                     <··  Mutate key
-  | myMap.get(key1);                        <··  returns null
-  ```
-  **SOLUTION**:
-   Java 8+ allows to compile programs using "PLUGGABLE TYPE SYSTEMs" ,
-   allowing to apply stricter checks than default ones in compiler like
-   Ex:
-   ```
-   $ javac  -processor NullnessChecker  MyFile.java
-   ```
-
-* PLUGABLE TYPE SYSTEM COMPILATION SCHEMA:
-  ```
-  |       (1)           No errors ²
-  |Source ···> Compiler ·(No error ·····┬···> Executable
-  |  ^            │       detected      ·²         ^
-  |  ·            v                     v          ·
-  |  ·         Standard               Optional     · Guaranteed
-  |  ·         Compiler               Type      ···┘ Behaviour
-  |  ·         Errors                 Checker
-  |  ·                                  ·
-  |  ·                                  v
-  |  └·················· Warnings ······┘
-
-  |  ² plugable type system allows generation
-  |    of executable to allow CI continue the
-  |    pipeline with further tests (functional
-  |    testing, configuration testing, ...)
-  ```
-
-## Instalation <!-- { -->
-1. Check new releases/versions at
-   <https://search.maven.org/search?q=g:org.checkerframework>
-
-1. Add next pom.xml dependencies like:
-   ```
-   | <dependency>
-   |     <groupId>org.checkerframework</groupId>
-   |     <artifactId>checker-qual</artifactId>
-   |     <version>2.11.0</version>
-   | </dependency>
-   | <dependency>
-   |     <groupId>org.checkerframework</groupId>
-   |     <artifactId>checker</artifactId>
-   |     <version>2.11.0</version>
-   | </dependency>
-   | <dependency>
-   |     <groupId>org.checkerframework</groupId>
-   |     <artifactId>jdk8</artifactId>
-   |     <version>2.11.0</version>
-   | </dependency>
-   ```
-1. tweak maven-compiler-plugin to use Checker Framework
-   as a pluggable Type System:
-   ```
-   | <plugin>
-   |   <artifactId> maven-compiler-plugin </artifactId>
-   |   <version>3.6.1</version>
-   |   <configuration>
-   |     <source>1.8</source>
-   |     <target>1.8</target>
-   |     <compilerArguments>
-   |       <Xmaxerrs>10000</Xmaxerrs>
-   |       <Xmaxwarns>10000</Xmaxwarns>
-   |     </compilerArguments>
-   |     <annotationProcessors>                            <······ "==" javac -processor ...
-   |       <annotationProcessor>
-   |          org.checkerframework.checker.nullness.NullnessChecker
-   |        </annotationProcessor>
-   |        <annotationProcessor>
-   |          org.checkerframework.checker.interning.InterningChecker
-   |        </annotationProcessor>
-   |        <annotationProcessor>
-   |          org.checkerframework.checker.fenum.FenumChecker
-   |        </annotationProcessor>
-   |        <annotationProcessor>
-   |          org.checkerframework.checker.formatter.FormatterChecker
-   |        </annotationProcessor>
-   |     </annotationProcessors>
-   |     <compilerArgs>
-   |       <arg>-AprintErrorStack</arg>
-   |       <arg>-Awarns</arg>
-   |     </compilerArgs>
-   |   </configuration>
-   | </plugin>
-   ```
-
-1. Manually add extended type annotations in real Java code
-<!-- } -->
-
-## Daily Ussage [[{]]
-
-* Avoiding Nulls:
-  ```
-  | private static int func1 (
-  |    @RequiresNonNull  String[] args  // <·· func. preconditions.
-  | ) {
-  |     @EnsuresNonNull final result;   // <·· func. post-condition. variable is guaranteed
-  |     result = args.length;           //     to be non-null on return. 
-  |     return result;                  //     Also: @EnsuresNonNullIf: variables is guaranteed 
-  |                                     //     to be non─null on ret.true/false  
-  | }
-  |
-  | public static void main
-  |   ( @Nullable  String[] args) {
-  |     ...
-  |     func1(args);  //                 // <·· [WARNING] ... [argument.type.incompatible]
-  | }                                    //     incompatible types in argument.
-  |                                      //     found    : null
-  |                                      //     required : @Initialized @NonNull ...
-  |
-  | static final
-  |    @Fenum("country") String ITALY = "IT",         // <·· Safe "country" string.
-  |    @Fenum("country") String US    = "US",
-  |    ...
-  |    @Fenum("planet" ) String MARS   = "Mars",      // <·· Safe "planet" string.
-  |    @Fenum("planet" ) String EARTH   = "Earth";
-  | ...
-  |
-  | void function1(                      // <·· Function expected "planet" string
-  |   @Fenum("planet") String inputPlanet){
-  |     System.out.println("Hello " + planet);
-  | }
-  |
-  | public static void main(String[] args) {
-  |     obj.greetPlanets(US);            // <·· [WARNING] ... incompatible types in argument.
-  | }                                    //      found   : @Fenum("country") String
-  |                                      //      required: @Fenum("planet")  String
-  |
-  |
-  | @Regex(1) static                     // <·· Force regext string with at least one matching group
-  |     String FIND_NUMBERS = "\\d*";    //     <·· [WARNING] ... incompatible types in assignment.
-  |                                      //         found   : @Regex String
-  |                                      //         required: @Regex(1) String
-  |
-  |  @Untainted String                   // <·· Validating tainted (non-trusted) input
-  |  validate (String sqlInput) {
-  |     // ... Do any suitable checks
-  |     //     OR THROW ON ERROR
-  |     @SuppressWarnings("tainting")    //     <·· "swear" that developer got sure
-  |     @Untainted String result = ...;  //          of input correctness
-  |     return result;
-  | }
-  |
-  | void execSQL(@Untainted  String sqlInput) {
-  |     ...
-  | }
-  |
-  | public static void main(String[] args) {
-  |     obj.execSQL(arg[0]);             //  <··  warning at compile time
-  |     obj.execSQL(validate(arg[0]));   //  <·· "OK". validate un-tain the input
-  | }
-  |
-  | @Immutable Date date = new Date();   //  <·· Mark as real immutable (vs weak "final")
-  | date.setSeconds(0);                  //  <·· compile-time error
-  ```
-[[}]]
-
-## Avoiding (certain) concurrency errors [[{]]
-  Lock Checker enforces a locking discipline:
-  "which locks must be held when a given operation occurs"
-
-  ```
-  | CHECKS ON TYPES                             │ CHECKS ON FUNCTION DECLARATION
-  |                                             │                 ┌────┬────┬───────────────────────────┐
-  |  @GuardedBy("lockexpr1","lockexpr2",...)    │                 │FUNC│FUNC│DESCRIPTION                │
-  |            int var1 = ....;                 │                 │PRE─│POST│                           │
-  |  ^^^^^^^^^^                                 │                 │COND│COND│                           │
-  | a thread may dereference the value referred │┌────────────────┼────┼────┼───────────────────────────┤
-  | to by var1 only when the thread holds all   ││@Holding        │X   │    │All the given lock exprs   │
-  | the locks that ["lockexpr1",...] currently  ││(String[] locks)│    │    │are held at method call    │
-  | evaluates to.                               │├────────────────┼────┼────┼───────────────────────────┤
-  |                                             ││@EnsuresLockHeld│    │X   │Ensures locks are locked on│
-  |                                             ││(String[] locks)│    │    │return,ex. lock adquired by│
-  |                                             ││                │    │    │ReentrantLock.lock().      │
-  |                                             │├────────────────┼────┼────┼───────────────────────────┤
-  |                                             ││@EnsuresLockHeld│    │X   │Ensures locks are locked on│
-  |                                             ││(String[] locks)│    │    │return,ex.lock conditionaly│
-  |                                             ││                │    │    │adquired by ReentrantLock  │
-  |                                             ││                │    │    │.lock()                    │
-  |                                             ││                │    │    │if method return true|false│
-  |                                             │└────────────────┴────┴────┴───────────────────────────┘
-  ```
-  
-  ```
-  | SIDE EFFECT SPECIFICATIONS
-  | ┌────────────────────┬───────────────────────────────────────────────┐
-  | │ @LockingFree       │method does NOT acquire│release locks:         │
-  | │                    │· it is not synchronized,                      │
-  | │                    │· it contains NO synchronized blocks           │
-  | │                    │· it contains no calls to lock│unlock methods  │
-  | │                    │· it contains no calls to methods that are not │
-  | │                    │  themselves @LockingFree                      │
-  | │                    │(@SideEffectFree implies @LockingFree)         │
-  | ├────────────────────┼───────────────────────────────────────────────┤
-  | │ @ReleasesNoLocks   │· method maintains a strictly                  │
-  | │                    │  nondecreasing lock hold count                │
-  | │                    │  on the current thread for any locks          │
-  | │                    │  held at method call.                         │
-  | ├────────────────────┼───────────────────────────────────────────────┤
-  | │ @EnsuresLockHeld   │method adquires new locsk                      │
-  | │ @EnsuresLockHeldIf │(default if no @LockingFree│@MayReleaseLocks│  │
-  | │                    │@SideEffectFree│@Pure used).                   │
-  | └────────────────────┴───────────────────────────────────────────────┘
-  ```
-[[}]]
-
-## Format String Checker
-* prevents use of incorrect format strings in System.out.printf,....
-  ```
-  | void printFloatAndInt
-  |      ( @Format({FLOAT, INT})  String   format )
-  | {
-  |   System.out.printf(  format , 3.1415, 42);
-  | }
-  ```
-* I18n Format Checker examples
-  ```
-  | MessageFormat.format("{0} {1}", 3.1415);
-  |                                       ^
-  |                             second argument missing
-  | MessageFormat.format("{0, time}", "my string");
-  |                                   ^^^^^^^^^^^
-  |                                   cannot be formatted
-  |                                   as Time type.
-  | MessageFormat.format("{0, thyme}", new Date());
-  |                           ^^^^^
-  |                           unknown format type
-  |
-  | MessageFormat.format("{0, number, #.#.#}", 3.1415);
-  |                                   ^^^^^
-  |                             subformat is invalid.
-  ```
-
-## Property File Checker!!!!  [[{PM.TODO]]
-* It ensures that used keys are found in the corresponding
-  property file or resource bundle.
-[[}]]  
-
-## GUI Effect Checker
-* It is difficult for a programmer to remember
-  which methods may be called on which thread(s).
-  (Main GUI thread or others)
-  Checker types the method as if:
-  * It accesses no UI elements (and may run on any thread);
-  * It may access UI elements  (and must run on the UI thread)
-
-## (physical) Internation System UNIT annotations :
-  ```
-  | @Acceleration: Meter Per Second Square @mPERs2
-  | @Angle       : Radians @radians
-  |                Degrees @degrees
-  | @Area        : square millimeters @mm2,
-  |                square meters @m2
-  |                square kilometers @km2
-  | @Current     : Ampere @A
-  | @Length      : Meters @m
-  |                millimeters @mm
-  |                kilometers @km
-  | @Luminance   : Candela @cd
-  | @Mass        : kilograms @kg
-  |                    grams @g
-  | @Speed       : meters per second   @m
-  |                kilometers per hour @kmPERh
-  | @Substance   : Mole @mol
-  | @Temperature : Kelvin @K
-  |                Celsius @C
-  | @Time        : seconds @s
-  |                minutes @min
-  |                hours @h
-  ```
-
-## @Unsigned/@Signed
-* guarantees values are not mixed
-
-## type alias or typedef
-* share same representation as another type
-  but is conceptually distinct from it.
-  ```
-  | Ex 1: get sure that Strings representing addresses
-  |       and passwords are NOT mixed
-  | Ex 2: get sure that integers used for meters are
-  |       not mixed with integers used for centimeters.
-  ```
-* Example:
-  ```
-  | @NonNull List<String>
-  | List<@NonNull String>
-  | @Regex String validation = "(Java|JDK) [7,8]"
-  |
-  | private String getInput(String parameterName){
-  |  final String retval = @Tainted request.getParameter(parameterName);
-  |  return retval;
-  | }
-  |
-  | private void runCommand(@Untainted String… commands){
-  |  // the previously tainted String must be validated before being passed in here.
-  |  ProcessBuilder processBuilder = new ProcessBuilder(command);
-  |  Process process = processBuilder.start();
-  | }
-  ```
-[[qa.101.checker_fw}]]
-
-[[{qa.101.spotbugs]]
-# SpotBugs
-@[https://github.com/spotbugs/spotbugs/issues]
-* OOSS static analysis tool for java code bugs.
-* Well maintained (as of 2021-12-21)
-* "spiritual successor of FindBugs"
-* SpotBugs checks for more than 400 bug patterns.
-* Works from GUI+cli, maven/gradle/eclipse integration.
-* Plugin extension support (just download plugin jar and
-  it will be detected and included):
-  * fb-contrib: Security Audits for Java Web applications:
-   <https://find-sec-bugs.github.io/> <br/>
-    It can detect 141 different vulnerability types with
-    over 823 unique API signatures.
-* When compared with SonarCube, SpotBugs emmits fewer false
-  possitives.
-
-## Running SpotBugs
-* Presetup. Compile java code to classes or jars.
-  **SpotBugs runs against compiles class files, using source code
-  as a reference when displaying output.**
-  ```
-  | $ java -jar ../spotbugs.jar ...$SPOTBUG_ OPTIONS ..
-  |
-  |                            JVM OPTIONS
-  |                            ===========
-  | -Xmx1500m                ← set JVM heap to big/1500MB  (recomended)
-  |
-  |                            STANDARD OPTIONS
-  |                            ================
-  | -textui                  ← vs -gui
-  | -effort min              ← := min|less|default|more|max
-  |                            min: decrease mem use/precision/exec.time
-  |                            max: increase mem use/precision/exec.time
-  | -project ... \           ← project *.fb or *.fbp created through the GUI
-  |                            (fb == FindBugs)
-  | -pluginList jar1;jar2     \
-  | -home $SPOTBUG_DIR       ← ex: /opt/spotbugs
-  | -adjustExperimental      ← Lower priority of experimental Bug Patterns.
-  | -workHard                ← Ensure analysis effort is at least ‘default’.
-  | -sortByClass=dir1/spotbugs.txt ← textui only
-  |                                  also supported to set multiple reports
-  | -include filter01.xml     ← show only bugs match filter specified.
-  | -exclude filter02.xml     ← *1
-  | -onlyAnalyze com.foo.*,com.bar.* ← Unlike filter, analysis is skipt
-  |                             for any other class type
-  |                             WARN: some detectors may produce inaccurate
-  |                             results
-  | -low                      ← Report all bugs.
-  | -medium                   ← Report medium and high priority bugs.
-  | -high                     ← Report only high priority bugs.
-  | -relaxed                  ← suppress heuristics, avoidin false positives.
-  | -html=../report.html      ← Output HTML. Alternative:
-  |                           ← Output HTML. Alternative:
-  |                             NOTE : It is -html=value while other flags work like
-  |                                    -flag value (without the "=" sign)
-  |                             -html:fancy.xsl=...  (DOM+JS for navigation + CSS)
-  |                             -html:fancy-hist.xsl=...  fancy.xsl evolution
-  |                             Other output formats include xml/sarif/emacs/xdocs
-  | -nested false             ← disable scanning of nested jar (def:enabled)
-  | -auxclasspath ...         ← It should include all jar/dirs containing classes
-  |                             that are part of the program being analyzed but
-  |                             you do not want to have analyzed for bugs.
-  | -auxclasspathFromInput    ← Read auxclasspath from STDIN, line by line
-  | -auxclasspathFromFile
-  | -analyzeFromFile fileI    ← Read input file list from file line-by-line.
-  | -showPlugins              ← listavailable detector plugins.
-  |
-  |                             OUTPUT CUSTOMIZATION OPTIONS
-  |                             ============================
-  | -timestampNow             ← Set results timestamp to current time.
-  | -quiet                    ← Suppress error messages.
-  | -longBugCodes             ← Report long bug codes.
-  | -progress                 ← Display progress in console.
-  | -release $name            ← Set release name in report
-  | -maxRank $rank            ← Only report issues with a bug rank at least
-  |                             as scary as that provided.
-  | -dontCombineWarnings      ← Don’t combine warnings differing only in line num.
-  | -train[:outputDir]:       ← Save training data (experimental);
-  | -useTraining[:inputDir]:  ← Use training data (experimental);
-  | -redoAnalysis $filenam    ← Redo using config. from previous analysis.
-  | -sourceInfo $file         ← Specify source info file (line numbers for
-  |                             fields/classes).
-  | -projectName $name        ← Descriptive name of project.
-  | -reanalyze $filename      ← Redo analysis in provided file.
-  |
-  |                             OUTPUT FILTERING OPTIONS
-  |                             ========================
-  | -bugCategories cat1,cat2  ← Only report bugs in those categories.
-  | -excludeBugs baseline_bug ← Exclude bugs that are also reported in
-  |                             baseline xml output.
-  | -applySuppression         ← Exclude bugs matching suppress.filter from *fbp
-  |
-  |                             DETECTOR (VISITOR) CONFIGURATION OPTIONS
-  |                             ========================================
-  | -visitors v1,v2,...       ← Run only named visitors.
-  | -omitVisitors v1,v2,...   ← Omit named visitors.
-  | -chooseVisitors +v1,-v2,. ← enable/disable detectors.
-  | -choosePlugins +p1,-p2,   ← Selectively en/dis-able plugins.
-  | -adjustPriority v1=raise|lower,v2=...
-  |
-  |                             PROJECT CONFIGURATION OPTIONS
-  |                             =============================
-  | -sourcepath $source_path  ← Set source path for analyzed classes.
-  | -exitcode                 ← Set exit code of process.
-  | -noClassOk                ← Output empty warning file if no classes are
-  |                             specified.
-  | -xargs                    ← Get list of class/jar files from STDIN
-  | -bugReporters name,-name2,.. ← Bug-reporter decorators to explicitly
-  |                                enable/disable.
-  | -printConfiguration       ← Print configuration and exit
-  |
-  |*1┌── myIncludeOrExcludeFilter.xml ────
-  |  │
-  |  │ <?xml version="1.0" encoding="UTF-8"?>
-  |  │ <FindBugsFilter>
-  |  │ <Match>
-  |  │   <Bug                       match if  pattern and/or code and/or category match
-  |  │     pattern="..."          ← comma-separated list of patterns to match
-  |  │                              ex.: DLS_DEAD_LOCAL_STORE,DM_EXIT,
-  |  │     code="..."             ← coarse-grained matching comma-sep. list of bug
-  |  │                              abbreviations(DC,DE,IC,IJU,MS,SIC,URF,UUF,XYZ,...)
-  |  │     category="..."         ← even more coarse-grained :=
-  |  │                              CORRECTNESS, BAD_PRACTICICE,
-  |  │   />                         PERFORMANCE, STYLE, MT_CORRECTNESS
-  |  │                                 (M)ulti(T)hreaded ┘
-  |  │
-  |  │
-  |  │   <Confidence value="1"/>  ← 1 match high-confidence warnings,
-  |  │                              2 match normal-confidence warnings
-  |  │                              3 match low-confidence warnings
-  |  │
-  |  │    <Rank value="1" />     ←  1  to 4 : scariest
-  |  │                              5  to 9 : scary
-  |  │                             10 to 14: troubling
-  |  │                             15 to 20: concern
-  |  │
-  |  │   <Package name="~.."/> ← name/regex. Nested packages are NOT included
-  |  │   <Class   name="~.. /> ← name/regex. NOTE: Some bug instances relate to
-  |  │                                       2+ classes.
-  |  │   <Source  name="..."/> ← name/regex.  match warnings associated to source file.
-  |  │                           └────┬────┘
-  |  │                         regex if prefixed by ~
-  |  │
-  |  │   <Method
-  |  │    name="funcXXX"
-  |  │    params="int,..."
-  |  │    returns="void"
-  |  │   />
-  |  │
-  |  │   <Field name="..." />   ← type=... instead of name can also be used
-  |  │   <Local name="..." />
-  |  │   <Type  name="..." />
-  |  │ </Match>
-  |  │
-  |  │ <Or>  <Match /><Match /></Or>
-  |  │ <And> <Match /><Match /></And>
-  |  │ <Not> <Match />         </Not>
-  |  │
-  |  │ </FindBugsFilter>
-  |  └────────────────────────────────────────────
-  ```
-[[qa.101.spotbugs}]]
-
-
-[[{qa.101.error_prone,PM.TODO]]
-# Error Prone 
-* <https://www.baeldung.com/java-error-prone-library?__s=aw56zebktqtoti1yt59p>
-
-* It hooks directly into the javac compiler.
-
-* Compared to SpotBugs [[{doc_has.comparative]]
-> I've used Error Prone for more than two years in a Spring Boot 
-> project. I run Spring Boot in debug mode with class reloading all day 
-> long. I like that it runs during compilation, so it's immediate 
-> feedback during development without having to stop. And whatever 
-> changes I make, I then test immediately.
-> Running PMD & SpotBugs is a separate build goal for me as part of 
-> the release process and the continuous integration. That's delayed 
-> feedback.
-[[doc_has.comparative}]]
-
-[[qa.101.error_prone}]]
-
-[[{qa.101.PMD,PM.TODO]]
-# PMD
-* <https://pmd.github.io/>
-* It detects errors in Java but also in Maven pom.xml files, JavaScript,
-Salesforce.com Apex and Visualforce, PLSQL, Apache Velocity, XML and XSL.
-
-* It includes CPD, the **copy-paste-detector to finds duplicated code** in
-  Java, C, C++, C#, Groovy, PHP, Ruby, Fortran, JavaScript, PLSQL,
-  Apache Velocity, Scala, Objective C, Matlab, Python, Go, Swift and
-  Salesforce.com Apex and Visualforce.
-[[qa.101.PMD}]]
-
-[[{qa.101.sonarlint,01_PM.low_code,]]
-# SonarLint 
-* Provides automatic feedback (vs late one at CI/CD as SonarQube does)
-[[qa.101.sonarlint,01_PM.low_code}]]
-* Integrates as Eclipse plugin.
-
-[[{qa.101.snarqube,01_PM.low_code,]]
-[[concurrency.101,JAVA_LANG.DEBUGGING]]
-[[scalability.profiling,01_PM.WiP]]
+debugging]]
+[[scalability.profiling,PM.WiP]]
 # SonarQube
 * SonarQube empowers all developers to write cleaner and safer code.
 * Comunity with 200K+ dev. teams.
@@ -623,7 +53,7 @@ Salesforce.com Apex and Visualforce, PLSQL, Apache Velocity, XML and XSL.
 * See original source for more info about SonarScanner Troubleshooting
   recipes, advanced docker config, running, caching scanner files,
   usng self-signed certs:
-  @[https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/]
+  <https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/>
   *1: not needed if the associated project is already linked to a
       git repository on the server side.
 
@@ -698,7 +128,7 @@ deprecated should be "No replacement".
 <!-- } -->
 [[qa.101.javadoc}]]
 
-# Junit [[{qa.junit.101,qa.101,doc_has.comparative,01_PM.WiP]] @[testing_summary]
+# Junit [[{qa.junit.101,qa.101,doc_has.comparative,PM.WiP]] <testing_summary>
 
 * Junit 5 is the sum of next modules:
   ```
@@ -1021,7 +451,7 @@ deprecated should be "No replacement".
   |public class JUnit5TestSuiteExample
   |{ }
   ```
-See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
+See also: <https://www.infoq.com/news/2018/01/VSCodeJunit>
 
 ## Dependency Injection for Constructors and Methods [[{]]
 * Junit 4: constructors or methods have zero params<br/>
@@ -1129,7 +559,7 @@ See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
 
 [[qa.junit.101}]]
 
-## AssertJ (Fluent Assertions) [[{01_PM.TODO,qa.junit.assertj]]
+## AssertJ (Fluent Assertions) [[{PM.TODO,qa.junit.assertj]]
 * composed of several modules: 
   ```
   | MODULE 
@@ -1200,7 +630,7 @@ See also: @[https://www.infoq.com/news/2018/01/VSCodeJunit]
   |// and many more assertions:
   |// iterable, stream, array, map, dates, path, file, numbers, predicate, optional ...
   ```
-[[01_PM.TODO,qa.junit.assertj}]]
+[[PM.TODO,qa.junit.assertj}]]
 
 [[{qa.testing.property]]
 # Property Testing
@@ -1224,7 +654,7 @@ suggests another way to test software. IT TARGETS ALL THE SCOPE
 COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
 
 * Available automated test technics:
- @[https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237]
+ <https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237>
  ```
  |         △ • Random
  |    full ┆   - Fuzzing
@@ -1240,7 +670,7 @@ COVERED BY EXAMPLE BASED TESTING: (UNIT TESTS TO INTEGRATION TESTS).
  |           Low  ← Feature compliance →    High
  ```
 
-Extracted from @[https://en.wikipedia.org/wiki/QuickCheck]<br/>
+Extracted from <https://en.wikipedia.org/wiki/QuickCheck><br/>
 * List of Java libs for property testing 
   ```
   |"FunctionalJava's QuickCheck module". FunctionalJava.  2015-08-14
@@ -1299,11 +729,11 @@ Extracted from @[https://en.wikipedia.org/wiki/QuickCheck]<br/>
 
 
 # JSR Annotations for Defect Detection [[{qa.error_control,qa.billion_dolar_mistake]]
-@[https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard]
+<https://stackoverflow.com/questions/1476757/jsr305-vs-jsr308-java-type-anotations-which-is-going-to-be-the-standard>
 [[}]]
 
-# TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,01_PM.TODO]]
-@[https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type]
+# TYPE ANNOTATIONS: [[{qa.billion_dolar_mistake,PM.TODO]]
+<https://blogs.oracle.com/java-platform-group/entry/java_8_s_new_type>
 ( TODO: Compare how it compares/overlaps CheckerFramework )
   ```
   |  @NonNull  compiler can determine cases where a │ @(Un)Tainted   Identity types of data that should
@@ -1605,9 +1035,9 @@ Extracted from @[https://en.wikipedia.org/wiki/QuickCheck]<br/>
  ```
 [[}]]
 
-[[{qa.testing.bdd.serenity,qa.documentation,01_PM.TODO]]
+[[{qa.testing.bdd.serenity,qa.documentation,PM.TODO]]
 # BDD Serenity Testing
-@[https://serenity-bdd.github.io/theserenitybook/latest/index.html]
+<https://serenity-bdd.github.io/theserenitybook/latest/index.html>
 
 * Serenity BDD provides strong support for different
   types of automated acceptance testing, including:
@@ -2196,9 +1626,9 @@ Requirements page of the output report.
   Serenity configuration options.
 [[qa.testing.bdd.serenity}]]
 
-[[{async/reactive.testing,qa.testing.async/reactive,01_PM.TODO]]
+[[{async/reactive.testing,qa.testing.async/reactive,PM.TODO]]
 # Awaitility(Async->Sync) Tests
-@[https://github.com/awaitility/awaitility]
+<https://github.com/awaitility/awaitility>
 * Awaitility: DSL allowing to express async results (test expectations) easely.
   removing complexity of handling threads, timeouts, concurrency issues, ...
   that obscured test code.
@@ -3023,11 +2453,15 @@ session management, logging etc.
 
 [[}]]
 
-# TODO [[{PM.TODO]]
+[[{PM.TODO]]
 ## Facebook Infer <https://fbinfer.com/> (Static analysis Java/C/...)
-## Scrutinizer
-## StopBugs
-## Eclipse Static Code Analasys [[{]]
+* Static analysis tool for Java/C/C++/Objective-C code returning a list of potential bugs.  Example:
+  ```
+  $ infer -- javac Infer.java
+  ...
+  object s lasta ssigned on line ... could be null and is dereferenced al line XX
+  ```
+## Eclipse Static Code Analasys [[{qa.billion_dolar_mistake]]
    ```
    | Eclipse → Properties → Java → Compiler → Errors/Warnings → Null analysis:
    | * Null pointer access
@@ -3049,12 +2483,12 @@ session management, logging etc.
    |     - Treat above errors like fatal compile erros
    |       (make compiled code not executable)
    ```
-[[}]]
+[[qa.billion_dolar_mistake}]]
 
 ## SpotBug examples
-@[https://spotbugs.readthedocs.io/en/latest/filter.html]
+<https://spotbugs.readthedocs.io/en/latest/filter.html>
 
-## Mockito [[{qa.testing.101,01_PM.TODO]]
+## Mockito [[{qa.testing.101,PM.TODO]]
 * It does not substitute other testing frameworks but complements 
   them.
 * Mockito allows to create "mocked" objects that other components
@@ -3077,8 +2511,8 @@ session management, logging etc.
 * Top 10 most-widely used Java amongt 30.000 inspected projects.
 [[}]]
 
-## JfrUnit [[{qa.testing,scalability.profiling,01_PM.TODO]]
-@[https://github.com/moditect/jfrunit]
+## JfrUnit [[{qa.testing,scalability.profiling,PM.TODO]]
+<https://github.com/moditect/jfrunit>
 * JUnit extension for asserting JDK Flight Recorder events
   emitted by an application identifying performance regressions
   (e.g. increased latencies, reduced throughput).
@@ -3094,8 +2528,8 @@ session management, logging etc.
   before they manifest as performance regressions in production.
 [[}]]
 
-## Tablasco [[{qa.testing.data,architecture.batch,01_PM.low_code,01_PM.TODO]]
-@[https://github.com/goldmansachs/tablasco]
+## Tablasco [[{qa.testing.data,architecture.batch,PM.low_code,PM.TODO]]
+<https://github.com/goldmansachs/tablasco>
 * (By Goldman Sasch) JUnit rule that adds table verification to unit
   tests. For software products that produce large amounts of data, this
   tool can help to create automated tests that are both comprehensive
@@ -3108,5 +2542,9 @@ session management, logging etc.
 
 * JUnit rule for comparing tables and Spark module for comparing large data sets.
 [[}]]
+
+## Java asserj best patterns [[{qa.testing.assertj,qa.best_patterns]]
+* <https://dzone.com/articles/hints-for-unit-testing-with-assertj>
+[[qa.testing.assertj}]]
 
 [[PM.TODO}]]

@@ -41,7 +41,7 @@
 <!-- } -->
 
 
-[[{java_lang.debugging,devops.containarization,monitoring]]
+[[{troubleshooting.debugging,devops.containarization,monitoring]]
 ## Debug remote JVM
 
 (or container process)
@@ -62,7 +62,7 @@
    ```
 [[}]]
 
-[[{java_lang.debugging.jcmd,101,monitoring.101,]]
+[[{troubleshooting.debugging.jcmd,101,monitoring.101,]]
 [[java_lang.profiling,monitoring.flight_recorder]]
 # `jcmd`: Diagnose running JVM
 
@@ -194,7 +194,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
 - built directly into the JDK, it   can monitor performance accurately .
   with about only   2% overhead(production friendly) .
 - accurate metrics to avoid mislead readers via safe points or sampling.  [[{doc_has.comparative]]
-  avoiding common problems (@[#JVM_safepoints]) with sampling profilers.  [[}]]
+  avoiding common problems (<#JVM_safepoints>) with sampling profilers.  [[}]]
   ```
   ┌────────────────┐
   │ JRE ┌────────┐ │
@@ -235,7 +235,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
   * Improve Flame Graph and Graph Views for memory ussage (vs CPU ussage).
 
 * JMC 8: (2021-04)
-@[https://www.infoq.com/news/2021/04/jdk-mission-control-8-released/]
+<https://www.infoq.com/news/2021/04/jdk-mission-control-8-released/>
   * new graphs and heap dump analysis by default.
   * Can also be used as a library for parsing/processing .jfr files.
    
@@ -266,7 +266,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
   * JFR Writer is introduced as a new core module.
 [[monitoring.flight_recorder}]]
 
-# CRaSH shell [[{monitoring.chrash,monitoring.101,java_lang.debugging,01_PM.low_code,01_PM.TODO]]
+# CRaSH shell [[{monitoring.chrash,monitoring.101,troubleshooting.debugging,01_PM.low_code,01_PM.TODO]]
 * Features:
   * Connect to any JVM running CRaSH through SSH, telnet or web.
   * Monitor and/or use virtual machine resources:
@@ -277,7 +277,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
 [[monitoring.chrash}]]
 
 # Eclipse Memory Analizer [[{java_lang.profiling.eclipse_mat,01_PM.TODO]]
-@[https://www.eclipse.org/mat/]
+<https://www.eclipse.org/mat/>
 """he Eclipse Memory Analyzer is a fast and feature-rich Java heap
   analyzer that helps you find memory leaks and reduce memory consumption.
 
@@ -288,7 +288,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
 """
 
 It can provide reports and warnings similar to:
-  (REF: @[https://www.youtube.com/watch?v=5joejuE2rEM])
+  (REF: <https://www.youtube.com/watch?v=5joejuE2rEM>)
   The classloader/component "sum.misc.Launcher$AppClassLoader@0x123412"
   occupies 607,654,123(38,27%) bytes.
   The memory is accumulated in one instance  of
@@ -385,7 +385,7 @@ profiling loop_and_wait:
 ```
 [[jvm.dynamic_instrumentation.systemtap}]]
 
-# Fast Thread [[{java_lang.debugging,monitoring.threads,01_PM.radar]]
+# Fast Thread [[{troubleshooting.debugging,monitoring.threads,01_PM.radar]]
 * <https://fastthread.io/>
 * Features:
   * Java Thread Dump Analyzer
@@ -396,9 +396,9 @@ profiling loop_and_wait:
   * Free Service
 [[}]]
 
-[[{jvm.memory,jvm.gc,java_lang.debugging,qa,01_PM.low_code,01_PM.TODO]]
+[[{jvm.memory,jvm.gc,troubleshooting.debugging,qa,01_PM.low_code,01_PM.TODO]]
 # gceasy.io
-@[https://gceasy.io/]
+<https://gceasy.io/>
 * Features:
   * machine learning guided Garbage collection log analysis tool.
     GCeasy has in-built intelligence to auto-detect problems in the JVM & Android
@@ -610,7 +610,7 @@ NOTE: symbols can change slightly during the profile session (around 30-60 secs)
   perf_events separately).
 [[java_lang.profiling.flamegraph}]]
 
-# Debugger Architecture [[{java_lang.debugging,01_PM.TODO]]
+# Debugger Architecture [[{troubleshooting.debugging,01_PM.TODO]]
 https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/jdwp-spec.html
 https://en.wikipedia.org/wiki/Java_Platform_Debugger_Architecture
 https://www.baeldung.com/spring-debugging
@@ -619,11 +619,11 @@ https://www.baeldung.com/spring-debugging
 
 # TODO:  <!-- { -->
 ## jstack
- @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jstack.md]
+ <https://github.com/tldr-pages/tldr/blob/master/pages/common/jstack.md>
 <!-- } -->
 
 ## jmap (WARN: NOT RECOMENDED, experimental&unsupported in JDK) [[{]]
-  @[https://github.com/tldr-pages/tldr/blob/master/pages/common/jmap.md]
+  <https://github.com/tldr-pages/tldr/blob/master/pages/common/jmap.md>
   ```
   $ jmap -dump:[live],format=b,file=$filePath  $jvm_pid  # <- capture heap-dump
                  └┬─┘         └ binary-format dump

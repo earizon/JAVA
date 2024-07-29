@@ -2,12 +2,12 @@ Concurrent Programming [[{$ Concurrent Programming]]
 [[{concurrency.101]]
 # External Links
 - Youtube Concurrency Classes:
-@[https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4] [  ES lang ]
+<https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4> [  ES lang ]
 [[}]]
 [[{concurrency.101,scalability.101,01_PM.low_code]]
 # 1uSec Thread sync
 REF:
-@[https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/]
+<https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/>
 """
   ...
 - If caches are so in-sync with one another, why do we need volatiles at all in
@@ -33,7 +33,7 @@ REF:
 
 
 See also: fast Inter-thread communication:
-@[https://www.infoq.com/articles/High-Performance-Java-Inter-Thread-Communications]
+<https://www.infoq.com/articles/High-Performance-Java-Inter-Thread-Communications>
 - The story begins with a simple idea: create a developer friendly,
   simple and lightweight inter-thread communication framework without
   using any locks, synchronizers, semaphores, waits, notifies; and no
@@ -98,7 +98,7 @@ See also: fast Inter-thread communication:
 - simplest form of synchronization:
   alternatives include:
   - reads and writes of volatile variables
-  @[https://avaldes.com/examining-volatile-keyword-with-java-threads-example/]
+  <https://avaldes.com/examining-volatile-keyword-with-java-threads-example/>
     typically used in applications when one thread will be making changes to the
     variables and the others all reading or consumers of the data. If you have
     multiple threads making changes to the data it will be best to stick with
@@ -159,7 +159,7 @@ See also: fast Inter-thread communication:
 [[{concurrency.barrier]]
 # CountDownLatch
 * In `java.util.concurrent` Since JDK 1.5
-@[https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html]
+<https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CountDownLatch.html>
 * Object allowing 1+ threads to wait until a 1+ operations are completed in other threads.
 
 * example usages:
@@ -268,11 +268,11 @@ See also: fast Inter-thread communication:
   }
   ```
 
-@[https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67]
+<https://liakh-aliaksandr.medium.com/java-barrier-synchronizers-countdownlatch-cyclicbarrier-phaser-50eb69724d67>
 [[concurrency.barrier}]]
 
 # Scheduling: Runnables|Callables Executors [[{concurrency.101,concurrency.scheduling,doc_has.diagram]]
-@[https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html]
+<https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html>
 * Basic Thread objects
   ```
    Java 1.0+           Java 1.5+
@@ -405,7 +405,7 @@ See also: fast Inter-thread communication:
   ```
 
 3. ForkJoinPool (1.7+) <!-- { -->
-REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html]
+REF: <http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkjoinpool.html>
 * ForkJoinPool scheduler is similar to "ExecutorService" but
   IT MAKES IT EASY FOR TASKS TO RECURSIVELY SPLIT  WORK INTO SMALLER ONES
 * Fork : Task (=="thread") that "Splits itself" into smaller subtasks, executing concurrently.
@@ -487,7 +487,7 @@ REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkj
 <!-- } -->
 [[}]]
 
-# CompletableFuture [[{async/reactive.CompletableFuture,async/reactive.101,doc_has.diagram]]
+# CompletableFuture [[{architecture.async.reactive.CompletableFuture,architecture.async.reactive.101,doc_has.diagram]]
 * REF <https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html>
 
 1. Future:            (Java 5+) Represent an asynchronous computation result.
@@ -664,11 +664,11 @@ REF: @[http://tutorials.jenkov.com/java-util-concurrent/java-fork-and-join-forkj
   CompletableFuture<String> future = completableFuture
     .thenApplyAsync(s -> s + " World"); // lambda is wrapped into ForkJoinTask instance
   assertEquals("Hello World", future.get());
-[[async/reactive.CompletableFuture}]]
+[[architecture.async.reactive.CompletableFuture}]]
 
 
 # DragonWell JDK with Coroutine Support [[{scalability.jvm.dragonwell,concurrency.*,doc_has.comparative]]
-REF: @[https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/]
+REF: <https://www.infoq.com/news/2021/01/adoptopenjdk-welcomes-dragonwell/>
 * AdoptOpenJDK and Alibaba announced that the Dragonwell JDK will be
   built, tested, and distributed using AdoptOpenJDK's infrastructure.
 
@@ -738,7 +738,7 @@ From <https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-ca
 ## Quasar(Fibers) [[{scalability.jvm.quasar]]
 * fast threads for java and Kotlin <https://docs.paralleluniverse.co/quasar/>
 * To be superseded by Prj. Loom:
-  Extracted from @[https://github.com/puniverse/quasar/issues/305]
+  Extracted from <https://github.com/puniverse/quasar/issues/305>
 > My understanding is that Ron is currently busy working for/with Oracle on
 > project Loom which should bring "native" Fiber/lightweight continuation
 > support directly into JVM without the need of auxiliary library like Quasar.

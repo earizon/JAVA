@@ -1,10 +1,10 @@
 # Who-is-Who [[{]]
 (Forcibly incomplete but still quite pertinent list of core developers and companies)
 * James Arthur Gosling:  Founder and lead-designer of the Java Programming Language
-  @[https://en.wikipedia.org/wiki/James_Gosling]
+  <https://en.wikipedia.org/wiki/James_Gosling>
 
 * Joshua J. Bloch:
-  @[https://en.wikipedia.org/wiki/Joshua_Bloch]
+  <https://en.wikipedia.org/wiki/Joshua_Bloch>
   * Author of the book "Effective Java" (a must read)
     and co-author of two other books:
     * Java Puzzlers (2005)
@@ -15,10 +15,10 @@
     and the assert mechanism.
 
 * Julien Viet:
- @[http://www.julienviet.com/]
+ <http://www.julienviet.com/>
   Core developer of VertX, crash (http://www.crashub.org/),
   and many other interesting Java software.
-  @[https://github.com/vietj?utf8=%E2%9C%93&tab=repositories&q=&type=source]
+  <https://github.com/vietj?utf8=%E2%9C%93&tab=repositories&q=&type=source>
 
 * Ben Evans:
   * jClarity Co-founder.
@@ -29,7 +29,7 @@
     * new editions of “Java in a Nutshell”,
     * “Java: The Legend” and “Optimizing Java”.
     * Track lead for Java / JVM at InfoQ.
-  @[https://www.jbcnconf.com/2019/infoTalk.html?id=5c64983638da16483151bb37]
+  <https://www.jbcnconf.com/2019/infoTalk.html?id=5c64983638da16483151bb37>
   IMPLEMENTING A SIMPLE JVM IN JAVA AND RUST
   ... I will explain how we might start to implement a JVM from scratch.. then
    we will show how the Rust programming language provides a good alternative
@@ -84,4 +84,16 @@
   * Java Platform Group - Oracle
   * <https://inside.java/u/delabassee>
   * <https://delabassee.com>
+
+
+* Johannes Bechberger
+  * JVM developer working on profilers in SapMachine team at SAP.
+    including improvements to async-profiler and its ecosystem,
+    a website to view the different JFR event types, and 
+    improvements to the FirefoxProfiler, making it usable in the
+    Java world.
+  * He started at SAP last year after two years of research studies 
+    at the KIT in the field of Java security analyses. His work today is 
+    comprised of many open-source contributions and his blog, where he 
+    writes regularly on in-depth profiling and debugging topics.
 [[}]]

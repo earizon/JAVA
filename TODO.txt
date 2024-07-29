@@ -1,9 +1,17 @@
 # TODO 
-
-* java_lang.debugging, ... -> troubleshooting.debugging, ...
-
 * Java 9 to 13 in a Nutshell!!!: [[{PM.TODO.NOW}]]
   https://bentolor.github.io/java9to13/#/_preview_features_preview_12
+
+
+String switchExpressionPreview13(Direction way) {    
+    return switch (way) {            // <·· switch as expression JDK 13+, JEP-325 JEP-354
+        case N -> "Up";              // <·· No break needed                
+        case S -> { yield "Down"; }  // <·· Lambdas OK using yield             
+        case E, W -> "Somewhere left or right";
+        default -> "Foo"             // <·· default can be ommitted for 
+    };                               //    a) void return values or 
+}                                    //    b) enum with every value handled
+
 
 ## Java Dev External Tutorials
 * <https://dev.java/>
@@ -54,15 +62,15 @@
 
 
 ## TODO: Java 101 [[{PM.TODO.101]]
-  @[https://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/]
-  @[https://www.programcreek.com/2015/12/top-10-java-utility-classes/] 
-  @[https://www.programcreek.com/2013/09/top-9-questions-for-java-map/]
-  @[https://www.programcreek.com/2013/09/top-10-questions-for-java-collections/]
-  @[https://www.programcreek.com/2013/09/top-8-diagrams-for-understanding-java/]
-  @[https://www.programcreek.com/2013/09/top-10-faqs-of-java-strings/]
-  @[https://www.programcreek.com/2013/09/top-10-methods-for-java-arrays/]
-  @[https://www.programcreek.com/2013/09/top-10-websites-for-advanced-level-java-developers/]
-  @[https://www.programcreek.com/2013/08/top-books-for-advanced-level-java-developers/]
+  <https://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/>
+  <https://www.programcreek.com/2015/12/top-10-java-utility-classes/> 
+  <https://www.programcreek.com/2013/09/top-9-questions-for-java-map/>
+  <https://www.programcreek.com/2013/09/top-10-questions-for-java-collections/>
+  <https://www.programcreek.com/2013/09/top-8-diagrams-for-understanding-java/>
+  <https://www.programcreek.com/2013/09/top-10-faqs-of-java-strings/>
+  <https://www.programcreek.com/2013/09/top-10-methods-for-java-arrays/>
+  <https://www.programcreek.com/2013/09/top-10-websites-for-advanced-level-java-developers/>
+  <https://www.programcreek.com/2013/08/top-books-for-advanced-level-java-developers/>
 [[PM.TODO.101}]]
 
 ## JVM Security
@@ -123,14 +131,14 @@ $   $ clean install -P myProfile -DskipTests=true            [[}]]
 
 ## Java Erasure
   Type Erasure is a technique employed the Java compiler to support the use of Generics.
-@[https://developer.ibm.com/recipes/tutorials/java-language-type-erasure/]
+<https://developer.ibm.com/recipes/tutorials/java-language-type-erasure/>
 
 ## High Perf Persistence
   https://www.reddit.com/r/linux/comments/ajkfs0/github_trimstraythepracticallinuxhardeningguide/
 
 ## Kryo serialization lib [[{]]
   - Object graph serialization library:
-   @[https://github.com/EsotericSoftware/kryo]
+   <https://github.com/EsotericSoftware/kryo>
     Kryo is a fast and efficient binary object graph serialization
     framework for Java. The goals of the project are high speed, low
     size, and an easy to use API. The project is useful any time objects
@@ -154,7 +162,7 @@ $   $ clean install -P myProfile -DskipTests=true            [[}]]
 
 [[{01_PM.TODO]]
 ## Secomp JVM Integration
-@[https://docs.sonarqube.org/latest/requirements/requirements/]
+<https://docs.sonarqube.org/latest/requirements/requirements/>
 https://en.wikipedia.org/wiki/Seccomp
 http://people.apache.org/~rmuir/es-coverage/post-query-refactoring/org.elasticsearch.bootstrap/Seccomp.java.html
 seccomp filter  Non-portable linux/amd64 only security protection, preventing non
@@ -181,7 +189,7 @@ CONFIG_SECCOMP=y
 [[}]]
 
 ## Clean JSON Notes.
-## @[https://www.baeldung.com/java-json-binding-api]
+## <https://www.baeldung.com/java-json-binding-api>
 
 ## Compact monitoring notes: jcmd, Visual Recorder,  CRaSH shell
   Eclipse Mem.Analizer
@@ -401,7 +409,7 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 
 ## JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
 ## JDeps: dependency analysis tool for Java bytecode (class files and JARs).
-@[https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/]
+<https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/>
 
 $ $ jdeps sh-2.6.3.jar       ←  -verbose:class will list dependencies between classes
   sh-2.6.3.jar → java.base      (vs aggregating them to package level)
@@ -427,15 +435,15 @@ $ $ jdeps sh-2.6.3.jar       ←  -verbose:class will list dependencies between 
 
 
 ## Quarkus (GraalVM) Framework [[{jvm.graalvm,devops.k8s,scalability.jvm,01_PM.TODO]]
-@[https://quarkus.io/guides/]
-@[https://quarkus.io/guides/kogito-guide]
-@[https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle]
+<https://quarkus.io/guides/>
+<https://quarkus.io/guides/kogito-guide>
+<https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle>
 ..
-@[https://www.infoq.com/news/2019/03/redhat-release-quarkus]
+<https://www.infoq.com/news/2019/03/redhat-release-quarkus>
 
 Extracted from "Hibernate with Panache" by Emmanuel Bernard.
 """ Quarkus is Supersonic Subatomic Java. extremely fast with low memory footprint""".
-@[https://quarkus.io/guides/hibernate-orm-panache-guide]
+<https://quarkus.io/guides/hibernate-orm-panache-guide>
 Hibernate ORM is the de facto JPA implementation and offers you the full
 breadth of an Object Relational Mapper. It makes complex mappings possible,
 but it does not make simple and common mappings trivial. Hibernate ORM with
@@ -460,8 +468,8 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   }
 [[}]]
 
-## AsyncAPI.org [[{async/reactive.101,standards.openapi,qa.*,01_PM.TODO]]
-@[https://www.asyncapi.org/]
+## AsyncAPI.org [[{architecture.async.reactive.101,standards.openapi,qa.*,01_PM.TODO]]
+<https://www.asyncapi.org/>
 - Building the future of event-driven architectures.
 - Open source tools to easily build and maintain your event-driven architecture.
 - All powered by the AsyncAPI specification, the industry standard for defining
@@ -469,7 +477,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
 [[}]]
 
 ## Sign/Verify JARs [[{devops,security.cryptography,01_PM.TODO]]
-@[https://docs.oracle.com/javase/9/tools/jarsigner.htm]
+<https://docs.oracle.com/javase/9/tools/jarsigner.htm>
 
 $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to set sign. algorithm
 
@@ -478,12 +486,12 @@ $ $ jarsigner -verify file01.jar           ← Verify jar
 
 ## Guava VisibleForTesting[qa] [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
 [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
-REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-method-public-only-for-test-classes]
-@[https://guava.dev/releases/19.0/api/docs/com/google/common/annotations/VisibleForTesting.html]
+REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-method-public-only-for-test-classes>
+<https://guava.dev/releases/19.0/api/docs/com/google/common/annotations/VisibleForTesting.html>
 [[}]]
 
 ## Javalin: Kiss Kotlin/Java web framework [[{01_PM.radar]]
-@[https://javalin.io]
+<https://javalin.io>
 - Inspired by Javascript KOA.js framework
 
 - Ex: Declare server and API in the same place
@@ -511,24 +519,24 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 [[{]]scalability.native_code" >
 ## JNR(JNI/UNIX friendly)
 ( used by Netty and others...)
--@[https://github.com/jnr/jnr-ffi]
+-<https://github.com/jnr/jnr-ffi>
    load native libraries without writing JNI code by hand, or using tools such as SWIG.
--@[https://github.com/jnr/jnr-unixsocket]
+-<https://github.com/jnr/jnr-unixsocket>
    jnr-unixsocket: UNIX domain sockets (AF_UNIX) for Java
--@[https://github.com/jnr/jnr-enxio]
+-<https://github.com/jnr/jnr-enxio>
    Java Native Runtime Enhanced X-platform I/O
--@[https://github.com/jnr/jnr-x86asm]
+-<https://github.com/jnr/jnr-x86asm>
    Pure java x86 and x86_64 assembler
--@[https://github.com/jnr/jnr-a64asm]
+-<https://github.com/jnr/jnr-a64asm>
   AArch64 assembler for the Java Native Runtime
--@[https://github.com/jnr/jnr-process]
+-<https://github.com/jnr/jnr-process>
   A ProcessBuilder look-alike based entirely on native POSIX APIs
 -...
 [[}]]
 
 
 ## JAAS [[{security.aaa,01_PM.TODO]]
-@[https://en.wikipedia.org/wiki/Java_Authentication_and_Authorization_Service]
+<https://en.wikipedia.org/wiki/Java_Authentication_and_Authorization_Service>
 - In UNIX, by default we authenticate against /etc/passwd, but the
   (P)lugable (A)uthentication (M)odule (PAM), allows to check against other sources.
   JAAS is similar to PAM for Java, allowing to offer a common AAA front-end to
@@ -536,7 +544,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 [[}]]
 
 ## Eclipse Microprofile [[{standards.jee.microprofile,01_PM.TODO]]
-@[https://dzone.com/articles/microprofile-5-things-you-need-to-know]
+<https://dzone.com/articles/microprofile-5-things-you-need-to-know>
 
 - launched at JavaOne 2016 to address the shortcomings in the Enterprise Java microservices space.
 
@@ -589,7 +597,7 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 [[}]]
 
 ## JavaPoet [[{java_lang,01_PM.TODO]]
-@[https://github.com/square/javapoet]
+<https://github.com/square/javapoet>
 - Library/API for generating .java source files.
 - Useful for things like:
   - annotation processing
@@ -598,8 +606,8 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
     keeping a single source of truth for the metadata .
 [[}]]
 
-## R2DBC API [[{async/reactive,persistence.sql,01_PM.TODO]]
-@[https://www.infoq.com/news/2018/10/springone-r2dbc]
+## R2DBC API [[{architecture.async.reactive,persistence.sql,01_PM.TODO]]
+<https://www.infoq.com/news/2018/10/springone-r2dbc>
 ## Project initiated by Pivotal to provide an async/reactive alternative to JDBC.
 
   WARN : Since Spring Data R2dbc evolved very quickly, thre are plenty
@@ -637,15 +645,15 @@ REF: @[https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-
 - Programs run in the server (which is implemented in Java), and are
   triggered by the client (written in C), which handles all I/O.
 
-@[https://github.com/facebook/nailgun]
+<https://github.com/facebook/nailgun>
 [[}]]
 
 ## 9 Profiling tools [[{java_lang.profiling,01_PM.TODO]]
-@[https://blog.idrsolutions.com/2014/06/java-performance-tuning-tools/]
+<https://blog.idrsolutions.com/2014/06/java-performance-tuning-tools/>
 [[}]]
 
 ## A Year with Java 11 in Production!  [[{01_PM.TODO]]
-@[https://www.infoq.com/presentations/java-11-production-story/?itm_source=www.oficina24x7.com]
+<https://www.infoq.com/presentations/java-11-production-story/?itm_source=www.oficina24x7.com>
 Andrzej Grzesik talks about Revolut’s experience in running Java 11
 in production for over a year. He talks about the doubts they had,
 some pain points and gains, as well as surprises that surprised them.
@@ -680,12 +688,12 @@ From Mike's blog: https://blog.plan99.net/kotlin-native-310ffac94af2
   | collector and a JIT compiler.
 [[}]]
 
-## R2DBC [[{persistence.sql,async/reactive,01_PM.radar]]
+## R2DBC [[{persistence.sql,architecture.async.reactive,01_PM.radar]]
 https://www.infoq.com/news/2018/10/springone-r2dbc
   Experimental Reactive Relational Database Connectivity Driver, R2DBC, Announced at SpringOne
 [[}]]
 ## jEnv [[{devops,01_PM.TODO]]
-@[http://www.jenv.be/]
+<http://www.jenv.be/>
 
  command line tool to help you forget how to set the JAVA_HOME environment variable:
 
@@ -708,8 +716,8 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
   $ jenv shell oracle64-1.6.0.39 Configure shell instance version
 [[}]]
 
-## SmallRye Mutiny [[{async/reactive.rxjava,async/reactive,doc_has.comparative,qa,01_PM.TODO]]
-@[https://smallrye.io/smallrye-mutiny/]
+## SmallRye Mutiny [[{architecture.async.reactive.rxjava,doc_has.comparative,qa,01_PM.TODO]]
+<https://smallrye.io/smallrye-mutiny/>
 
 ## SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
 ## Mutiny is designed after having experienced many issues with other
@@ -725,9 +733,9 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 
 
 
-## Netty [[{async/reactive.io.network,doc_has.comparative,01_PM.radar,01_PM.backlog]]
+## Netty [[{architecture.async.reactive.io.network,doc_has.comparative,01_PM.radar,01_PM.backlog]]
 - One Framework to rule them all by Norman Maurer
-@[https://www.youtube.com/watch?v=DKJ0w30M0vg]
+<https://www.youtube.com/watch?v=DKJ0w30M0vg>
 ──────────────────────────────────────────────
 ## Apache MINA:Netty Alt.
 ## Apache MINA vs Netty: https://www.youtube.com/watch?v=A2pWsxPWJuc
@@ -765,33 +773,33 @@ Hibernate and JPOX persistence engines.
 [[}]]
 
 ## bytes java [[{01_PM.backlog]]
-@[https://github.com/patrickfav/bytes-java]
+<https://github.com/patrickfav/bytes-java>
 - utility library that makes it easy to create, parse, transform,
   validate and convert byte arrays in Java
 [[}]]
 
-## 3 NIO ways to read files [[{async/reactive.io,persistence.fs,01_PM.TODO]]
-@[https://howtodoinjava.com/java7/nio/3-ways-to-read-files-using-java-nio/]
+## 3 NIO ways to read files [[{architecture.async.reactive.io,persistence.fs,01_PM.TODO]]
+<https://howtodoinjava.com/java7/nio/3-ways-to-read-files-using-java-nio/>
 - read small file using ByteBuffer and RandomAccessFile
 - FileChannel and ByteBuffer to read large files
 - Example 3: Reading a file using memory-mapped files in Java
 [[}]]
 
 ## JLink [[{devops.containarization,01_PM.TODO]]
-@[https://docs.oracle.com/javase/9/tools/jlink.htm]
+<https://docs.oracle.com/javase/9/tools/jlink.htm>
 - You can use the jlink tool to assemble and optimize a set of modules
   and their dependencies into a custom runtime image
 
 TODO:
-@[https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4]
+<https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4>
 [[}]]
 
 [[{java_lang.configuration,standards.JSR330,qa,doc_has.comparative,Spring,standards.JSR330]]
 ## Spring vs Google Guice
-@[https://www.baeldung.com/guice-spring-dependency-injection]
+<https://www.baeldung.com/guice-spring-dependency-injection>
 ────────────────────────
 ## Dependency injection
-@[http://www.theserverside.com/feature/Spring-vs-Guice-The-Clash-of-the-IOC-Containers]
+<http://www.theserverside.com/feature/Spring-vs-Guice-The-Clash-of-the-IOC-Containers>
 A: t's important to realize that Dagger was created after Guice, by one
 of Guice's creators ("Crazy Bob" Lee) after his move to Square:
 - Spring was originally released in October 2002.
@@ -804,7 +812,7 @@ of Guice's creators ("Crazy Bob" Lee) after his move to Square:
 - Square marked Dagger 1 as deprecated 10 days ago,
   on September 15, 2016.
 ## JSR-330: Provider<MyTargetBean>
-@[http://javax-inject.github.io/javax-inject/]
+<http://javax-inject.github.io/javax-inject/>
 
 FROM https://github.com/google/guice/wiki/JSR330
 - JSR-330 standardizes annotations like @Inject and the Provider
@@ -819,15 +827,15 @@ FROM https://github.com/google/guice/wiki/JSR330
 
   - See also:
     - Cryptography map:
-    @[../General/cryptography_map.html]
+    <../General/cryptography_map.html>
 
     - Bounce Castle FIPS JCA provider
-    @[https://www.bouncycastle.org/fips-java/BCFipsIn100.pdf]
+    <https://www.bouncycastle.org/fips-java/BCFipsIn100.pdf>
     - Jipher (OpenSSL 3.0 based JCA provider)
 
     PKCS#11 Ref.guide : [TODO]
-  @[https://docs.oracle.com/javase/7/docs/technotes/guides/security/p11guide.html]
-  About PCKS#11: @[http:./../General/cryptography_map.html?topics=pkcs]
+  <https://docs.oracle.com/javase/7/docs/technotes/guides/security/p11guide.html>
+  About PCKS#11: <http:./../General/cryptography_map.html?topics=pkcs>
 [[}]]
 
 ## Loading properties [[{java_lang.configuration,01_PM.low_code,01_PM.TODO]]
@@ -847,12 +855,12 @@ is.close();
 
 ## XML Stream parsing [[{persistence.xml,01_PM.TODO]]
 [TODO]: Write summary of best XML libraries.
-@[https://github.com/FasterXML/aalto-xml]
-@[http://www.studytrails.com/java/xml/aalto/java-xml-aalto-stax-async-basic/]
-@[https://docs.oracle.com/javase/tutorial/jaxp/stax/why.html]
-@[https://gist.github.com/shvalb/38cc8f454ee84a2032d2b341a9b8aeae]
-@[http://www.studytrails.com/java/xml/aalto/java-xml-aalto-introduction/]
-@[https://gist.github.com/shvalb/38cc8f454ee84a2032d2b341a9b8aeae]
+<https://github.com/FasterXML/aalto-xml>
+<http://www.studytrails.com/java/xml/aalto/java-xml-aalto-stax-async-basic/>
+<https://docs.oracle.com/javase/tutorial/jaxp/stax/why.html>
+<https://gist.github.com/shvalb/38cc8f454ee84a2032d2b341a9b8aeae>
+<http://www.studytrails.com/java/xml/aalto/java-xml-aalto-introduction/>
+<https://gist.github.com/shvalb/38cc8f454ee84a2032d2b341a9b8aeae>
 [[}]]
 
 ## CGLIB library [[{JVM.101,01_PM.TODO]]
@@ -860,10 +868,10 @@ is.close();
   Spring Framework for example).
 [[}]]
 
-## Spring Reactor/Spring-Async [[{async/reactive.rxjava,async/reactive,doc_has.comparative,01_PM.TODO]]
-@[https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html]
-@[https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm]
-@[https://spring.io/guides/gs/async-method/]
+## Spring Reactor/Spring-Async [[{architecture.async.reactive.rxjava,doc_has.comparative,01_PM.TODO]]
+<https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html>
+<https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm>
+<https://spring.io/guides/gs/async-method/>
 ## Q:"Why Reactor when there's already RxJava2?"
    - RxJava2 is java 6 while for Reactor the Spring team decided to go all in
      and focus only on Java 8. This means that you can make use of all the new
@@ -949,12 +957,12 @@ https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
   etc.
 [[}]]
 
-## Async Servlets 3.0+: [[{async/reactive.servlets,standards.jee.servlets,01_PM.TODO]]
+## Async Servlets 3.0+: [[{architecture.async.reactive.servlets,standards.jee.servlets,01_PM.TODO]]
 https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processing-support-in-servlet-3-0.html
 [[}]]
 
-## Real-World Java 9 [[{async/reactive.101,java_lang.flow_api,java_lang.101,01_PM.TODO]]
-@[https://www.infoq.com/presentations/java9-flow-stream-api/?utm_source=oficina24x7.com]
+## Real-World Java 9 [[{architecture.async.reactive.101,java_lang.flow_api,java_lang.101,01_PM.TODO]]
+<https://www.infoq.com/presentations/java9-flow-stream-api/?utm_source=oficina24x7.com>
 
 ## Real-World Java 9:
   Trisha Gee shows via live coding how we can use the new Flow API to
@@ -966,7 +974,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
 [[}]]
 
 ## Deplo WAR to k8s with JKube [[{devops.containarization,standards.jee.war,devops.k8s]]
-@[https://developers.redhat.com/blog/2020/07/27/deploy-your-java-web-application-into-the-cloud-using-eclipse-jkube/]
+<https://developers.redhat.com/blog/2020/07/27/deploy-your-java-web-application-into-the-cloud-using-eclipse-jkube/>
 
 ## JKube Maven  converts war (dependent of a container) into cloud-native app.
 
@@ -1054,7 +1062,7 @@ use enclaves to:
 [[}]]
 
 ## Checkpointing outside the JVM [[{scalability.JVM,DevOps,01_PM.TODO]] #[jvm_app_checkpoint]
-@[https://developers.redhat.com/blog/2020/10/15/checkpointing-java-from-outside-of-java/]
+<https://developers.redhat.com/blog/2020/10/15/checkpointing-java-from-outside-of-java/>
 When OpenJDK‘s Java virtual machine (JVM) runs a Java application,
 it loads a dozen or so classes before it starts the main class.
 
@@ -1065,11 +1073,11 @@ it loads a dozen or so classes before it starts the main class.
   cost of long startup times.          Start time seconds → millisecs!!!
 
   Checkpoint inside JVM HOW-TO:  [TODO]
-@[https://www.jfokus.se/jfokus19-preso/Checkpointing-Java.pdf]
+<https://www.jfokus.se/jfokus19-preso/Checkpointing-Java.pdf>
 
   Checkpoint Outside JVM HOW-TO:
         - Under the hood it uses Linux Checkpoint/Restore in Userspace (CRIU).
-        @[https://www.criu.org/Main_Page]
+        <https://www.criu.org/Main_Page>
 
   $ CONSOLE 1                              CONSOLE
   $ $ setsid java -XX:-UsePerfData \     $ $ sudo criu dump -t $pid \    ← stops and checkpoint
@@ -1091,12 +1099,12 @@ it loads a dozen or so classes before it starts the main class.
   consumption and garbage collector issues.
 
 - See also notes on gRPC:
-  @[./java_map.html?query=grpc]
-  @[../WebTechnologies/map.html?topics=grpc&showSearchMenu=false]
+  <./java_map.html?query=grpc>
+  <../WebTechnologies/map.html?topics=grpc&showSearchMenu=false>
 [[}]]
 
 ## SMTP: Sending mail [[{messaging.mail.smtp,security.notifications]]
-- Based on AWS guide @[https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-using-smtp-java.html]
+- Based on AWS guide <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-using-smtp-java.html>
   but applies to any standard SMTP e-mail server.
 
   - pom coordinates:
@@ -1175,7 +1183,7 @@ it loads a dozen or so classes before it starts the main class.
 [[}]]
 
 ## jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,01_PM.TODO]]
-@[https://github.com/jerolba/jfleet]
+<https://github.com/jerolba/jfleet>
 · JFleet is a Java library which persist in database large collections
   of Java POJOs as fast as possible, using the best available technique
   in each database provider, achieving it with alternate persistence
@@ -1222,7 +1230,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 [[}]]
 
 ## Java Threading resources [[{concurrency,01_PM.TODO]]
-@[https://avaldes.com/?s=java+thread]
+<https://avaldes.com/?s=java+thread>
 
 - Java Thread, Concurrency and Multithreading Tutorial
 - Java Threads and Concurrent Locks with Examples
@@ -1233,8 +1241,8 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 - Java Threads Wait, Notify and NotifyAll Example
 [[}]]
 
-## JIMFS [[{async/reactive.io,persistence.fs,01_PM.TODO]]
-@[https://github.com/google/jimfs]
+## JIMFS [[{architecture.async.reactive.io,persistence.fs,01_PM.TODO]]
+<https://github.com/google/jimfs>
 - Jimfs supports almost all the APIs under java.nio.file:
   - Create/delete/move/Copy  files/dirs.
   - Read/write files with FileChannel/SeekableByteChannel/InputStream/OutputStream/...
@@ -1261,7 +1269,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 [[}]]
 
 ## Java Poet [[{01_PM.backlog]]
-@[https://github.com/square/javapoet]
+<https://github.com/square/javapoet>
 ## Java API for generating .java source files.
 ## useful for:
   - transpiling: Custom language to java.
@@ -1272,12 +1280,12 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 [[}]]
 
 ## Storing HttpSessions to Redis [[{persistence.session,scalability.cache,architecture.distributed]]
-@[https://github.com/AmadeusITGroup/HttpSessionReplacer]
+<https://github.com/AmadeusITGroup/HttpSessionReplacer>
 AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
 
 ## Dekorate k8s annotations [[{devops.k8s,01_PM.backlog]]
-@[https://developers.redhat.com/blog/2021/03/17/using-dekorate-to-generate-kubernetes-manifests-for-java-applications/]
+<https://developers.redhat.com/blog/2021/03/17/using-dekorate-to-generate-kubernetes-manifests-for-java-applications/>
 ## ex:
   JAVA ANOTATION INPUT
   ====================
@@ -1301,7 +1309,7 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
 
 ## Yourkit profiler [[{java_lang.profiling,01_PM.radar]]
-@[https://www.yourkit.com/java/profiler/features/]
+<https://www.yourkit.com/java/profiler/features/>
 ## Yourkit: commercial (non OOSS) profiler with advanced features
 ## Tight integration with your IDE
 ## "Smart what if"  allows to evaluate performance gains of supposed optimizations
@@ -1348,25 +1356,25 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
 
 ## LMAX Disruptor: High Perf Inter-Thread Messaging Library [[{concurrency,01_PM.radar]]
-@[https://lmax-exchange.github.io/disruptor/]
+<https://lmax-exchange.github.io/disruptor/>
 
 See also:
-@[https://www.infoq.com/articles/High-Performance-Java-Inter-Thread-Communications/]
+<https://www.infoq.com/articles/High-Performance-Java-Inter-Thread-Communications/>
 
-@[https://www.infoq.com/news/2013/05/lmax-zing]
+<https://www.infoq.com/news/2013/05/lmax-zing>
 LMAX Exchange Getting Up To 50% Improvement in Latency From Azul's Zing JVM
 Interesting points about GC tunning.
 [[}]]
 
 ## Tribe: reliable multicast [[{java_lang.io.multicast,architecture.distributed,scalability.distributed]]
                             [[doc_has.comparative,qa,01_PM.low_code,01_PM.radar]]
-REF: @[http://tribe.ow2.org/]
+REF: <http://tribe.ow2.org/>
 - Unlike JGroups, Tribe only targets reliable multicast
  (no probabilistic delivery) and is optimized for cluster
  communications.
 
 ## JGroups multicast
-@[http://www.jgroups.org/]
+<http://www.jgroups.org/>
 - toolkit for reliable multicast communication.
 - point-to-point FIFO communication channels (basically TCP)
 - Targets high performance cluster environments.
@@ -1377,7 +1385,7 @@ REF: @[http://tribe.ow2.org/]
 [[}]]
 
 ## OSV.io [[{scalability.unikernel,security,devops,01_PM.backlog]]
-- @[http://osv.io/]
+- <http://osv.io/>
   versatile modular unikernel designed to run unmodified Linux
   applications securely on micro-VMs in the cloud. Built from the ground up for
   effortless deployment and management of micro-services and serverless apps,
@@ -1385,9 +1393,9 @@ REF: @[http://tribe.ow2.org/]
 [[}]]
 
 ## Excellent Java Blog (spanish)
-  @[https://picodotdev.github.io/blog-bitix/tags/java/">Excellent Java Blog (spanish)
+   <https://picodotdev.github.io/blog-bitix/tags/java/>Excellent Java Blog (spanish)
 
-## @[https://github.com/akullpp/awesome-java] Awesome Java
+## <https://github.com/akullpp/awesome-java> Awesome Java
 
 ## Amazon CodeGuru [[{qa.testing,cloud.aws,devops,01_PM.backlog]]
 - Powered by IA.
@@ -2542,3 +2550,252 @@ https://www.baeldung.com/java-override-system-time
 ## Architecture of a Geospatial Application with Java
   https://www.baeldung.com/java-geospatial-applications
 
+
+## Java Census: official record of the structure of theOpenJDK Community  [[{]]
+* <https://openjdk.org/census#crac>
+* It lists the active Groups, Projects, andContributors and the 
+  relationships between them. The census wasinitially constructed per 
+  the transitionplan defined in the ratified Bylaws;details are 
+  available below.To nominate an existing Contributor to a new role, or 
+  to proposea new Group or Project, please see the advice and 
+  instructions forGroups and Projects.To request a change or correction 
+  to the census, please contactthe registrar.IndexGroupsadoption 
+  buildclient-libs compiler conformancecore-libs csr gb hotspot i18n 
+  ide-support jmx members net porters quality security serviceability 
+  vulnerability webProjectsaarch32-port aarch64-port amberanno-pipeline 
+  audio-engine babylonbrisbane bsd-portbuild-infra caciocavallo 
+  closurescode-tools coincompiler-grammar crac cvmi detroit dio duke 
+  font-scaler galahad graal graphics-rasterizer guide haiku hsx icedtea 
+  javadoc-next jdk jdk-updates jdk10 jdk6 jdk7 jdk7u jdk8 jdk8u jdk9 
+  jigsaw jmc jmmjmx2 kona kulla lambda lanai leyden lilliput 
+  locale-enhancement loom macosx-port metropolis mips-portmlvm mobile 
+  modules nashorn nio openjfx panama penrose portola 
+  ppc-aix-portriscv-port s390x-port sctp shenandoah skara sumatra 
+  threeten tiered-attrib tsantype-annotations valhalla verona visualvm 
+  wakefieldzero zgc
+[[}]]
+
+## Spring and Records [[{spring.101,101.records,qa.101,qa.inmutability]]
+
+* REF: <https://dzone.com/articles/tackling-records-in-spring-boot>
+  By Anghel Leonard
+
+* Example. Using Records in Controllers
+  ```
+  public record Book(String title, String isbn) {}
+  public record Author(String name, String genre, List<Book> books) {}
+
+  @GetMapping("/authors")
+  public List<Author> fetchAuthors() {
+    return bookstoreService.fetchAuthors();
+  }
+  ```
+  NOTE: Jackson library (default JSON library in Spring Boot) will automatically 
+  (un)marshal instances of type Author/Book to/from JSON.
+
+* Example: Using Records With Thymeleaf Templates
+   
+  1. store List<Author> into "authors" Thymeleaf variable:
+     ```
+     @GetMapping("/bookstore")
+     public String bookstorePage(Model model) {
+       model.addAttribute("authors",   
+          bookstoreService.fetchAuthors());
+       return "bookstore";
+     }
+     ```
+  2. Consume in bookstore.html thymeleaf template:
+     ```
+      ...
+      <ul th:each="author : ${authors}">
+        <li th:text="${author.name} + ' (' + ${author.genre} + ')'" />
+        <ul th:each="book : ${author.books}">
+          <li th:text="${book.title}" />
+        </ul>
+      </ul>
+     ```
+* Example: Using Records for Configuration
+
+  1. Configuration: 
+  ```
+  $ cat configuration.properties: (or yml)
+  bookstore.bestseller.author=Joana Nimar
+  bookstore.bestseller.book=Prague history
+  ```
+  Mapping to recod with Spring @ConfigurationProperties. 
+  ```
+  | @ConfigurationProperties(prefix = "bookstore.bestseller")
+  | public record BestSellerConfig(String author, String book) {}
+  ```
+  Inject BestSellerConfig into Service through constructor:
+  ```
+  | @Service
+  | public class BookstoreService {
+  |   private final BestSellerConfig bestSeller; // QA.inmutability
+  | 
+  |   public BookstoreService(BestSellerConfig bestSeller) {
+  |     this.bestSeller = bestSeller;
+  |   }
+  |  
+  |   public String fetchBestSeller() {
+  |      return bestSeller.author() + " | " + bestSeller.book();
+  |   }
+  | }
+  ```
+
+### Record and Dependency Injection
+
+  ```
+  | @RestController
+  | public class BookstoreController {
+  | 
+  |   private final BookstoreService bookstoreService;
+  | 
+  |   public BookstoreController(BookstoreService bookstoreService) {
+  |     this.bookstoreService = bookstoreService;
+  |   }
+  | 
+  |    @GetMapping("/authors")
+  |    public List<Author> fetchAuthors() {
+  |      return bookstoreService.fetchAuthors();
+  |    }
+  | }
+  ```
+[[spring.101,101.records}]]
+
+## EclipseStore   [[{scalability.storage,storage.scalability,cloud.pricearchitecture.storage,]]
+* <https://devsummit.infoq.com/presentation/munich2024/ultra-fast-memory-database-applications-java>
+
+* New (as of 2024) open source project.
+* Only java core dependencies.
+* Hibernate is the de facto standard persistence for traditional Java 
+  database apps. It is also known as complex and slow.<br/>
+   Cloud, microservices and serverless have changed Java dramatically,
+  but persistence is still the same.  [[{doc_has.comparative}]]
+* EclipseStore is built to be the next generation Java persistence for 
+  modern cloud-native systems and AI.  It follows the system prevalence 
+  architectural pattern and enables databaseless in-memory data 
+  processing using the native Java object model.
+*  The engine enables seamlessly mirroring any Java object graph of
+  any size and complexity transaction-safe into any binary object 
+  storage such as AWS S3. Main benefits:
+  * High performance: microsecond response and query time, way faster
+    than comparable JPA queries,
+  * Significant cloud database cost savings: Ex. AWS S3 object storage 
+    is 70% – 96% cheaper than any database in the cloud such as
+    AWS RDS PostgreSQL or Maria DB. [[{storage.cloud.price}]]
+  * Simplicity: only one data model (just POJOs), any Java types are 
+    supported, no expensive mappings or data conversion, simple 
+    architecture, simple schema migration.
+[[storage}]]
+
+JAVA GOLang
+## jsoniter (Much) faster JSON iterator en/de-coder [[{io.json.jsoniter]]
+* <https://github.com/json-iterator>
+* available in Java and Go.
+* Up to 3x times faster than jackson/gson/fastjson. [[{doc_has.comparative}]]
+[[io.json.jsoniter}]]
+
+[[io.json.jsoniter}]] 
+
+
+## With Java 21, Your Code Runs Even Faster
+* <https://inside.java/2023/10/06/devoxx-your-code-runs-even-faster/>
+
+
+## "1 Billion Row Challenge"  [[{scalability.101]]
+* It Shows Java Can Process a One Billion Rows File in Two Seconds
+* <https://www.infoq.com/news/2024/01/1brc-fast-java-processing/>
+[[scalability.101}]]
+
+## Redisson: Easy Redis Java client  [[{architecture.cachearchitecture.distributed,]]
+* <https://github.com/redisson/redisson>
+* features In-Memory Data Grid.
+* Sync/Async/RxJava/Reactive API.
+* Over 50 Redis based Java objects and services:
+  * Set, Multimap, SortedSet, Map, List, Queue, Deque,
+    Semaphore, Lock, AtomicLong, Map Reduce, Bloom filter, 
+    Spring Cache, Tomcat, Scheduler, JCache API, Hibernate,
+    RPC, local cache 
+[[architecture.cache}]]
+
+## JEP 474: Generational Mode Now Standard for ZGC in Java [[{jvm.gc.ZGC,]]
+* <https://www.infoq.com/news/2024/05/java-zgc-update/>
+* The non-generational mode will be deprecated and removed in a future JDK release.
+* most significant change in JEP 474: switch of the ZGenerational option’s default
+  value from false to true.
+* This clearly signals a strategic change in Java's approach to memory management,
+  specifically optimizing garbage collection based on delivering more ‘free’ memory
+  to Java applications and a lower overhead of GC.  [[{scalability.jvm.memory}]]
+[[jvm.gc.ZGC}]]
+
+## Is Protobuf 5x Faster Than JSON?  [[{io.protobuf,doc_has.comparative]]
+* <https://dzone.com/articles/is-protobuf-5x-faster-than-json-part-ii>
+[[io.protobuf}]]
+
+
+[[{security.101,qa,pm.low_code]]
+
+## Eclipse (Safe) Serializer
+* <https://github.com/eclipse-serializer/serializer/blob/main/README.md>
+
+* High secure serialization for the JVM and Android
+* Strict separation of data and code
+* Neither code nor any class information is transferred
+* No code is executed through deserialization
+* Objects are generated by the framework
+* Injecting malicious code won't have any consequences because executing is impossible
+* Implementing the interface java.io.Serializable is not required at all
+* Serialize any object
+* Any object from 3rd party APIs can be serialized
+* Built for any complex object graphs, circular references are troublefree
+* The depth of an object graph is not limited, no stack-based recursion
+* No requirements to your classes, no interfaces, superclasses or annotations required
+[[security.101}]]
+
+[[{qa.refactoring.openrewrite]]
+## OpenRewrite 
+https://docs.openrewrite.org/ 
+Introduction to OpenRewrite
+
+Large-scale automated source code refactoring
+
+OpenRewrite is an automated refactoring ecosystem for source code, 
+enabling developers to effectively eliminate technical debt within 
+their repositories.
+
+It consists of an auto-refactoring engine that runs prepackaged, 
+open-source refactoring recipes for common framework migrations, 
+security fixes, and stylistic consistency tasks – reducing your 
+coding effort from hours or days to minutes. Build tool plugins like 
+the OpenRewrite Gradle plugin and the OpenRewrite Maven plugin help 
+you run these recipes on one repository at a time.
+
+While the original focus was on the Java language, the OpenRewrite 
+community is continuously expanding language and framework coverage. 
+Thousands of great individuals and teams are working together to make 
+software seamless to update and continuously secure.
+[[qa.refactoring.openrewrite}]]
+
+## Spring shell
+https://spring.io/projects/spring-shell
+
+[[{scalability.jvm.virtualThreads]]
+## Spring Boot 3.2
+* Support for Virtual Threads and Modern RestClient and JdbcClient
+* <https://www.infoq.com/news/2023/12/spring-boot-virtual-threads/>
+[[scalability.jvm.virtualThreads}]]
+
+[[{security.AAA]]
+## Spring Boot OAuth2 Auth+Resource Server Example
+
+* <https://github.com/amitdhodi/spring-boot-oauth2>
+* Showcasing the authorization code grant flow.
+[[security.AAA}]]
+
+[[{security.AAA]]
+## Simplified Guide to JWT Authentication with Spring Boot - DEV Community
+* <https://dev.to/abhi9720/a-comprehensive-guide-to-jwt-authentication-with-spring-boot-117p>
+[[security.AAA}]]
+
+## Java 9+ Multi-Release JARs

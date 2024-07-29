@@ -1,4 +1,6 @@
-# Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,devops.k8s,doc_has.diagram,_PM.TODO]]
+# Containerization
+
+## Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,devops.k8s,doc_has.diagram,_PM.TODO]]
 
 * Example Dockerfile
 ```
@@ -20,10 +22,10 @@ EXPOSE 8080
 CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME
 ```
 
-# Jib: Image Builder
+## Jib: Image Builder
 * Docker+mvn/gradle integration:
-@[https://www.infoq.com/news/2018/08/jib]
-@[https://github.com/GoogleContainerTools/jib]
+<https://www.infoq.com/news/2018/08/jib>
+<https://github.com/GoogleContainerTools/jib>
 
 * Build Java Container without Docker/Dockerfile
 * Jib's build approach separates the Java application
@@ -180,7 +182,7 @@ Extracted from <https://www.infoq.com/news/2023/12/canonical-chiselled-ubuntu/>
 See also: jKube notes
 [[devops.containarization}]]
 
-# From 318.7 MB to 32 MB [[{devops.containarization.101,qa.101]]
+## From 318.7 MB to 32 MB [[{devops.containarization.101,qa.101]]
 ```
 ┌───────────────────────┬───────────┬────────────────────────────┬─────┐
 │                       │ Modules   │  **jlink flags**           │ MB  │

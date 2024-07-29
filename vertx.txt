@@ -1,26 +1,26 @@
 ## Apropos:
   Content is versioned in git.  commits, issues and pull-requests welcome!
-@[https://www.github.com/earizon/JAVA]
+<https://www.github.com/earizon/JAVA>
 
 [[{vertx]]
 ## VertX: Who-is-Who
   (Forcibly incomplete but still quite pertinent list of core developers and companies)
   Tim Fox     :  Initiated VertX in 2012
   Julien Viet :  Project lead (as of 2020), RedHat, Marseille
-               @[https://github.com/vietj]
-               @[http://blog.julienviet.com/]
-                 He is also core developer of Crash @[http://www.crashub.org/]
+               <https://github.com/vietj>
+               <http://blog.julienviet.com/>
+                 He is also core developer of Crash <http://www.crashub.org/>
 
-  Julien Ponge:@[https://julien.ponge.org/]
+  Julien Ponge:<https://julien.ponge.org/>
                  Author of VertX in Action
-  Many others :@[https://github.com/eclipse-vertx/vert.x/graphs/contributors]
+  Many others :<https://github.com/eclipse-vertx/vert.x/graphs/contributors>
 [[}]]
 
-# Vert.X Summary [[{vertx.101,async/reactive.*,doc_has.diagram]]
+# Vert.X Summary [[{vertx.101,architecture.async.reactive,doc_has.diagram]]
 REF:
-- Vert.X guide for java devs @[https://github.com/vert-x3/vertx-guide-for-java-devs]
-- VertX maven starter        @[https://github.com/vert-x3/vertx-maven-starter]
-- Examples for amqp-bridge,  @[https://github.com/vert-x3/vertx-examples]
+- Vert.X guide for java devs <https://github.com/vert-x3/vertx-guide-for-java-devs>
+- VertX maven starter        <https://github.com/vert-x3/vertx-maven-starter>
+- Examples for amqp-bridge,  <https://github.com/vert-x3/vertx-examples>
   grpc, core, docker,
   gradle/maven , ignite, jca,
   jdbc.  kafka, kotlin, mail,
@@ -30,7 +30,7 @@ REF:
   service-discovery,
   service-proxy, shell, spring,
   sync, unit, web/web-client ...
-- Web server examples        @[https://github.com/vert-x3/vertx-examples/tree/master/web-examples/src/main/java/io/vertx/example/web]
+- Web server examples        <https://github.com/vert-x3/vertx-examples/tree/master/web-examples/src/main/java/io/vertx/example/web>
   angular, auth, authjdbc,
   authorisation,
   blockinghandler, chat,
@@ -40,10 +40,10 @@ REF:
   mongo, react, realtime, rest,
   sessions, staticsite,
   templating, upload, vertxbus
-- Web/ JDBC server examples @[https://github.com/vert-x3/vertx-examples/blob/master/web-examples/src/main/java/io/vertx/example/web/jdbc/Server.java]
+- Web/ JDBC server examples <https://github.com/vert-x3/vertx-examples/blob/master/web-examples/src/main/java/io/vertx/example/web/jdbc/Server.java>
 
 # verticle
-REF: @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/README.adoc]
+REF: <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/README.adoc>
 - reusable unit  of   deployment
                       ^^^^^^^^^^
                   - Can be passed some   configuration  like
@@ -59,7 +59,7 @@ REF: @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/READM
        │            verticles messages, ...   to offload the blocking I/O operations
 <<io.vertx.core.                              from the event loop to a worker thread
   AbstractVerticle>> Base Class
-  ════════════════ @[https://vertx.io/docs/apidocs/io/vertx/core/AbstractVerticle.html]
+  ════════════════ <https://vertx.io/docs/apidocs/io/vertx/core/AbstractVerticle.html>
 -  .start()  ← life-cycle sync/async method to be overrided
 -  .stop ()  ← life-cycle sync/async method to be overrided
 -  .vertx    ← - Points to the   Vert.x environment where the verticle is deployed
@@ -162,15 +162,15 @@ lots of concurrent networked requests.
 [[}]]
 
 ## HTTPS AAA:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc>
 
 ## VertX 4.0 What's New
 [[}]]
 
 
 # Testing [[{vertx.testing,qa.testing]]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/README.adoc]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/http/SampleHttpServerTest.java]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/README.adoc>
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/http/SampleHttpServerTest.java>
 
 └ Ex.1:
   @RunWith(VertxUnitRunner.class)  ← annotation to JUnit tests to allow vertx-unit features
@@ -221,7 +221,7 @@ lots of concurrent networked requests.
 
 └ Ex.2: check/test that a timer task has been called once,
         and that a periodic task has been called 3 times.
-      @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/database/WikiDatabaseVerticleTest.java]
+      <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/database/WikiDatabaseVerticleTest.java>
 
   RunWith(VertxUnitRunner.class)
   public class WikiDatabaseVerticleTest {
@@ -259,7 +259,7 @@ lots of concurrent networked requests.
 [[vertx.testing}]]
 
 # Reusable Verticles [[{vertx.101]]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc>
 
 - resulting verticles will not have direct references to each other
   as they will only agree on destination names in the event bus as well
@@ -267,12 +267,12 @@ lots of concurrent networked requests.
 - messages sent on the event bus will be encoded in JSON.
 
 - Ex:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-2/src/main/java/io/vertx/guides/wiki]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-2/src/main/java/io/vertx/guides/wiki>
  HttpServerVerticle.java
  WikiDatabaseVerticle.java
  MainVerticle.java      ← its sole purpose is to bootstrap the app
                           and deploy other verticles.
- @[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
+ <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/src/main/java/io/vertx/guides/wiki/MainVerticle.java>
   package io.vertx.guides.wiki;
 
   public class MainVerticle extends AbstractVerticle {
@@ -299,7 +299,7 @@ lots of concurrent networked requests.
 [[}]]
 
 # Create HttpServer [[{vertx.101]]
-REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java]
+REF:<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java>
 
    import io.vertx.ext.web.handler.BodyHandler;
    public class MainVerticle  extends io.vertx.core.AbstractVerticle  {
@@ -344,8 +344,8 @@ REF:@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/m
 
 
 # Maven Bootstrap  [[{vertx.101,devops]]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc>
+<https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1>
 
 Ex: minimally viable wiki written with Vert.x
 
@@ -383,28 +383,28 @@ Tip: The SQL database modules supported by the Vert.x project do not currently
    However, nothing forbids using more advanced modules from the community,
    and we especially recommend checking out projects like this jOOq generator
    for VertX
-   @[https://github.com/jklingsporn/vertx-jooq]
+   <https://github.com/jklingsporn/vertx-jooq>
 
 $ mvn clean package
 $ java -jar target/project01-SNAPSHOT-fat.jar
 [[}]]
 
 Non-Classified / TODO [[{01_PM.TODO]]
-## RxJava Integration: [[{vertx.101,async/reactive.rxjava,devops.k8s,architecture.frontend]]
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc]
+## RxJava Integration: [[{vertx.101,architecture.async.reactive.rxjava,devops.k8s,architecture.frontend]]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc>
   Refactoring some code to use reactive programming with the
   popular RxJava library and its Vert.x integration.
  [[}]
 
 ## Vertx+k8s:
-@[http://escoffier.me/vertx-kubernetes/]
+<http://escoffier.me/vertx-kubernetes/>
 ## SockJS:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc>
   - Event-bus bridge allowing web apps to seamlessly communicate over
   - event bus from JavaScript running in the browser by receiving and publishing
   - messsages just like any verticle would do
 ## Angular Client:
-@[https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-9/README.adoc]
+<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-9/README.adoc>
 
  TODO:
  Cookbook recipe:
@@ -431,7 +431,7 @@ Non-Classified / TODO [[{01_PM.TODO]]
   """
 
 ## What's new Vert.X 4.0: (2020-12-09):
-@[https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes]
+<https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes>
 
 
 ## https://github.com/vert-x3/vertx-4-migration-guide
@@ -443,7 +443,7 @@ Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
 
 # OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
                                [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
-@[https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx]
+<https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx>
 - "Contract Driven Development" (or API Design First approach) is a methodology
   that uses declarative API Contracts to enable developers to efficiently design,
   communicate, and evolve their HTTP APIs, while automating API implementation
@@ -479,13 +479,13 @@ easier. [[}]]
 
 # Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO.NOW]]
 ## Reactive isn't Complicated with Vert.x and the new Mutiny APIs
-@[https://www.youtube.com/watch?v=3tdU5WRvuuo]
+<https://www.youtube.com/watch?v=3tdU5WRvuuo>
 [[}]]
 
-## @[https://quarkus.io/guides/using-vertx.html]
+## <https://quarkus.io/guides/using-vertx.html>
 
 ## Reactive Spring with Vert.x
-@[https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/]
+<https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/>
 - Reactive Spring Boot programming with Vert.x
   The latest bundle of Red Hat supported Spring Boot starters was recently
   released. In addition to supporting the popular Red Hat products for our Spring

@@ -8,7 +8,7 @@
   that's fun to deal with especially when you start getting larger projects.
 
 # Guava ListenableFuture [[{async/reactive.101,doc_has.comparative,qa]]
-@[https://github.com/google/guava/wiki/ListenableFutureExplained]
+<https://github.com/google/guava/wiki/ListenableFutureExplained>
 - Concurrency is a hard problem, but it is significantly simplified by
   working with powerful and simple abstractions. To simplify matters,
   Guava extends the Future interface of the JDK with ListenableFuture.
@@ -21,7 +21,7 @@
       variants of their methods.
 
 # Listenable vs CompletableFutures
-@[https://stackoverflow.com/questions/38744943/listenablefuture-vs-completablefuture]
+<https://stackoverflow.com/questions/38744943/listenablefuture-vs-completablefuture>
           ListenableFuture                           │               CompletableFuture
 ─────────────────────────────────────────────────────┼───────────────────────────────────────────────────
                                                      │ It is different from ListenableFuture in that it

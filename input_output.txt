@@ -1,4 +1,4 @@
-# JAVA INPUT/OUTPUT [[{ $INPUT_OUTPUT ]]
+# JAVA INPUT/OUTPUT
 
 [[{java_lang.101,persistence.FS,io.101]]
 ## Reading file as lines-of-text  <!-- { -->
@@ -100,8 +100,8 @@ LineIterator.closeQuietly(it);                ← Close resources
   ```
 [[}]]
 
-## NIO (JDK 1.4+) [[{async/reactive.io]]
-@[http://tutorials.jenkov.com/java-nio/buffers.html]
+## NIO (JDK 1.4+) [[{architecture.async.reactive.io]]
+<http://tutorials.jenkov.com/java-nio/buffers.html>
 - Replaced OLD blocking IO based on [ byte/char, read-or-write streams ]
   ```
 ┌──────────┐     ┌──────────────┐
@@ -246,7 +246,7 @@ LineIterator.closeQuietly(it);                ← Close resources
     ```
 [[}]]
 
-## Async/Reactive Standlib API tree [[{async/reactive.io.network,persistence.fs]]
+## Async/Reactive Standlib API tree [[{architecture.async.reactive.io.network,persistence.fs]]
 
 * JDK 8
 ```
@@ -303,8 +303,8 @@ LineIterator.closeQuietly(it);                ← Close resources
 ```
 [[}]]
 
-## SELECTORS [[{async/reactive.io.network]]
-@[https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html]
+## SELECTORS [[{architecture.async.reactive.io.network]]
+<https://docs.oracle.com/javase/7/docs/api/java/nio/channels/Selector.html>
 
 - A Selector allows a single thread to manage multiple channels
   (network connections), by examining which ones are ready for
@@ -369,7 +369,7 @@ LineIterator.closeQuietly(it);                ← Close resources
        will "wake up" immediately.
 [[}]]
 
-## FileChannel [[{async/reactive.io,persistence.FS]]
+## FileChannel [[{architecture.async.reactive.io,persistence.FS]]
 - Java NIO FileChannel: channel connected to a file allowing to
       read data from  and write data to a file.
 - A FileChannel canNOT be set into non-blocking mode:
@@ -444,7 +444,7 @@ LineIterator.closeQuietly(it);                ← Close resources
   ```
 [[}]]
 
-## Pipe [[{async/reactive.io,java_lang.functional]]
+## Pipe [[{architecture.async.reactive.io,java_lang.functional]]
 - Pipe: one-way data connection between two threads
   ```
    "=="  source channel   ← One threads writes to sink
@@ -468,7 +468,7 @@ LineIterator.closeQuietly(it);                ← Close resources
   ```
 [[}]]
 
-## SocketChannel [[{async/reactive.io.network]]
+## SocketChannel [[{architecture.async.reactive.io.network]]
 * There are two ways a SocketChannel can be created:
 
   ```
@@ -492,7 +492,7 @@ LineIterator.closeQuietly(it);                ← Close resources
   ```
 [[}]]
 
-## Non-blocking Mode [[{async/reactive.io.network]]
+## Non-blocking Mode [[{architecture.async.reactive.io.network]]
 - socketChannel .configureBlocking(false) ;
 - Calls to connect(), read() and write() will not block
 - In non-blocking mode connect() calls may return before
@@ -512,7 +512,7 @@ LineIterator.closeQuietly(it);                ← Close resources
 NOTE: non-blocking works much better with Selector's
 [[}]]
 
-[[{async/reactive.io.network]]
+[[{architecture.async.reactive.io.network]]
 ## ServerSocketChannel
   ```
   ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -534,7 +534,7 @@ NOTE: non-blocking works much better with Selector's
   ```
 [[}]]
 
-## Datagram Channel [[{async/reactive.io.network]]
+## Datagram Channel [[{architecture.async.reactive.io.network]]
 - Since UDP is a connection-less network protocol, you cannot just
   by default read and write to a DatagramChannel like you do from
   other channels. Instead you send and receive packets of data
@@ -567,10 +567,10 @@ NOTE: non-blocking works much better with Selector's
   ```
 [[}]]
 
-## NonBlocking Server Example [[{async/reactive.io.network]]
+## NonBlocking Server Example [[{architecture.async.reactive.io.network]]
 REF:
-- @[http://tutorials.jenkov.com/java-nio/non-blocking-server.html]
-- @[https://github.com/jjenkov/java-nio-server]
+- <http://tutorials.jenkov.com/java-nio/non-blocking-server.html>
+- <https://github.com/jjenkov/java-nio-server>
 - Non-blocking IO Pipelines:
   ```
   read-write pipeline:  channelIn  → selector → component → ... → componentN →  channelOut
@@ -665,7 +665,7 @@ REF:
   ```
 [[}]]
 
-## Files [[{persistence.FS,async/reactive,java_lang.101]]
+## Files [[{persistence.FS,architecture.async.reactive,java_lang.101]]
 - java.nio.file.Files provides several methods for manipulating FS files/directories:
 - uses Path instances:
   ```
@@ -701,7 +701,7 @@ REF:
   ```
 [[}]]
 
-## Asyncrhonous FileChannel 1.7+ [[{persistence.fs,async/reactive.io]]
+## Asyncrhonous FileChannel 1.7+ [[{persistence.fs,architecture.async.reactive.io]]
 * read/write data from/to files asynchronously
   ```
   Path path = Paths.get("data/test.xml");
@@ -766,12 +766,12 @@ AsynchronousFileChannel fileChannel =
 [[}]]
 
 
-[[{io.net.http,async/reactive.io.network,PM.low_code,doc_has.comparative,qa]]
+[[{io.net.http,architecture.async.reactive.io.network,PM.low_code,doc_has.comparative,qa]]
 ## java.net.http.HTTPClient
-* API REF: @[https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html]
-* JEP: @[https://openjdk.java.net/jeps/321]
+* API REF: <https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html>
+* JEP: <https://openjdk.java.net/jeps/321>
 
-* TODO: HTTPClient Quick intro: @[https://openjdk.java.net/groups/net/httpclient/intro.html]
+* TODO: HTTPClient Quick intro: <https://openjdk.java.net/groups/net/httpclient/intro.html>
 
 * Example JShell script for GET request:
   ```
@@ -793,7 +793,7 @@ AsynchronousFileChannel fileChannel =
 [[}]]
 
 ## OkHTTP [[{io.HTTP.OkHTTP]]
-- @[https://square.github.io/okhttp/]
+- <https://square.github.io/okhttp/>
 
 ### OkHTTP vs java.net.http.HTTPClient
 - See also [Retrofit](https://square.github.io/retrofit/), built on top
@@ -812,7 +812,7 @@ AsynchronousFileChannel fileChannel =
                       async calls.
   ```
 
-* From @[https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency]
+* From <https://stackoverflow.com/questions/42392778/okhttp-or-httpclient-which-offers-better-functionality-and-more-efficiency>
   ```
    OkHTTP PROs over                     OkHTTP CONs over
    java.net.http.HTTPClient             java.net.http.HTTPClient
@@ -830,7 +830,7 @@ AsynchronousFileChannel fileChannel =
  - synch or async+callback API.
   ```
 
-* DAILY USSAGE  @[https://square.github.io/okhttp/recipes/]
+* DAILY USSAGE  <https://square.github.io/okhttp/recipes/>
   ```
   import java.io.IOException;
   import okhttp3.OkHttpClient;
@@ -870,15 +870,15 @@ AsynchronousFileChannel fileChannel =
 
 [[io.HTTP.OkHTTP}]]
 
-## okIO [[{async/reactive.io.network,qa]]
+## okIO [[{architecture.async.reactive.io.network,qa]]
 * complements java.nio
-@[https://github.com/square/okio]
+<https://github.com/square/okio>
 - makes it much easier to access, store, and process your data.
 - It started as a component of OkHttp, the capable HTTP client
   included in Android. It's well-exercised and ready to solve new problems.
 [[}]]
 
-# Retrofit [[{io.http.retrofit,PM.lowcode]]
+## Retrofit [[{io.http.retrofit,PM.low_code]]
 * <https://square.github.io/retrofit/>
 * See also: Retrofit, Volley, etc
 * type-safe HTTP client for Android and Java turning an HTTP API
@@ -1063,4 +1063,18 @@ AsynchronousFileChannel fileChannel =
   ```
 [[io.http.retrofit}]]
 
-[[ $INPUT_OUTPUT}]]
+
+## Java io.http.URI by hideki ikeda [[{qa.IO,io.http.URI,standards.RFC_3986]]
+* <https://github.com/hidebike712/rfc3986>
+* For a long time, Java developers have struggled with the 
+  limitations imposed by the Java standard URI library, which adheres 
+  to the outdated RFC 2396. These limitations have frequently led to 
+  URI management issues that fail to meet modern web standards. After 
+  evaluating other open-source software libraries and finding none that 
+  met my criteria, I decided to develop my own URI library to address 
+  these challenges. Despite the development process taking longer than 
+  anticipated and presenting several implementation challenges, I am 
+  thrilled to finally announce the release of the first version of my 
+  library, which complies with the most modern URI standards, including 
+  RFC 3986.
+[[qa.IO}]]

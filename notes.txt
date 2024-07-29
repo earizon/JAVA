@@ -1,6 +1,6 @@
 ## Apropos
 * Content is versioned in git.  commits, issues and pull-requests welcome!
-  @[https://www.github.com/earizon/JAVA]
+  <https://www.github.com/earizon/JAVA>
 * This __"cheat-sheet with steroids"__ presents an always-growing set of
   "TOP Java recipes" well ordered&amp;classified extracted from
   * DZone
@@ -13,20 +13,20 @@
   * ...
 
 ## External Links [[{]]
-* @[https://openjdk.java.net/jeps/0] JAVA Enhancements proposals
-* @[https://docs.oracle.com/javase/specs/] Lang & VM specs
-* @[https://docs.oracle.com/javase/17/docs/api/]
-* @[https://docs.oracle.com/javase/11/docs/api/]
-* @[https://docs.oracle.com/javase/8/docs/api/]
-* @[https://adoptopenjdk.net/]
-* @[https://hg.openjdk.java.net/jdk/jdk] OpenJDK@Mercurial
-* @[https://wiki.openjdk.java.net/]
-* @[https://openjdk.java.net/]
-* @[https://en.wikipedia.org/wiki/List_of_Java_virtual_machines]
+* <https://openjdk.java.net/jeps/0> JAVA Enhancements proposals
+* <https://docs.oracle.com/javase/specs/> Lang & VM specs
+* <https://docs.oracle.com/javase/17/docs/api/>
+* <https://docs.oracle.com/javase/11/docs/api/>
+* <https://docs.oracle.com/javase/8/docs/api/>
+* <https://adoptopenjdk.net/>
+* <https://hg.openjdk.java.net/jdk/jdk> OpenJDK@Mercurial
+* <https://wiki.openjdk.java.net/>
+* <https://openjdk.java.net/>
+* <https://en.wikipedia.org/wiki/List_of_Java_virtual_machines>
 * Eclipe Tools for [QA]
-  * @[https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-improve_code_quality.htm&cp=1_3_9]
-* @[https://github.com/douglascraigschmidt/LiveLessons] Douglas Craigs Schmidt Java Lessons
-* @[https://java-source.net/] Production-ready software developed with Java, from DDBBs, caches, servers, ...
+  * <https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-improve_code_quality.htm&cp=1_3_9>
+* <https://github.com/douglascraigschmidt/LiveLessons> Douglas Craigs Schmidt Java Lessons
+* <https://java-source.net/> Production-ready software developed with Java, from DDBBs, caches, servers, ...
 
 ## Bibliography
 
@@ -80,7 +80,7 @@
 
 ## JBang: Simplified Java [[{]]
 * [Official Doc](https://www.jbang.dev/documentation/guide/latest/debugging.html)
-* @[https://www.youtube.com/watch?v=X4x2jM3Y0uE]
+* <https://www.youtube.com/watch?v=X4x2jM3Y0uE>
 
 * Install JDKs:
   ```
@@ -174,33 +174,40 @@
   |     .collect( Collectors.joining(", ") );
   ```
 
-## StringBuffer/StringBuilder
+## String vs StringBuffer vs StringBuilder [[{101]]
 
-* Much faster when concatenating strings at runtime.
+* String is inmutable. Safests (and slowest alternative).
+* StringBuffer is much faster when concatenating strings at runtime.
   (See also java.io.StringWriter: 'character stream' collecting output to StringBuffer).
 * StringBuffer   is thread-safe.
-* StringBuilder  is faster. (when thread-safety is not needed)
+* StringBuilder  is NOT thread-safe but is still faster than StringBuffer. 
+  NOTE: Most of the time, string building is single-thread and so Stringbuilder is
+  the fastest while still being safe.
   ```
   | for (int i = 0; i < 0 ; i++)
-  |   { sbuffer.append(""); } // ← 2241 millisec
+  |   { str01 = str01 + ""; } // ← 32410 millisec
   | for (int i = 0; i < 0 ; i++)
-  |   { sbuildr.append(""); } // ←  753 millisec  ~3.0x faster!!!
+  |   { sbuffer.append(""); } // ←  2241 millisec
+  | for (int i = 0; i < 0 ; i++)
+  |   { sbuildr.append(""); } // ←   753 millisec  ~3.0x faster!!!
   ```
+* For complex string manipulation `String` must be seen as just an inmutable
+  view of StringBuilder and StringBuffer instances.
+[[101}]]
 
 ### forcing String pool reuse [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
 
-- Strings are immutable.
-- Stored on the heap.
+- Strings are immutable and stored on the heap.
 - Java manages a string pool in memory, reusing strings whenever possible.
   ```
   | String string01 = "297",                       // <·· string01 == string02 : true
   |        string02 = "297",                       //     string01 == string03 : false
   |        string03 = new Integer(297).toString(), //     string01 == string04 : true
   |        string04 = new Integer(297).toString()  //     string05 == string01 : false
-  |                   .intern() ;
+  |                   .intern() ; // ¹  
   |        string05 = new String("297")
   |
-  |  1: WARN:  Pool reuse does not work for dynamically created strings.
+  |  ¹: Pool reuse does not work for dynamically created strings.
   |     If we consider that the computed String will be used quite often,
   |     we can force the JVM to add it to the string pool by adding the
   |     .intern() method at the end of computed string.
@@ -242,7 +249,7 @@
     | Thread stack size -Xss128m   – set thread stack     size to  128 megabytes
     | Young genera.size -Xmn256m   – set young generation size to  256 megabytes
     ```
-  * REF: @[https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_source=www.oficina24x7.com]
+  * REF: <https://dzone.com/articles/heap-memory-in-java-performance-testing?utm_source=www.oficina24x7.com>
     ```
    |- Initial Heap Size: -Xms: >= 1/64th of physical memory || reasonable minimum.
    |- Maximum Heap Size: -XmX: <= 1/4 th of physical memory || 1GB.
@@ -278,7 +285,7 @@
     ```
 * Use `-verbose:gc`  to get the garbage collection output.
 * See also [Eclipse Memory Analyzer Manual:
-  @[https://help.eclipse.org/2019-06/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fwelcome.html&cp=62]
+  <https://help.eclipse.org/2019-06/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Fwelcome.html&cp=62>
 
 ### Commom Memory Leaks pitfalls
 
@@ -421,7 +428,7 @@
 
 * See also:
   * Inmmutable Objects are faster (and safer)
-  @[https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html]
+  <https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html>
   (A final variable is the simplest example of an immutable object)
 * Catch blocks must rethrow if the exception can not be fixed on the catch block.
   HINT: 99% of times it can NOT be fixed on the catch block.
@@ -465,8 +472,8 @@
 * **Avoid checked exceptions**, specially avoid them to signal the non happy path in
   business operation. As a thumb of rule, each time a checked exception is found
   convert to a runtime (subclass) exception.  More info at:
-  * @[https://phauer.com/2015/checked-exceptions-are-evil/]
-  * @[https://dzone.com/articles/introduction-to-pragmatic-functional-java]
+  * <https://phauer.com/2015/checked-exceptions-are-evil/>
+  * <https://dzone.com/articles/introduction-to-pragmatic-functional-java>
 [[java_lang.101.donts}]]
 
 ## JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]
@@ -676,7 +683,7 @@
 
 [[{java_lang.101.annotations,qa]]
 ## Annotations
-@[http://docs.oracle.com/javase/tutorial/java/annotations/]
+<http://docs.oracle.com/javase/tutorial/java/annotations/>
 
 -  predefined annotation types in java.lang include:
   ```
@@ -1029,7 +1036,7 @@
     “123” as the 123th day of the year.
 
 ### TimeUnit (JDK 1.5+)
-@[https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html]
+<https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/TimeUnit.html>
 * Represents time durations at a given unit of granularity and
   provides utility methods to convert across units, and to perform
   timing and delay operations in these units.
@@ -1155,7 +1162,7 @@ is a compiled version of module-info.java specifying:
 [[java_lang.101}]]
 
 
-[[{PM.WHATS_NEW,doc_has.ext_resource,async/reactive,java_lang.debugging]]
+[[{PM.WHATS_NEW,doc_has.ext_resource,architecture.async.reactive,troubleshooting.debugging]]
 ## What's new
 
 RELATED:
@@ -1301,7 +1308,7 @@ RELATED:
 <!-- } -->
 
 ### v.15 2020-09-15 <!-- { -->
-@[https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features]
+<https://www.itprotoday.com/programming-languages/java-15-gains-garbage-collection-text-block-features>
 
 * **RECORDS!!!**: non-verbose inmutable classes.  [[{java_lang.records}]]
 * production ready ZGC low-latency garbage collector, expected to be
@@ -1331,10 +1338,10 @@ RELATED:
 
 ### v 12,13  <!-- { -->
 * REFs:
-  * @[https://www.infoq.com/news/2019/06/java13-feature-freeze/]
-  * @[https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/]
-  * @[https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/]
-  * @[https://developers.redhat.com/blog/2019/07/01/shenandoah-gc-in-jdk-13-part-3-architectures-and-operating-systems/]
+  * <https://www.infoq.com/news/2019/06/java13-feature-freeze/>
+  * <https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/>
+  * <https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/>
+  * <https://developers.redhat.com/blog/2019/07/01/shenandoah-gc-in-jdk-13-part-3-architectures-and-operating-systems/>
 * add container support to jhsdb command (JDK-8205992)
 * Impove systemd slice memory limit suppot (JDK-8217338)
 * More container awareness:  [[{devops.containarization]]<br/>
@@ -1346,8 +1353,8 @@ RELATED:
 
 ### v.11(LTS) 2018/09 <!-- { -->
 * REFs:
-  * @[https://www.journaldev.com/24601/java-11-features]
-  * @[https://www.infoq.com/news/2018/09/java11-released]
+  * <https://www.journaldev.com/24601/java-11-features>
+  * <https://www.infoq.com/news/2018/09/java11-released>
 * More container awareness...                                             [[{devops.containarization]]
   * Remove -XX:+UnlockExperimentalVMOptions, -XX:+UseGroupMemoryLimitFoHeap (JDK-8194086)
   * jcmd -l & jps: do not list JVMs in Docker containers (JDK-8193710)
@@ -1355,6 +1362,7 @@ RELATED:
   * Update CPU count algorithm when both cpu shares and quotas are used (JDK-8197867)
     --XX:+PrefectContainerQuotaForCPUCount                              [[}]]
 
+* Flight Recorder, ZGC, CDS, ... opensourced : Oracle JDK "==" OpenJDK
 #### New major features:
 * Autocompilation(JEP 330)
   ```
@@ -1384,11 +1392,10 @@ RELATED:
   * Last-drop latency improvements
   * Last-drop throughput improvements        [[}]]
 
-* Remove the JavaEE and CORBA Modules(JEP 320)
+* Remove JavaEE and CORBA Modules(JEP 320)
 
-* HTTP/1.1, HTTP/2 and WebSockets Client (JEP 321)  [[{io.http]]
+* New HTTP/1.1, HTTP/2 and WebSockets Client (JEP 321)  [[{io.http]]
   designed to improve overall performance.          [[}]]
-
 * TLS 1.3                                           [[{SECURITY.CRYPTOGRAPHY]]
 * ChaCha20,Poly1305 Crypto (JEP 329) implemented in
   the SunJCE provider.
@@ -1452,9 +1459,12 @@ RELATED:
   |   -XX:+UseGroupMemoryLimitFoHeap
   |   - set -XX:MaxRAMFraction to 2 (default is 4)   [[}]]
   ```
+* jshell
+* jlink -release
+* Multi-release JARs
 
-#### **Java Platform Module System** [[{]]
-* divides the JDK into a set of modules for combining at run, compile, or build time.
+#### **Java Platform Module System ("Jigsaw")** [[{]]
+* JPMS divides the JDK into a set of modules for combining at run, compile, or build time.
 * enabling understanding of dependencies across modules.
 * allows developers to more easily assemble and maintain sophisticated applications.
 * allows to scale down to smaller devices.
@@ -1515,12 +1525,12 @@ RELATED:
 * First version to support Containers. **WARN**: Do not use any version below that.
 
 * [[{PM.TODO]]
-  @[https://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html]
-  @[https://www.qwant.com/?q=what+new+java+8]
+  <https://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html>
+  <https://www.qwant.com/?q=what+new+java+8>
   [[}]]
 
 * TLS enhancements backported to 1.8 (HTTP2)
-  @[https://www.infoq.com/news/2020/04/tls-alpn-java8/]
+  <https://www.infoq.com/news/2020/04/tls-alpn-java8/>
 <!-- } -->
 [[PM.WHATS_NEW}]]
 
@@ -1528,7 +1538,7 @@ RELATED:
 
 [[{JVM,java_lang.profiling,architecture.real-time]]
 ## JVM Safepoints
-* @[http://psy-lob-saw.blogspot.com/2015/12/safepoints.html]    [[{PM.TODO}]]
+* <http://psy-lob-saw.blogspot.com/2015/12/safepoints.html>    [[{PM.TODO}]]
 
 * Definition: Mutator threads: threads which manipulate the JVM heap.
   all Java Threads are mutators, Non*Java (native?) threads may also be
@@ -1593,7 +1603,7 @@ RELATED:
 -XX:+PrintApplicationStoppedTime will log contained safepoint pauses.
 
 ##  Problems with (most) Sampling Profilers
-([REF]@[http://psy-lob-saw.blogspot.com/2016/02/why-most-sampling-java-profilers-are.html])
+([REF]<http://psy-lob-saw.blogspot.com/2016/02/why-most-sampling-java-profilers-are.html>)
 * A large number of samples needed to get statistically significant results.
 * profiler should sample all points in a program run with equal probability
 * Generic profilers rely on the JVMTI spec:
@@ -1606,11 +1616,11 @@ RELATED:
 [[}]]
 
 ## Inside the JVM [[{jvm.101,PM.WiP]]
-* @[https://www.artima.com/insidejvm/ed2/index.html]
+* <https://www.artima.com/insidejvm/ed2/index.html>
 
 * JVM anatomy Park
-  * @[https://shipilev.net/jvm-anatomy-park/]
-  * @[https://shipilev.net/jvm-anatomy-park/22-safepoint-polls/]
+  * <https://shipilev.net/jvm-anatomy-park/>
+  * <https://shipilev.net/jvm-anatomy-park/22-safepoint-polls/>
 
     ```
     |  ┌────────────────────┐
@@ -1638,13 +1648,13 @@ RELATED:
     |   ^^^^^^^^
     | The hotter the optimization level, the better the
     | expected performance, but the higher the cost in terms of
-    | CPU and memory.  See also @[#jvm_app_checkpoint]
+    | CPU and memory.  See also <#jvm_app_checkpoint>
     ```
 [[}]]
 
 [[{jvm.101,scalability.jvm,monitoring.jvm]]
 ## JVM Memory
-* REF: @[https://dzone.com/articles/java-memory-management]
+* REF: <https://dzone.com/articles/java-memory-management>
 * JAVA MEMORY MODEL:
   ```
   |          │    STACK ("SMALL")          │ HEAP  ("HUGE")
@@ -1674,7 +1684,7 @@ RELATED:
   |│         │   We let the GC remove the object pointed to by the weak reference,
   |│         │   after which a null will be returned
   |│         │   See JDK implementation at
-  |│         │   @[https://docs.oracle.com/javase/7/docs/api/java/util/WeakHashMap.html]
+  |│         │   <https://docs.oracle.com/javase/7/docs/api/java/util/WeakHashMap.html>
   |├─────────┼───────────────────────────────────────────────────────────────────────────
   |│ SOFT    │ - used for more memory-sensitive scenarios
   |│         │ - Will be garbage collected only when the application is running low on memory.
@@ -1760,7 +1770,7 @@ RELATED:
 ## sysctl/ulimit+JAVA [[{performance.jvm.linux]]
 
 Reference (non-mandatory) Linux OS setup for JVM server tasks extracted from:
-@[https://docs.sonarqube.org/latest/requirements/requirements/].
+<https://docs.sonarqube.org/latest/requirements/requirements/>.
 
 * ```
   | $ sysctl vm.max_map_count     <·· Ensure it's greater than or equal to 524288
@@ -2040,7 +2050,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 
 [[{monitoring.logging.slf4j]]
 ## SLF4j Logging
-* @[https://www.slf4j.org/]
+* <https://www.slf4j.org/>
 * Simple Log Facade or abstraction for various logging frameworks
   (e.g. java.util.logging, logback, log4j) allowing the end user
   to plug in the desired logging framework at deployment time.
@@ -2381,7 +2391,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 
 # Security 101
 
-@[https://snyk.io/blog/10-java-security-best-practices/]
+<https://snyk.io/blog/10-java-security-best-practices/>
 ## Make code immutable
 * Tag variables as 'final' by default.
   (a final variable is not variable but constant)
@@ -2444,7 +2454,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   |            issuer─uri: https://.....okta.com/oauth2/default
   ```
 ## Scan dependencies for known vulnerabilities
-   Ej.: Use a service like  @[https://snyk.io/test/] !!!
+   Ej.: Use a service like  <https://snyk.io/test/> !!!
 
 ## Handle secrets with care
  * Use secrets on-demand and remove from memory as soon as possible.
@@ -2549,7 +2559,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 [[security.101}]]
 
 # Functional Programming [[{ $functional_programming ]]
-[[{java_lang.101,java_lang.functional.lambdas,async/reactive.*,java_lang.101]]
+[[{java_lang.101,java_lang.functional.lambdas,architecture.async.reactive,java_lang.101]]
 ## Lambdas 1.8+
 * simplifies development of non-blocking style APIs
   (low-level CompletableFuture or higher level ReactiveX).
@@ -2631,7 +2641,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 ## Collectors 1.8+ [[{java_lang.101,JAVA_LANG.FUNCTIONAL,PM.TODO}]]
 
 ## Monads in Java [[{java_lang.functional,java_lang.101,PM.TODO]]
-@[https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394]
+<https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394>
 * two of the most commonly known Java 8 features are monad
   implementations, namely Stream and Optional.
 * Monad is a concept:  we can view it as a wrapper which puts our
@@ -2660,8 +2670,8 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   ```
 [[PM.low_code.unix4j,}]]
 
-## java.util.concurrent.Flow(1.9+) [[{java_lang.functional,async/reactive.io,async/reactive.101,PM.TODO]]
-@[https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html]
+## java.util.concurrent.Flow(1.9+) [[{java_lang.functional,architecture.async.reactive.io,io.101,PM.TODO]]
+<https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html>
 * JDK 1.9+
 * Reactive Streams was adopted by the JDK in the form of the java.util.concurrent.Flow API.
 * It allows two different libraries that support asynchronous
@@ -2674,11 +2684,11 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
   development implementations that are targetting the JDK, including
   the incubating <a href="http://openjdk.java.net/jeps/321">JDK9 HTTP Client</a>,
   and the [Asynchronous Database Adapter (ADBA)](https://twitter.com/brunoborges/status/915302682939711488)
-* See also @[http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php]
+* See also <http://www.eclipse.org/community/eclipse_newsletter/2018/may/reactivestreams-ee4j.php>
 [[}]]
 
-# RxJava [[{async/reactive.rxjava,qa]]
-* @[https://github.com/ReactiveX/RxJava]
+# RxJava [[{architecture.async.reactive.rxjava,qa]]
+* <https://github.com/ReactiveX/RxJava>
 * ReactiveX provides a set of very-well thought-out cross-language abstraction to
   implement the reactive patterns.
 
@@ -2739,8 +2749,8 @@ competing VMs running on the same physical server.
 
   ```
   | Observable/Operators/Observers
-  |@[http://reactivex.io/documentation/contract.html]
-  |@[http://reactivex.io/documentation/observable.html]
+  |<http://reactivex.io/documentation/contract.html>
+  |<http://reactivex.io/documentation/observable.html>
   |                                         ⇑
   |                                    <<Subscriber>>
   |                                    unsubscribe  : - Observable can opt to stop
@@ -2879,11 +2889,11 @@ competing VMs running on the same physical server.
 * [REF](http://reactivex.io/documentation/operators.html#tree)
   ```
   | Alphabetical List of Observable Operators
-  | @[http://reactivex.io/documentation/operators.html#alphabetical
+  | <http://reactivex.io/documentation/operators.html#alphabetical>
   | 
   | Core API
   | └ rx.Observable "==" [Java 8 Stream + CompletableFuture + "Back-presure" measures ]
-  |   @[http://reactivex.io/documentation/observable.html]    └──────────────┬──────┘
+  |   <http://reactivex.io/documentation/observable.html>    └──────────────┬──────┘
   |                                                                          │
   |                                                           probably an intermediate
   |                                                           buffer for incomming/outgoing
@@ -2904,11 +2914,11 @@ competing VMs running on the same physical server.
   |       from the operation of the previous operator. Order matters.
   |       (the Builder Pattern, also supported, is non-ordered)
   | └ rx.Subject :
-  | @[http://reactivex.io/documentation/subject.html]
+  | <http://reactivex.io/documentation/subject.html>
   |   sort of "bridge or proxy" is available in some implementations
   |   that acts both as an observer and as an Observable.
   | └ rx.Scheduler :
-  | @[http://reactivex.io/documentation/scheduler.html]
+  | <http://reactivex.io/documentation/scheduler.html>
   |   - Needed when using multithreading into the
   |     cascade of Observable operators.
   |   - By default, the chain of Observables/operators
@@ -2926,24 +2936,24 @@ competing VMs running on the same physical server.
 
 ## External links:
 * Rx Workshop: Introduction
- @[https://channel9.msdn.com/Series/Rx-Workshop/Rx-Workshop-Introduction]
+ <https://channel9.msdn.com/Series/Rx-Workshop/Rx-Workshop-Introduction>
 * Introduction to Rx: IObservable
- @[http://introtorx.com/Content/v1.0.10621.0/02_KeyTypes.html#IObservable]
+ <http://introtorx.com/Content/v1.0.10621.0/02_KeyTypes.html#IObservable>
 * Mastering observables (from the Couchbase Server documentation)
- @[https://developer.couchbase.com/documentation/server/3.x/developer/java-2.0/observables.html]
+ <https://developer.couchbase.com/documentation/server/3.x/developer/java-2.0/observables.html>
 * 2 minute introduction to Rx by Andre Staltz (“Think of an Observable as an asynchronous immutable array.”)
- @[https://medium.com/@andrestaltz/2-minute-introduction-to-rx-24c8ca793877]
+ <https://medium.com/@andrestaltz/2-minute-introduction-to-rx-24c8ca793877>
 * Introducing the Observable by Jafar Husain (JavaScript Video Tutorial)
- @[https://egghead.io/lessons/rxjs-introducing-the-observable]
+ <https://egghead.io/lessons/rxjs-introducing-the-observable>
 * Observable object (RxJS) by Dennis Stoyanov
- @[http://xgrommx.github.io/rx-book/content/observable/index.html]
+ <http://xgrommx.github.io/rx-book/content/observable/index.html>
 * Turning a callback into an Rx Observable by @afterecho
- @[https://afterecho.uk/blog/turning-a-callback-into-an-rx-observable.html]
+ <https://afterecho.uk/blog/turning-a-callback-into-an-rx-observable.html>
 
 ## Ops.classification 1
 * Operators creating new Observables
   ```
-  | @[http://reactivex.io/documentation/operators.html#creating]
+  | <http://reactivex.io/documentation/operators.html#creating>
   |  Create     create Observable from scratch programmatically
   |  Defer      do not create the Observable until the observer subscribes,
   |             and create a fresh Observable for each observer
@@ -2962,7 +2972,7 @@ competing VMs running on the same physical server.
 
 * Operators Transforming Items:
   ```
-  |@[http://reactivex.io/documentation/operators.html#transforming]
+  |<http://reactivex.io/documentation/operators.html#transforming>
   |  Buffer     periodically gather items from input into bundles and emit
   |             these bundles rather than emitting the items one at a time
   | 
@@ -2980,7 +2990,7 @@ competing VMs running on the same physical server.
   ```
 * Operators selectively filtering emitted events from a source Observable
   ```
-  | @[phttp://reactivex.io/documentation/operators.html#filtering]
+  | <phttp://reactivex.io/documentation/operators.html#filtering>
   |  Debounce   only emit an item from an Observable if a particular timespan has passed
   |             without it emitting another item
   |  Distinct   suppress duplicate items emitted by an Observable
@@ -2997,7 +3007,7 @@ competing VMs running on the same physical server.
   ```
 * Operators Combining multiple source Observables into a new single Observable
   ```
-  | @[http://reactivex.io/documentation/operators.html#combining]
+  | <http://reactivex.io/documentation/operators.html#combining>
   |  And        combine sets of items emitted by two or more Observables by means
   |  Then       of Pattern and Plan intermediaries
   |  When
@@ -3020,14 +3030,14 @@ competing VMs running on the same physical server.
   ```
 * Operators handling Errors and helping to recover from error-notifications
   ```
-  | @[http://reactivex.io/documentation/operators.html#error]
+  | <http://reactivex.io/documentation/operators.html#error>
   |  Catch   recover from an onError notification by continuing the sequence without error
   |  Retry   if a source Observable sends an onError notification, resubscribe to it
   |          in the hopes that it will complete without error
   ```
 * Utility Operators "toolbox"
   ```
-  | @[http://reactivex.io/documentation/operators.html#utility]
+  | <http://reactivex.io/documentation/operators.html#utility>
   |  Delay       shift the emissions from an Observable forward in time by a particular amount
   |  Do          register an action to take upon a variety of Observable lifecycle events
   |
@@ -3048,12 +3058,12 @@ competing VMs running on the same physical server.
 * Conditional and Boolean Operators evaluating one or more
   Observables or items emitted by Observables
   ```
-  | @[http://reactivex.io/documentation/operators.html#conditional]
+  | <http://reactivex.io/documentation/operators.html#conditional>
   | All         determine whether all items emitted by an Observable meet some criteria
   |             Mathematical and Aggregate Operators
   | Amb         given two or more source Observables, emit all of the items from only the
   |             first of these Observables to emit an item
-  |           @[http://reactivex.io/documentation/operators.html#mathematical]
+  |           <http://reactivex.io/documentation/operators.html#mathematical>
   | Contains   determine whether an Observable emits a particular item or not
   |            Average, Concat, Count, Max, Min, Reduce, and Sum
   | DefaultIfEmpty  emit items from the source Observable, or a default item if the
@@ -3085,7 +3095,7 @@ competing VMs running on the same physical server.
   ```
 * Backpressure Operators. <br/>
   A variety of operators that enforce particular flow-control policies
-  @[http://reactivex.io/documentation/operators/backpressure.html]
+  <http://reactivex.io/documentation/operators/backpressure.html>
   * backpressure operators strategies for coping with Observables that produce items more
   rapidly than their observers consume them
   ```
@@ -3149,20 +3159,20 @@ competing VMs running on the same physical server.
 
 ## TODO [[{PM.TODO,troubleshooting,qa.error_control]]
 * Custom Ops
-@[http://reactivex.io/documentation/implement-operator.html]
-[[{async/reactive.rxjava,qa,PM.TODO}]]
+<http://reactivex.io/documentation/implement-operator.html>
+[[{architecture.async.reactive.rxjava,qa,PM.TODO}]]
 * 5 Not So Obvious Things About RxJava
-@[https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc]
+<https://medium.com/@jagsaund/5-not-so-obvious-things-about-rxjava-c388bd19efbc>
 * Error control
-@[https://github.com/ReactiveX/RxJava/wiki/Error-Handling-Operators]
+<https://github.com/ReactiveX/RxJava/wiki/Error-Handling-Operators>
 * Dealing with RxJava's never-ending Observables
-@[https://tech.xing.com/dealing-with-rxjavas-never-ending-observables-1ca8f18797ff]
+<https://tech.xing.com/dealing-with-rxjavas-never-ending-observables-1ca8f18797ff>
 [[}]]
 
-[[{java_lang.functional,qa,async/reactive.*,PM.WiP]]
+[[{java_lang.functional,qa,architecture.async.reactive,PM.WiP]]
 ## java.utility.function
-@[https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html]
-@[https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html]
+<https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html>
+<https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html>
 * JDK 1.8+
 * Incomplete but good enough to cover the "shape" of many lambda
   expressions and method references representing abstract concepts like
@@ -3262,18 +3272,18 @@ competing VMs running on the same physical server.
   ```
 
 ### INTERFACES
-* @[http://download.oracle.com/javase/6/docs/api/java/util/HashSet.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/TreeSet.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashSet.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/ArrayList.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/LinkedList.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/HashMap.html]
-* @[http://download.oracle.com/javase/6/docs/api/index.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/TreeMap.html]
-* @[http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashMap.html]
+* <http://download.oracle.com/javase/6/docs/api/java/util/HashSet.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/TreeSet.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashSet.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/ArrayList.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/LinkedList.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/HashMap.html>
+* <http://download.oracle.com/javase/6/docs/api/index.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/TreeMap.html>
+* <http://download.oracle.com/javase/6/docs/api/java/util/LinkedHashMap.html>
 
 ### Cheat-sheet
-* REF: @[http://files.zeroturnaround.com/pdf/zt_java_collections_cheat_sheet.pdf]
+* REF: <http://files.zeroturnaround.com/pdf/zt_java_collections_cheat_sheet.pdf>
   ```
   | ┌─────────────────┬─────────────────────────────────────────────────────────────┐
   | │Collection       │ Thread-safe                ┃ DATA      ┃ OPERATIONS ALLOWED │
@@ -3487,7 +3497,7 @@ Map<String, Double> map01 = new HashMap<>();
 [[data_structures.maps}]]
 
 ## java.util.Collections [[{data_structures.collections,]]
-(@[https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html] )
+(<https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html> )
 * Utility class with static methods that operate on or return collections
   ```
   Collections.EMPTY_SET  ( == Collections.emptySet()         ) See also Collections.singleton(T o)
@@ -3547,7 +3557,7 @@ Map<String, Double> map01 = new HashMap<>();
   ```
 [[data_structures.collections}]]
 
-## Fastutil @[http://fastutil.di.unimi.it/] [[{data_structures,performance.101,PM.backlog]]
+## Fastutil <http://fastutil.di.unimi.it/> [[{data_structures,performance.101,PM.backlog]]
 * Fast and compact type-specific collections for Java
   Great default choice for collections of primitive types,
   like int or long. Also handles big collections with more than 2
@@ -3563,7 +3573,7 @@ Map<String, Double> map01 = new HashMap<>();
 
 [[{data_structures.iterator,data_structures.101,doc_has.comparative]]
 ## `<<Enumeration>>`(1.0) vs `<<Iterator>>`(1.7)
-@[https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator]
+<https://stackoverflow.com/questions/948194/difference-between-java-enumeration-and-iterator>
 * both interfaces will give successive elements
 * Iterators allow the caller to remove elements from the underlying
   collection during the iteration with well-defined semantics.
@@ -3596,210 +3606,10 @@ Map<String, Double> map01 = new HashMap<>();
 
 # Non-Classified / TODO [[{ $non_classified]]
 
-[[{async/reactive.javalite,PM.low_code,messaging.jms,messaging.activemq,architecture.async,architecture.batch,architecture.distributed]]
-## JavaLite lightweight async.job processing
-
-* Use Cases:
-  * website that needs to run batch process in background
-  * We receive batch of inputs to be processed in a "best-effort"
-    but replay as-soon-as-possible to client that we have the
-    input batch ready for processing.
-* easy-to-use "Wrapper" on top o Apache Artemis (ActiveMQ "next Gen")
-  the Async adds an abstraction layer based on a Command Pattern,
-  which makes it trivial to add asynchronous processing.
-* Embedded broker instance with reasonable defaults
-* Ex:
-  ```
-  Async async = new Async(            ←  CREATE one or more Queues
-            "/opt/project1",          ← place to store persistent messages
-            false,
-            new QueueConfig(
-               "MESSAGES_QUEUE",      ← queue 1 name
-               new CommandListener(),
-               5)                     ← number of listeners(threads) to
-            ,
-            new QueueConfig(
-                  "ERRORS_QUEUE",     ← queue 2 name (No limit in the number o
-                  new ErrorListener(),                queues)
-               5)
-            );
-        async .start();
-
-   public class HelloCommand             ←  Create a command
-       extends Command {
-       private String message;
-
-       public HelloCommand(String message) {
-         this.message = message;
-       }
-
-       public HelloCommand() {}          ←   necessary (forbid finals)
-
-       @Override
-       public void execute() {
-           System.out.println(message);
-       }
-   }
-
-   for(int i = 0; i < 100; i++){         ←  sending commands async
-      async.send(
-        "MESSAGES_QUEUE",
-        new HelloCommand("Hello Number "+ i));
-   }
-   Output will be similar to
-   → Hello Number 0
-   → Hello Number 1
-   → ...
-
-   List<Command> topCommands             ←  Peek (vs Consume) 3 "top"
-      =  async .getTopCommands(            commands from "ERROR_QUEUE"
-           3, "ERROR_QUEUE");
-  ```
-* Commands can be read and processed synchronously (one-by-one)
-  from an individual queue one at the time without a listener.<br/>
-  Ex:   you do not want to process errors automatically . To do so:
-  ```
-  ErrorCommand errorCommand =           ←  Consume message
-       (ErrorCommand)receiveCommand("ERROR_QUEUE");
-  ... // Process manually
-  ```
-
-* Text vs Binary messages
-  * To be compatible with JMS the  communication protocol is limited to
-    ```
-    - javax.jms.TextMessage   ← Default mode.
-    - javax.jms.BytesMessage  ← async.setBinaryMode(true);
-    ```
-    In both cases, the   serialization of a command is first done to XML
-    with the use of XStream.
-  * If a given command has transient field that must NOT  be serialized,
-    use the field annotation @XStreamOmitField to ignore it.
-  *  WARN:  Do not switch from mode to mode while having persistent
-            messages stored in your queues.
-* Commands with DB access
-  * If queue processing requires a database connetion, DBCommandListener
-    can be used:
-    ```
-    Async async = new Async(filePath, false, new
-        QueueConfig("MESSAGES_QUEUE", new
-        DBCommandListener(                 ← If JNDI connection is setup, the
-         "java:comp/env/jdbc/conn01"), 5)    listener will find and open it
-    );                                        Use your tomcat/Jboss/... container
-    ```
-
-* (Artemis) Config API: For complex app configuration, the underlying Artemis API
-  can be used:
-  ```
-    org.apache.activemq.artemis.core.config.Condifuration
-       artemisCOnfig = async.getConfig();
-  ```
-* See also filequeue. It's faster but doesn't support Queue to DDBBs.
-[[async/reactive.javalite}]]
-
-[[{async/reactive.FileQueue,PM.low_code,messaging.jms,messaging.activemq,architecture.async,scalability.101]]
-## FileQueue
-@[https://github.com/stimulussoft/filequeue]
-* KISS alternative using MVStore
-@[http://www.h2database.com/html/mvstore.html]
-* All producers and consumers run within a JVM.
-* H2 MVStore DB used for storage.
-* Queue items are   POJOs serialized into Json using jackson .
-* faster than JavaLite due to performance shortcut :
-  *  File Queue will transfer queued items directly to consumers
-     without hitting the database provided there are consumers
-     available, otherwise, message will be persisted
-*  Doesn't support persistence to JNDI DDBB
-* fixed and exponential back-off retry is present.
-
-* PRE-SETUP :
-  * maven/gradle package dependency:
-    `com.stimulussoft:filequeue:1.1.4`
-
-* Usage:
-  * Implement POJO extending FileQueueItem
-  * Implement consume(FileQueueItem) on <<Consumer>> to process items
-  * Instantiate a FileQueue object and call config() to configure
-  * Call startQueue() to start the queue
-  * Call stopQueue() to stop the queue processing
-  * Call FileQueue.destroy() to shutdown all static threads (optional)
-
-* Queue Ussage example:
-  ```
-  FileQueue queue = FileQueue.fileQueue();
-  FileQueue.Config config = FileQueue.
-      config(
-        queueName,
-        queuePath,
-        TestFileQueueItem.class,
-        new TestConsumer()
-      )
-      .maxQueueSize(MAXQUEUESIZE)           // ← queueItem will block until an slot becomes
-                                                 available or ExceptionTimeout thrown
-      .retryDelayAlgorithm(
-         QueueProcessor.RetryDelayAlgorithm.EXPONENTIAL)
-      .retryDelay(RETRYDELAY)
-      .maxRetryDelay(MAXRETRYDELAY)
-      .maxRetries(0);                       // ← Infinite retries
-      .persistRetryDelay(                   // ← delay between DDBB scans.
-         PERSISTENTRETRYDELAY);
-  queue.startQueue(config);                 // ← Start queue
-  for (int i = 0; i < ROUNDS; i++)
-    queue.queueItem(                        // ← Submit items
-      new TestFileQueueItem(i)
-    );
-  queue.stopQueue();                        // ← stopQueue
-  ```
-* Consumer example implementation:
-  ```
-  static class TestConsumer implements Consumer<FileQueueItem> {
-    public TestConsumer() { }
-
-    @Override
-    public Result consume(FileQueueItem item)
-    throws InterruptedException {
-                    try {
-    TestFileQueueItem retryFileQueueItem =
-        (TestFileQueueItem) item;
-    if (retryFileQueueItem.getTryCount() == RETRIES )
-        return Result.SUCCESS;
-    return Result.FAIL_REQUEUE;
-                    } catch (Exception e) {
-    logger.error(e.getMessage(), e);
-    return Result.FAIL_NOQUEUE;
-                    }
-    }
-  }
-  ```
-* FileQueueItem implementation:
-  ```
-  import com.stimulussoft.filequeue.*;
-
-  static class TestFileQueueItem extends FileQueueItem {
-    Integer id;
-    public TestFileQueueItem() { super(); };
-    private TestFileQueueItem(Integer id) {
-        this.id = id;
-    }
-    @Override
-    public String toString() { return String.valueOf(id); }
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-  }
-  ```
-### File Caching:
-If there is the need to cache a file to disk or perform resource
-availability checks prior to items being placed on the queue,
-implement availableSlot() on the QueueCallback interface. This method
-is called as soon as a slot becomes available, just before the item
-is place on the queue. It may be used to cache a file to disk, or
-perform resource availability pre-checks (e.g. disk space check).
-
-[[async/reactive.FileQueue}]]
-
 [[{enterprise_patterns,qa.error_control,architecture.distributed,PM.WiP]]
 ## FailSafe
 
-@[https://github.com/failsafe-lib/failsafe]
+<https://github.com/failsafe-lib/failsafe>
 * Fault tolerance and resilience patterns for the JVM
 * lightweight, zero-dependency library for handling failures in Java 8+.
 * It works by wrapping executable logic with one or more resilience policies,
@@ -3825,8 +3635,8 @@ perform resource availability pre-checks (e.g. disk space check).
 [[enterprise_patterns}]]
 
 ## JDepend [[{qa.reporting,qa.versioning,security.auditing,DevOps.101]]
-@[https://github.com/clarkware/jdepend]
-@[https://htmlpreview.github.io/?https://github.com/clarkware/jdepend/blob/master/docs/JDepend.html]
+<https://github.com/clarkware/jdepend>
+<https://htmlpreview.github.io/?https://github.com/clarkware/jdepend/blob/master/docs/JDepend.html>
 * JDepend traverses Java class and source file directories and
    generates design-quality-metrics for each Java package in terms of
   its extensibility, reusability, and maintainability to effectively
@@ -3836,9 +3646,9 @@ perform resource availability pre-checks (e.g. disk space check).
 ## JSON-P /JSR-374 [[{persistence.JSON,security.TLS/X509,security.aaa]]
 * TODO: Patterns of JSON Matching
   Streaming based, binding based, expression based.
-@[https://dzone.com/articles/patterns-of-reading-json?edition=598293]
+<https://dzone.com/articles/patterns-of-reading-json?edition=598293>
 * REF:JSON processing public review
-  @[https://www.infoq.com/news/2017/03/json-processing-public-review]
+  <https://www.infoq.com/news/2017/03/json-processing-public-review>
 
 * JSR 374, API for JSON Processing (JSON-P) version 1.1.
   * Java 8 streams and lambdas alternative to Moshi and Jackson.
@@ -4015,8 +3825,8 @@ perform resource availability pre-checks (e.g. disk space check).
   such as count, min, max, sum, and average."
 [[}]]
 
-## BascomTask Lib: 'CompletableFutures' Complement  [[{async/reactive.101,PM.TODO.NOW]]
-* [REF](https://dzone.com/articles/lightweight-parallel-tasks-in-java-microservices)
+## BascomTask Lib: 'CompletableFutures' Complement  [[{architecture.async.reactive.101,qa,PM.TODO.NOW]]
+* [REF@dzone](https://dzone.com/articles/lightweight-parallel-tasks-in-java-microservices)
 * lightweight task-orchestration library providing frictionless thread-level
   parallelization.
 * by design, use is very close to pure Java code, including use of
@@ -4060,8 +3870,8 @@ perform resource availability pre-checks (e.g. disk space check).
 [[}]]
 
 ## PicoCli UX Cli apps [[{qa.UX,]]
-@[https://github.com/remkop/picocli]
-@[https://picocli.info/]
+<https://github.com/remkop/picocli>
+<https://picocli.info/>
   Picocli is a one-file framework for creating Java user-friendly
  (autocompletion, subcommands, ...)  command line  , GraalVM-enabled
   applications with almost zero code. It supports a variety of command
@@ -4073,7 +3883,7 @@ perform resource availability pre-checks (e.g. disk space check).
 [[}]]
 
 ### Clig.Dev: Command Line Interface Guidelines [[{qa.UX]]
-@[https://clig.dev/]
+<https://clig.dev/>
 * An open-source guide to help you write better command-line
   programs, taking traditional UNIX principles and updating them for
   the modern day.
@@ -4098,7 +3908,7 @@ https://github.com/topics/snippets-collection
 [[}]]
 
 ## JVM Implementations [[{jvm,PM.WiP]]
-@[https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html]
+<https://blog.joda.org/2018/09/time-to-look-beyond-oracles-jdk.html>
 
 In practical terms, there is only one set of source code for the JDK.
 
@@ -4142,7 +3952,7 @@ In practical terms, there is only one set of source code for the JDK.
 
 
 ## Jabba JDK Version Mng [[{]]
-@[https://github.com/shyiko/jabba]
+<https://github.com/shyiko/jabba>
 * pain-free JDK installing on Linux x86/x86_64/ARMv7+, macOS, Windows x86_64.
 * Support for:
   ```

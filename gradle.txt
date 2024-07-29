@@ -1,6 +1,6 @@
 ##Apropos:
 Content is versioned in git.  commits, issues and pull-requests welcome!
-@[https://www.github.com/earizon/gradle.md]
+<https://www.github.com/earizon/gradle.md>
 
 [[{$devops.gradle]]
 
@@ -488,6 +488,15 @@ the command line but 'gradle.properties' helps keeping them separate.
 
 #What's New [[{01_PM.WHATS_NEW]]
 
+### Gradle 8.9.0
+
+* Gradle 8.9.0 delivers improved error and warning reporting for 
+  variant issues during dependency resolution; structural details 
+  exposed of Java compilation errors for IDE integrators, allowing for 
+  easier analysis and resolving issues; and the ability to display more 
+  detailed information about JVMs used by Gradle. Further details on 
+  this release may be found in the release notes.  [[{QA.UX}]]
+
 ###gradle 8.0 GA release [[{DEVOPS.GRADLE]]
 *enhancements to Kotlin DSL (alternative to Groovy DSL).
 *upgrades to Kotlin 1.8 and JDK 11.
@@ -499,7 +508,7 @@ provides fixes for these issues:
 [[}]]
 
 ###Gradle v6:
-*@[https://www.infoq.com/news/2020/01/gradle-releases-version-6/]
+*<https://www.infoq.com/news/2020/01/gradle-releases-version-6/>
 [[}]]
 
 #Building Java & JVM projects [[{gradle.java_projects]]
