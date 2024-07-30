@@ -1,47 +1,58 @@
 # Functional Programming
 
 [[{java_lang.101,java_lang.functional.lambdas,architecture.async.reactive,java_lang.101]]
-## Lambdas 1.8+
-* simplifies development of non-blocking style APIs
-  (low-level CompletableFuture or higher level ReactiveX).
-
-
-### Sytnax  <!-- { -->
+## `TLDR` Examples:
   ```
-  | (parameters) -> expression
-  | (parameters) -> { statements; }
+  | val stream01      = new ArrayList<String>().stream();  // <·· Init from ArrayList
+  | val intStream1_10 = IntStream.of(1,2,3,4,5,6,7,9,10);  // <·· Init from list of int[]
+  |
+  | intStream1_10
+  |    .skip(2)                                 // <·· discard first 2 elements
+  |    .limit(3)                                // <·· returns stream no longer than 3 elements.
+  | //  └──────┴─ skip + limit == "paginate".
+  |    .filter( i -> i % 2 == 0 )               // <·· filter out if result is not true
+  | //          └─────────────┴─················ Java 8+ lambda function ¹
+  |    .distinct()                              // <·· Remove duplicated. (a "hash strategy can be used")
+  |    .map(i -> i*i)                           // <·· map to new elements.
+  |    ...
+  |    .findFirst()                             // <·· Alt 1) Complete stream to single element
+  |    .peek ( e -> System.out.println(e))      // <·· Debug streams without changes [[{troubleshooting.stream}]]
+  |    .orElse(arr.length);
   | 
-  | Function<Long, String> f = (l) -> l.toString();    // <·· takes a Long, returns a String
+  | // "Complete" stream 
+  |    .toArray();                              // <·· Alt 2) Complete stream to array 
+  |    .count();                                // <·· Alt 3) Complete stream to element number
+  |    .collect(Collectors.groupingBy(func));   // <·· Alt 4) Complete stream to Map grouping by func
+  |    .collect(Collectors.toList());           // <·· Alt 5) Complete stream to List
+  |    .collect(Collectors.toCollection(TreeSet::new))  // 6) Complete stream to TreeSet
   | 
-  | Supplier<Thread> s = Thread::currentThread;        // <·· takes nothing, gives you Thread
+  | Stream.concat( stream1, stream2 ).filter(...) // concat streams
   | 
-  | Consumer<String> c = System.out::println;          // <·· takes a string as the parameter
+  | Stream<Integer> stream = intStream1_10.boxed();  // <·· box primitive in Integer 
+  |                                                         needed to collect to list for example.
+  | ¹ Lambda syntax -----------------------------
+  |   (parameters) -> expression
+  |   (parameters) -> { statements; }
   | 
-  | new ArrayList<String>().stream()....               // <·· use lambdas in streams
-  | 
-  | peek ( e -> System.out.println(e)). ...            // <·· peek: Debug streams without changes
-  | 
-  | map ( e -> e.hashCode())...                        // <·· map: Convert every element into something
-  | 
-  | // filter (hc -> (hc % 2) == 0) ...
-  | 
-  | collect(Collectors.toCollection(TreeSet::new))    // <·· collect all values from the stream
+  |   Function<Long, String> f = (l) -> l.toString();    // <·· takes a Long , returns a String
+  |   Supplier<Thread> s = Thread::currentThread;        // <·· takes nothing, returns a Thread
+  |   Consumer<String> c = System.out::println;          // <·· takes a string as the parameter
   ```
 <!-- } -->
 
-## jOOλ functional extensions to Java 8 [[{java_lang.functional.jOOλ,java_lang.functional.101,troubleshooting.checked_exceptions,PM.TODO,]]
+[[{java_lang.functional.jOOλ,java_lang.functional.101,troubleshooting.stream,troubleshooting.checked_exceptions,PM.TODO]]
+## jOOλ functional extensions to Java 8
 
 * [jOOλ](https://github.com/jOOQ/jOOL)
 
-**Problem Context**: "Pains with checked exceptions and lambdas"  [[{java_lang.101]]
-* <http://stackoverflow.com/q/18198176/521799>
-* <http://stackoverflow.com/q/19757300/521799>
-* <http://stackoverflow.com/q/14039995/521799>                      [[java_lang.101}]]
-**Solution**: `org.jooq.lambda.Unchecked`
-
-* Standard Java 8
+- **Problem Context**: "Pains with checked exceptions and lambdas"  [[java_lang.101]]
+  - <http://stackoverflow.com/q/18198176/521799>
+  - <http://stackoverflow.com/q/19757300/521799>
+  - <http://stackoverflow.com/q/14039995/521799>                    [[java_lang.101}]]
+- **Solution**: `org.jooq.lambda.Unchecked`
 
   ```
+  | STANDARD JAVA 8
   | Arrays
   | .stream(dir.listFiles())
   | .forEach(file -> {
@@ -79,7 +90,7 @@
 
 [[java_lang.functional.lambdas}]]
 
-## Monads in Java [[{java_lang.functional.monads,java_lang.101,PM.TODO]]
+## Streams and Optional are Monads [[{java_lang.functional.101]]
 <https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394>
 * two of the most commonly known Java 8 features are monad
   implementations, namely Stream and Optional.
@@ -87,10 +98,11 @@
   value in some context and allows us to perform operations on the
   value. In this context, the output of an operation at any step is the
   input to the operation at the next step.
-[[java_lang.functional.monads}]]
+[[java_lang.functional.101}]]
 
 ## Unix4j [[{101,PM.low_code.unix4j,java_lang.functional]]
 * [Link@Github](https://github.com/tools4j/unix4j)
+* High level functional programming "the Unix way".
 
 > ...Working in the finance industry in Melbourne, the authors of
 > Unix4j spent a lot of time writing complex text processing
