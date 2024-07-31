@@ -179,3 +179,22 @@
   | java.security.UnresolvedPermission          javax.sound.sampled.AudioPermission [[}]]
   ```
 [[security.101}]]
+
+## SPARTA (anti-malware) [[{security.antimalware,PM.TODO]] 
+* <https://checkerframework.org/sparta/>
+* Research project funded by the DARPA Automated Program Analysis for Cybersecurity (APAC) program.
+* Aimed at preventing malware from appearing in an app store.
+* provides an information-flow type-checker customized to Android
+  but can also be applied to other domains.
+* The paper "Collaborative verification of information flow for a
+  high-assurance app store" appeared in CCS 2014.
+* verification approach is type-checking:
+  1. the developer states a security property, 
+  2. annotates the source code with type qualifiers that express that security property.
+  3. Runs a pluggable type-checker to verify that the type qualifiers are right 
+     (and thus that the program satisfies the security property). 
+* It was developed with two different types of users in mind.
+  1. Application vendors/authors of an app that submit the app to an app store for a security review. 
+  2. App analysts, or verification engineers, who work on behalf of the app store to verify that
+     apps meant specific security properties before they are accepted. 
+[[security.antimalware}]]

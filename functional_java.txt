@@ -3,8 +3,12 @@
 [[{java_lang.101,java_lang.functional.lambdas,architecture.async.reactive,java_lang.101]]
 ## `TLDR` Examples:
   ```
-  | val stream01      = new ArrayList<String>().stream();  // <·· Init from ArrayList
-  | val intStream1_10 = IntStream.of(1,2,3,4,5,6,7,9,10);  // <·· Init from list of int[]
+  | int counter = 1;
+  | val stream01 =      List.of(1,2,3,4,5,6,7,9,10).stream();  // <·· Init from List
+  | val stream02 = IntStream.of(1,2,3,4,5,6,7,9,10);           // <·· Init from int[]
+  | val stream03 = Stream.generate(() -> counter++).limit(10); // <·· stream02 == stream03
+  | val Stream<Integer> stream04 =
+  |                      Stream.iterate(10, n -> n).limit(10); // <·· stream generated "on demand"
   |
   | intStream1_10
   |    .skip(2)                                 // <·· discard first 2 elements

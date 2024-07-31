@@ -742,4 +742,29 @@ From <https://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-ca
 > project Loom which should bring "native" Fiber/lightweight continuation
 > support directly into JVM without the need of auxiliary library like Quasar.
 [[scalability.jvm.quasar}]]
-[[{$ Concurrent Programming}]]
+
+
+## ReentrantLock vs synchronized keyword: [[{]]
+ 1) Another significant difference between ReentrantLock and the
+synchronized keyword is fairness. The synchronized keyword doesn't
+support fairness. Any thread can acquire lock once released, no
+preference can be specified, on the other hand, you can make
+ReentrantLock fair by specifying fairness property while creating an
+instance of ReentrantLock. Fairness property provides a lock to the
+longest waiting thread, in case of contention.
+
+ 2) The second difference between synchronized and Reentrant lock is
+tryLock() method. ReentrantLock provides a convenient tryLock()
+method, which acquires lock only if its available or not held by any
+other thread. This reduces the blocking of thread waiting for lock-in
+Java applications.
+
+ 3) One more worth noting the difference between ReentrantLock and
+synchronized keyword in Java is, the ability to interrupt Thread
+while waiting for Lock. In case of a synchronized keyword, a thread
+can be blocked waiting for a lock, for an indefinite period of time
+and there was no way to control that. ReentrantLock provides a method
+called lockInterruptibly(), which can be used to interrupt thread
+when it is waiting for lock. Similarly, tryLock() with timeout can be
+used to timeout if the lock is not available in certain time period. 
+[[}]]

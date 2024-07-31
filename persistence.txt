@@ -1,4 +1,4 @@
-# JAVA persistence [[{]]
+# JAVA SQL persistence 
 
 ## Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,spring.*,persistence.jpa,01_PM.TODO]]
 * tool providing version control for database (SQL) schemas
@@ -9,9 +9,7 @@
 * Supports for many different SQL databases, including        [cloud]
   cloud ones (Amazon RDS, Azure Database, Google Cloud SQL).
 
-  ##########
-  # HOW-TO #
-  ##########
+### Flyway HowTO:
 * PRESETUP: The target database to manage and user with update privileges be created first,
             "outside" of flyway.
 
@@ -26,23 +24,26 @@
 * SQL and JAVA  migrations in src/main/resources/db/migration/ are automatically      [spring]
   applied in Spring Boot when  'org.flywaydb:flyway-core' compile dependency is
   detected.
-  src/main/resources/db/migration/
-  └ V1__Initial_schema.sql   ← Flyway expected file name
-                               "Verssion"__"Prefix".sql
-    CREATE TABLE table01 (
-     id      BIGSERIAL PRIMARY KEY NOT NULL,
-     column1 BIGINT NOT NULL,
-     column2 FLOAT8 NOT NULL,
-     column3 INTEGER NOT NULL,
-     column4 VARCHAR(255) UNIQUE NOT NULL,
-    );
+  ```
+  | src/main/resources/db/migration/
+  | └ V1__Initial_schema.sql   ← Flyway expected file name
+  |                              "Verssion"__"Prefix".sql
+  |   CREATE TABLE table01 (
+  |    id      BIGSERIAL PRIMARY KEY NOT NULL,
+  |    column1 BIGINT NOT NULL,
+  |    column2 FLOAT8 NOT NULL,
+  |    column3 INTEGER NOT NULL,
+  |    column4 VARCHAR(255) UNIQUE NOT NULL,
+  |   );
 
-  └ V2__Add_column5.sql
-    ALTER TABLE table01
-      ADD COLUMN column5 VARCHAR(255);
+  | └ V2__Add_column5.sql
+  |   ALTER TABLE table01
+  |     ADD COLUMN column5 VARCHAR(255);
+  ```
+* Alternatives to Flyway include LiquidBase, Obevo, ... [TODO]
 
 ## Obevo: DDBB change manager
-<https://github.com/goldmansachs/obevo>
+* <https://github.com/goldmansachs/obevo>
 - Obevo: ddbb deployment tool handling enterprise scale schemas and complexity.
 - By Goldman Sachs.
 - Obevo is a database deployment tool that helps teams manage database
@@ -61,32 +62,31 @@
   community around the tool.”
 
 
-  """ Deploying tables for a new application?
-    Or looking to improve the DB Deployment of a years-old system with
-    hundreds (or thousands) of tables, views, stored procedures, and
-    other objects?
-
-    Obevo has your use case covered.
-
-    Supported platforms: DB2, H2, HSQLDB, Microsoft SQL Server, MongoDB,
-    Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
-  """
-* Alternatives to Flyway include LiquidBase, ... [TODO]
+> """ Deploying tables for a new application?
+>   Or looking to improve the DB Deployment of a years-old system with
+>   hundreds (or thousands) of tables, views, stored procedures, and
+>   other objects?<br/>
+>
+>   Obevo has your use case covered.<br/>
+>
+>   Supported platforms: DB2, H2, HSQLDB, Microsoft SQL Server, MongoDB,
+>   Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
+> """
 
 * As a reference Spring Boot includes auto-configuration support for both Flyway and Liquibase.
 [[}]]
 
 ## QueryDSL Compile safe SQL [[{persistence.sql.querydsl,PM.TODO]]
-* https://www.baeldung.com/intro-to-querydsl
+* <https://www.baeldung.com/intro-to-querydsl>
 
 * Compile safe SQL like domain specific language compatible with JPA.
 
 [[persistence.sql.querydsl}]]
 
 ## Jooq: SQL made simple [[{persistence.sql,vertx.*,architecture.async.reactive,01_PM.low_code,qa.data,01_PM.TODO]]
-<https://www.jooq.org/>
-* WARN: Free for OOSS databases, requires licence for Oracle and others.
-* ¿Deprecated in favor of QueryDSL?
+* <https://www.jooq.org/>
+* WARN: Free for OOSS databases, requires licence for Oracle and maybe others.
+* WARN: ¿Deprecated in favor of QueryDSL?
 
 ### Vertx+Jooq
 <https://github.com/jklingsporn/vertx-jooq>
@@ -96,64 +96,60 @@
 
 [[}]]
 
-## MyBatis [[{]]
-C&P https://www.infoq.com/articles/SQL-relevance-NoSQL/
+[[{persistence.sql.mybatis]]
+## MyBatis 
+Summary from <https://www.infoq.com/articles/SQL-relevance-NoSQL/>
+*  """ SQL is everywhere in data processing, ... Humble detected an increasing discomfort
+   with “classic” ORMs such as Hibernate. These tools have solved two problems:<br/>
+   * The repetitiveness of CRUD<br/>
+   * Caching and thus speeding up disk access<br/>
+   """
+* Intelligent caching can be quite hard, even with Hibernate,  ...
+* JPA’s caching mechanism is only possible because the ORM strategy has
+  been deeply integrated with JPQL. Short of native querying, it is hard
+  to bypass the essential mechanisms used for caching.
+* Memory is getting cheaper ... What if data is no longer accessed from disk
+  (milliseconds), but from memory (nanoseconds) instead?
+* Will we still need complicated and complex second level caches, when the
+  database already “cached” all relevant data in memory?
+* Not only are databases capable of keeping live online transactional
+  data in memory all the time, they have already been doing some
+  sophisticated caching for quite a while now. Just consider Oracle’s
+  cursor cache, query result cache, and scalar subquery cache.
+* ...an increasing use of more SQL-centric alternatives such as
+  MyBatis or jOOQ (both being “post-JPA” frameworks) indicates a
+  certain need to get closer to SQL again.
+* ANSI-SQL standard is continually evolving ... things which are
+  very hard to get through the JCP and into next generations of JPA.
+  ....In all my conference talks about jOOQ, I have been asking the
+  audience about their happiness with CriteriaQuery. The answer was
+  always unanimously hostile.
 
-SQL is everywhere in data processing, ... Humble detected an increasing discomfort
-with “classic” ORMs such as Hibernate. These tools have solved two problems:
-* The repetitiveness of CRUD
-* Caching and thus speeding up disk access
-
-Intelligent caching can be quite hard, even with Hibernate,  ...
-JPA’s caching mechanism is only possible because the ORM strategy has
-been deeply integrated with JPQL. Short of native querying, it is hard
-to bypass the essential mechanisms used for caching.
-
-Memory is getting cheaper ... What if data is no longer accessed from disk
-(milliseconds), but from memory (nanoseconds) instead?
-Will we still need complicated and complex second level caches, when the
-database already “cached” all relevant data in memory?
-
-Not only are databases capable of keeping live online transactional
-data in memory all the time, they have already been doing some
-sophisticated caching for quite a while now. Just consider Oracle’s
-cursor cache, query result cache, and scalar subquery cache.
-
-...an increasing use of more SQL-centric alternatives such as
-MyBatis or jOOQ (both being “post-JPA” frameworks) indicates a
-certain need to get closer to SQL again.
- ANSI-SQL standard is continually evolving ... things which are
-very hard to get through the JCP and into next generations of JPA.
-....In all my conference talks about jOOQ, I have been asking the
-audience about their happiness with CriteriaQuery. The answer was
-always unanimously hostile.
-
-Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
-* jOOQ is an internal domain-specific language modelling SQL through a Java fluent API.
-* MyBatis is an XML-based SQL templating and mapping engine where
-  dynamic SQL can be created through an XML-DSL.
-
-...  MyBatis’ current success is mostly based on it having provided
+### MyBatis "vs" Jooq:
+* <https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/>
+  * jOOQ is an internal domain-specific language modelling SQL through a Java fluent API.
+  * MyBatis is an SQL templating and mapping engine where dynamic SQL
+    can be created through an XML-DSL.
+* ...  MyBatis’ current success is mostly based on it having provided
   a viable alternative to JPA in a time when JPA was still a
   controversial standard, and when JPA had to prove that it is better
   than JDO, which solves very similar problems.
+[[persistence.sql.mybatis}]]
 
-[[}]]
+[[{persistence.sql.jpa,01_PM.TODO]]
+## Hibernate/JPA Summary 
 
+* <https://quarkus.io/guides/hibernate-orm-panache-guide>
+* Hibernate Gotchas:
+  - <https://github.com/theotherian/hibernate-gotchas>.
+  - <http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html>.
+  hibernate, joins, and max results: a match made in hell.
+* Common Hibernate Exceptions Every Developer Must Know:
+  - <https://thorben-janssen.com/hibernate-exceptions/>
+[[persistence.sql.jpa}]]
 
-## Hibernate/JPA Summary [[{persistence.jpa,01_PM.TODO]]
-<https://quarkus.io/guides/hibernate-orm-panache-guide>
-
-- Hibernate Gotchas:
-  https://github.com/theotherian/hibernate-gotchas
-  http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html
-  hibernate, joins, and max results: a match made in hell
-
-- Common Hibernate Exceptions Every Developer Must Know
-  https://thorben-janssen.com/hibernate-exceptions/
-[[}]]
-
-## speedment: SQL as Streams [[{persistence.sql,01_PM.low_code,qa.data,java_lang.functional]]
+[[{persistence.sql.speedment,01_PM.low_code,qa.data,java_lang.functional]]
+## Speedment: SQL as Streams
 <https://github.com/speedment/speedment>
 - Stream ORM toolkit and runtime.
 - The toolkit analyzes the metadata of an existing SQL database and
@@ -161,7 +157,7 @@ Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
 - The powerful ORM enables you to create scalable and efficient Java
   applications using standard Java streams with no need to type SQL or
   use any new API.
-
+  ```
   SQL                                    JAVA 8 Stream Equivalent
  --------------------------------------------------------------------
   FROM                                   stream()
@@ -201,25 +197,26 @@ Compared to Jooq: https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/
        `sakila`.`film
   WHERE
       (`length` > 120)
-[[}]]
+  ```
+[[persistence.sql.speedment}]]
 
 ## Other ORM/DSL SQL frameworks
+
 ### Excluded ORM Framework Comparative [[{]]
-https://dzone.com/articles/best-java-orm-frameworks-for-postgresql
 
-.... The following frameworks have been excluded from the test due to lack
-of support of one or more of the required features or because of
-other problems. That isn't to say anything negative about
-them—they're certainly promising—but they didn't suit my needs
-for one or more reasons.
-
+* <https://dzone.com/articles/best-java-orm-frameworks-for-postgresql>
+* .... The following frameworks have been excluded from the test due to lack
+  of support of one or more of the required features or because of
+  other problems. That isn't to say anything negative about
+  them—they're certainly promising—but they didn't suit my needs
+  for one or more reasons.
 * Exposed is the ORM for Kotlin implemented by JetBrains. I've tried
   to use it in Jav,a but it was really hard, almost impossible. For
   Scala developers, this may be a good option.
 * Reladomo is an enterprise ORM, but it does not support UDTs or other PostgreSQL advanced features.
 * Speedment does not support transactions in its current stable version.
-
 [[}]]
+
 ### frameworks no longer developed or maintained: [[{]]
 * ActiveJPA seems like it never reached stable release, with the last commits from 2014.
 * Apache Torque had its last commit in 2013.
@@ -234,48 +231,17 @@ for one or more reasons.
 * TJDO Project's last commit is from 2008.
 [[}]]
 
-### reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
-<https://github.com/goldmansachs/reladomo>
-  - Enterprise grade ORM framework featuring:
-    - Strongly typed   compile-time  checked query language
-    - Bi-temporal chaining
-    - Transparent multi-schema support
-    - Full support for unit-testable code
-[[}]]
-
-[[$div}]]
-
-## Snappy Fast de/compressor [[{persistence.fs,scalability.persistence,01_PM.TODO]]
-<https://github.com/xerial/snappy-java>
-- Java port of the snappy <http://code.google.com/p/snappy/>
-[[}]]
-
-## JCache [[{scalability.cache,01_PM.TODO]]
-- Map-Like API optimized for caching.
-- 1.0 drawbacks:
-  - No async operations.
-- Implemented by Hazelcast and others
-[[}]]
-
-## HikariCP JDBC "zero-overhead" production ready JDBC connection pool [[{]]
-https://github.com/brettwooldridge/HikariCP
-https://www.baeldung.com/hikaricp
-
-* very light ~ 130KB.
-* one order of magniture faster than c3p0 dbcp2 tomcat vibur in connections/sec
-  C&P from :
-  https://github.com/brettwooldridge/HikariCP/wiki/Down-the-Rabbit-Hole
-  """...  In order to make HikariCP as fast as it is, we went down to
-    bytecode-level engineering, and beyond. We pulled out every trick we
-    know to help the JIT help you. We studied the bytecode output of the
-    compiler, and even the assembly output of the JIT to limit key
-    routines to less than the JIT inline-threshold. We flattened
-    inheritance hierarchies, shadowed member variables, eliminated casts."""
-*
+### Reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
+* <https://github.com/goldmansachs/reladomo>
+Enterprise grade ORM framework featuring:
+- Strongly typed   compile-time  checked query language
+- Bi-temporal chaining
+- Transparent multi-schema support
+- Full support for unit-testable code
 [[}]]
 
 ### c3p0 (abandoned) [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
-Ver HikariCP como alternativa  https://github.com/brettwooldridge/HikariCP
+Ver HikariCP como alternativa  <https://github.com/brettwooldridge/HikariCP>
 <https://www.mchange.com/projects/c3p0/#what_is>
 * c3p0: easy-to-use library for making traditional JDBC drivers
         "enterprise-ready" augmenting them with jdbc3 functionality,
@@ -297,4 +263,33 @@ Ver HikariCP como alternativa  https://github.com/brettwooldridge/HikariCP
     implementations of ConnectionPoolDataSource).
 [[}]]
 
+## HikariCP JDBC "zero-overhead" production ready JDBC connection pool [[{]]
+https://github.com/brettwooldridge/HikariCP
+https://www.baeldung.com/hikaricp
+
+* very light ~ 130KB.
+* one order of magniture faster than c3p0 dbcp2 tomcat vibur in connections/sec
+  C&P from <https://github.com/brettwooldridge/HikariCP/wiki/Down-the-Rabbit-Hole>
+  """...  In order to make HikariCP as fast as it is, we went down to
+    bytecode-level engineering, and beyond. We pulled out every trick we
+    know to help the JIT help you. We studied the bytecode output of the
+    compiler, and even the assembly output of the JIT to limit key
+    routines to less than the JIT inline-threshold. We flattened
+    inheritance hierarchies, shadowed member variables, eliminated casts."""
+[[}]]
+
+
+# JAVA Persistence "Others"
+
+[[{scalability.persistence.compression,persistence.fs,01_PM.TODO]]
+## Snappy Fast de/compressor
+* <https://github.com/xerial/snappy-java>
+Java port of the snappy <http://code.google.com/p/snappy/>
+[[scalability.persistence.compression}]]
+
+## JCache [[{scalability.cache,01_PM.TODO]]
+- Map-Like API optimized for caching.
+- 1.0 drawbacks:
+  - No async operations.
+- Implemented by Hazelcast and others
 [[}]]

@@ -474,6 +474,16 @@
   convert to a runtime (subclass) exception.  More info at:
   * <https://phauer.com/2015/checked-exceptions-are-evil/>
   * <https://dzone.com/articles/introduction-to-pragmatic-functional-java>
+
+* Make code as brief as possible ... **but no more**.<br/>
+  We spend more time reading code than writing new one, so syntax sugar to 
+  shortcut code must never result in other people having troubles to know
+  what the code is trying to do.<br/>
+  For example inlining a function into a lambda can be an antipattern if 
+  the original function name provided context on the intention of the code.
+  
+
+  
 [[java_lang.101.donts}]]
 
 ## JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]

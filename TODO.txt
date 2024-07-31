@@ -36,48 +36,6 @@
   https://www.baeldung.com/java-curl
 [[}]]
 
-## jLine [[{qa.UX,java_lang.repl,java_lang.101,PM.low_code,PM.TODO]]
-* [Github](https://github.com/jline/jline3)
-* jLine: GNU/readline alike library for JAVA.
-- Builtin support for console variables, scripts, custom pipes, widgets and object printing.
-- Autosuggestions
-- Language REPL Support
-[[}]]
-
-## PicoCli UX Cli apps [[{qa.UX,]]
-<https://github.com/remkop/picocli>
-<https://picocli.info/>
-  Picocli is a one-file framework for creating Java user-friendly
- (autocompletion, subcommands, ...)  command line  , GraalVM-enabled
-  applications with almost zero code. It supports a variety of command
-  line syntax styles including POSIX, GNU, MS-DOS and more. It
-  generates highly customizable usage help messages that use ANSI
-  colors and styles to contrast important elements and reduce the
-  cognitive load on the user.
-  - 1 source file so apps can include as source and avoid adding a dependency!!!
-[[}]]
-
-### Clig.Dev: Command Line Interface Guidelines [[{qa.UX]]
-<https://clig.dev/>
-* An open-source guide to help you write better command-line
-  programs, taking traditional UNIX principles and updating them for
-  the modern day.
-  · ...
-  · Use a command-line argument parsing library where you can. Either
-     your language’s built-in one, or a good third-party one. They will
-     normally handle arguments, flag parsing, help text, and even spelling
-     suggestions in a sensible way.
-
-* Note: Alternatives in other languajes:
-  · Go: Cobra, cli
-  · Node: oclif
-  · Python: Click, Typer
-  · Ruby: TTY
-  · Rust: clap, structopt
-  · PHP: console
-[[}]]
-
-
 ## Java 9 to 13 in a Nutshell!!!: [[{PM.TODO.NOW}]]
   https://bentolor.github.io/java9to13/#/_preview_features_preview_12
 
@@ -90,7 +48,6 @@ String switchExpressionPreview13(Direction way) {
         default -> "Foo"             // <·· default can be ommitted for 
     };                               //    a) void return values or 
 }                                    //    b) enum with every value handled
-
 
 ## Java Dev External Tutorials
 * <https://dev.java/>
@@ -152,50 +109,9 @@ String switchExpressionPreview13(Direction way) {
   <https://www.programcreek.com/2013/08/top-books-for-advanced-level-java-developers/>
 [[PM.TODO.101}]]
 
-## JVM Security
-* https://blog.frankel.ch/jvm-security/4/ [[{jvm,security}]]
-
-## SPARTA (anti-malware) [[{security}]] 
-* <https://checkerframework.org/sparta/>
-* Aimed at preventing malware from appearing in an app store.
-* provides an information-flow type-checker customized to Android
-  but can also be applied to other domains.
-* The paper "Collaborative verification of information flow for a
-  high-assurance app store" appeared in CCS 2014.
-
-## Guava Collections [[{data_structures,qa.data,PM.TODO]]
-* Widely used Google Core Libraries for Java 6+.
-  <https://www.baeldung.com/guava-sets?>
-[[data_structures}]]
-
 
 ## https://github.com/topics/snippets-collection
 
-## Scala 3 Overhauls Language for Better Developer Experience
-  https://www.infoq.com/news/2021/06/scala-3-overhaul/
-
- 1) Another significant difference between ReentrantLock and the
-synchronized keyword is fairness. The synchronized keyword doesn't
-support fairness. Any thread can acquire lock once released, no
-preference can be specified, on the other hand, you can make
-ReentrantLock fair by specifying fairness property while creating an
-instance of ReentrantLock. Fairness property provides a lock to the
-longest waiting thread, in case of contention.
-
- 2) The second difference between synchronized and Reentrant lock is
-tryLock() method. ReentrantLock provides a convenient tryLock()
-method, which acquires lock only if its available or not held by any
-other thread. This reduces the blocking of thread waiting for lock-in
-Java applications.
-
- 3) One more worth noting the difference between ReentrantLock and
-synchronized keyword in Java is, the ability to interrupt Thread
-while waiting for Lock. In case of a synchronized keyword, a thread
-can be blocked waiting for a lock, for an indefinite period of time
-and there was no way to control that. ReentrantLock provides a method
-called lockInterruptibly(), which can be used to interrupt thread
-when it is waiting for lock. Similarly, tryLock() with timeout can be
-used to timeout if the lock is not available in certain time period. 
 
 ## JAVA DONT's:
   https://dzone.com/articles/we-should-write-java-code-differently?edition=598293#

@@ -1,7 +1,9 @@
-# Collections 
 [[{data_structures.101,java_lang.101,scalability.101,doc_has.decission_tree,doc_has.diagram,qa.data]]
+# Collections
+
 ## Collections 101
-* COLLECTION DECISSION TREE
+
+### COLLECTION DECISSION TREE
   ```
   |                                 ┌──────────┐
   |                                 │  Allows  │
@@ -24,7 +26,9 @@
   |                                                              v                     v
                                                             HashSet              TreeSet
   ```
+
 ### Collection Comparative
+
   ```
   | Standard   non-concurrent  SDK:
   |         ┌──────────────────────────────────────────────────────────────────────────────────────────
@@ -41,7 +45,7 @@
   | ├───────┼───────────────────┼───────────────────┼──────────────┼─────────────┼─────────────────────
   | │<Map>  │ HashMap,Hashtable │                   │  TreeMap     │             │ LinkedHashMap
   | └───────┴───────────────────┴───────────────────┴──────────────┴─────────────┴─────────────────────
-  | 
+  |
   |   WARN : There is a huge performance difference LinkedList and ArrayList.
   |          - when there is a large number of add/remove operations LinkedList is much faster.
   |          - When there is a lot of random access operations ArrayList is much faster.
@@ -109,7 +113,7 @@
   | HashSet          │  O(1)                     │ O(1)            │ O(1)
   | HashMap          │  O(1)                     │ O(1)            │ O(1)
   | TreeMap          │  O(log(n))                │ O(log(n))       │ O(log(n))
-
+  | 
   |¹ NavigableMap: SortedMap with additional methods for finding entries
   |                by their ordered position in the key set.
   |                So potentially this can remove the need for iterating
@@ -123,229 +127,252 @@
 ## GRAPH STRUCTURES  [[{data_structures.graphs]]
 * [REF](https://guava.dev/releases/20.0/api/docs/com/google/common/graph/package-summary.html)
 
-```
-Interface               Description
-Graph<N>                An interface for graph-structured data, whose edges are
-                        anonymous entities with no identity or information of their own.
-MutableGraph<N>         A subinterface of Graph which adds mutation methods.
-MutableNetwork<N,E>     A subinterface of Network which adds mutation methods.
-MutableValueGraph<N,V>  A subinterface of ValueGraph which adds mutation methods.
-Network<N,E>            An interface for graph-structured data, whose edges are unique objects.
-ValueGraph<N,V>         An interface for graph- structured data, whose edges have associated
-                        non-unique values.
-```
+  ```
+  |Interface               Description
+  |Graph<N>                An interface for graph-structured data, whose edges are
+  |                        anonymous entities with no identity or information of their own.
+  |MutableGraph<N>         A subinterface of Graph which adds mutation methods.
+  |MutableNetwork<N,E>     A subinterface of Network which adds mutation methods.
+  |MutableValueGraph<N,V>  A subinterface of ValueGraph which adds mutation methods.
+  |Network<N,E>            An interface for graph-structured data, whose edges are unique objects.
+  |ValueGraph<N,V>         An interface for graph- structured data, whose edges have associated
+  |                        non-unique values.
+  ```
 [[data_structures.graphs}]]
 
 ## Lists [[{data_structures.lists,data_structures.101,qa]]
-* INITIALIZING A LIST
-```
-final List<String> myList =                  ← final forbid re-asigning the list,
-      Arrays.asList("one", "two", "three");     but its content is still mutable
-      myList.add("four");
 
-final List<String> myInmmutableList =        ← inmutable version (thread safe)
-      Collections.unmodifiableList(myList);
+### INITIALIZING A LIST
 
-String[] array01 = ...;
-final      List<String> readOnlyList  ← Inmutable ArrayList (static class inside Arrays),
-       = Arrays.asList(arr);            lacks set(), get(), contains() or "adding" methods
-                                        providing for a read-only view.
+  ```
+  | import java.util.ArrayList;
+  | import java.util.Arrays;
+  | import java.util.Collections;
+  | import java.util.stream.Collectors;
+  | import java.util.stream.Stream;
+  | public class Main {
+  |   public static void main(String[] args) {
+  |     final List<String>                         // <·· WARN: `final` keyword forbids re-asigning the list,
+  |        list01 = new ArrayList<String>()  ,     //     but its content is still mutable. ¹
+  |       ilist01 = Collections                    // <··  Inmutable version (thread safe) of list01
+  |                 .unmodifiableList(list01),
+  |        list02 = new ArrayList<String>(10),
+  |       ilist03 = Arrays.asList("s1", "s2"),     // <·· READ-ONLY inmutable ArrayList. list03 will lack
+  |                                                       set(), get(), contains() or "adding" methods
+  |                                                       providing for a read-only view of the original String[]
+  |        list03 = new ArrayList<String>(         // <·· mutable version built by "copying" the inmutable
+  |                     ilist03)             ,     //      ilist03 version.
+  | 
+  |        list04 = Stream.of("s1", "s2")
+  |                 .collect(
+  |                  Collectors.toCollection(
+  |                    ArrayList::new) );
+  |        list05 = new ArrayList<String>()  ;
+  |     // └────┴─────────────┬────┐
+  |        list05.add("s1");  ·    ·
+  |        Collections.addAll(list05, "s2","s3");
+  |   }
+  | }
+  ```
 
-final ArrayList<String> mutableList   ← Mutable list.
-       = new ArrayList<String>(
-         Arrays.asList(arr));
-```
+### Walk over Lists(and Sets) collections
 
-* Walk over Lists(Set/...) collections
-```
- for ( int idx = 0; idx < collection   .length ; idx++) { ← Alt 1: Java 1.0 for-walk over collection index.
-   type array_element = collection   .get(idx);           ←   WARN:  Very slow for LinkedLists
- }                                                                   (Faster for other List implementations)
+  ```
+  | for ( int idx = 0; idx < collection   .length ; idx++) {// <·· Alt 1: Java 1.0 for-walk over collection index.
+  |   type array_element = collection   .get(idx);          //     WARN:  Very slow for LinkedLists
+  | }                                                       //            (Faster for other List implementations)
+  |                                                         //
+  | for ( Iterator iterator = collection   .iterator() ;    // <·· Alt 2: for-walk over iterator. Preferred to Alt 1.
+  |        iterator.hasNext(); ) {                          //          safer when removing/modifying the collection
+  |   type type = (type)   iterator.next() ;                //          while iterating over it.
+  | }                                                       //
+  |                                                         //
+  | for ( iterable_type iterable_element   :collection ) {  // <·· Alt 3: Preferred to Alt 2 option when NOT
+  |   ...                                                   //          removing/modifying elements while in the "loop"
+  | }                                                       //
+  |
+  | collection.stream()                                     // <·· Alt 4: STREAMS (Java 8+): UNIX "pipe like" iteration.
+  |   .peek   ( e -> { System.err.print("[" + e + "]"); } ) //     Functional approach. Preferred for "complex" business
+  |   .forEach( e -> { System.out.print(e + ","); } )       //     logic.
+  |;
+  ```
 
- for ( Iterator iterator = collection   .iterator() ;     ← Alt 2: for-walk over iterator. Preferred:
-        iterator.hasNext(); ) {                                    safer when removing/modifying the collection
-   type type = (type)   iterator.next() ;                          while iterating over it.
- }
-
- for ( iterable_type iterable_element   :collection ) {   ← Alt 3: Best option when NOT remov./modify. elements
-   ...
- }
-
- collection .forEach ((element) -> {                      ← Alt 4: STREAMS (Java 8+): UNIX pipe like iteration.
-   System.out::println(element)                             Functional approach. In this case we can "shortcut" to:
- });                                                        collection.forEach(System.out::println);
-```
 [[data_structures.lists}]]
 
 ## Maps ("Dictionaries") [[{data_structures.maps]]
-* Initializing maps
-```
-final Map<String,String> myMap =                          ← Mutable map (WARN: even if 'final' used)
-      new HashMap<String,String>();
-  myMap.put("k1", "k2");
-  ...
-  final Map<String,String> myInmutableMap =               ← Inmutable version of map
-        Collections.unmodifiableMap(temp);
 
-  final HashMap<String,String> data =  HashMapBuilder     ← Java 7+ must have even number of elements
-        .build( "k1","v1", "k2","v2", ...);
+### Initializing maps
 
-  final Map<String, String> inumtableMap01 =              ← Java 9+ must have even number of elements
-        Map.of("k1", "v1", "k2", "v2");
+  ```
+  | final Map<String,String> myMap =             // <·· Mutable map (WARN: even if 'final' used)
+  |       new HashMap<String,String>();
+  |   myMap.put("k1", "k2");
+  |   ...
+  | final Map<String,String> myInmutableMap =    // <·· Inmutable version of map
+  |       Collections.unmodifiableMap(temp);
+  |
+  | final Map<String, String> inumtableMap01 =   // <·· Java 9+ must have even number of elements
+  |       Map.of("k1", "v1", "k2", "v2");
+  |
+  | final Map<String, String> inmutableMap02 =   // <·· Java 9+ (Safer syntax). Preferred
+  |       Map.ofEntries( entry("k1", "k2"),...);
+  |
+  | final Map<String, String> test =             // <·· Guava ImmutableMap
+  |       ImmutableMap.of("k1","v1", ...);       //     works only with up to 5 key/value pairs
+  |
+  | final Map<String, String> test =             // <·· Guava ImmutableMap alternative
+  |       ImmutableMap.<String, String>builder()
+  |       .put("k1", "v1").put("k2", "v2")
+  |       ...
+  |       .build();
+  ```
 
-  final Map<String, String> inmutableMap02 =              ← Java 9+ (Safer syntax)
-        Map.ofEntries( entry("k1", "k2"),...);
+### WALK-OVER/ITERATE A MAP
 
-  final Map<String, String> test =                        ← Guava ImmutableMap
-        ImmutableMap.of("k1","v1", ...);                    works only with up to 5 key/value pairs
+  ```
+  | Map<String, String> map = ...
+  | for ( Map.pair<String, String>   pair  :
+  |       map .pairSet() ) {                                 ← Alt 1: pairSet (Java 5+)
+  |  ... pair.getKey() ... pair.getValue() ...
+  | }
+  |
+  | for ( Map.Entry<Integer, Integer> pair :                 ← Alt 2: USING "for : entrySet"
+  |          myMap .entrySet() ) {
+  |  ... pair.getKey() ... pair.getValue() ...
+  | }
+  |
+  | map.forEach((k, v) -> {                                  ← forEach (java 8+)
+  |  ... pair.getKey() ... pair.getValue() ...
+  | }
+  |
+  | map.entrySet().stream().forEach( (pair) -> {            ← Stream API (1.8+)
+  | ... pair.getKey() ... pair.getValue() ...                 "Functional" Unix Pipe like style
+  | });
+  |
+  | map.entrySet().stream().                                ← Stream API parallel (1.8+)
+  | .parallel().forEach( pair -> {                            "Functional" Unix Pipe like style
+  | ... pair.getKey() ... pair.getValue() ...
+  | } ) );
+  ```
 
-  final Map<String, String> test =                        ← Guava ImmutableMap alternative
-        ImmutableMap.<String, String>builder()
-        .put("k1", "v1").put("k2", "v2")
-        ...
-        .build();
-```
-* WALK-OVER/ITERATE A MAP
-```
- Map<String, String> map = ...
- for ( Map.pair<String, String>   pair  :
-       map .pairSet() ) {                                 ← Alt 1: pairSet (Java 5+)
-  ... pair.getKey() ... pair.getValue() ...
- }
+### UPDATING MAPS
 
- Iterator<Map.Entry<String, String>> it =                 ← Alt 2: (Java 7?) using iterators
-       map.entrySet .iterator() ;
- while (it.hasNext()) {
-   const Map.Entry<Integer, Integer> pair =  it.next();
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- for ( Map.Entry<Integer, Integer> pair :                 ← Alt 3: USING "for : entrySet"
-          myMap .entrySet() ) {
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- map.forEach((k, v) -> {                                  ← forEach (java 8+)
-  ... pair.getKey() ... pair.getValue() ...
- }
-
- map.entrySet().stream().forEach( (pair) -> {            ← Stream API (1.8+)
- ... pair.getKey() ... pair.getValue() ...                 "Functional" Unix Pipe like style
- });
-
- map.entrySet().stream().                                ← Stream API parallel (1.8+)
- .parallel().forEach( pair -> {                            "Functional" Unix Pipe like style
- ... pair.getKey() ... pair.getValue() ...
- } ) );
-```
-* Updating maps
-```
-Map<String, Double> map01 = new HashMap<>();
-  map01.put("key1", 1);
-  map01.put("key2", 2);
-  map01.put("key3", 3);                    ← Update (Before Java 8). Alt 1: Do not check for key existence.
-  if (map01.containsKey("key3")) {
-    map01.put("key3", 3);                  ← Update (Before Java 8). Alt 2:        check for key existence.
-  }
-
-  Integer oldValue = map01                 ← Java 8+ . Returns nulls if key1 didn't exists
-         .replace("key1", 10);
-  boolean isOK = map01.replace("key1",     ← Java 8+. Safer variant. Update fails if old value
-           1 /*old value*/,                  is null or changed. Most probably false will throw
-          10 /* new value */ );              a RuntimeError.
-
-  map01.getOrDefault("key4", 0));          ← Return default for non-existing key (vs null)    [qa]
-
-  map01.putIfAbsent ("key4", 4));          ← Update only if absent or value null.             [qa]
-
-
-  const BiFunction<Integer, Integer, Integer>
-      sumFun = (x1, x2) -> x1 + x2;
-
-  map01.compute("key1",                         ← Use bifunction to update. NullPointerException
-    (key, currentValue)                           if key doesn't exit.
-        -> sumFun.apply(currentValue, 2));        (alternatively computeIfAbsent / computeIfPresent )
-
-  map01.merge("key1", defaultValue,             ← Update with BiFunction if key exists.
-    (key, currentValue)                           or add defValue to key otherwise.
-        -> sumFun.apply(v, 2));
-```
+  ```
+  | Map<String, Double> map01 = new HashMap<>();
+  |   map01.put("key1", 1);                    // <·· Insert.
+  |   map01.put("key2", 2);
+  |
+  |   if (!map01.containsKey("key3")) {        // <·· Update checking for key existence (Before Java 8)
+  |     throw RuntimeException("...");
+  |   }
+  |   map01.put("key3", 3);
+  |
+  |   Integer oldValue = map01                 // <·· Java 8+. Returns nulls if key1 didn't exists
+  |          .replace("key1", 10);
+  |   boolean isOK = map01.replace("key1",     // <·· Java 8+. Safer/preferred variant.
+  |            1 /*old value*/,                //     Update fails if old value is null or changed.
+  |           10 /* new value */ );            //
+  |
+  |   map01.getOrDefault("key4", 0));          // <·· Return default for non-existing key. Probably
+  |                                            //     throwing is a safer approach in most scenarios.
+  |
+  |   map01.putIfAbsent ("key4", 4));          // <·· Update only if key4 value is absent/null.
+  |
+  |   const BiFunction<Integer, Integer, Integer>
+  |       sumFun = (x1, x2) -> x1 + x2;
+  |
+  |   map01.compute("key1",                    // <·· Use bifunction to update. NullPointerException
+  |     (key, currentValue)                    //     if key doesn't exit.
+  |         -> sumFun.apply(currentValue, 2)); //     (alternatively computeIfAbsent / computeIfPresent )
+  |                                            //
+  |   map01.merge("key1", defaultValue,        // <·· Update with BiFunction if key exists.
+  |     (key, currentValue)                    //     or add defValue to key otherwise.
+  |         -> sumFun.apply(v, 2));
+  ```
 [[data_structures.maps}]]
 
 ## java.util.Collections [[{data_structures.collections,]]
-(<https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html> )
+
+* <https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html>
 * Utility class with static methods that operate on or return collections
   ```
-  Collections.EMPTY_SET  ( == Collections.emptySet()         ) See also Collections.singleton(T o)
-  Collections.EMPTY_LIST ( == Collections.emptyList()        ) See also Collections.singletonList(T o)
-  Collections.EMPTY_MAP  ( == Collections.emptyMap()         ) See also Collections.singletonMap(K key, V value)
-                              Collections.emptyEnumeration()
-                              Collections.emptyIterator()
-                              Collections.emptyListIterator()
-
-  boolean      Collections.addAll(Collection c, T... elements)           Adds all elements to collection 'c'
-  Queue        Collections.asLifoQueue(Deque deque)                      deque to Last-In/First-Out "LIFO" Queue view
-  int          Collections.binarySearch(List list, T key)                Searches key in list using binary search.
-  int          Collections.binarySearch(List list, T key, Comparator c)  Searches key in list using binary search + comparator.
-
-  Collection   Collections.checkedCollection(Collection c, Class type)   Returns a dynamically typesafe view of input collection/list/...
-  List         Collections.checkedList(List list, Class type)
-  Map          Collections.checkedMap
-                           (Map m, Class keyType, Class valueType)
-  Set          Collections.checkedSet(Set s, Class type)
-  SortedMap    Collections.checkedSortedMap
-                           (SortedMap m, Class keyType, Class valueType)
-
-  SortedSet    Collections.checkedSortedSet(SortedSet s, Class type)
-  void         Collections.copy(List dest, List src)                     Copies src list elements to dest list
-  boolean      Collections.disjoint(Collection c1, Collection c2)        true if c1/c2 have no elements in common.
-
-  Enumeration  Collections.enumeration(Collection c)                     Returns an enumeration over the specified collection.
-
-  void         Collections.fill(List list, T obj)                        Replaces all of the elements of the specified list with the specified element.
-  int          Collections.frequency(Collection c, Object o)             Returns the number of elements in the specified collection equal to the specified object.
-  int          Collections.indexOfSubList(List list, List sublist)       -1 if not found.
-  int          Collections.lastIndexOfSubList(List list, List sublist)   -1 if not found.
-  ArrayList    Collections.list(Enumeration e)                           Enum to array list in the order they are returned by input enum.
-  T            Collections.max/min(Collection coll (, Comparator comp))  max/min element of collection, according to comparator order.(Def to natural ordering)
-  List         Collections.nCopies(int nCopies, T inputObject)
-  Set          Collections.newSetFromMap(Map map)
-  boolean      Collections.replaceAll(List list, T oldVal, T newVal)     ← NOTE: Replaces in list
-  void         Collections.reverse(List list)
-  Comparator   Collections.reverseOrder()                                Return <<Comparable>> Comparator imposing reverse natural ordering.
-  Comparator   Collections.reverseOrder(Comparator cmp)                  Returns               comparator imposing reverse ordering of input comparator.
-  void         Collections.rotate(List list, int distance)               Rotates elements in list.
-  void         Collections.shuffle(List list (, Random rnd) )            Randomly permutes elements using source of randomness (or def. src of randomness).
-  void         Collections.sort(List list (, Comparator c))              Sorts in comparator (def. to natural) order.
-  void         Collections.swap(List list, int pos1, int pos2)           Swap elemnts in pos 1 and 2.
-  Collection   Collections.synchronizedCollection(Collection c)          Returns thread-safe collection       [qa]
-  List         Collections.synchronizedList(List list)                   Returns thread-safe list             [qa]
-  Map          Collections.synchronizedMap(Map m)                        Returns thread-safe map              [qa]
-  Set          Collections.synchronizedSet(Set s)                        Returns thread-safe set              [qa]
-  SortedMap    Collections.synchronizedSortedMap(SortedMap m)            Returns thread-safe sorted map       [qa]
-  SortedSet    Collections.synchronizedSortedSet(SortedSet s)            Returns thread-safe sorted set       [qa]
-  Collection   Collections.unmodifiableCollection(Collection c)          Returns inmutable view               [qa]
-  List         Collections.unmodifiableList(List list)                   Returns inmutable view               [qa]
-  Map          Collections.unmodifiableMap(Map m)                        Returns inmutable view               [qa]
-  Set          Collections.unmodifiableSet(Set s)                        Returns inmutable view               [qa]
-  SortedMap    Collections.unmodifiableSortedMap(SortedMap m)            Returns inmutable view               [qa]
-  SortedSet    Collections.unmodifiableSortedSet(SortedSet s)            Returns inmutable view               [qa]
+  | Collections.EMPTY_SET  ( == Collections.emptySet()         ) See also Collections.singleton(T o)
+  | Collections.EMPTY_LIST ( == Collections.emptyList()        ) See also Collections.singletonList(T o)
+  | Collections.EMPTY_MAP  ( == Collections.emptyMap()         ) See also Collections.singletonMap(K key, V value)
+  |                             Collections.emptyEnumeration()
+  |                             Collections.emptyIterator()
+  |                             Collections.emptyListIterator()
+  |
+  | boolean      Collections.addAll(Collection c, T... elements)           Adds all elements to collection 'c'
+  | Queue        Collections.asLifoQueue(Deque deque)                      deque to Last-In/First-Out "LIFO" Queue view
+  | int          Collections.binarySearch(List list, T key)                Searches key in list using binary search.
+  | int          Collections.binarySearch(List list, T key, Comparator c)  Searches key in list using binary search + comparator.
+  |
+  | Collection   Collections.checkedCollection(Collection c, Class type)   Returns dynamic&typesafe view of input collection.
+  | List         Collections.checkedList(List list, Class type)
+  | Map          Collections.checkedMap
+  |                          (Map m, Class keyType, Class valueType)
+  | Set          Collections.checkedSet(Set s, Class type)
+  | SortedMap    Collections.checkedSortedMap
+  |                          (SortedMap m, Class keyType, Class valueType)
+  |
+  | SortedSet    Collections.checkedSortedSet(SortedSet s, Class type)
+  | void         Collections.copy(List dest, List src)                     Copies src-list elements to dest-list
+  | boolean      Collections.disjoint(Collection c1, Collection c2)        true if c1/c2 have no elements in common.
+  |
+  | Enumeration  Collections.enumeration(Collection c)                     Returns an enumeration over the specified collection.
+  |
+  | void         Collections.fill(List list, T obj)                        Replaces all elements in list with obj.
+  | int          Collections.frequency(Collection c, Object o)             Returns number of el. in c equals to o.
+  | int          Collections.indexOfSubList(List list, List sublist)       -1 if not found.
+  | int          Collections.lastIndexOfSubList(List list, List sublist)   -1 if not found.
+  | ArrayList    Collections.list(Enumeration e)                           Enum to array list (in order as returned by input enum).
+  | T            Collections.max/min(Collection coll (, Comparator comp))  max/min element of collection, according to comparator
+  |                                                                        (Def to natural ordering)
+  | List         Collections.nCopies(int nCopies, T inputObject)
+  | Set          Collections.newSetFromMap(Map map)
+  | boolean      Collections.replaceAll(List list, T oldVal, T newVal)     NOTE: Replaces in list
+  | void         Collections.reverse(List list)
+  | Comparator   Collections.reverseOrder()                                Return <<Comparable>> Comparator imposing
+  |                                                                        reverse natural order.
+  | Comparator   Collections.reverseOrder(Comparator cmp)                  Returns               comparator imposing
+  |                                                                        reverse ordering of input comp.
+  | void         Collections.rotate(List list, int distance)               Rotates elements in list.
+  | void         Collections.shuffle(List list (, Random rnd) )            Permutes elements using source of randomness 
+  |                                                                        (or default source of randomness).
+  | void         Collections.sort(List list (, Comparator c))              Sorts in comparator (def. to natural) order.
+  | void         Collections.swap(List list, int pos1, int pos2)           Swap elemnts in pos 1 and 2.
+  |                                                                        [[qa.thread-safe]]<!-- { --> 
+  | Collection   Collections.synchronizedCollection(Collection c)          Returns thread-safe collection  
+  | List         Collections.synchronizedList(List list)                   Returns thread-safe list       
+  | Map          Collections.synchronizedMap(Map m)                        Returns thread-safe map        
+  | Set          Collections.synchronizedSet(Set s)                        Returns thread-safe set        
+  | SortedMap    Collections.synchronizedSortedMap(SortedMap m)            Returns thread-safe sorted map 
+  | SortedSet    Collections.synchronizedSortedSet(SortedSet s)            Returns thread-safe sorted set 
+  |                                                                        [[qa.thread-safe]] <!-- } -->
+  |                                                                        [[qa.inmutability.data_structures]] <!-- { --> 
+  | Collection   Collections.unmodifiableCollection(Collection c)          Returns inmutable view         
+  | List         Collections.unmodifiableList(List list)                   Returns inmutable view         
+  | Map          Collections.unmodifiableMap(Map m)                        Returns inmutable view         
+  | Set          Collections.unmodifiableSet(Set s)                        Returns inmutable view         
+  | SortedMap    Collections.unmodifiableSortedMap(SortedMap m)            Returns inmutable view         
+  | SortedSet    Collections.unmodifiableSortedSet(SortedSet s)            Returns inmutable view
+  |                                                                        [[qa.inmutability.data_structures]] <!-- } -->
   ```
 [[data_structures.collections}]]
 
-## Fastutil <http://fastutil.di.unimi.it/> [[{data_structures,performance.101,PM.backlog]]
-* Fast and compact type-specific collections for Java
-  Great default choice for collections of primitive types,
-  like int or long. Also handles big collections with more than 2
-  31 elements well.
-
-* [Eclipse Collections](https://www.eclipse.org/collections/)
+[[{data_structures.collections.eclipse]]
+## Eclipse Collections
+* <https://www.eclipse.org/collections/>
+* <https://github.com/eclipse/eclipse-collections>
   (Originated from Goldman Sachs [gs-collection](https://github.com/goldmansachs/gs-collections)
-  Features you want with the collections you need Previously known as
-  gs-collections, this library includes almost any collection you might
-  need: primitive type collections, multimaps, bidirectional maps and
-  so on.
-[[}]]
+* This library includes almost any collection  needed:
+  primitive type collections, multimaps, bidirectional maps, ...
+* Rich, functional and fluent API.  
+* Preferred to standard Collections in JDK when memory efficiency is a "MUST".  
+  REF: <https://medium.com/oracledevs/unifiedset-the-memory-saver-25b830745959>
+  [[{performance.memory}]]
+[[data_structures.collections.eclipse}]]
 
 [[{data_structures.iterator,data_structures.101,doc_has.comparative]]
 ## `<<Enumeration>>`(1.0) vs `<<Iterator>>`(1.7)
@@ -369,11 +396,11 @@ Map<String, Double> map01 = new HashMap<>();
 * Iterator should be preferred over Enumeration taking the place of
   Enumeration in collections framework
   ```
-  Enumeration     │ Iterator
-  ────────────────┼────────────
-  hasMoreElement()│ hasNext()
-  nextElement()   │ next()
-                  │ remove() ← optional: not implemented in many classes
+  | Enumeration     │ Iterator
+  | ────────────────┼────────────
+  | hasMoreElement()│ hasNext()
+  | nextElement()   │ next()
+  |                 │ remove() ← optional: not implemented in many classes
   ```
 [[data_structures.iterator}]]
 [[data_structures.101}]]

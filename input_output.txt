@@ -1078,3 +1078,46 @@ AsynchronousFileChannel fileChannel =
   library, which complies with the most modern URI standards, including 
   RFC 3986.
 [[qa.IO}]]
+
+## jLine GNU/readline alike [[{qa.UX,java_lang.repl,java_lang.101,PM.low_code,PM.TODO]]
+* <https://github.com/jline/jline3>
+- Builtin support for console variables, scripts, custom pipes, widgets and object printing.
+- Autosuggestions.
+- Language REPL Support.
+[[}]]
+
+## PicoCli UX Cli apps [[{qa.UX,]]
+<https://github.com/remkop/picocli>
+<https://picocli.info/>
+  Picocli is a one-file framework for creating Java user-friendly
+ (autocompletion, subcommands, ...)  command line  , GraalVM-enabled
+  applications with almost zero code. It supports a variety of command
+  line syntax styles including POSIX, GNU, MS-DOS and more. It
+  generates highly customizable usage help messages that use ANSI
+  colors and styles to contrast important elements and reduce the
+  cognitive load on the user.
+  - 1 source file so apps can include as source and avoid adding a dependency!!!
+[[}]]
+
+### Clig.Dev: Command Line Interface Guidelines [[{qa.UX]]
+<https://clig.dev/>
+* An open-source guide to help you write better command-line
+  programs, taking traditional UNIX principles and updating them for
+  the modern day.
+  · ...
+  · Use a command-line argument parsing library where you can. Either
+     your language’s built-in one, or a good third-party one. They will
+     normally handle arguments, flag parsing, help text, and even spelling
+     suggestions in a sensible way.
+
+* Note: Alternatives in other languajes:
+  · Go: Cobra, cli
+  · Node: oclif
+  · Python: Click, Typer
+  · Ruby: TTY
+  · Rust: clap, structopt
+  · PHP: console
+[[}]]
+
+
+

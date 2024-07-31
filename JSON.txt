@@ -161,11 +161,41 @@
     obtain the type.
 [[persistence.JSON}]]
 
+## Jackson Summary
 
+* json file to JsonNode:
+  ```
+  import com.fasterxml.jackson.databind.JsonNode;
+  import com.fasterxml.jackson.databind.ObjectMapper;
+  ...
+  ObjectMapper objectMapper = new ObjectMapper();
+  JsonNode jsonNode = objectMapper.readTree(new FileReader("computer.json"));
+  System.out.println(jsonNode.get("hardware").get("cpu"));
+  ```
+* JsonNode to String:
+  ```
+  String s = jsonNode.toString();
+  ```
+* JsonNode to Class instance :
+  ```
+  TODO: 
+  ```
+
+## GSON
+
+* JSON library By Google.
+* Gson alsoallows to map objects we don't have the source code for.
+* Simple API:
+  ```
+  toJson()
+  fromJson()
+  ```
 
 ## jsoniter (Much) faster JSON iterator en/de-coder [[{io.json.jsoniter]]
 * <https://github.com/json-iterator>
 * available in Java and Go.
 * Up to 3x times faster than jackson/gson/fastjson [[{doc_has.comparative}]]
 [[io.json.jsoniter}]]
+
+
 
