@@ -5,9 +5,9 @@
 - Youtube Concurrency Classes:
 <https://www.youtube.com/watch?v=8yD0hHAz3cs&list=PLw8RQJQ8K1ySGcb3ZP66peK4Za0LKf728&index=4> [  ES lang ]
 [[}]]
-[[{concurrency.101,scalability.101,01_PM.low_code]]
+[[{concurrency.101,scalability.101,PM.low_code]]
 
-## 1uSec Thread sync  [[{101]]
+## 1uSec Thread sync  [[{java_lang.101]]
 REF:
 <https://software.rajivprab.com/2018/04/29/myths-programmers-believe-about-cpu-caches/>
 """
@@ -42,7 +42,7 @@ See also: fast Inter-thread communication:
   queues, messages, events or any other concurrency specific words or
   tools.
   Just get POJOs communicating behind plain old Java interfaces.
-[[101}]]
+[[java_lang.101}]]
 
 ## Concurrency Basics [[{concurrency.101]]
 - Concurrency problems arise from the desire to use CPU resources more efficiently. Non concurrent

@@ -1,5 +1,5 @@
-[[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
-# JVM Troubleshooting and Monitoring [[{monitoring.101,jvm,monitoring.jvm,devops.containarization,01_PM.TODO]]
+[[{monitoring.101,jvm,monitoring.jvm,devops.containarization,PM.TODO]]
+# JVM Troubleshooting and Monitoring [[{monitoring.101,jvm,monitoring.jvm,devops.containarization,PM.TODO]]
 
 [[{troubleshooting.debugging.101]]
 ## Dump Exception stack trace 
@@ -62,7 +62,7 @@
    ```
 [[}]]
 
-[[{troubleshooting.debugging.jcmd,101,monitoring.101,]]
+[[{troubleshooting.debugging.jcmd,monitoring.101]]
 [[java_lang.profiling,monitoring.flight_recorder]]
 # `jcmd`: Diagnose running JVM
 
@@ -266,7 +266,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
   * JFR Writer is introduced as a new core module.
 [[monitoring.flight_recorder}]]
 
-# CRaSH shell [[{monitoring.chrash,monitoring.101,troubleshooting.debugging,01_PM.low_code,01_PM.TODO]]
+# CRaSH shell [[{monitoring.chrash,monitoring.101,troubleshooting.debugging,PM.low_code,PM.TODO]]
 * Features:
   * Connect to any JVM running CRaSH through SSH, telnet or web.
   * Monitor and/or use virtual machine resources:
@@ -276,7 +276,7 @@ NOTE: `jcmd` must run on same machine+user+group on which the JVM is running.
   * Officially embedded as Spring Boot remote shell.
 [[monitoring.chrash}]]
 
-# Eclipse Memory Analizer [[{java_lang.profiling.eclipse_mat,01_PM.TODO]]
+# Eclipse Memory Analizer [[{java_lang.profiling.eclipse_mat,PM.TODO]]
 <https://www.eclipse.org/mat/>
 """he Eclipse Memory Analyzer is a fast and feature-rich Java heap
   analyzer that helps you find memory leaks and reduce memory consumption.
@@ -295,7 +295,7 @@ It can provide reports and warnings similar to:
   java.util.LinkedList$Entry loaded by 'system class loader'
 [[java_lang.profiling.eclipse_mat}]]
 
-# SystemTap+Java [[{jvm.dynamic_instrumentation.systemtap,java_lang.profiling,01_PM.TODO]]
+# SystemTap+Java [[{jvm.dynamic_instrumentation.systemtap,java_lang.profiling,PM.TODO]]
 * <https://laurent-leturgez.com/2017/12/22/profiling-java-application-with-systemtap/>
 
 ## PRESETUP
@@ -385,7 +385,7 @@ profiling loop_and_wait:
 ```
 [[jvm.dynamic_instrumentation.systemtap}]]
 
-# Fast Thread [[{troubleshooting.debugging,monitoring.threads,01_PM.radar]]
+# Fast Thread [[{troubleshooting.debugging,monitoring.threads,PM.radar]]
 * <https://fastthread.io/>
 * Features:
   * Java Thread Dump Analyzer
@@ -396,7 +396,7 @@ profiling loop_and_wait:
   * Free Service
 [[}]]
 
-[[{jvm.memory,jvm.gc,troubleshooting.debugging,qa,01_PM.low_code,01_PM.TODO]]
+[[{jvm.memory,jvm.gc,troubleshooting.debugging,qa,PM.low_code,PM.TODO]]
 # gceasy.io
 <https://gceasy.io/>
 * Features:
@@ -412,7 +412,7 @@ profiling loop_and_wait:
   * Made by the developers, for the developers
 [[}]]
 
-[[{java_lang.profiling,concurrency.lock,monitoring.distributed,01_PM.TODO]]
+[[{java_lang.profiling,concurrency.lock,monitoring.distributed,PM.TODO]]
 # libperfagent (perf agent)
 Extracted from:
   "Apache Spark @Scale: A  production use case"
@@ -429,7 +429,7 @@ Extracted from:
 >    internal metrics collection framework.
 [[}]]
 
-[[{architecture.distributed,monitoring.distributed,java_lang.profiling,01_PM.TODO]]
+[[{architecture.distributed,monitoring.distributed,java_lang.profiling,PM.TODO]]
 # Uber JVM Profiler: Tracing at scale
 * <https://eng.uber.com/jvm-profiler/>
 
@@ -518,7 +518,7 @@ Flame Graph Interpretation:
 * Another way is top down, as the top edge shows the function running on CPU,
   and beneath it is its ancestry.
 
-* Focus on the widest functions, which were present in the profile the most. [[{DOC_HAS.KEY-POINT}]] 
+* Focus on the widest functions, which were present in the profile the most. [[{doc_has.keypoint}]] 
 
 * There have historically been two types of profilers used on Java:  [[doc_has.comparative]]
   * System profilers: eg: Linux perf_events, profiling system code paths, including libjvm
@@ -610,7 +610,7 @@ NOTE: symbols can change slightly during the profile session (around 30-60 secs)
   perf_events separately).
 [[java_lang.profiling.flamegraph}]]
 
-# Debugger Architecture [[{troubleshooting.debugging,01_PM.TODO]]
+# Debugger Architecture [[{troubleshooting.debugging,PM.TODO]]
 https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/jdwp-spec.html
 https://en.wikipedia.org/wiki/Java_Platform_Debugger_Architecture
 https://www.baeldung.com/spring-debugging

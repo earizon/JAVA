@@ -1,6 +1,6 @@
 # JAVA SQL persistence 
 
-## Flyway: SQL schema versioning [[{persistence.sql,qa.data,01_PM.low_code,spring.*,persistence.jpa,01_PM.TODO]]
+## Flyway: SQL schema versioning [[{persistence.sql,qa.data,PM.low_code,spring.*,persistence.jpa,PM.TODO]]
 * tool providing version control for database (SQL) schemas
   and automated schema (tables, columns, sequences), data, views, procedures
   and packages evolution.
@@ -83,7 +83,7 @@
 
 [[persistence.sql.querydsl}]]
 
-## Jooq: SQL made simple [[{persistence.sql,vertx.*,architecture.async.reactive,01_PM.low_code,qa.data,01_PM.TODO]]
+## Jooq: SQL made simple [[{persistence.sql,vertx.*,architecture.async.reactive,PM.low_code,qa.data,PM.TODO]]
 * <https://www.jooq.org/>
 * WARN: Free for OOSS databases, requires licence for Oracle and maybe others.
 * WARN: ¿Deprecated in favor of QueryDSL?
@@ -136,7 +136,7 @@ Summary from <https://www.infoq.com/articles/SQL-relevance-NoSQL/>
   than JDO, which solves very similar problems.
 [[persistence.sql.mybatis}]]
 
-[[{persistence.sql.jpa,01_PM.TODO]]
+[[{persistence.sql.jpa,PM.TODO]]
 ## Hibernate/JPA Summary 
 
 * <https://quarkus.io/guides/hibernate-orm-panache-guide>
@@ -148,7 +148,7 @@ Summary from <https://www.infoq.com/articles/SQL-relevance-NoSQL/>
   - <https://thorben-janssen.com/hibernate-exceptions/>
 [[persistence.sql.jpa}]]
 
-[[{persistence.sql.speedment,01_PM.low_code,qa.data,java_lang.functional]]
+[[{persistence.sql.speedment,PM.low_code,qa.data,java_lang.functional]]
 ## Speedment: SQL as Streams
 <https://github.com/speedment/speedment>
 - Stream ORM toolkit and runtime.
@@ -231,7 +231,7 @@ Summary from <https://www.infoq.com/articles/SQL-relevance-NoSQL/>
 * TJDO Project's last commit is from 2008.
 [[}]]
 
-### Reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,01_PM.low_code,01_PM.TODO]]
+### Reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,PM.low_code,PM.TODO]]
 * <https://github.com/goldmansachs/reladomo>
 Enterprise grade ORM framework featuring:
 - Strongly typed   compile-time  checked query language
@@ -240,7 +240,7 @@ Enterprise grade ORM framework featuring:
 - Full support for unit-testable code
 [[}]]
 
-### c3p0 (abandoned) [[{persistence.sql,qa.*,scalability.persistence,01_PM.TODO]]
+### c3p0 (abandoned) [[{persistence.sql,qa.*,scalability.persistence,PM.TODO]]
 Ver HikariCP como alternativa  <https://github.com/brettwooldridge/HikariCP>
 <https://www.mchange.com/projects/c3p0/#what_is>
 * c3p0: easy-to-use library for making traditional JDBC drivers
@@ -281,13 +281,13 @@ https://www.baeldung.com/hikaricp
 
 # JAVA Persistence "Others"
 
-[[{scalability.persistence.compression,persistence.fs,01_PM.TODO]]
+[[{scalability.persistence.compression,persistence.fs,PM.TODO]]
 ## Snappy Fast de/compressor
 * <https://github.com/xerial/snappy-java>
 Java port of the snappy <http://code.google.com/p/snappy/>
 [[scalability.persistence.compression}]]
 
-## JCache [[{scalability.cache,01_PM.TODO]]
+## JCache [[{scalability.cache,PM.TODO]]
 - Map-Like API optimized for caching.
 - 1.0 drawbacks:
   - No async operations.

@@ -1,6 +1,6 @@
-[[{DEVOPS.MAVEN]]
+[[{devops.maven]]
 
-# DevOps: Maven Summary [[{101,_PM.WiP]]
+# DevOps: Maven Summary [[{devops.maven.101,PM.WiP]]
 
 * External Links
   * PUBLIC REPOSITORY:      <https://mvnrepository.com/>
@@ -347,7 +347,7 @@ Utilities to clean, organize, and restructure Maven POMs.
   </dependencyManagement>
   ```
 
-* [[{qa.best_practices}]] Try to avoid using parent inherited 
+* [[{qa.best_patterns}]] Try to avoid using parent inherited 
 properties in children, unless we know they are "inmutable" or really 
 shared.  Otherwise modifying the parent can break children.
 
@@ -516,7 +516,7 @@ But in the end, you choose what's best for your project/environment.
    ```
 [[}]]
 
-## POM BEST PRACTICES  [[{qa.best_practices]]
+## POM BEST PRACTICES  [[{qa.best_patterns]]
 
 * REF: <http://geertschuring.wordpress.com/2011/02/23/maven-best-practices/>
 
@@ -587,7 +587,7 @@ But in the end, you choose what's best for your project/environment.
 
 - TODO:
 <http://www.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/>
-[[qa.best_practices}]]
+[[qa.best_patterns}]]
 
 ## Package Dependency Management  [[{qa.101]]
   ```
@@ -766,7 +766,7 @@ But in the end, you choose what's best for your project/environment.
   ```
 [[}]]
 
-## OWASP (maven) Plugin [[{security.101.owasp,01_PM.TODO]]
+## OWASP (maven) Plugin [[{security.101.owasp,PM.TODO]]
 <https://maven.apache.org/plugins/>
 * OWASP Dependency-Check identifies project dependencies and checks
   if there are any known, publicly disclosed, vulnerabilities.
@@ -796,4 +796,4 @@ But in the end, you choose what's best for your project/environment.
   * help:evaluate          evaluates Maven expressions. [[]]
   * help:system            displays a of platform details (system properties, environment variables.
 
-[[DEVOPS.MAVEN}]]
+[[devops.maven}]]

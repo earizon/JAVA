@@ -174,7 +174,7 @@
   |     .collect( Collectors.joining(", ") );
   ```
 
-## String vs StringBuffer vs StringBuilder [[{101]]
+## String vs StringBuffer vs StringBuilder [[{java_lang.101]]
 
 * String is inmutable. Safests (and slowest alternative).
 * StringBuffer is much faster when concatenating strings at runtime.
@@ -193,7 +193,7 @@
   ```
 * For complex string manipulation `String` must be seen as just an inmutable
   view of StringBuilder and StringBuffer instances.
-[[101}]]
+[[java_lang.101}]]
 
 ### forcing String pool reuse [[{jvm.memory,performance.memory,scalability.jvm,java_lang.strings]]
 
@@ -655,7 +655,7 @@
 ```
 [[QA.inmutability}]]
 
-[[{java_lang.records,java_lang.data_structure,QA.101]]
+[[{java_lang.records,QA.101]]
 
 ## RECORDS!!! v15+
 

@@ -24,7 +24,7 @@
   ```
 [[}]]
 
-## Sub-processes [[{concurrency.101,PM.TODO,PM.low_cost]]
+## Sub-processes [[{concurrency.101,PM.TODO,PM.low_code]]
 * Concurrency can be greately simplified by using OS processes
   (vs in-process threads).  This automatically avoid many/most of the problems
   with thread concurrency.
@@ -97,7 +97,7 @@ String switchExpressionPreview13(Direction way) {
 [[concurrency.101}]]
 
 
-## TODO: Java 101 [[{PM.TODO.101]]
+## TODO: Java 101 [[{PM.TODO]]
   <https://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/>
   <https://www.programcreek.com/2015/12/top-10-java-utility-classes/> 
   <https://www.programcreek.com/2013/09/top-9-questions-for-java-map/>
@@ -107,7 +107,7 @@ String switchExpressionPreview13(Direction way) {
   <https://www.programcreek.com/2013/09/top-10-methods-for-java-arrays/>
   <https://www.programcreek.com/2013/09/top-10-websites-for-advanced-level-java-developers/>
   <https://www.programcreek.com/2013/08/top-books-for-advanced-level-java-developers/>
-[[PM.TODO.101}]]
+[[PM.TODO}]]
 
 
 ## https://github.com/topics/snippets-collection
@@ -155,7 +155,7 @@ $   $ clean install -P myProfile -DskipTests=true            [[}]]
   Optional Evolution
   https://dzone.com/articles/java-optional-api-evolution?edition=699391
 
-[[{01_PM.TODO]]
+[[{PM.TODO]]
 ## Secomp JVM Integration
 <https://docs.sonarqube.org/latest/requirements/requirements/>
 https://en.wikipedia.org/wiki/Seccomp
@@ -378,10 +378,10 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
   such as Resiliency4J for resiliency, Jaeger for tracing, or
   Micrometer for monitoring.
 
-## JAVA JDK version, JVM version, javac -source/-target/-release/ ... related info: [[{java,01_PM.TODO}]]
+## JAVA JDK version, JVM version, javac -source/-target/-release/ ... related info: [[{PM.TODO}]]
   https://stackoverflow.com/questions/43102787/what-is-the-release-flag-in-the-java-9-compiler
 
-## JVM Journey to Cloud-native [[{cloud.101,01_PM.TODO]]
+## JVM Journey to Cloud-native [[{cloud.101,PM.TODO]]
 (by BellSoft)
 ```
 ## JDK 9 : Compact Strings, HTTP/2 client.
@@ -395,14 +395,14 @@ https://crowdsec.net/blog/detect-block-log4j-exploitation-attempts/
 ```
 [[}]]
 
-## JPA Summary [[{01_PM.TODO]]
+## JPA Summary [[{PM.TODO]]
 ## Java: Migrating from JPA 2.x to 3.0
   https://thorben-janssen.com/migrating-jpa-2-x-to-3-0/?ck_subscriber_id=935368299
 ## https://www.javacodegeeks.com/2015/02/jpa-tutorial.html
 [[}]]
 
 
-## JDeps [[{devops.101,java_lang.debugging,01_PM.TODO]]
+## JDeps [[{devops.101,java_lang.debugging,PM.TODO]]
 ## JDeps: dependency analysis tool for Java bytecode (class files and JARs).
 <https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/>
 
@@ -429,7 +429,7 @@ $ $ jdeps sh-2.6.3.jar       ←  -verbose:class will list dependencies between 
 
 
 
-## Quarkus (GraalVM) Framework [[{jvm.graalvm,devops.k8s,scalability.jvm,01_PM.TODO]]
+## Quarkus (GraalVM) Framework [[{jvm.graalvm,devops.k8s,scalability.jvm,PM.TODO]]
 <https://quarkus.io/guides/>
 <https://quarkus.io/guides/kogito-guide>
 <https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle>
@@ -463,7 +463,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   }
 [[}]]
 
-## AsyncAPI.org [[{architecture.async.reactive.101,standards.openapi,qa.*,01_PM.TODO]]
+## AsyncAPI.org [[{architecture.async.reactive.101,standards.openapi,qa.*,PM.TODO]]
 <https://www.asyncapi.org/>
 - Building the future of event-driven architectures.
 - Open source tools to easily build and maintain your event-driven architecture.
@@ -471,7 +471,7 @@ Panache focuses on making your entities trivial and fun to write in Quarkus.
   asynchronous APIs.
 [[}]]
 
-## Sign/Verify JARs [[{devops,security.cryptography,01_PM.TODO]]
+## Sign/Verify JARs [[{devops,security.cryptography,PM.TODO]]
 <https://docs.oracle.com/javase/9/tools/jarsigner.htm>
 
 $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to set sign. algorithm
@@ -479,13 +479,13 @@ $ $ jarsigner file01.jar $keystore_alias   ← Sign Jar. use flag -sigalg ... to
 $ $ jarsigner -verify file01.jar           ← Verify jar
 [[}]]
 
-## Guava VisibleForTesting[qa] [[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
-[[{data_structures.*,concurrency.*,qa.testing,01_PM.TODO]]
+## Guava VisibleForTesting[qa] [[{data_structures.*,concurrency.*,qa.testing,PM.TODO]]
+[[{data_structures.*,concurrency.*,qa.testing,PM.TODO]]
 REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-method-public-only-for-test-classes>
 <https://guava.dev/releases/19.0/api/docs/com/google/common/annotations/VisibleForTesting.html>
 [[}]]
 
-## Javalin: Kiss Kotlin/Java web framework [[{01_PM.radar]]
+## Javalin: Kiss Kotlin/Java web framework [[{PM.radar]]
 <https://javalin.io>
 - Inspired by Javascript KOA.js framework
 
@@ -530,7 +530,7 @@ REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-m
 [[}]]
 
 
-## JAAS [[{security.aaa,01_PM.TODO]]
+## JAAS [[{security.aaa,PM.TODO]]
 <https://en.wikipedia.org/wiki/Java_Authentication_and_Authorization_Service>
 - In UNIX, by default we authenticate against /etc/passwd, but the
   (P)lugable (A)uthentication (M)odule (PAM), allows to check against other sources.
@@ -538,7 +538,7 @@ REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-m
   file/ddbb/LDAP/... backends.
 [[}]]
 
-## Eclipse Microprofile [[{standards.jee.microprofile,01_PM.TODO]]
+## Eclipse Microprofile [[{standards.jee.microprofile,PM.TODO]]
 <https://dzone.com/articles/microprofile-5-things-you-need-to-know>
 
 - launched at JavaOne 2016 to address the shortcomings in the Enterprise Java microservices space.
@@ -591,7 +591,7 @@ REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-m
       that can be leveraged system-wide.
 [[}]]
 
-## JavaPoet [[{java_lang,01_PM.TODO]]
+## JavaPoet [[{java_lang,PM.TODO]]
 <https://github.com/square/javapoet>
 - Library/API for generating .java source files.
 - Useful for things like:
@@ -601,7 +601,7 @@ REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-m
     keeping a single source of truth for the metadata .
 [[}]]
 
-## R2DBC API [[{architecture.async.reactive,persistence.sql,01_PM.TODO]]
+## R2DBC API [[{architecture.async.reactive,persistence.sql,PM.TODO]]
 <https://www.infoq.com/news/2018/10/springone-r2dbc>
 ## Project initiated by Pivotal to provide an async/reactive alternative to JDBC.
 
@@ -633,7 +633,7 @@ REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-m
         max-size: 10                             those used for JDBC.
 [[}]]
 
-## Nailgun [[{devops.containarization,scalability.jvm,01_PM.TODO]]
+## Nailgun [[{devops.containarization,scalability.jvm,PM.TODO]]
 - Nailgun is a client, protocol, and server for running Java programs
   from the command line without incurring the JVM startup overhead.
 
@@ -643,11 +643,11 @@ REF: <https://stackoverflow.com/questions/6913325/annotation-to-make-a-private-m
 <https://github.com/facebook/nailgun>
 [[}]]
 
-## 9 Profiling tools [[{java_lang.profiling,01_PM.TODO]]
+## 9 Profiling tools [[{java_lang.profiling,PM.TODO]]
 <https://blog.idrsolutions.com/2014/06/java-performance-tuning-tools/>
 [[}]]
 
-## A Year with Java 11 in Production!  [[{01_PM.TODO]]
+## A Year with Java 11 in Production!  [[{PM.TODO]]
 <https://www.infoq.com/presentations/java-11-production-story/?itm_source=www.oficina24x7.com>
 Andrzej Grzesik talks about Revolut’s experience in running Java 11
 in production for over a year. He talks about the doubts they had,
@@ -656,7 +656,7 @@ He discusses tools, alternative JVM languages, and some 3rd party
 products.
 [[}]]
 
-## Aviam:Light Weight JVM [[{jvm,01_PM.TODO]]
+## Aviam:Light Weight JVM [[{jvm,PM.TODO]]
 https://readytalk.github.io/avian/  ("Embedded java")
 Avian is a lightweight virtual machine and class library designed to
 provide a useful subset of Java’s features, suitable for building
@@ -683,11 +683,11 @@ From Mike's blog: https://blog.plan99.net/kotlin-native-310ffac94af2
   | collector and a JIT compiler.
 [[}]]
 
-## R2DBC [[{persistence.sql,architecture.async.reactive,01_PM.radar]]
+## R2DBC [[{persistence.sql,architecture.async.reactive,PM.radar]]
 https://www.infoq.com/news/2018/10/springone-r2dbc
   Experimental Reactive Relational Database Connectivity Driver, R2DBC, Announced at SpringOne
 [[}]]
-## jEnv [[{devops,01_PM.TODO]]
+## jEnv [[{devops,PM.TODO]]
 <http://www.jenv.be/>
 
  command line tool to help you forget how to set the JAVA_HOME environment variable:
@@ -711,7 +711,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
   $ jenv shell oracle64-1.6.0.39 Configure shell instance version
 [[}]]
 
-## SmallRye Mutiny [[{architecture.async.reactive.rxjava,doc_has.comparative,qa,01_PM.TODO]]
+## SmallRye Mutiny [[{architecture.async.reactive.rxjava,doc_has.comparative,qa,PM.TODO]]
 <https://smallrye.io/smallrye-mutiny/>
 
 ## SmallRye Mutiny is a reactive programming library. Wait? Another one?  Yes!
@@ -728,7 +728,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 
 
 
-## Netty [[{architecture.async.reactive.io.network,doc_has.comparative,01_PM.radar,01_PM.backlog]]
+## Netty [[{architecture.async.reactive.io.network,doc_has.comparative,PM.radar,PM.backlog]]
 - One Framework to rule them all by Norman Maurer
 <https://www.youtube.com/watch?v=DKJ0w30M0vg>
 ──────────────────────────────────────────────
@@ -753,7 +753,7 @@ https://www.infoq.com/news/2018/10/springone-r2dbc
 [[}]]
 
 
-## SwarmCache [[{scalability.distributed,scalability.cache,persistence.jpa,01_PM.low_code,01_PM.TODO]]
+## SwarmCache [[{scalability.distributed,scalability.cache,persistence.jpa,PM.low_code,PM.TODO]]
 SwarmCache is a simple but effective distributed cache. It uses IP
 multicast to efficiently communicate with any number of hosts on a
 LAN. It is specifically designed for use by clustered,
@@ -767,20 +767,20 @@ Wrappers have been written that allow SwarmCache to be used with the
 Hibernate and JPOX persistence engines.
 [[}]]
 
-## bytes java [[{01_PM.backlog]]
+## bytes java [[{PM.backlog]]
 <https://github.com/patrickfav/bytes-java>
 - utility library that makes it easy to create, parse, transform,
   validate and convert byte arrays in Java
 [[}]]
 
-## 3 NIO ways to read files [[{architecture.async.reactive.io,persistence.fs,01_PM.TODO]]
+## 3 NIO ways to read files [[{architecture.async.reactive.io,persistence.fs,PM.TODO]]
 <https://howtodoinjava.com/java7/nio/3-ways-to-read-files-using-java-nio/>
 - read small file using ByteBuffer and RandomAccessFile
 - FileChannel and ByteBuffer to read large files
 - Example 3: Reading a file using memory-mapped files in Java
 [[}]]
 
-## JLink [[{devops.containarization,01_PM.TODO]]
+## JLink [[{devops.containarization,PM.TODO]]
 <https://docs.oracle.com/javase/9/tools/jlink.htm>
 - You can use the jlink tool to assemble and optimize a set of modules
   and their dependencies into a custom runtime image
@@ -816,7 +816,7 @@ FROM https://github.com/google/guice/wiki/JSR330
   has no analog to Guice's modules.
 [[}]]
 
-## Crypto.API(JCA) [{security.cryptography,security.secret_mng,security.aaa,01_PM.TODO]]
+## Crypto.API(JCA) [{security.cryptography,security.secret_mng,security.aaa,PM.TODO]]
   WARN : Prefer a high level cryptographic API like Google Tink
          when possible.
 
@@ -833,7 +833,7 @@ FROM https://github.com/google/guice/wiki/JSR330
   About PCKS#11: <http:./../General/cryptography_map.html?topics=pkcs>
 [[}]]
 
-## Loading properties [[{java_lang.configuration,01_PM.low_code,01_PM.TODO]]
+## Loading properties [[{java_lang.configuration,PM.low_code,PM.TODO]]
 NOTE: Probably is better to use ENV.VARs to simplify compatibility
       with container deployments.
 
@@ -848,7 +848,7 @@ is.close();
   https://www.tutorialspoint.com/how-to-read-write-data-from-to-properties-file-in-java
 [[}]]
 
-## XML Stream parsing [[{persistence.xml,01_PM.TODO]]
+## XML Stream parsing [[{persistence.xml,PM.TODO]]
 [TODO]: Write summary of best XML libraries.
 <https://github.com/FasterXML/aalto-xml>
 <http://www.studytrails.com/java/xml/aalto/java-xml-aalto-stax-async-basic/>
@@ -858,12 +858,12 @@ is.close();
 <https://gist.github.com/shvalb/38cc8f454ee84a2032d2b341a9b8aeae>
 [[}]]
 
-## CGLIB library [[{JVM.101,01_PM.TODO]]
+## CGLIB library [[{JVM.101,PM.TODO]]
 - CGLIB library: Used for bytecode generation/method injection (Used by
   Spring Framework for example).
 [[}]]
 
-## Spring Reactor/Spring-Async [[{architecture.async.reactive.rxjava,doc_has.comparative,01_PM.TODO]]
+## Spring Reactor/Spring-Async [[{architecture.async.reactive.rxjava,doc_has.comparative,PM.TODO]]
 <https://ordina-jworks.github.io/reactive/2016/12/12/Reactive-Programming-Spring-Reactor.html>
 <https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm>
 <https://spring.io/guides/gs/async-method/>
@@ -876,7 +876,7 @@ is.close();
 
 [[}]]
 
-## Example JVM config.  [[{jvm,scalability.jvm,01_PM.TODO]]
+## Example JVM config.  [[{jvm,scalability.jvm,PM.TODO]]
 Server version:        Apache Tomcat/8.x
 Server built:          unknown
 Server number:         8.0.x
@@ -926,14 +926,14 @@ Command line argument: -Dcatalina.home=...
 Command line argument: -Djava.io.tmpdir=.../temp
 [[}]]
 
-## mvn: Default Wrapper in 3.7 [[{DevOps.maven,01_PM.TODO]]
+## mvn: Default Wrapper in 3.7 [[{DevOps.maven,PM.TODO]]
 https://www.infoq.com/news/2020/04/maven-wrapper/
 <hr/>
 ## Java on VC.Studio
 https://devblogs.microsoft.com/java/java-on-visual-studio-code-update-february-2020/?WT.mc_id=social-reddit-marouill
 [[}]]
 
-## JHSDB [[{java_lang.debugging,monitoring.forensic,01_PM.TODO]]
+## JHSDB [[{java_lang.debugging,monitoring.forensic,PM.TODO]]
 https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
 - You use the jhsdb tool to attach to a Java process or to a core dump
   from a crashed Java Virtual Machine (JVM).
@@ -952,11 +952,11 @@ https://docs.oracle.com/en/java/javase/12/tools/jhsdb.html
   etc.
 [[}]]
 
-## Async Servlets 3.0+: [[{architecture.async.reactive.servlets,standards.jee.servlets,01_PM.TODO]]
+## Async Servlets 3.0+: [[{architecture.async.reactive.servlets,standards.jee.servlets,PM.TODO]]
 https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processing-support-in-servlet-3-0.html
 [[}]]
 
-## Real-World Java 9 [[{architecture.async.reactive.101,java_lang.flow_api,java_lang.101,01_PM.TODO]]
+## Real-World Java 9 [[{architecture.async.reactive.101,java_lang.flow_api,java_lang.101,PM.TODO]]
 <https://www.infoq.com/presentations/java9-flow-stream-api/?utm_source=oficina24x7.com>
 
 ## Real-World Java 9:
@@ -1043,7 +1043,7 @@ https://www.infoworld.com/article/2077995/java-concurrency-asynchronous-processi
 [[}]]
 
 
-## Conclave [[{security.secret_mng,01_PM.TODO]]
+## Conclave [[{security.secret_mng,PM.TODO]]
 https://medium.com/corda/conclave-beta-3-graalvm-mail-more-5038bd6d50da
 Today we’re announcing a new beta release of Conclave, a platform
 that makes it easy to use secure hardware enclaves with Java. You can
@@ -1056,7 +1056,7 @@ use enclaves to:
 - Upgrade privacy on distributed ledger platforms like Corda.
 [[}]]
 
-## Checkpointing outside the JVM [[{scalability.JVM,DevOps,01_PM.TODO]] #[jvm_app_checkpoint]
+## Checkpointing outside the JVM [[{scalability.JVM,DevOps,PM.TODO]] #[jvm_app_checkpoint]
 <https://developers.redhat.com/blog/2020/10/15/checkpointing-java-from-outside-of-java/>
 When OpenJDK‘s Java virtual machine (JVM) runs a Java application,
 it loads a dozen or so classes before it starts the main class.
@@ -1082,7 +1082,7 @@ it loads a dozen or so classes before it starts the main class.
                                          $    -d -vvv -o restore.log
 [[}]]
 
-## Jrpip: Low code RMI [[{architecture.distributed,01_PM.low_code,01_PM.TODO]] #[jrpip]
+## Jrpip: Low code RMI [[{architecture.distributed,PM.low_code,PM.TODO]] #[jrpip]
   Let developers concentrate on logic vs network plumbing and TCP errors.
 - Jrpip mplements remote interface method invocation which allows different
   Java processes to interact with one another.
@@ -1177,7 +1177,7 @@ it loads a dozen or so classes before it starts the main class.
         SMTP username credential is 20-chars (letters and numbers)
 [[}]]
 
-## jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,01_PM.TODO]]
+## jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,PM.TODO]]
 <https://github.com/jerolba/jfleet>
 · JFleet is a Java library which persist in database large collections
   of Java POJOs as fast as possible, using the best available technique
@@ -1191,12 +1191,12 @@ it loads a dozen or so classes before it starts the main class.
   tables and columns, JFleet is not an ORM.
 [[}]]
 
-## JVM Anatomy [[{jvm.101,01_PM.TODO]]
+## JVM Anatomy [[{jvm.101,PM.TODO]]
 https://shipilev.net/jvm-anatomy-park/
 https://shipilev.net/jvm-anatomy-park/22-safepoint-polls/
 [[}]]
 
-## Java Class Library (JCL, rt.jar) [[{java_lang.101,01_PM.TODO]]
+## Java Class Library (JCL, rt.jar) [[{java_lang.101,PM.TODO]]
 rt.jar contains the Java Class Library (JCL)
 https://en.wikipedia.org/wiki/Java_Class_Library
 
@@ -1224,7 +1224,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
   several modules with specified dependencies.
 [[}]]
 
-## Java Threading resources [[{concurrency,01_PM.TODO]]
+## Java Threading resources [[{concurrency,PM.TODO]]
 <https://avaldes.com/?s=java+thread>
 
 - Java Thread, Concurrency and Multithreading Tutorial
@@ -1236,7 +1236,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 - Java Threads Wait, Notify and NotifyAll Example
 [[}]]
 
-## JIMFS [[{architecture.async.reactive.io,persistence.fs,01_PM.TODO]]
+## JIMFS [[{architecture.async.reactive.io,persistence.fs,PM.TODO]]
 <https://github.com/google/jimfs>
 - Jimfs supports almost all the APIs under java.nio.file:
   - Create/delete/move/Copy  files/dirs.
@@ -1263,7 +1263,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 
 [[}]]
 
-## Java Poet [[{01_PM.backlog]]
+## Java Poet [[{PM.backlog]]
 <https://github.com/square/javapoet>
 ## Java API for generating .java source files.
 ## useful for:
@@ -1279,7 +1279,7 @@ https://en.wikipedia.org/wiki/Java_Class_Library
 AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 [[}]]
 
-## Dekorate k8s annotations [[{devops.k8s,01_PM.backlog]]
+## Dekorate k8s annotations [[{devops.k8s,PM.backlog]]
 <https://developers.redhat.com/blog/2021/03/17/using-dekorate-to-generate-kubernetes-manifests-for-java-applications/>
 ## ex:
   JAVA ANOTATION INPUT
@@ -1303,7 +1303,7 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
 ## Integration with Jib to generate OCI images is also available.
 [[}]]
 
-## Yourkit profiler [[{java_lang.profiling,01_PM.radar]]
+## Yourkit profiler [[{java_lang.profiling,PM.radar]]
 <https://www.yourkit.com/java/profiler/features/>
 ## Yourkit: commercial (non OOSS) profiler with advanced features
 ## Tight integration with your IDE
@@ -1350,7 +1350,7 @@ AmadeusITGroup/HttpSessionReplacer: Store JEE Servlet HttpSessions in Redis
   Special offers for educational and scientific organizations.
 [[}]]
 
-## LMAX Disruptor: High Perf Inter-Thread Messaging Library [[{concurrency,01_PM.radar]]
+## LMAX Disruptor: High Perf Inter-Thread Messaging Library [[{concurrency,PM.radar]]
 <https://lmax-exchange.github.io/disruptor/>
 
 See also:
@@ -1362,7 +1362,7 @@ Interesting points about GC tunning.
 [[}]]
 
 ## Tribe: reliable multicast [[{java_lang.io.multicast,architecture.distributed,scalability.distributed]]
-                            [[doc_has.comparative,qa,01_PM.low_code,01_PM.radar]]
+                            [[doc_has.comparative,qa,PM.low_code,PM.radar]]
 REF: <http://tribe.ow2.org/>
 - Unlike JGroups, Tribe only targets reliable multicast
  (no probabilistic delivery) and is optimized for cluster
@@ -1379,7 +1379,7 @@ REF: <http://tribe.ow2.org/>
   cluster communications.
 [[}]]
 
-## OSV.io [[{scalability.unikernel,security,devops,01_PM.backlog]]
+## OSV.io [[{scalability.unikernel,security,devops,PM.backlog]]
 - <http://osv.io/>
   versatile modular unikernel designed to run unmodified Linux
   applications securely on micro-VMs in the cloud. Built from the ground up for
@@ -1392,7 +1392,7 @@ REF: <http://tribe.ow2.org/>
 
 ## <https://github.com/akullpp/awesome-java> Awesome Java
 
-## Amazon CodeGuru [[{qa.testing,cloud.aws,devops,01_PM.backlog]]
+## Amazon CodeGuru [[{qa.testing,cloud.aws,devops,PM.backlog]]
 - Powered by IA.
 - CodeGuru consists of two components
 – Amazon CodeGuru Profiler:
@@ -2393,7 +2393,7 @@ at Oracle.
 ## WireMock Spring Boot Simplifies WireMock Configuration [[{SPRING.testing]]
   https://www.infoq.com/news/2023/03/wiremock-spring-boot/
 [[}]]
-[[java,01_PM.TODO}]]
+[[java,PM.TODO}]]
 
 
 * Recheck tool Guides: java launcher, keytool
@@ -2570,7 +2570,7 @@ https://www.baeldung.com/java-override-system-time
   wakefieldzero zgc
 [[}]]
 
-## Spring and Records [[{spring.101,101.records,qa.101,qa.inmutability]]
+## Spring and Records [[{spring.101.records,qa.spring.101,qa.inmutability]]
 
 * REF: <https://dzone.com/articles/tackling-records-in-spring-boot>
   By Anghel Leonard
@@ -2656,7 +2656,7 @@ https://www.baeldung.com/java-override-system-time
   |    }
   | }
   ```
-[[spring.101,101.records}]]
+[[spring.101.records}]]
 
 ## EclipseStore   [[{scalability.storage,storage.scalability,cloud.pricearchitecture.storage,]]
 * <https://devsummit.infoq.com/presentation/munich2024/ultra-fast-memory-database-applications-java>
@@ -2793,5 +2793,31 @@ https://spring.io/projects/spring-shell
 ## Snippets Collection [[{]]
 https://github.com/topics/snippets-collection
 [[}]]
+
+## Microsoft Open-Sources GCToolkit to Tap into JVM GC Logs  [[{JVM.gc.debugging,troubleshooting.debugging,]]
+  https://www.infoq.com/news/2021/09/msft-opensourced-gctoolkit/
+
+Besides the API, there are two other modules: the parser and the
+Vert.x module. The parser module is based on a collection of regular
+expressions and code written over many years to be considered the
+most robust GC log parser available. The Vert.x-based messaging
+backend makes use of two message buses: the first one streams data
+from a data source. The current implementation streams log lines from
+the GC log file. The consumers of this bus are the parsers that
+convert the data from the data source into events that represent
+either a GC cycle or safe point. These events are published on the
+second message bus: the event bus. Subscribers on the event bus are
+then able to be notified and to process events that are of interest
+to them.
+
+More importantly, it has long been known that a suboptimal
+configuration collector will result in an application requiring more
+CPU and memory, while at the same time, degrading the end user’s
+experience. In other words, poorly tuned often equates to a more
+expensive runtime and unhappy users. The challenge is that to
+optimally tune the GC, one needs to create a delicate balance between
+several concerns all of which are not easily seen without the
+assistance of tooling. GCToolKit has been helpful in making this
+easier. [[JVM.gc.debugging}]]
 
 

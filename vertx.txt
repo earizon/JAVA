@@ -5,505 +5,487 @@
 [[{vertx]]
 ## VertX: Who-is-Who
   (Forcibly incomplete but still quite pertinent list of core developers and companies)
-  Tim Fox     :  Initiated VertX in 2012
-  Julien Viet :  Project lead (as of 2020), RedHat, Marseille
-               <https://github.com/vietj>
-               <http://blog.julienviet.com/>
-                 He is also core developer of Crash <http://www.crashub.org/>
-
-  Julien Ponge:<https://julien.ponge.org/>
+* Tim Fox     :  Initiated VertX in 2012
+* Julien Viet :  Project lead (as of 2020), RedHat, Marseille <br/>
+  <https://github.com/vietj>, <http://blog.julienviet.com/> <br/>
+  He is also core developer of Crash <http://www.crashub.org/>
+* Julien Ponge:<https://julien.ponge.org/><br/>
                  Author of VertX in Action
-  Many others :<https://github.com/eclipse-vertx/vert.x/graphs/contributors>
-[[}]]
+* Many others :<https://github.com/eclipse-vertx/vert.x/graphs/contributors>
 
-# Vert.X Summary [[{vertx.101,architecture.async.reactive,doc_has.diagram]]
+[[{vertx.101,architecture.async.reactive,doc_has.diagram]]
+
+# Vert.X Summary 
 REF:
 - Vert.X guide for java devs <https://github.com/vert-x3/vertx-guide-for-java-devs>
 - VertX maven starter        <https://github.com/vert-x3/vertx-maven-starter>
 - Examples for amqp-bridge,  <https://github.com/vert-x3/vertx-examples>
-  grpc, core, docker,
-  gradle/maven , ignite, jca,
-  jdbc.  kafka, kotlin, mail,
-  metrics, mqtt, openshift3,
-  reactjs-server-side-rendering,
-   redis, resteasy, rx,
-  service-discovery,
-  service-proxy, shell, spring,
+  grpc, core, docker, gradle/maven , ignite, jca,
+  jdbc.  kafka, kotlin, mail, metrics, mqtt, openshift3,
+  reactjs-server-side-rendering, redis, resteasy, rx,
+  service-discovery, service-proxy, shell, spring,
   sync, unit, web/web-client ...
-- Web server examples        <https://github.com/vert-x3/vertx-examples/tree/master/web-examples/src/main/java/io/vertx/example/web>
-  angular, auth, authjdbc,
-  authorisation,
-  blockinghandler, chat,
-  cookie, cors,
-  custom_authorisation, form,
-  helloworld, http2, , jwt,
-  mongo, react, realtime, rest,
-  sessions, staticsite,
-  templating, upload, vertxbus
-- Web/ JDBC server examples <https://github.com/vert-x3/vertx-examples/blob/master/web-examples/src/main/java/io/vertx/example/web/jdbc/Server.java>
+- Web server examples: <br/>
+  <https://github.com/vert-x3/vertx-examples/tree/master/web-examples/src/main/java/io/vertx/example/web>
+  angular, auth, authjdbc, authorisation, blockinghandler, chat,
+  cookie, cors, custom_authorisation, form, helloworld, http2, , jwt,
+  mongo, react, realtime, rest, sessions, staticsite,
+  templating, upload, vertxbus.
+- Web/ JDBC server examples:<br/>
+  <https://github.com/vert-x3/vertx-examples/blob/master/web-examples/src/main/java/io/vertx/example/web/jdbc/Server.java>
 
-# verticle
-REF: <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/README.adoc>
-- reusable unit  of   deployment
-                      ^^^^^^^^^^
-                  - Can be passed some   configuration  like
-                    credentials, network address,...
-                  - can be deployed several times
-                  - A verticle can deploy other verticles.
+## Verticle
+* REF: <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/intro/README.adoc>
+  ```
+  | Verticle = reusable unit  of deployment
+  |                  ┌───────────┴────────┘
+  |                  - Can be passed some   configuration  like
+  |                    credentials, network address,...
+  |                  - can be deployed several times.
+  |                  - A verticle can deploy other verticles.
+  |
+  |  |verticle| 1 <··> 1|event─loop|1 <········> 1|Thread|
+  |  ·        ·         ·          ·              ·      ·
+  |  └────┬───┘         └────┬─────┘              └──┬───┘
+  |       ^             "input" event like        Must not handle I/O thread-blocking
+  |       │             network buffers,          or CPU intensive operations
+  |                     timing events,            'executeBlocking' can be used
+  |       │             verticles messages, ...   to offload the blocking I/O operations
+  | <<io.vertx.core.                              from the event loop to a worker thread
+  |  AbstractVerticle>> Base Class
+  |  ════════════════ <https://vertx.io/docs/apidocs/io/vertx/core/AbstractVerticle.html>
+  |-  .start()  <·· life-cycle sync/async method to be overrided
+  |-  .stop ()  <·· life-cycle sync/async method to be overrided
+  |-  .vertx    <·· - Points to the Vert.x environment where the verticle is deployed
+  |             · - provides methods to create HTTP/TCP/UDP/... servers/clients. Ex:
+  |             ·   · io.vertx.core.http.HttpServer server  = thisO .vertx .createHttpServer();
+  |             · - provides access to the event bus.
+  |             ·   Ex:
+  |             ·     SENDING VERTICLE                         │ RECEIVING VERTICLE
+  |             ·   ┌──────────────────────────────────────────┼────────────────────────────────────────
+  |             ·   │ ...                                      │ ...
+  |             ·   │  vertx .eventBus()                       │ public void onMessage(
+  |             ·   │   .request(wikiDbQueue,                  │          Message<JsonObject> message)
+  |             ·   │       jsonObject, options ,              │ {
+  |             ·   │       └────┬───┘  └──┬──┘                │   String action = message.
+  |             ·   │            ·      headers                │                headers().get("action");
+  |             ·   │            ·    + payload codecs         │
+  |             ·   │            ·    + tiemouts               │   switch (action) {
+  |             ·   │            ·      └──┬──┘                │     case "action1":
+  |             ·   │// Ussually jsonObject contains the data  │       ...
+  |             ·   │// and an "action" header the action to   │       message.reply(
+  |             ·   │// be executed by the receiving verticle  │           new JsonObject()
+  |             ·   │       reply -> {                         │           .put("key1", value1));
+  |             ·   │     if (reply.succeeded()) {             │       break;
+  |             ·   │       ...                                │     case ...:
+  |             ·   │     } else {                             │       ...
+  |             ·   │       ...                                │     default:
+  |             ·   │     }                                    │       message.fail(
+  |             ·   │   });                                    │         ErrorCodes.BAD_ACTION.ordinal(),
+  |             ·   │                                          │         "Bad action: " + action);
+  |             ·   │                                          │   }
+  |             ·   │                                          │ }
+  |
+  |-  .config() <·· accessors to some deployment configuration to allow passing   external configuration
+  |                 Ex:
+  |                 │ public static final String CONFIG_WIKIDB_QUEUE = "wikidb.queue";
+  |                 │ ...
+  |                 │ wikiDbQueue =  config() .getString(CONFIG_WIKIDB_QUEUE, "wikidb.queue");
+  |                 │                             ^^^^^^                      ^^^^^^^^^^^^^^
+  |                                       or Integers, booleans               Default param
+  |                                       complex JSON data, ...              if first is null
+  ```
 
-  |verticle| 1 ←─→ 1|event─loop|1 ←──────→   1|Thread|
-  └────┬───┘        └────┬─────┘              └──┬───┘
-       ^            "input" event like        Must not handle I/O thread-blocking
-       │            network buffers,          or CPU intensive operations
-                    timing events,            'executeBlocking' can be used
-       │            verticles messages, ...   to offload the blocking I/O operations
-<<io.vertx.core.                              from the event loop to a worker thread
-  AbstractVerticle>> Base Class
-  ════════════════ <https://vertx.io/docs/apidocs/io/vertx/core/AbstractVerticle.html>
--  .start()  ← life-cycle sync/async method to be overrided
--  .stop ()  ← life-cycle sync/async method to be overrided
--  .vertx    ← - Points to the   Vert.x environment where the verticle is deployed
-             · - provides methods to create HTTP/TCP/UDP/... servers/clients. Ex:
-             ·   · io.vertx.core.http.HttpServer server  = thisO .vertx .createHttpServer();
-             · - provides access to the event bus.
-             ·   Ex:
-             ·     SENDING VERTICLE                         │ RECEIVING VERTICLE
-             ·   ┌──────────────────────────────────────────┼────────────────────────────────────────
-             ·   │ ...                                      │ ...
-             ·   │  vertx .eventBus()                       │ public void onMessage(
-             ·   │   .request(wikiDbQueue,                  │          Message<JsonObject> message)
-             ·   │       jsonObject, options ,              │ {
-             ·   │       └────┬───┘  └──┬──┘                │   String action = message.
-             ·   │            ·      headers                │                headers().get("action");
-             ·   │            ·    + payload codecs         │
-             ·   │            ·    + tiemouts               │   switch (action) {
-             ·   │            ·      └──┬──┘                │     case "action1":
-             ·   │// Ussually jsonObject contains the data  │       ...
-             ·   │// and an "action" header the action to   │       message.reply(
-             ·   │// be executed by the receiving verticle  │           new JsonObject()
-             ·   │       reply -> {                         │           .put("key1", value1));
-             ·   │     if (reply.succeeded()) {             │       break;
-             ·   │       ...                                │     case ...:
-             ·   │     } else {                             │       ...
-             ·   │       ...                                │     default:
-             ·   │     }                                    │       message.fail(
-             ·   │   });                                    │         ErrorCodes.BAD_ACTION.ordinal(),
-             ·   │                                          │         "Bad action: " + action);
-             ·   │                                          │   }
-             ·   │                                          │ }
+  ```
+  |import io.vertx.core.AbstractVerticle;
+  |public class MainVerticle extends AbstractVerticle {
+  |
+  |  @Override
+  |  public void start(Future<Void> startFuture) {
+  |                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  |                    No params for the sync version
+  |    startFuture.complete();
+  |  }
+  |}
+  ```
 
--  .config() ← - accessors to some deployment configuration to allow passing   external configuration
-                 Ex:
-                 │ public static final String CONFIG_WIKIDB_QUEUE = "wikidb.queue";
-                 │ ...
-                 │ wikiDbQueue =  config() .getString(CONFIG_WIKIDB_QUEUE, "wikidb.queue");
-                 │                             ^^^^^^                      ^^^^^^^^^^^^^^
-                                       or Integers, booleans               Default param
-                                       complex JSON data, ...              if first is null
-
-import io.vertx.core.AbstractVerticle;
-public class MainVerticle extends AbstractVerticle {
-
-  @Override
-  public void start(Future<Void> startFuture) {
-                    ^^^^^^^^^^^^^^^^^^^^^^^^
-                    No params for the sync version
-    startFuture.complete();
-  }
-}
-
-# VertX Event Bus [[{vertx.event_bus]]
-- main tool for communication between verticles using  messages
-  and one of:
-  - point-to-point messaging
-  - request-response messaging
-  - publish / subscribe for broadcasting messages
-
-  |verticle 01|                                    |verticle 02|
-  (HTTP server)             event─bus              (DDBB client)
-   │                          ║ ║                        │
-   ├─── user 1234 ? ─────────→║ ║                        │
-   │                          ║ ║─────── user 1234 ? ──→ │
-   │                          ║ ║                        ├── ....─→
-   │                          ║ ║                        │←─ ....
-   │                          ║ ║←────── user 1234 ? ────┤
-   │←── user 1234   ──────────║ ║                        │
-        ^^^^^^^^^             ║ ║
-  Message are free-form
-  strings. (JSON recomended    ^
-  for multi─language support   │
-                               │
-
-                  - It can be accessed through (simple)
-                    TCP protocol for 3rd party apps
-                    or exposed over general-purpose
-                    messaging bridges (AMQP, Stomp,...)
-                  - Support cluster support sending
-                    messages to verticles deployed&running
-                    in different application nodes
-                  - a   SockJS  bridge allows web applications
-                    to seamlessly communicate over the event bus
-                    from JavaScript running in the browser by
-                    receiving and publishing messages just like
-                    any verticle would do.
+## VertX Event Bus [[{vertx.event_bus]]
+* main tool for communication between verticles using  messages and one of:
+  * point-to-point messaging
+  * request-response messaging
+  * publish / subscribe for broadcasting messages
+  ```
+  | |verticle 01|                                    |verticle 02|
+  | (HTTP server)             event─bus              (DDBB client)
+  |  │                          ║ ║                        │
+  |  ├─── user 1234 ? ─────────>║ ║                        │
+  |  │                          ║ ║─────── user 1234 ? ───>│
+  |  │                          ║ ║                        ├── ....─>
+  |  │                          ║ ║                        │<─ ....
+  |  │                          ║ ║<────── user 1234 ? ────┤
+  |  │<── user 1234   ──────────║ ║                        │
+  |       ^^^^^^^^^             ║ ║
+  | Message are free-form
+  | strings. (JSON recomended    ^
+  | for multi─language support   │
+  |                              │
+  |
+  |                 - It can be accessed through (simple)
+  |                   TCP protocol for 3rd party apps
+  |                   or exposed over general-purpose
+  |                   messaging bridges (AMQP, Stomp,...)
+  |                 - Support cluster support sending
+  |                   messages to verticles deployed&running
+  |                   in different application nodes
+  |                 - a   SockJS  bridge allows web applications
+  |                   to seamlessly communicate over the event bus
+  |                   from JavaScript running in the browser by
+  |                   receiving and publishing messages just like
+  |                   any verticle would do.
+  ```
 [[vertx.event_bus}]]
 
-## VertX Event-Loop to threading configuration:  [[{vertx.101]]
+[[{vertx.101]]
+## VertX Event-Loop to threading configuration
 
-By default Vert.x attaches CPU-core-thread 1<-->2 event loops
-VertX Threading Strategies:
-   Incoming network data -> accepting thread"N":
-   accepting thread "N" -> event-loop thread: +event with data
+* By default Vert.x attaches `CPU-core-thread 1<-->2 event loops`
+* VertX Threading Strategies:
+  * Incoming network data -> accepting thread"N":
+  * accepting thread "N" -> event-loop thread: +event with data
 
-When a verticle opens a network server and is deployed more than once,
-then the events are being distributed to the verticle instances in a
-round-robin fashion which is very useful for maximizing CPU usage with
-lots of concurrent networked requests.
+* When a verticle opens a network server and is deployed more than once,
+  then the events are being distributed to the verticle instances in a
+  round-robin fashion which is very useful for maximizing CPU usage with
+  lots of concurrent networked requests.
 [[}]]
 
-## HTTPS AAA:
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc>
+## HTTPS AAA
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc>
 
-## VertX 4.0 What's New
 [[}]]
 
+# Vert.x Testing [[{vertx.testing,qa.testing]]
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/README.adoc>
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/http/SampleHttpServerTest.java>
 
-# Testing [[{vertx.testing,qa.testing]]
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/README.adoc>
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/http/SampleHttpServerTest.java>
+* Ex.1:
+  ```
+  | @RunWith(VertxUnitRunner.class)     // <·· annotation to JUnit tests to allow vertx-unit features
+  | public class SampleHttpServerTest {
+  |
+  |   private   Vertx vertx ;
+  |
+  |   @Before public void prepare() {   vertx = Vertx.vertx(); }
+  |
+  |   @After public void finish(TestContext   context ) {
+  |     vertx.close(  context .asyncAssertSuccess());
+  |   }
+  |
+  |   @Test
+  |   public void start_http_server
+  |          (TestContext   context ) {
+  |                         ^^^^^^^
+  |               // provided by the runner
+  |               // provides access to basic assertions,
+  |               // a context to store data,
+  |               // and several async-oriented helpers
+  |
+  |     Async   async  =   context .async();
+  |
+  |     vertx
+  |       .createHttpServer().requestHandler(
+  |          req -> req.response().putHeader("Content-Type", "text/plain").end("Ok")
+  |       )
+  |       .listen(
+  |         8080,
+  |         context .asyncAssertSuccess(
+  |         server -> {
+  |           WebClient webClient = WebClient.create(vertx);
+  |           webClient.get(8080, "localhost", "/").send(ar -> {
+  |             if (ar.succeeded()) {
+  |               HttpResponse<Buffer> response = ar.result();
+  |               context .assertTrue(response.headers().contains("Content-Type"));
+  |               context .assertEquals("text/plain", response.getHeader("Content-Type"));
+  |               context .assertEquals("Ok", response.body().toString());
+  |               async .complete();
+  |             } else {
+  |               async .resolve(Promise.failedPromise(ar.cause()));
+  |             }
+  |           });
+  |         }));
+  |   }
+  | }
+  ```
 
-└ Ex.1:
-  @RunWith(VertxUnitRunner.class)  ← annotation to JUnit tests to allow vertx-unit features
-  public class SampleHttpServerTest {
+* Ex.2: check/test that a timer task has been called once,
+  and that a periodic task has been called 3 times.<br/>
+  <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/database/WikiDatabaseVerticleTest.java>
 
-    private   Vertx vertx ;
-
-    @Before public void prepare() {   vertx = Vertx.vertx(); }
-
-    @After public void finish(TestContext   context ) {
-      vertx.close(  context .asyncAssertSuccess());
-    }
-
-    @Test
-    public void start_http_server
-           (TestContext   context ) {
-                          ^^^^^^^
-                // provided by the runner
-                // provides access to basic assertions,
-                // a context to store data,
-                // and several async-oriented helpers
-
-      Async   async  =   context .async();
-
-      vertx
-        .createHttpServer().requestHandler(
-           req -> req.response().putHeader("Content-Type", "text/plain").end("Ok")
-        )
-        .listen(
-          8080,
-          context .asyncAssertSuccess(
-          server -> {
-            WebClient webClient = WebClient.create(vertx);
-            webClient.get(8080, "localhost", "/").send(ar -> {
-              if (ar.succeeded()) {
-                HttpResponse<Buffer> response = ar.result();
-                context .assertTrue(response.headers().contains("Content-Type"));
-                context .assertEquals("text/plain", response.getHeader("Content-Type"));
-                context .assertEquals("Ok", response.body().toString());
-                async .complete();
-              } else {
-                async .resolve(Promise.failedPromise(ar.cause()));
-              }
-            });
-          }));
-    }
-  }
-
-└ Ex.2: check/test that a timer task has been called once,
-        and that a periodic task has been called 3 times.
-      <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-4/src/test/java/io/vertx/guides/wiki/database/WikiDatabaseVerticleTest.java>
-
-  RunWith(VertxUnitRunner.class)
-  public class WikiDatabaseVerticleTest {
-    private Vertx vertx;
-    @Before public void prepare(TestContext context) { vertx = ...       }
-    @After  public void finish(TestContext context)  { vertx.close(...); }
-
-    @Test /*(  timeout=5000 )*/
-    public void async_behavior(TestContext context) { // 1
-      Vertx vertx = Vertx.vertx();
-      Async a1 = context.async();
-      Async a2 = context.async(3); // ← works as a countdown that
-                                        completes successfully after 3 calls.
-      vertx.setTimer(100, n -> a1.complete());
-      vertx.setPeriodic(100, n -> a2.countDown());
-    }
-
-    @Test
-    public void crud_operations(TestContext context) {
-      Async async = context.async();
-
-      service.createPage(..., ...,
-        context.asyncAssertSuccess(v1 -> {
-          service.fetchPage(...,
-            context.asyncAssertSuccess(json1 -> {
-              context.assertTrue(json1.getBoolean("found"));
-              context.assert...;
-              ...
-              async.complete();  // 1
-            }));
-        }));
-      async.awaitSuccess(  5000 );
-    }
-  }
+  ```
+  | RunWith(VertxUnitRunner.class)
+  | public class WikiDatabaseVerticleTest {
+  |   private Vertx vertx;
+  |   @Before public void prepare(TestContext context) { vertx = ...       }
+  |   @After  public void finish(TestContext context)  { vertx.close(...); }
+  |
+  |   @Test /*(  timeout=5000 )*/
+  |   public void async_behavior(TestContext context) { // 1
+  |     Vertx vertx = Vertx.vertx();
+  |     Async a1 = context.async();
+  |     Async a2 = context.async(3); // ← works as a countdown that
+  |                                       completes successfully after 3 calls.
+  |     vertx.setTimer(100, n -> a1.complete());
+  |     vertx.setPeriodic(100, n -> a2.countDown());
+  |   }
+  |
+  |   @Test
+  |   public void crud_operations(TestContext context) {
+  |     Async async = context.async();
+  |
+  |     service.createPage(..., ...,
+  |       context.asyncAssertSuccess(v1 -> {
+  |         service.fetchPage(...,
+  |           context.asyncAssertSuccess(json1 -> {
+  |             context.assertTrue(json1.getBoolean("found"));
+  |             context.assert...;
+  |             ...
+  |             async.complete();  // 1
+  |           }));
+  |       }));
+  |     async.awaitSuccess(  5000 );
+  |   }
+  | }
+  ```
 [[vertx.testing}]]
 
-# Reusable Verticles [[{vertx.101]]
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc>
+## Reusable Verticles [[{vertx.101]]
 
-- resulting verticles will not have direct references to each other
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/README.adoc>
+* resulting verticles will not have direct references to each other
   as they will only agree on destination names in the event bus as well
   as message formats.
-- messages sent on the event bus will be encoded in JSON.
+* messages sent on the event bus will be encoded in JSON.
 
-- Ex:
-<https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-2/src/main/java/io/vertx/guides/wiki>
- HttpServerVerticle.java
- WikiDatabaseVerticle.java
- MainVerticle.java      ← its sole purpose is to bootstrap the app
-                          and deploy other verticles.
- <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/src/main/java/io/vertx/guides/wiki/MainVerticle.java>
-  package io.vertx.guides.wiki;
-
-  public class MainVerticle extends AbstractVerticle {
-    @Override
-    public void start(Promise<Void> promise) {
-      Promise<String> promise01 = Promise.promise();
-      vertx.deployVerticle(new WikiDatabaseVerticle(), promise01);
-      promise01.future().compose(id -> {
-        Promise<String> promise02 = Promise.promise();
-        vertx.deployVerticle(
-          "io.vertx.guides.wiki.HttpServerVerticle",  // <4>
-          new DeploymentOptions().setInstances(2),    // <5>
-          promise02);
-        return promise02.future();
-      }).setHandler(ar -> {
-        if (ar.succeeded()) {
-          promise.complete();
-        } else {
-          promise.fail(ar.cause());
-        }
-      });
-    }
-  }
+* Ex:
+  (<https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-2/src/main/java/io/vertx/guides/wiki>)
+  ```
+  | HttpServerVerticle.java
+  | WikiDatabaseVerticle.java
+  | MainVerticle.java   <······ its sole purpose is to bootstrap the app and deploy other verticles.
+  ```
+                            
+  <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-2/src/main/java/io/vertx/guides/wiki/MainVerticle.java>
+  ```
+  |  package io.vertx.guides.wiki;
+  |
+  |  public class MainVerticle extends AbstractVerticle {
+  |    @Override
+  |    public void start(Promise<Void> promise) {
+  |      Promise<String> promise01 = Promise.promise();
+  |      vertx.deployVerticle(new WikiDatabaseVerticle(), promise01);
+  |      promise01.future().compose(id -> {
+  |        Promise<String> promise02 = Promise.promise();
+  |        vertx.deployVerticle(
+  |          "io.vertx.guides.wiki.HttpServerVerticle",  // <4>
+  |          new DeploymentOptions().setInstances(2),    // <5>
+  |          promise02);
+  |        return promise02.future();
+  |      }).setHandler(ar -> {
+  |        if (ar.succeeded()) {
+  |          promise.complete();
+  |        } else {
+  |          promise.fail(ar.cause());
+  |        }
+  |      });
+  |    }
+  |  }
+  ```
 [[}]]
 
-# Create HttpServer [[{vertx.101]]
-REF:<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java>
+## Creating an HttpServer [[{vertx.101]]
+* REF:<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/src/main/java/io/vertx/guides/wiki/MainVerticle.java>
 
-   import io.vertx.ext.web.handler.BodyHandler;
-   public class MainVerticle  extends io.vertx.core.AbstractVerticle  {
-      ...
-      private io.vertx.core.http.HttpServer server = vertx.createHttpServer(); // vertx defined in Parent Class
-
-      @Override
-      public void start(Future<Void> startFuture) {
-          Json.mapper.registerModule(new JavaTimeModule());
-          FileSystem vertxFileSystem = vertx.fileSystem();
-          vertxFileSystem.readFile("swagger.json", readFile -> {
-              if (readFile.succeeded()) {
-                  // Swagger swagger = new SwaggerParser().parse(readFile.result().toString(Charset.forName("utf-8")));
-                  // SwaggerManager.getInstance().setSwagger(swagger);
-                  Router router = Router.router(vertx);
-                  router.get  (ROUTE_ENTITY01+"/:id")                              .handler(this:: GetEntity01Handler);
-                  router.post (ROUTE_ENTITY01       ).handler(BodyHandler.create()).handler(this::PostEntity01Handler);
-                                                              └───────┬───────────┘         └───────────┬───────────┘
-                                                decode POST req.body (forms,...) to         function signature:
-                                                Vert.x buffer objects                       void functionName( RoutingContext context )
-                  router.delete(ROUTE_ENTITY01+"/:id")                              .handler(this::DeleEntity01Handler);
-                  log.info("Starting Server... Listening on "+RC.host+":"+RC.port);
-                  vertx.createHttpServer(_getHTTPServerOptions()).
-                          requestHandler(router::accept).listen(
-                           8080,                                  ← Different deployments can share the port. Vertx will round-robin
-                           /* AsyncResult */ar -> { //
-                            if (ar.succeeded()) {
-                              LOGGER.info("HTTP server running on port 8080");
-                              startFuture.complete();
-                            } else {
-                              LOGGER.error("Could not start a HTTP server", ar.cause());
-                              startFuture.fail(ar.cause());
-                            }
-                          });
-              } else {
-                  startFuture.fail(readFile.cause());
-              }
-          });
-      }
-    }
+  ```
+  | import io.vertx.ext.web.handler.BodyHandler;
+  | public class MainVerticle  extends io.vertx.core.AbstractVerticle  {
+  |    ...
+  |    private io.vertx.core.http.HttpServer server =
+  |       vertx.createHttpServer(); // vertx defined in Parent Class
+  |
+  |    @Override
+  |    public void start(Future<Void> startFuture) {
+  |      Json.mapper.registerModule(new JavaTimeModule());
+  |      FileSystem vertxFileSystem = vertx.fileSystem();
+  |      vertxFileSystem.readFile("swagger.json", readFile -> {
+  |        if (readFile.succeeded()) {
+  |          // Swagger swagger = new SwaggerParser()
+  |          //         .parse(readFile.result()
+  |          //         .toString(Charset.forName("utf-8")));
+  |          // SwaggerManager.getInstance().setSwagger(swagger);
+  |          Router router = Router.router(vertx);
+  |          router.get  (ROUTE_ENTITY01+"/:id")                              .handler(this:: GetEntity01Handler);
+  |          router.post (ROUTE_ENTITY01       ).handler(BodyHandler.create()).handler(this::PostEntity01Handler);
+  |          //                                          └───────┬───────────┘         └───────────┬───────────┘
+  |          //                            decode POST req.body (forms,...) to         function signature:
+  |          //                            Vert.x buffer objects                       void functionName( RoutingContext context )
+  |          router.delete(ROUTE_ENTITY01+"/:id")                              .handler(this::DeleEntity01Handler);
+  |          log.info("Starting Server... Listening on "+RC.host+":"+RC.port);
+  |          vertx.createHttpServer(_getHTTPServerOptions()).
+  |            requestHandler(router::accept).listen(
+  |            8080,                 // <·· Different deployments can share the port. Vertx will round-robin
+  |            /* AsyncResult */ar -> {
+  |              if (ar.succeeded()) {
+  |                LOGGER.info("HTTP server running on port 8080");
+  |                startFuture.complete();
+  |              } else {
+  |                LOGGER.error("Could not start a HTTP server", ar.cause());
+  |                startFuture.fail(ar.cause());
+  |              }
+  |            });
+  |        } else {
+  |            startFuture.fail(readFile.cause());
+  |        }
+  |      });
+  |    }
+  |  }
+  ```
 [[}]]
 
 
-# Maven Bootstrap  [[{vertx.101,devops]]
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc>
-<https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1>
+[[{vertx.101,devops]]
+## Maven Bootstrap  
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-1/README.adoc>
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/tree/3.8/step-1>
 
-Ex: minimally viable wiki written with Vert.x
+* Ex: minimally viable wiki written with Vert.x
+  * Features:
+    * server-side rendering
+    * data persistence through a JDBC connection and async ddbb access
+  * Dependencies:
+    * Vert.x web: "elegant" APIs to deal with routing, request payloads, etc.
+    * Vert.x JDBC client: asynchronous API over JDBC.
+    * other libreries for HTML/md rendering
 
-   └ Features:
-     - server-side rendering
-     - data persistence through a JDBC connection
-       and async ddbb access
+  ```
+  |                                        ┌ · configured pom.xml:
+  | $ URL="https://github.com/vert-x3"     │   - Maven Shade Plugin configured to create a single
+  | $ URL="${URL}/vertx─maven─starter"   <─┤     "fat" Jar archive with all required dependencies
+  | $ git clone ${URL} project01           │   - Exec Maven Plugin to provide the exec:java goal
+  | $ cd project01                         │     that in turns starts the application through the
+  |                                        │     Vert.x io.vertx.core.Launcher class.
+  |                                        │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |                                        │     (equivalent to running using the vertx cli tool)
+  |                                        │
+  |                                        │ · sample verticle
+  |                                        │
+  |                                        │ · unit tests
+  |                                        │
+  |                                        └ · redeploy.sh: auto compile+redeploy on code changes.
+  |                                            (adjust $VERTICLE in script to match main verticle)
+  | $ mvn package exec:java             ← check that maven install is correct
+  | $ mvn clean package
+  | $ java -jar target/project01-SNAPSHOT-fat.jar
+  ```
 
-   └ Dependencies:
-     - Vert.x web: "elegant" APIs to deal with routing, request payloads, etc.
-     - Vert.x JDBC client: asynchronous API over JDBC.
-     - other libreries for HTML/md rendering
-
-                                          ┌ o configured pom.xml:
- $ $ URL="https://github.com/vert-x3"     │   - Maven Shade Plugin configured to create a single
- $ $ URL="${URL}/vertx─maven─starter"   ←─┤     "fat" Jar archive with all required dependencies
- $ $ git clone ${URL} project01           │   - Exec Maven Plugin to provide the exec:java goal
- $ $ cd project01                         │     that in turns starts the application through the
-                                          │     Vert.x io.vertx.core.Launcher class.
-                                          │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                          │     (equivalent to running using the vertx cli tool)
-                                          │
-                                          │ o sample verticle
-                                          │
-                                          │ o unit tests
-                                          │
-                                          └ o redeploy.sh: auto compile+redeploy on code changes.
-                                              (adjust $VERTICLE in script to match main verticle)
- $ $ mvn package exec:java             ← check that maven install is correct
-
-
-Tip: The SQL database modules supported by the Vert.x project do not currently
+* Tip: The SQL database modules supported by the Vert.x project do not currently
    offer anything beyond passing SQL queries (e.g., an object-relational mapper)
    as they focus on providing asynchronous access to databases.
    However, nothing forbids using more advanced modules from the community,
    and we especially recommend checking out projects like this jOOq generator
-   for VertX
-   <https://github.com/jklingsporn/vertx-jooq>
-
-$ mvn clean package
-$ java -jar target/project01-SNAPSHOT-fat.jar
+   for VertX <https://github.com/jklingsporn/vertx-jooq>
 [[}]]
 
-Non-Classified / TODO [[{01_PM.TODO]]
+
+# Vert.X: Non-Classified / TODO [[{PM.TODO]]
 ## RxJava Integration: [[{vertx.101,architecture.async.reactive.rxjava,devops.k8s,architecture.frontend]]
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc>
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-7/README.adoc>
   Refactoring some code to use reactive programming with the
   popular RxJava library and its Vert.x integration.
- [[}]
+[[async.reactive.rxjava}]
 
-## Vertx+k8s:
-<http://escoffier.me/vertx-kubernetes/>
+## Vertx+k8s
+* <http://escoffier.me/vertx-kubernetes/>
+
 ## SockJS:
-<https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc>
-  - Event-bus bridge allowing web apps to seamlessly communicate over
-  - event bus from JavaScript running in the browser by receiving and publishing
-  - messsages just like any verticle would do
-## Angular Client:
+* <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-10/README.adoc>
+* Event-bus bridge allowing web apps to seamlessly communicate over
+* event bus from JavaScript running in the browser by receiving and publishing
+* messsages just like any verticle would do
+### Angular Client:
 <https://github.com/vert-x3/vertx-guide-for-java-devs/blob/3.8/step-9/README.adoc>
 
- TODO:
- Cookbook recipe:
+## Cookbook recipe:
+  ```
     Vertx vertx = Vertx.vertx();
     HttpServer server = vertx.createHttpServer();
     server.requestHandler(req -> {
       req.response().end("Hello world");
     });
     server.listen(8080);
- ------------------------------------
-  """
-  There are many features and modules that we haven’t covered in this guide, such as:
-    - Clustering using Hazelcast, Infinispan, Apache Ignite or Zookeeper,
-    - Exposing&consuming over HTTP/2, possibly (but not necessarily) with gRPC
-    - Using NoSQL databases such as MongoDB or Redis.
-    - Sending emails over SMTP.
-    - Messaging with AMQP, Stomp, Kafka, MQTT or RabbitMQ.
-    - Using OAuth2 authentication from custom and popular providers.
-    - Vert.x sync for writing blocking-style code that is later
-      turned into fibers non-blocking code at runtime.
-    - Publishing and discovering micro-services from registries, for
-      instance when deploying on cloud environments like OpenShift,
-    - Exposing metrics and health checks.
-  """
+  ```
+
+## Others: 
+
+> There are many features and modules that we haven’t covered in this guide, such as: <br/>
+> - Clustering using Hazelcast, Infinispan, Apache Ignite or Zookeeper, <br/>
+> - Exposing&consuming over HTTP/2, possibly (but not necessarily) with gRPC <br/>
+> - Using NoSQL databases such as MongoDB or Redis. <br/>
+> - Sending emails over SMTP. <br/>
+> - Messaging with AMQP, Stomp, Kafka, MQTT or RabbitMQ. <br/>
+> - Using OAuth2 authentication from custom and popular providers. <br/>
+> - Vert.x sync for writing blocking-style code that is later <br/>
+>   turned into fibers non-blocking code at runtime.
+> - Publishing and discovering micro-services from registries, for <br/>
+>   instance when deploying on cloud environments like OpenShift,
+> - Exposing metrics and health checks. <br/>
+
 
 ## What's new Vert.X 4.0: (2020-12-09):
-<https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes>
+* <https://github.com/vert-x3/wiki/wiki/4.0.0-Release-Notes>
 
+## Vert.X Migration Guide (2020-12-09):
+* <https://github.com/vert-x3/vertx-4-migration-guide>
 
-## https://github.com/vert-x3/vertx-4-migration-guide
-
-# Vert.x 3.9 Fluent API Query [[{vertx,01_PM.TODO]]
-https://developers.redhat.com/blog/2020/05/25/red-hat-build-of-eclipse-vert-x-3-9-brings-fluent-api-query/
-Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
+## Vert.x 3.9 Fluent API Query [[{vertx,PM.TODO]]
+* <https://developers.redhat.com/blog/2020/05/25/red-hat-build-of-eclipse-vert-x-3-9-brings-fluent-api-query/>
+* Red Hat build of Eclipse Vert.x 3.9 brings Fluent API Query
 [[}]]
 
-# OpenAPI: contract-driven Dev [[{standards.openapi,architecture.api_management]]
-                               [[vertx.*,01_PM.low_code,qa.documentation,01_PM.backlog]]
+[[{standards.openapi,architecture.api_management]]
+[[vertx,PM.low_code,qa.documentation,PM.backlog]]
+## OpenAPI: contract-driven Dev 
 <https://developers.redhat.com/devnation/tech-talks/develop-openapi-vertx>
 - "Contract Driven Development" (or API Design First approach) is a methodology
   that uses declarative API Contracts to enable developers to efficiently design,
   communicate, and evolve their HTTP APIs, while automating API implementation
   phases where possible.
+[[standards.openapi}]]
+
+
+## Vert.X Mutiny APIs [[{vertx.*,PM.TODO.NOW]]
+* Reactive isn't Complicated with Vert.x and the new Mutiny APIs
+  <https://www.youtube.com/watch?v=3tdU5WRvuuo>
+* VertX Mutiny Zero by Julien Ponge 
+  <https://www.linkedin.com/feed/update/activity:7038552356413693952>
+  latest developments around Mutiny, Mutiny Zero and switching from legacy Reactive Streams to JDK Flow.
+  <https://www.youtube.com/watch?v=RRs4DJJUSx8>
 [[}]]
 
-## Microsoft Open-Sources GCToolkit to Tap into JVM GC Logs  [[{]]
-  https://www.infoq.com/news/2021/09/msft-opensourced-gctoolkit/
 
-Besides the API, there are two other modules: the parser and the
-Vert.x module. The parser module is based on a collection of regular
-expressions and code written over many years to be considered the
-most robust GC log parser available. The Vert.x-based messaging
-backend makes use of two message buses: the first one streams data
-from a data source. The current implementation streams log lines from
-the GC log file. The consumers of this bus are the parsers that
-convert the data from the data source into events that represent
-either a GC cycle or safe point. These events are published on the
-second message bus: the event bus. Subscribers on the event bus are
-then able to be notified and to process events that are of interest
-to them.
+[[PM.TODO}]]
 
-More importantly, it has long been known that a suboptimal
-configuration collector will result in an application requiring more
-CPU and memory, while at the same time, degrading the end user’s
-experience. In other words, poorly tuned often equates to a more
-expensive runtime and unhappy users. The challenge is that to
-optimally tune the GC, one needs to create a delicate balance between
-several concerns all of which are not easily seen without the
-assistance of tooling. GCToolKit has been helpful in making this
-easier. [[}]]
-
-
-# Vert.X Mutiny APIs [[{vertx.*,01_PM.TODO.NOW]]
-## Reactive isn't Complicated with Vert.x and the new Mutiny APIs
-<https://www.youtube.com/watch?v=3tdU5WRvuuo>
-[[}]]
-
-## <https://quarkus.io/guides/using-vertx.html>
+## Quarkus and VertX
+* <https://quarkus.io/guides/using-vertx.html>
 
 ## Reactive Spring with Vert.x
-<https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/>
-- Reactive Spring Boot programming with Vert.x
+* <https://developers.redhat.com/blog/2019/08/21/reactive-spring-boot-programming-with-vert-x/>
+* Reactive Spring Boot programming with Vert.x
   The latest bundle of Red Hat supported Spring Boot starters was recently
   released. In addition to supporting the popular Red Hat products for our Spring
   Boot customers, the Red Hat Spring Boot team was also busy creating new ones.
   The most recent technical preview added is a group of Eclipse Vert.x Spring
   Boot starters, which provide a Spring-native vocabulary for the popular JVM
   reactive toolkit.
-
-[[01_PM.TODO}]]
-
-# VertX Mutiny Zero by Julien Ponge  [[{]]
-  Quarkus Insights 120
-  https://www.linkedin.com/feed/update/activity:7038552356413693952
-
-  latest developments around Mutiny, Mutiny Zero and switching from legacy Reactive Streams to JDK Flow.
-  https://www.youtube.com/watch?v=RRs4DJJUSx8
-[[}]]
-
-
+[[PM.TODO}]]
 
 [[vertx}]]

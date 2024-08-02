@@ -425,7 +425,7 @@
   [[{doc_has.KEYPOINT}]].
 [[devops.gradle.101}]]
 
-## Gradle: What's New [[{01_PM.WHATS_NEW]]
+## Gradle: What's New [[{PM.WHATS_NEW]]
 
 ### Gradle 8.9.0
 
@@ -437,7 +437,7 @@
 * Java toolchains Improvements.
 [[}]]
 
-[[01_PM.WHATS_NEW}]]
+[[PM.WHATS_NEW}]]
 
 # Gradle: Building Java/JVM projects [[{devops.gradle.java_projects]]
 
@@ -748,7 +748,7 @@
 - setting a property   replaces values.
 - corresponding method appends values.
 
-# TODO/Non-classified [[{01_PM.TODO]]
+# TODO/Non-classified [[{PM.TODO]]
 
 ## HTTP Basic Authentication (  WARN : use only with TLS connections)
 
