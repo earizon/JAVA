@@ -78,7 +78,7 @@
   | }
   ```
 
-## JBang: Simplified Java [[{]]
+## JBang: Simplified Java [[{qa.ux,devops.jbang,]]
 * [Official Doc](https://www.jbang.dev/documentation/guide/latest/debugging.html)
 * <https://www.youtube.com/watch?v=X4x2jM3Y0uE>
 
@@ -122,6 +122,7 @@
   |   }
   | }
   ```
+
 [[}]]
 
 ## Strings  [[{java_lang.strings,java_lang.101,PM.WiP]]
@@ -1145,7 +1146,7 @@ is a compiled version of module-info.java specifying:
   | - JSR 379: JAVA SE 9
   ```
 
-[[{DEVOPS.101,troubleshooting.modules]]
+[[{java_lang.101,devops.101,troubleshooting.modules]]
 ### Troubleshooting 
 
 #### `--release $version` compiler flag (JDK 9+)
@@ -1167,4 +1168,31 @@ is a compiled version of module-info.java specifying:
    The `-release` flag replace the previous -source, -target and -Xbootclasspath
 [[}]]
 [[java_lang.modules}]]
+
+[[{devops.101,java_lang.debugging,PM.TODO]]
+## JDeps: dependency analysis tool for Java bytecode (class files and JARs).
+
+* <https://nipafx.dev/jdeps-tutorial-analyze-java-project-dependencies/>
+  ```
+  | $ jdeps sh-2.6.3.jar        # -verbose:class will list dependencies between classes
+  | sh-2.6.3.jar → java.base    # (vs aggregating them to package level)
+  | sh-2.6.3.jar → java.datatransfer
+  | sh-2.6.3.jar → java.desktop
+  | sh-2.6.3.jar → java.logging
+  | sh-2.6.3.jar → java.prefs
+  | sh-2.6.3.jar → java.sql
+  | sh-2.6.3.jar → java.xml
+  | sh-2.6.3.jar → not found
+  |    edu.udo.sh → com.beust.jcommander  not found
+  |    edu.udo.sh → edu.udo.sh.data       sh-2.6.3.jar
+  |    edu.udo.sh → edu.udo.sh.gui        sh-2.6.3.jar
+  |    edu.udo.sh → edu.udo.sh.gui.util   sh-2.6.3.jar
+  |    edu.udo.sh → edu.udo.sh.util       sh-2.6.3.jar
+  |    edu.udo.sh → java.io               java.base
+  |    edu.udo.sh → java.lang             java.base
+  |    edu.udo.sh → javax.swing           java.desktop
+  |    edu.udo.sh → org.slf4j             not found
+  | [... truncated many more package dependencies ...]
+  ```
+[[}]]
 [[java_lang.101}]]

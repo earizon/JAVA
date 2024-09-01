@@ -52,7 +52,7 @@ https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B
 * The core API is are capable of interacting with logging services
   on the host operating system.
 
-* Loggin Control Flow:
+* Logging Control Flow:
   ```
   |  |App| ··> Creates LogRecord
   |    ·               ---------

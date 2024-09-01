@@ -1,5 +1,21 @@
 # JAVA INPUT/OUTPUT
 
+[[{java_lang.configuration,java_lang.101,PM.low_code,PM.TODO]]
+## Loading properties 
+NOTE: Probably is better to use ENV.VARs to simplify compatibility
+      with container deployments.
+
+Config properties files located in .../src/main/resources/db_config.properties
+
+InputStream is = getClass().getResurceAsStream("/db_config.properties");
+Properties props = new Properties();
+props.load(is);
+is.close();
+
+└ How to add comments to properties file:
+  https://www.tutorialspoint.com/how-to-read-write-data-from-to-properties-file-in-java
+[[java_lang.configuration}]]
+
 [[{java_lang.101,persistence.FS,io.101]]
 ## Reading file as lines-of-text  <!-- { -->
   ```
@@ -1119,5 +1135,31 @@ AsynchronousFileChannel fileChannel =
   · PHP: console
 [[}]]
 
+[[{architecture.async.reactive.io,persistence.fs,PM.TODO]]
+## 3 NIO ways to read files 
 
+* <https://howtodoinjava.com/java7/nio/3-ways-to-read-files-using-java-nio/>
+* read small file using ByteBuffer and RandomAccessFile
+* FileChannel and ByteBuffer to read large files
+* Example 3: Reading a file using memory-mapped files in Java
+[[}]]
 
+[[{java_lang.io.multicast,architecture.distributed,scalability.distributed]]
+[[doc_has.comparative,qa,PM.low_code,PM.radar]]
+## Tribe: reliable multicast 
+
+* REF: <http://tribe.ow2.org/>
+- Unlike JGroups, Tribe only targets reliable multicast
+ (no probabilistic delivery) and is optimized for cluster
+ communications.
+
+## JGroups multicast
+<http://www.jgroups.org/>
+- toolkit for reliable multicast communication.
+- point-to-point FIFO communication channels (basically TCP)
+- Targets high performance cluster environments.
+
+- Unlike JGroups, Tribe only targets reliable multicast
+  (no probabilistic delivery) and is optimized for
+  cluster communications.
+[[}]]

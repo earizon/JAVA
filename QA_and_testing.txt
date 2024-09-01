@@ -2586,7 +2586,9 @@ session management, logging etc.
 
 [[PM.TODO}]]
 
-## QA: Resilience4j [[{architecture.distributed,java_lang.functional,qa.error_control,PM.TODO]]
+[[{architecture.distributed,java_lang.functional,qa.error_control,PM.low_code,PM.TODO]]
+## Resilience4j 
+
 * higher-order functions (decorators) to enhance any functional interface,
   lambda expression or method reference with a Circuit Breaker, Rate
   Limiter, Retry or Bulkhead.

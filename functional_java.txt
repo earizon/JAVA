@@ -124,3 +124,20 @@
   | Unix4j.cat("test.txt").grep("Tuesday").sed("s/kilogram/kg/g").sort();
   ```
 [[PM.low_code.unix4j}]]
+
+# Functional Programming TODO
+
+## Java Flow
+* <https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Flow.html>
+[[{architecture.async.reactive.101,java_lang.flow_api,java_lang.101,PM.TODO]]
+* <https://www.infoq.com/presentations/java9-flow-stream-api/?utm_source=oficina24x7.com>
+  Trisha Gee shows via live coding how we can use the new Flow API to
+  utilize Reactive Programming, how the improvements to the Streams API
+  make it easier to control real-time streaming data and how the
+  Collections convenience methods simplify code. She talks about other
+  Java 9 features, including some of the additions to interfaces and
+  changes to deprecation.
+[[}]]
+
+
+

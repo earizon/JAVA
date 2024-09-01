@@ -198,3 +198,32 @@
   2. App analysts, or verification engineers, who work on behalf of the app store to verify that
      apps meant specific security properties before they are accepted. 
 [[security.antimalware}]]
+
+## OSV.io [[{scalability.unikernel,security.OSV,devops,PM.backlog]]
+- <http://osv.io/>
+  versatile modular unikernel designed to run unmodified Linux
+  applications securely on micro-VMs in the cloud. Built from the ground up for
+  effortless deployment and management of micro-services and serverless apps,
+  with superior performance. (Includes CRaSH shell)
+[[}]]
+
+[[{security.secret_mng.conclave,PM.TODO]]
+## Conclave SDK 1.3 ("Intel SGX Trusted Computing") as Open Source
+
+* <https://www.conclave.net/blog/announcing-conclave-sdk-1-3-and-open-source>
+* <https://github.com/R3Conclave/conclave-core-sdk>
+
+* Milestone in confidential computing ... workloads in the cloud
+  with the KDS ... under Apache 2.0 
+
+* Conclave is R3’s privacy preserving platform enabling you to write
+  secure confidential applications with ease ... based on Intel® SGX
+  enclaves ... using Java, Kotlin, and JavaScript hiding the
+  low-level complexities of SGX
+* It also powers Conclave Cloud privacy-preserving SaaS platform.
+* Confidential computing protects data at rest, in transit and
+  **during processing**.
+* SGX hardware provides a secure region of the CPU  ..
+   physically isolated ..  cannot be tampered with, not even
+   by the system or cloud administrator.
+[[security.secret_mng.conclave}]]

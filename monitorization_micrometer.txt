@@ -1,8 +1,14 @@
-# Monitorization [[{monitoring]]
-#[micrometer_summary]
-## Micrometer Metrics [[{monitoring.micrometer,architecture.distributed,monitoring.distributed,PM.low_code,PM.WiP]]
-* simple facade to instrumentation clients for
-* instrument JVM-based apps without vendor lock-in.
+[[{monitoring.micrometer,architecture.distributed,monitoring.distributed,PM.low_code,PM.Draft,PM.TODO]]
+# Micrometer Metrics 
+
+* WARN: OpenTelemetry looks to be preferred, platform agnostic way to monitor apps as of 2022:<br/>
+  Historically, OpenTelemetry was focused on tracing (see zipkin and Jaeger) more than metrics,
+  but now metrics are "prominent".<br/>
+  Current projects using Micrometry can integrate with OpenTelemetry using 
+  the Micrometer OpenTelemetryMeterRegistry.<br/>
+  Spring stills recomends Opentracing as preferred framework.
+
+* simple facade to instrumentation clients for JVM-based apps without vendor lock-in.
   (Think SLF4J, but for application metrics! supporting AppOptics,
    Atlas, Datadog, Dynatrace, Elastic, Ganglia, Graphite,
    Influx,Instana, JMX (hierarchical mapping), KairosDB, New Relic,

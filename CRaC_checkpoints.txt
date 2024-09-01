@@ -1,0 +1,139 @@
+[[{scalability.JVM.CRAC,DevOps.CrAC]]
+# CrAC Project: Coordinate and Restore Checkpoints in running JVMs.
+
+* Summary from <https://foojay.io/today/springboot-3-2-crac/> 
+  by Gerrit Grunwald, JUG Leader.
+* <https://wiki.openjdk.org/display/crac> 
+* <https://github.com/hoangphuc2k/graalvm-demo>
+
+* CrAC will not make apps run faster, but it avoid the JVM start-up and warm-up
+  providing much better scalability when the process is restarted
+  frequently.
+* It's probably a better alternative to GraalVM since we continue
+  to have all the standard monitorization tools of an standard JVM
+  environment.
+*  primary aim: develop a new standard mechanism-agnostic API to
+   notify Java programs about the checkpoint and restore events.
+
+
+* Currently (2024) only available on Linux.
+
+## SpringBoot (3.2+) Automatic Checkpoint
+
+NOTE: A JVM with support for CRaC is needed (ex. Azul Zulu 21.0.1 + CRaC) 
+
+  ```
+  | $ sudo chown root:root $JAVA_HOME/lib/criu # fix permission to use Linux 
+  | $ sudo chmod u+s $JAVA_HOME/lib/criu       # CRIU (Checkpoint/Restore in
+  |                                            # Userspace)
+  | $ editor build.gradle.kts # or similar in maven 
+  |   ... 
+  |   dependencies {
+  | +  implementation 'org.crac:crac:1.4.0' // gradle, similar for Maven
+  |                   └─────────┬─────────┘
+  |    In linux it just invoke the native jdk.crac API of the underlying
+  |    JDK (supported by Linux CRIU), on MacOSX/Win it implements the API.º
+  |   ... }
+  | 
+  | $ R_DIR_01="/tmp/jvmCheckpoint/app01" # folder for stored checkpoint for app01
+  | $ mkdir -p ${R_DIR_01}
+  | 
+  | $ ./gradlew assemble # or ./gradle clean build
+  | 
+  | $ S_OPTS="-Xms512m ..." # Standard JVM startup options.
+  | $ C_OPTS=""             # <·· Checkpoint Options for JVM startup
+  | # STEP 1): Create checkpoint and exists ---------
+  | $ java \
+  |   -Dspring.context.checkpoint=onRefresh \
+  |   -XX:CRaCCheckpointTo=${R_DIR_01}  \
+  |   -jar .../myapp.jar   
+  |   └──┬─────────────────────────────────┘
+  |   Creates checkpoint right before the application is started
+  |   during the LifecycleProcessor.onRefresh phase. 
+  |   """ all non-lazy initialized singletons have been 
+  |    instantiated and InitializingBean#afterPropertiesSet 
+  |    callbacks have been invoked; but the lifecycle has 
+  |    not started, and the ContextRefreshedEvent has not
+  |    yet been published. """
+  | 
+  | # STEP 2): startup using the existing Checkpoint --
+  | $ java \
+  |   -XX:CRaCRestoreFrom=${R_DIR_01}  \
+  |   -jar .../myapp.jar
+  |
+  ```
+* startup time now is >10x faster with no code changes !!!  [[{PM.low_code}]]
+* The previous checkpoint only contains the Spring framework code and not
+  the application code.
+
+* WARN: See comments with problems in the original post when the image contains
+  external resources (tcp/DDBB connections,...)
+  * Q: "...  Were you able to verify how was it performing with the DB connections
+     using manual checkpoint..."<br/>
+    A: Nope, but feel free to test that and share the results.
+  * I try on a demo app using a simple controller calling a JPA object in database.
+    ```
+    org.springframework.context.ApplicationContextException: Failed to take CRaC checkpoint
+    ... 
+
+    Caused by: java.lang.Exception: This file descriptor was created by 
+    HikariPool-1 connection adder at epoch:1701351807255 here
+    ...
+    ```
+  * ... Same issue 
+    ```
+    ... jdk.internal.crac.impl.CheckpointOpenSocketException: tcp localAddr 
+        172.18.0.6 localPort 46868 remoteAddr 172.18.0.3 remotePort 6379
+    ```
+
+## Manual Checkpoint (after App warmup)
+
+* Checkpoint creation:
+  ```
+  | # STEP 1: Start JVM with Checkpoint enabled
+  | $ java \
+  | -XX:CRaCRestoreFrom=${R_DIR_01}
+  | $ java -jar .../myapp.jar 1>app.log 2>&1 &
+  | 
+  | ...  wait now for warmup, maybe invoking some REST APIs ...
+  | 
+  | # STEP 2: Checkpoint and stop the running app.
+  | $ jcmd .../myapp.jar JDK.checkpoint 
+  | 
+  | # STEP 3: Restart with the new checkpoint after warmup.
+  | $ java \
+  | -XX:CRaCRestoreFrom=${R_DIR_01}
+  | $ java -jar .../myapp.jar 1>app.log 2>&1 &
+  ```
+
+* startup time now is >40x faster with no code changes. !!!  
+  The app is still running on a normal JVM (vs GraalVM).
+ [[{PM.low_code}]]
+
+[[{DevOps.containarization.CRaC]]
+## Running containerized Java Apps with CRaC 
+
+* <https://foojay.io/today/how-to-run-a-java-application-with-crac-in-a-docker-container/>
+[[DevOps.containarization.CRaC}]]
+
+
+## Se also
+
+* Checkpointing outside the JVM 
+  <https://developers.redhat.com/blog/2020/10/15/checkpointing-java-from-outside-of-java/>
+* Checkpoint inside JVM HOW-TO
+  <https://www.jfokus.se/jfokus19-preso/Checkpointing-Java.pdf>
+
+* Checkpointing with Linux CRIU:
+
+  ```
+  | CONSOLE 1                         | CONSOLE 2
+  | $ setsid java -XX:-UsePerfData \  | $ sudo criu dump -t $pid \    ← stops and checkpoint
+  |     -XX:+UseSerialGC Scooby       |    --shell-job -o dump.log      app
+  |                                   |
+  |                                   | $ sudo restore --shell-job \  ← Restore app
+  |                                   |    -d -vvv -o restore.log
+  ```
+[[}]]
+
+[[scalability.JVM.CRAC}]]

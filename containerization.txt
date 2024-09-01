@@ -218,3 +218,14 @@ See also: jKube notes
 
 ```
 
+[[{devops.containarization.101,PM.TODO]]
+## JLink 
+
+* <https://docs.oracle.com/javase/9/tools/jlink.htm>
+* You can use the jlink tool to assemble and optimize a set of modules
+  and their dependencies into a custom runtime image
+
+TODO:
+
+* <https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4>
+[[}]]

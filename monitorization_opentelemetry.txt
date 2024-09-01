@@ -1,0 +1,200 @@
+[[{monitoring.opentelemetry]]
+# Open Telemetry
+
+* WARN: Open Telemetry replaces the now outdated OpenTracing.
+
+* 838 supported frameworks as of 2024.
+  <https://opentelemetry.io/ecosystem/registry/?component=instrumentation&language=java>
+
+[[{PM.low_code]]
+## Instrument Java Apps in 5 minutes
+
+* REF: <https://opentelemetry.io/docs/languages/java/getting-started/>,
+  <https://opentelemetry.io/docs/zero-code/java/agent/annotations/>
+
+* Add traces, metrics, and logs to the console with zero code.
+
+1. Presetup:
+   1. JDK 17+ for Spring Boot 3; Java 8+ for Spring Boot 2
+   ```
+   $ cat build.gradle.kts 
+   | plugins {
+   |   id("java")
+   |   id("org.springframework.boot") version "3.0.6"
+   |   id("io.spring.dependency-management") version "1.1.0"
+   | }
+   | 
+   | sourceSets {
+   |   main {
+   |     java.setSrcDirs(setOf("."))
+   |   }
+   | }
+   | 
+   | repositories {
+   |   mavenCentral()
+   | }
+   | 
+   | dependencies {
+   |   implementation("org.springframework.boot:spring-boot-starter-web")
+   |   implementation('io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.6.0') // <··
+   | }
+   ```
+   2. Download the opentelemetry-javaagent.jar agent to automatically instrument 
+      the application at launch time from 
+   <https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases>
+
+2. Create and launch an HTTP Server:
+   ```
+   | $ cat DiceApplication.java 
+   | package otel;
+   | 
+   | import org.springframework.boot.Banner;
+   | import org.springframework.boot.SpringApplication;
+   | import org.springframework.boot.autoconfigure.SpringBootApplication;
+   | 
+   | @SpringBootApplication
+   | public class DiceApplication {
+   |   public static void main(String[] args) {
+   |     SpringApplication app = new SpringApplication(DiceApplication.class);
+   |     app.setBannerMode(Banner.Mode.OFF);
+   |     app.run(args);
+   |   }
+   | }
+   ```
+3. Create a controller
+   ```
+   | $ cat RollController.java
+   | package otel;
+   | 
+   | import java.util.Optional;
+   | import java.util.concurrent.ThreadLocalRandom;
+   | import org.slf4j.Logger;
+   | import org.slf4j.LoggerFactory;
+   | import org.springframework.web.bind.annotation.GetMapping;
+   | import org.springframework.web.bind.annotation.RequestParam;
+   | import org.springframework.web.bind.annotation.RestController;
+   | import io.opentelemetry.instrumentation.annotations.WithSpan;      // <··
+   | import io.opentelemetry.instrumentation.annotations.SpanAttribute; // <··
+   | 
+   | @RestController
+   | public class RollController {
+   |   private static final Logger logger = 
+   |    LoggerFactory.getLogger(RollController.class);
+   | 
+   |   @GetMapping("/rolldice")
+   |   public String index(
+   |     @RequestParam("player") Optional<String> player) {
+   |     int result = this.getRandomNumber(1, 6);
+   |     if (player.isPresent()) {
+   |       logger.info("{} ... {}", player.get(), result);
+   |     } else {
+   |       logger.info("...: {}", result);
+   |     }
+   |     return Integer.toString(result);
+   |   }
+   | 
+   |   @WithSpan                                   // <·· Instrument method duration and
+   |   public int getRandomNumber(                 //     reports thrown exceptions !!!
+   |                                               //     for  span.name ==<class>.<method>
+   |                                               //     (default name)
+   |     @SpanAttribute("getRandom_min") int min,  // <·· Instrument!! 
+   |     @SpanAttribute("getRandom_max") int max   // <·· Instrument!! 
+   |   )
+   |      {
+   |     return ThreadLocalRandom.current().nextInt(min, max + 1);
+   |   }
+   | }
+   | ¹: If return type is one of the following (listed below),     [[{architecture.async}]]
+   |    the span will not be ended until the future completes.
+   |    
+   |    · java.util.concurrent.CompletableFuture
+   |    · java.util.concurrent.CompletionStage
+   |    · com.google.common.util.concurrent.ListenableFuture
+   |    · org.reactivestreams.Publisher
+   |    · reactor.core.publisher.Mono
+   |    · reactor.core.publisher.Flux
+   |    · io.reactivex.Completable
+   |    · io.reactivex.Maybe
+   |    · io.reactivex.Single
+   |    · io.reactivex.Observable
+   |    · io.reactivex.Flowable
+   |    · io.reactivex.parallel.ParallelFlowable
+   ```
+4. Assemble (Build) the app:
+   ```
+   $ gradle assemble  # <·· create app in ./build/libs/java-simple.jar 
+   ```
+7. Stop and restart the app like:
+   ```
+   | $ export JAVA_TOOL_OPTIONS="-javaagent:PATH/TO/opentelemetry-javaagent.jar" 
+   | $ export OTEL_TRACES_EXPORTER=logging 
+   | $ export OTEL_METRICS_EXPORTER=logging 
+   | $ export OTEL_LOGS_EXPORTER=logging 
+   | $ export OTEL_METRIC_EXPORT_INTERVAL=15000  # "small value" just for testing
+   | $ java -jar ./build/libs/java-simple.jar 1>app.log 2&1 &
+   | (output from the otel.javaagent will be automatically displayed to app.log)
+   ```
+8. Test setup by checking opentelemetry traces are in place.
+   ```
+   $ curl localhost:8080/rolldice
+   $ cat app.log 
+   .... 
+   [otel.javaagent 2023-04-24 17:33:54:567 +0200] [http-nio-8080-exec-1] INFO
+   io.opentelemetry.exporter.logging.LoggingSpanExporter - 'RollController.index' :
+    70c2f04ec863a956e9af975ba0d983ee 7fd145f5cda13625 INTERNAL [tracer:
+    io.opentelemetry.spring-webmvc-6.0:1.25.0-alpha] AttributesMap{data=
+    {thread.id=39, thread.name=http-nio-8080-exec-1}, capacity=128,
+    totalAddedValues=2}
+   [otel.javaagent 2023-04-24 17:33:54:568 +0200] [http-nio-8080-exec-1] INFO
+   io.opentelemetry.exporter.logging.LoggingSpanExporter - 'GET /rolldice' :
+   70c2f04ec863a956e9af975ba0d983ee 647ad186ad53eccf SERVER [tracer:
+   io.opentelemetry.tomcat-10.0:1.25.0-alpha] AttributesMap{          <···
+     data={
+       user_agent.original=curl/7.87.0,
+       thread.name=http-nio-8080-exec-1,
+       thread.id=39,
+       net.host.name=localhost,
+       net.transport=ip_tcp,
+       net.sock.peer.port=53422,
+       net.sock.host.addr=127.0.0.1,
+       net.protocol.name=http,
+       net.protocol.version=1.1,
+       net.host.port=8080,
+       net.sock.peer.addr=127.0.0.1,
+       http.target=/rolldice,
+       http.route=/rolldice,
+       http.status_code=200,
+       http.scheme=http,
+       http.response_content_length=1,
+       http.method=GET
+    },
+    capacity=128,
+    totalAddedValues=17}
+   
+   ... at stop time we will see something similar to ... 
+   [otel.javaagent 2023-04-24 17:34:25:347 +0200] [PeriodicMetricReader-1] INFO
+   io.opentelemetry.exporter.logging.LoggingMetricExporter - Received a collection
+    of 19 metrics for export.
+   [otel.javaagent 2023-04-24 17:34:25:347 +0200] [PeriodicMetricReader-1] INFO
+   io.opentelemetry.exporter.logging.LoggingMetricExporter - metric:
+   ImmutableMetricData{
+     resource=Resource{schemaUrl=https://opentelemetry.io/schemas/1.19.0,
+     attributes={
+       host.arch="aarch64",
+       host.name="myserver01",
+       os.description="Mac OS X 13.3.1",
+       os....
+       process.pid=12345,
+       process....
+       instrumentationScopeInfo=InstrumentationScopeInfo{
+             name=io.opentelemetry.runtime-metrics,
+             version=1.25.0,
+            schemaUrl=null, attributes={}
+       }
+       name=process.runtime.jvm.buffer.limit,
+       data=ImmutableSumData{ points=[ ... ] }
+   ...
+   ```
+[[PM.low_code}]]
+
+[[monitoring.opentelemetry}]]

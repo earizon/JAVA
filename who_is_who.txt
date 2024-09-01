@@ -96,4 +96,7 @@
     at the KIT in the field of Java security analyses. His work today is 
     comprised of many open-source contributions and his blog, where he 
     writes regularly on in-depth profiling and debugging topics.
+
+* Gerrit Grunwald, JUG Leader, CRaC project, JReleaser, Azul VM, ...
+  <https://foojay.io/today/author/gerrit-grunwald/>
 [[}]]

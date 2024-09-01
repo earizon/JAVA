@@ -1,7 +1,21 @@
 [[{PM.WHATS_NEW,doc_has.ext_resource,architecture.async.reactive,troubleshooting.debugging]]
-## What's new
+# What's new
 
-RELATED:
+[[{cloud.101,PM.TODO]]
+## JVM Journey to Cloud-native (by BellSoft)
+  ```
+  · JDK 16: Elastic metaspace, Alpine Linux port
+  · JDK 15: Reimplement Datagram Socker API, Hidden Classes.
+  · JDK 14: JFR Event Streaming.
+  · JDK 13: Uncommit unused memory for ZGC.
+  · JDK 12: Return unused memory, Shenandoah GC.
+  · JDK 11: ZGC.
+  · JDK 10: Docker awareness.
+  · JDK 09: Compact Strings, HTTP/2 client.
+  ```
+[[cloud.101}]]
+
+## RELATED
 * <https://docs.openrewrite.org/>  [[{troubleshooting,PM.low_code,qa}]]
   OpenRewrite enables large-scale distributed source code refactoring 
   for framework migrations, vulnerability patches, and API migrations. 

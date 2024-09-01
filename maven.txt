@@ -797,3 +797,19 @@ But in the end, you choose what's best for your project/environment.
   * help:system            displays a of platform details (system properties, environment variables.
 
 [[devops.maven}]]
+
+[[{DevOps.maven.wrapper]]
+## Maven Wrapper  (maven 3.7+)
+
+* <https://maven.apache.org/wrapper/>
+
+* similar to gradle wrapper, it is designed to
+  simplify portable builds between systems, 
+  avoiding the need for local maven installs.
+  ```
+  $ mvn wrapper:wrapper -Dmaven=3.5.4 # latest version used by default.
+  $ ./mvnw clean install # <· use local install 
+  ```
+
+
+[[{DevOps.maven,PM.TODO]]

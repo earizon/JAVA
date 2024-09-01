@@ -172,7 +172,7 @@
      and the order in which they must be executed.
   3. EXECUTION     : Runs tasks until completion or error.
 
-[[gradle.101}]]
+[[devops.gradle.101}]]
 
 ## Gradle Initial project/s Setup: <!-- { -->
   ```
@@ -419,7 +419,7 @@
   |   }
   | }
   ```
-[[gradle.customization}]]
+[[devops.gradle.customization}]]
 * DO **NOT** add a setting to `gradle.propeties` before having read
   the docs to understand what any (collateral/direct) effect.
   [[{doc_has.KEYPOINT}]].
@@ -678,7 +678,7 @@
   - Copy static resources in src/main/webapp into root of WAR
   - Copy the compiled production classes into a WEB-INF/classes
   - Copy lib.dependencies into WEB-INF/lib subdirectory
-[[gradle.java_projects}]]
+[[devops.gradle.java_projects}]]
 
 # Gradle Scans  [[{troubleshooting]]
 
@@ -922,7 +922,22 @@
   ```
 <!-- } version catalogs  -->
 
-## TODO:
-* Java Modules support:
-  https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_modular
+# TODO Gradle
+
+## Java Modules support:
+
+* https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_modular
 * https://docs.gradle.org/current/userguide/configuration_cache.html
+
+
+##  gradle 8.0 GA release [[{DEVOPS.GRADLE]]
+- enhancements to Kotlin DSL (alternative to Groovy DSL).
+- upgrades to Kotlin 1.8 and JDK 11.
+- improvements in buildSrc builds;
+- configuration cache: incubating new feature
+- improvements in Java toolchains.
+- Shortly after the GA release, a patch release, Gradle 8.0.1,
+  provides fixes for these issues:
+[[}]]
+
+

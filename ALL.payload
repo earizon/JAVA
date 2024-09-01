@@ -15,7 +15,9 @@ jee_war_apps.txt
 maven.txt
 containerization.txt
 gradle.txt
+CRaC_checkpoints.txt
 monitorization.txt
+monitorization_opentelemetry.txt
 monitorization_micrometer.txt
 JVM.txt
 whats_new.txt
@@ -25,3 +27,4 @@ vertx.txt
 who_is_who.txt
 GraalVM.txt
 TODO.txt
+eclipse_microprofile.txt
