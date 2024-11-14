@@ -1,5 +1,28 @@
 # JSON Processing
 
+
+* Summary
+   ```
+   20XX  JAX-RS 1.1: Java API for RESTful Web Services
+         Official in JEE 6.
+
+   2013  JAX-RS 2.0: 
+
+   201? JSON-P(rocessing) :
+        - API for parsing and generating JSON data.
+          with imperative and streaming API.
+                       
+
+   2017 JSON-B(inding)    :
+        - API for bidirectional binding between Java objects and
+          json string. (later spec sitting on top of JSON-P)
+          Similar in concept to JAXB (Java Object to XML binding)
+        - Unfortunately the standard falls sort and extensions to
+          it are needed. For example Jackson allows for inmutable
+          constructor with @JsonConstructor, but it is not part of
+          the standard.
+   ```
+
 ## JSON-P(rocessing) /JSR-374 [[{persistence.JSON.json-p,security.TLS/X509,security.aaa,PM.TODO]]
 * Patterns of JSON Matching:
   * Streaming based, binding based, expression based.
@@ -11,7 +34,7 @@
 * JSR 374, API for JSON Processing (JSON-P) version 1.1.
   * Java 8 streams and lambdas alternative to Moshi and Jackson.
   * expected to be included in J2EE 8 .
-  * compatible with JSON IETF standards.
+  tun* compatible with JSON IETF standards.
   * It includes support for:
     * JSON Pointer
     * JSON Patch
@@ -191,10 +214,13 @@
   fromJson()
   ```
 
-## jsoniter (Much) faster JSON iterator en/de-coder [[{io.json.jsoniter]]
+
+[[{io.json.jsoniter]]
+## jsoniter: (Much) faster JSON iterator en/de-coder (Abandoned project)
+* WARNS: Looks to be abandoned.
 * <https://github.com/json-iterator>
 * available in Java and Go.
-* Up to 3x times faster than jackson/gson/fastjson [[{doc_has.comparative}]]
+* Up to 3x times faster than jackson/gson/fastjson [[doc_has.comparative]]
 [[io.json.jsoniter}]]
 
 

@@ -1,0 +1,68 @@
+# JHipster [[{PM.low_code.jhipster,spring.101,architecture.frontend]]
+* HomePage: <https://www.jhipster.tech/>
+* Development platform to generate, develop and deploy
+  Spring Boot + Angular / React / Vue Web applications and 
+  Spring microservices.
+* Created by Julien Dubois, currently (2021-06) Java Developer Advocacy
+  manager at Microsoft
+
+## JHipster install: 
+1. Install a LTS node version (through `nvm`)
+2. Install latest JHipster.
+
+## JHiipster project bootstrap:
+
+1. Choose the desired Java version. Probably latest LTS JDK supported by
+   the project and library transitive dependencies. <br/>
+   This means, unfortunately, JDK 11 for many "old" libraries using XML.
+   Otherwise opt for JDK 21 (as of 2024-03), since it's just better.
+2. Choose a desired Spring version compatible with your JDK:
+   [REF](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions#jdk-version-range)
+   ```
+   JDK Version Range
+   - Spring Framework 6.2.x: JDK 17-25 (expected)
+   - Spring Framework 6.1.x: JDK 17-23
+   - Spring Framework 6.0.x: JDK 17-21
+   - Spring Framework 5.3.x: JDK 8-21 (as of 5.3.26)
+   ```
+3. Choose newest Spring-Boot version compatible with your Java version.<br/>
+   ```
+       \             Spring               \   Spring Boot 
+   JDK  \            Version               \   Version
+         \----------------------------------\---------------
+         | 6.2.x   6.1.0    6.0.x   5.3.26+ | 3.0.X+ 2.7.X 
+   25    | OK      ERR      ERR     ERR     | ??     ERR
+   23    |  OK      OK      ERR     ERR     | ??     ERR
+   21    |  OK      OK       OK      OK     | OK     ERR
+   17    |  OK      OK       OK      OK     | OK     ERR
+   11    | ERR     ERR      ERR      OK     | ERR    OK 
+    8    | ERR     ERR      ERR      OK     | ERR    OK
+
+   C&P from
+   https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions
+   We fully test and support Spring on Long-Term Support (LTS) releases of the JDK:
+   currently JDK 8, JDK 11, JDK 17, and JDK 21. Additionally, there is support for
+   intermediate releases such as JDK 18/19/20 on a best-effort basis, ...
+   We recommend JDK 17 and 21 for production use with Spring Framework 6.x as well as 5.3.x.
+   --------------------------------------------------------
+    https://spring.io/projects/spring-boot#support
+    Branch |Init. Relea.| End Suppor| End Comm.
+    -------+------------+-----------+-----------
+    3.2.x  | 2023-11-23 |2024-11-23 | 2026-02-23
+    3.1.x  | 2023-05-18	|2024-05-18	| 2025-08-18
+    3.0.x  | 2022-11-24	|2023-11-24	| 2025-02-24
+    2.7.x  | 2022-05-19	|2023-11-24	| 2025-08-24
+   ```
+3.  Choose the jhipster version supporting the JDK version:<br/>
+   TODO:(0) Map JDK to supported spring versions.
+   ```
+              |  Spring-boot | Min.Spring | JDK
+    JHipster  |  version     | Supported  | Supported
+    8.0.x     |   3.1.5      | ???        | ¿17,21? 
+    7.9.0     |   2.7.2      |            | ¿8,11?
+    7.8.0     |   2.6.6      |            | ¿8,11?
+
+   ```
+
+[[PM.low_code.jhipster}]]
+

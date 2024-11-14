@@ -1,0 +1,22 @@
+# TornadoVM
+
+TornadoVM is an open-source software technology that automatically 
+accelerates Java programs on multi-core CPUs, GPUs, and FPGAs.
+
+
+## TornadoVM Plugin for IntelliJ [[{scalability.JVM.TornadoVM,qa.UX]]
+* <https://www.infoq.com/news/2024/01/java-news-roundup-jan08-2024/>
+* TornadoVMTornadoInsight is an open-source IntelliJ IDEA plugin for
+  enhancing the developer experience when working with TornadoVM.
+* It was introduced by the TornadoVM team this past week.
+  * Key features include:
+    * an on-the-fly static checker that scans TornadoVM code in real-time
+      and reports any Java features that are not supported by TornadoVM.
+  * A dynamic testing framework to simplify the testing process for
+    individual TornadoVM tasks. 
+[[scalability.JVM.TornadoVM}]]
+
+## Running on XPUs via Docker
+
+* <https://www.tornadovm.org/post/running-java-programs-on-xpus-with-tornadovm-via-docker>
+

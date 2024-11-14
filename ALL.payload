@@ -26,5 +26,6 @@ vertx.txt
 ../cryptography/java_cryptography.txt
 who_is_who.txt
 GraalVM.txt
+jhipster.txt
 TODO.txt
 eclipse_microprofile.txt

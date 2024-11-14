@@ -89,8 +89,13 @@
 ## Jooq: SQL made simple [[{persistence.sql,vertx.*,architecture.async.reactive,PM.low_code,qa.data,PM.TODO]]
 * <https://www.jooq.org/>
 * WARN: Free for OOSS databases, requires licence for Oracle and maybe others.
-* WARN: ¿Deprecated in favor of QueryDSL?
-
+* Q ¿Deprecated in favor of QueryDSL?, maybe not:
+  from Thorben e-mail:<r/>
+  " ...  I shared the announcement video for Lukas Eder's Expert Session a few days ago. Did you see it?
+  Starting at minute 1:30, Lukas shares a few interesting jOOQ features, including the new multiset support.
+  **It will be interesting to see if other frameworks adopt that feature. It seems to be an efficient way 
+  to fetch nested data structures in 1 query.**"<br/>
+  VIDEO Link: <https://www.youtube.com/watch?v=XZOpC1Fd10s>
 * Related: No More MultipleBagFetchException thanks to Multiset Nested Collections SQL and jOOQ.
   <https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/>
 

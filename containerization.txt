@@ -1,26 +1,41 @@
+[[{containerization,image.build.java]]
 # DevOps: Containerization
 
 ## Dockerfile "pipeline": mvn to Container [[{devops.containarization,devops.maven,devops.k8s,doc_has.diagram,PM.TODO]]
 
 * Example Dockerfile
-```
-FROM maven:3.6-jdk-12-alpine as build
-WORKDIR /builder
-ADD pom.xml /builder/pom.xml
-ADD src /builder/src
-
-RUN mvn install -DskipTests=true
-
-FROM openjdk:11-jre
-ARG APP_NAME_ARG=middleware-0.0.1-SNAPSHOT.jar
-ENV APP_PROFILE docker
-ENV APP_NAME $APP_NAME_ARG
-WORKDIR /app
-COPY --from=build /builder/target/$APP_NAME /app
-COPY --from=build /builder/src/main/resources /app/src/main/resources
-EXPOSE 8080
-CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME
-```
+  ```
+  | FROM maven:3.6-jdk-12-alpine as build   <·· state 1) Use build image 
+  | WORKDIR /builder
+  | ADD pom.xml /builder/pom.xml
+  | ADD src /builder/src
+  | 
+  | RUN mvn install -DskipTests=true
+  | 
+  |                            
+  | FROM gcr.io/distroless/java:11          <·· stage 2) copy build to distroless ¹ runtime image 
+  |                                                      alter                        openjdk:11-jre
+  | ARG APP_NAME_ARG=myapp-1.0.jar
+  | ENV APP_PROFILE docker
+  | ENV APP_NAME $APP_NAME_ARG
+  | WORKDIR /app
+  | COPY --from=build /builder/target/$APP_NAME /app
+  | COPY --from=build /builder/src/main/resources /app/src/main/resources
+  |
+  | EXPOSE 8080
+  | 
+  | # CMD java -Dspring.profiles.active=$APP_PROFILE -jar $APP_NAME  <·· Alt 1: java as entrypoint 
+  | CMD dockerize \                                                  <·· Alt 2: dockerize as entrypoint
+  |   -template /config.tmpl:/app/config.xml \                           to make app docker friendly
+  |    -stdout /app/app.log -stderr /app/error.log \
+  |      java -Dspring.profiles.active=$APP_PROFIE -jar $APP_NAME
+  | 
+  | <https://github.com/googlecontainertools/distroless/blob/master/examples/java/dockerfile>
+  | "Distroless" images contain only your application and its runtime dependencies.
+  | They do not contain package managers, shells or any other programs you would
+  | expect to find in a standard Linux distribution.
+  ```
+[[image.build.java}]]
 
 ## Jib: Image Builder
 * Docker+mvn/gradle integration:
@@ -229,3 +244,5 @@ TODO:
 
 * <https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4>
 [[}]]
+
+[[containerization}]]

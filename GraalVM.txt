@@ -1,0 +1,157 @@
+# GraalVM Summary [[{jvm.graalvm,devops.k8s,scalability.jvm,PM.TODO]]
+<http://www.graalvm.org/>
+<https://technology.amis.nl/2018/11/23/comparing-jvm-performance-zulu-openjdk-openjdk-oracle-jdk-graalvm-ce/>
+<https://www.reddit.com/r/java/comments/acarqq/graalvm_in_2018/>
+
+- Graal: How to Use the New JVM JIT Compiler in Real Life
+  <https://www.infoq.com/presentations/graal-jvm-jit/>
+
+- GraalVM Native Image
+<https://www.graalvm.org/docs/reference-manual/native-image/>
+ "native-image"  utility:
+ - ahead-of-time compiler to a   standalone executable .
+ - JVM is replaced with necesary  components (memory mngr,
+   Thread scheduler) in "Substrate VM" runtime:
+   Substrate VM runtime is actually the name for the runtime components
+   (like the deoptimizer, garbage collector, thread scheduling etc.).
+ - Result has faster startup time and lower runtime memory .
+ - It statically analyses which classes and methods are reachable
+   and used during application execution and passes all this
+   reachable code as the input to the GraalVM compiler for
+   ahead-of-time compilation into native-library.
+Ex Ussage:
+<https://github.com/web3j/svm/blob/master/generate_native_image.sh>
+  # tested with graalvm 19.3.1
+  ./gradlew spotlessApply
+  ./gradlew build
+  ./gradlew shadowJar  // ← create fat JARs, relocate packages for apps/libs
+  cd "build/libs" || exit
+  native-image \
+     -cp svm-1.0-SNAPSHOT-all.jar \
+     org.web3j.svm.MainKt \
+     --no-fallback \
+     --enable-https \
+     --enable-http
+[[}]]
+
+# GraalVM Dockerfile [[{devops.containarization,scalability.jvm.graalvm,architecture.serverless,PM.TODO]]
+<https://jamesward.com/2020/05/07/graalvm-native-image-tips-tricks/>
+
+```
+| FROM oracle/graalvm-ce:20.0.0-java11 as builder
+| WORKDIR /app
+| COPY . /app
+|
+| RUN gu install native-image
+|
+| # Build the app (via Maven, Gradle, etc) and create the native image
+| FROM scratch
+| COPY --from=builder /app/target/my-native-image /my-native-image
+| ENTRYPOINT ["/my-native-image"]
+```
+
+* to build a statically linked native image:
+  ```
+  --static
+  ```
+
+* ...Luckily GraalVM has a way to also include the necessary system
+  libraries in the static native image with musl libc:
+  * In your Dockerfile download the musl bundle for GraalVM:
+  ```
+  RUN curl --silent -L -o - \
+      https://github.com/gradinac/musl-bundle-example/releases/download/v1.0/musl.tar.gz && \
+      tar -xvzf musl.tar.gz
+  ```
+  And then add a native-image parameter that points to the extracted location of the bundle, like:
+  ```
+  -H:UseMuslC=bundle/
+  ```
+  Now your native image will include the standard library system calls that are needed!
+
+- If AOT thing fails, it will fallback to just running the app in the JVM.
+  To avoid it running on the JVM:
+  ```
+  --no-fallback
+  ```
+
+* FAIL-FAST: Don't Defer Problems to Runtime.  Make sure native-image 
+  is NOT being run with any of these params:
+  ```
+  --report-unsupported-elements-at-runtime
+  --allow-incomplete-classpath
+  -H:+ReportUnsupportedElementsAtRuntime
+  ```
+
+## Reflection Woes
+  * reflection happens at runtime, making it hard for an AOT complier.
+  * you can tell GraalVM about what needs reflection access,
+    but this can quickly get a bit out-of-hand, hard to derive and maintain.
+  * Micronaut and Quarkus do a pretty good job generating the reflection
+    configuration at compile time but you might need to augment the
+    generated config. (tricky with shaded transitive dependencies).
+  * To reliably generate a reflection config you need to exercise as many
+    execution code paths as possible, ideally by running unit/integration tests.
+
+GraalVM has a way to keep track of reflection and output the configuration.
+Run the app on GraalVM and use a special Java agent that will be able to
+see the reflective calls.
+
+STEPS:
+
+1. grab GraalVM Community Edition.
+2. set JAVA_HOME and PATH.
+3. From release assets grab the right native-image-installable-svm-BLAH.jar file
+   and extract it in the root of your GraalVM JAVA_HOME directory.
+4. run tests with parameter:
+   ```
+   -agentlib:native-image-agent=config-output-dir=src/graal"
+   ```
+   This will generate the reflection config (and possibly other configs for
+   dynamic proxies, etc).
+5. tell native-image about those configs, like:
+   -H:ReflectionConfigurationFiles=src/graal/reflect-config.json
+6. For Quarkus & Micronaut see their docs (Quarkus / Micronaut) for details on
+   how to add your own reflection config files.
+[[}]]
+
+
+## Compressed GraalVM Native Images
+
+* REF: <https://medium.com/graalvm/compressed-graalvm-native-images-4d233766a214>
+"the best startup for Java apps comes in tiny packages"
+
+### TLDR
+* Ultimate Packer for eXecutables (UPX for sort) allows to
+  compress GraalVM 20.3.0 Native Images by a factor of x3/x4 with
+  very low impacts on the startup time. <br/>
+* DRAGON Stack manager Java CLI tool, improves the
+  developer experience because of the resulting perception: a lot 
+  of capabilities in less than 20 MB.
+
+* UPX is portable, free and open-source: 
+  * Decompression is simple and very fast.
+  * Requires no memory for decompression.
+  * Excellent compression ratios.
+  * Several compression levels are available. 
+
+* CI/CD Pipeline
+```
+src code -> |GraalVM AOT| -> exe -> |UPX| -> micro-exe
+                                    ·   ·
+                                    └─┬─┘
+                                  $ upx -7 -k myapp
+```
+
+## Quarkus (GraalVM) Framework [[{jvm.graalvm,devops.k8s,scalability.jvm,persistence.jpa,PM.TODO]]
+
+* <https://quarkus.io/guides/>
+* <https://quarkus.io/guides/kogito-guide>
+* <https://marketplace.visualstudio.com/items?itemName=kie-group.vscode-extension-kogito-bundle>
+* <https://www.infoq.com/news/2019/03/redhat-release-quarkus>
+* ..
+
+
+[[}]]
+
+

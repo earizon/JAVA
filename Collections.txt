@@ -215,10 +215,14 @@
   |       Map.of("k1", "v1", "k2", "v2");
   |
   | final Map<String, String> inmutableMap02 =   // <·· Java 9+ (Safer syntax). Preferred
-  |       Map.ofEntries( entry("k1", "k2"),...);
+  |       Map:ofEntries( 
+  |         Map.entry("k1", "v1"),
+  |         Map.entry("k2", "v2"),
+  |         ...
+  |       );
   |
   | final Map<String, String> test =             // <·· Guava ImmutableMap
-  |       ImmutableMap.of("k1","v1", ...);       //     works only with up to 5 key/value pairs
+  |       ImmutableMap:of("k1","v1", ...);       //     works only with up to 5 key/value pairs
   |
   | final Map<String, String> test =             // <·· Guava ImmutableMap alternative
   |       ImmutableMap.<String, String>builder()

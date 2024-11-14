@@ -363,9 +363,9 @@
 
 ## `gradle.properties` Customizing gradle/project/build/plugins [[{devops.gradle.customization]]
 
-*[REF](https://dev.to/jmfayard/configuring-gradle-with-gradle-properties-211k)
-*`gradle.propeties` is NOT created by default during '$ gradle init ...'
-*`$ gradle refreshVersions` can be used to generate an initial one
+* REF: <https://dev.to/jmfayard/configuring-gradle-with-gradle-properties-211k>
+* `gradle.propeties` is NOT created by default during `$ gradle init ...`
+* `$ gradle refreshVersions` can be used to generate an initial one
   with depedencies versions and available updates looking similar to:
   ```
   | $ cat gradle.properties             <·· Properties can also be defined in build.gradle.kts
@@ -570,12 +570,22 @@
   |   with(tasks.jar.get() as CopySpec)
   | }
   |
-  | tasks.named("bootJar") { archiveClassifier = 'boot' }
+  | tasks.named("bootJar") {                          // <·· Executes only when the task run match the name. (lazy/on demand)
+  |    archiveClassifier = 'boot'                     //     Probably is what we need most of the times.
+  | }
   |
   | //    ┌──────┬─····· TODO:
-  | tasks.withType<Test> { useJUnitPlatform() }
+  | tasks.withType<Test> { useJUnitPlatform() }       // <·· Executes Always/eagerly, inconditionally, the closure
+  |                                                          on all existing tasks with the matching type, even if they
+  |                                                          are not going to be run, and also later on for any matching
+  |                                                          task created on demand.
+  |                                                          tasks.withType(Test) in old/deprecated Groovy syntax.
   |
-  | tasks.withType(Tar) {                             //  <·· FIX ERROR: > Entry ....jar is duplicate but no duplicate
+  | tasks.withType<ABC>.configureEach {               // <·· Similar to withType but executes lazely, only if task is
+  |    options.release = 17                                  to be run.
+  | }
+  |
+  | tasks.withType<Tar> {                             //  <·· FIX ERROR: > Entry ....jar is duplicate but no duplicate
   |   duplicatesStrategy = DuplicatesStrategy.EXCLUDE //      handling strategy has been set.
   | }
   | tasks.withType(Zip) {

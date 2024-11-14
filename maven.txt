@@ -89,10 +89,10 @@ First time mvn is executed will be slow, since lot of libraries must be download
   ```
 
   ```
-  | [[{troubleshooting.scripting,troubleshooting.debugging}]]              EXTRACT PACKAGE INFO 
-  | (Quite useful to integrate into shell scripts in CI/CD that have a 
+  | [[{troubleshooting.scripting,troubleshooting.debugging}]]              EXTRACT PACKAGE INFO
+  | (Quite useful to integrate into shell scripts in CI/CD that have a
   |  need for some value in pom without the need to manually parse the xml
-  |  file -error prone-) 
+  |  file -error prone-)
   | $ mvn help:evaluate -q -DforceStdout -Dexpression=project.artifactId   ← Artifact ID
   | $ mvn help:evaluate -q -DforceStdout -Dexpression=project.groupId      ← Extract Group ID
   | $ mvn help:evaluate -q -DforceStdout -Dexpression=project.version      ← Extract Version
@@ -198,7 +198,7 @@ Utilities to clean, organize, and restructure Maven POMs.
   * find dependencies that are specified but unused.
   * find dependencies used but unspecified (TRANSITIVE DEPENDENCIES THAT SHOULD BE DIRECT).
 
-## MVND(aemon) 
+## MVND(aemon)
 * <https://www.infoq.com/news/2020/12/mvnd-mavens-speed-daemon/>
 * Study driven by Gradle shows Maven as being
   up to 100 times slower than gradle builds .
@@ -347,8 +347,8 @@ Utilities to clean, organize, and restructure Maven POMs.
   </dependencyManagement>
   ```
 
-* [[{qa.best_patterns}]] Try to avoid using parent inherited 
-properties in children, unless we know they are "inmutable" or really 
+* [[{qa.best_patterns}]] Try to avoid using parent inherited
+properties in children, unless we know they are "inmutable" or really
 shared.  Otherwise modifying the parent can break children.
 
 1. Defining all children sub-modules in the <modules> sections converts the parent pom into an aggregator.
@@ -361,15 +361,15 @@ shared.  Otherwise modifying the parent can break children.
                       of the build. Such plugin will be built first.
                       Otherwise the default order in the <modules> section is used.
                       Optional flags include:
-                      --resume-from          : resumes reactor from a given project 
+                      --resume-from          : resumes reactor from a given project
                                                (on previous fail)
                       --also-make            : build the specified projects, and any
                                                of their dependencies in the reactor
-                      --also-make-dependents : build the specified projects, and any that 
+                      --also-make-dependents : build the specified projects, and any that
                                                depend on them
                       --fail-fast            : default behavior. Stop on first module fail.
                       --fail-at-end          : Continue on module failure.
-                      --non-recursive        : Ignore <modules>, build just project in 
+                      --non-recursive        : Ignore <modules>, build just project in
                                                the current directory (not very useful since
                                                usually modules exists just on pom like projects)
   ```
@@ -442,10 +442,10 @@ But in the end, you choose what's best for your project/environment.
   Which version of project D will be used. v1.4 or v1.0?
   ```
 
-* Solution 1: Maven automatic dependency mediation. "nearest 
-  one"/closest to our project.  (D v1.0 in previous dependency tree 
+* Solution 1: Maven automatic dependency mediation. "nearest
+  one"/closest to our project.  (D v1.0 in previous dependency tree
   example)
-* Solution 2: Explicit declaration (put Dv1.4 as direct dependency in 
+* Solution 2: Explicit declaration (put Dv1.4 as direct dependency in
   pom.xml of project A)
 * Solution 3: Use <dependencyManagement> as BOM (Bill of material)
 * Solution 3.Alt 1: Declare <dependencyManagement> in parent's pom, and just inherit in
@@ -525,12 +525,13 @@ But in the end, you choose what's best for your project/environment.
      ```
      $ mvn versions:use-latest-versions \      ← update pom dependency to latest version
          -DincludesList="org.apache.logging.log4j:*,org.checkerframework:*,com.google.guava:*"
-         -DexcludesList="io.cucumber:*" 
+         -DexcludesList="io.cucumber:*"
          -DallowMajorUpdates=false \
          -DallowMinorUpdates=true \
          -DignoredVersions="0\.*,*-SNAPSHOT"
       See <https://www.mojohaus.org/versions/versions-maven-plugin/use-latest-releases-mojo.html> for details.
      ```
+* ..
   * `versions:use-latest-releases`: searches pom for all non-SNAPSHOT versions which have been a newer release.
     (RELEASE has been deprecated in maven but it is still supported)
   * `versions:update-properties`: updates properties defined in a project to the latest available version of
@@ -540,10 +541,10 @@ But in the end, you choose what's best for your project/environment.
   * `versions:update-parent`: updates parent section of a project to reference the newest available version.
     Useful for example, when updating a corporate root POM.
   * `versions:update-child-modules`: updates parent section of child modules so that version matches the version
-    of the current project. 
+    of the current project.
     Useful when using an aggregator pom that is also the parent for the projects that it aggregates and the
     children and parent versions get out of sync.<br/>
-    Note: you may need to invoke Maven with the -N option in order to run this goal if your project is 
+    Note: you may need to invoke Maven with the -N option in order to run this goal if your project is
     broken so badly that it cannot build because of the version miss-match.
   * `versions:lock-snapshots`: searches the pom for all -SNAPSHOT versions and replaces them with current
     timestamp version: ej: `-SNAPSHOT  -> -20090327.172306-4`
@@ -553,13 +554,13 @@ But in the end, you choose what's best for your project/environment.
     version being used.
   * `versions:use-releases`: searches pom for -SNAPSHOT versions which have been released and replaces them
     with the corresponding release version.
-  * `versions:use-next-releases`: searches the pom for all non-SNAPSHOT versions which have been a newer release 
+  * `versions:use-next-releases`: searches the pom for all non-SNAPSHOT versions which have been a newer release
     and replaces them with the next release version.
   * `versions:use-next-versions`: searches the pom for all versions which have been a newer version and replaces
     them with the next version.
   * `versions:commit` removes the pom.xml.versionsBackup files. <br/>
     Forms one half of the built-in "Poor Man's SCM".
-  * `versions:revert` restores the pom.xml files from the pom.xml.versionsBackup files. 
+  * `versions:revert` restores the pom.xml files from the pom.xml.versionsBackup files.
     Forms one half of the built-in "Poor Man's SCM".
 <!-- } -->
 
@@ -687,10 +688,10 @@ But in the end, you choose what's best for your project/environment.
 
 * required files:
   ```
-  $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc          ² 
-  $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc          ² 
-  $  cat artifact01-1.4.7-sources.jar ¹  | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc  ² 
-  $  cat artifact01-1.4.7-javadoc.jar ¹  | gpg2 -ab -o artifact01-1.4.7-javadoc.jar.asc  ² 
+  $  cat artifact01-1.4.7.pom            | gpg2 -ab -o artifact01-1.4.7.pom.asc          ²
+  $  cat artifact01-1.4.7.jar            | gpg2 -ab -o artifact01-1.4.7.jar.asc          ²
+  $  cat artifact01-1.4.7-sources.jar ¹  | gpg2 -ab -o artifact01-1.4.7-sources.jar.asc  ²
+  $  cat artifact01-1.4.7-javadoc.jar ¹  | gpg2 -ab -o artifact01-1.4.7-javadoc.jar.asc  ²
          └──┬─────┘ └─┬─┘              ^               └──────────────┬───────────────┘  ^
          artifactId version            │                      GPG signatures *.asc       │
                                        │                                                 │
@@ -722,24 +723,22 @@ But in the end, you choose what's best for your project/environment.
 
 * e-mail received after Namespace correct registration
   ```
-  ┌──────────────────────────────────────────────────────────────────┐
-  │ https://issues.sonatype.org/browse/OSSRH-39644?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
-  │ Thad Watson resolved OSSRH-39644: Resolution: Fixed              │
-  │                                                                  │
-  │ Configuration has been prepared, now you can:                    │
-  │ → Deploy snapshot artifacts into repository                      │
-  │   <https://oss.sonatype.org/content/repositories/snapshots>     │
-  │ → Deploy release artifacts into the staging repository           │
-  │   <https://oss.sonatype.org/service/local/staging/deploy/maven2>│
-  │ → Promote staged artifacts into repository 'Releases'            │
-  │ → Download snapshot and release artifacts from group             │
-  │   <https://oss.sonatype.org/content/groups/public>              │
-  │ → Download snapshot, release and staged artifacts from           │
-  │   staging group                                                  │
-  │   <https://oss.sonatype.org/content/groups/staging>             │
-  │  please comment on this ticket when you promoted                 │
-  │  your first release, thanks                                      │
-  └──────────────────────────────────────────────────────────────────┘
+  | https://issues.sonatype.org/browse/OSSRH-39644?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
+  | Thad Watson resolved OSSRH-39644: Resolution: Fixed
+  |
+  | Configuration has been prepared, now you can:
+  | → Deploy snapshot artifacts into repository
+  |   <https://oss.sonatype.org/content/repositories/snapshots>
+  | → Deploy release artifacts into the staging repository
+  |   <https://oss.sonatype.org/service/local/staging/deploy/maven2>
+  | → Promote staged artifacts into repository 'Releases'
+  | → Download snapshot and release artifacts from group
+  |   <https://oss.sonatype.org/content/groups/public>
+  | → Download snapshot, release and staged artifacts from
+  |   staging group
+  |   <https://oss.sonatype.org/content/groups/staging>
+  |  please comment on this ticket when you promoted
+  |  your first release, thanks
   ```
 
 ## pre-deployment Tests
@@ -790,9 +789,9 @@ But in the end, you choose what's best for your project/environment.
   The Help Plugin has 7 goals:
   * help:active-profiles:  lists profiles currently active for build.
   * help:all-profiles      lists available profiles under project.
-  * help:describe          describes attributes of a Plugin and/or a Mojo 
+  * help:describe          describes attributes of a Plugin and/or a Mojo
   * help:effective-pom     displays effective POM for current build.
-  * help:effective-settings displays calculated settings. 
+  * help:effective-settings displays calculated settings.
   * help:evaluate          evaluates Maven expressions. [[]]
   * help:system            displays a of platform details (system properties, environment variables.
 
@@ -804,11 +803,11 @@ But in the end, you choose what's best for your project/environment.
 * <https://maven.apache.org/wrapper/>
 
 * similar to gradle wrapper, it is designed to
-  simplify portable builds between systems, 
+  simplify portable builds between systems,
   avoiding the need for local maven installs.
   ```
   $ mvn wrapper:wrapper -Dmaven=3.5.4 # latest version used by default.
-  $ ./mvnw clean install # <· use local install 
+  $ ./mvnw clean install # <· use local install
   ```
 
 
