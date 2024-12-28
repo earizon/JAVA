@@ -1,0 +1,9 @@
+[[{persistence.sql.querydsl,PM.TODO]]
+## QueryDSL Persistence: Compile safe SQL
+* <https://www.baeldung.com/intro-to-querydsl>
+
+* Compile safe SQL like domain specific language compatible with JPA.
+
+[[persistence.sql.querydsl}]]
+
+

@@ -1,0 +1,51 @@
+[[{persistence.sql.speedment,PM.low_code,qa.data,java_lang.functional]]
+## Speedment Persistence: SQL as Streams
+<https://github.com/speedment/speedment>
+- Stream ORM toolkit and runtime.
+- The toolkit analyzes the metadata of an existing SQL database and
+  automatically creates a Java representation of the data model.
+- The powerful ORM enables you to create scalable and efficient Java
+  applications using standard Java streams with no need to type SQL or
+  use any new API.
+  ```
+  SQL                                    JAVA 8 Stream Equivalent
+ --------------------------------------------------------------------
+  FROM                                   stream()
+ --------------------------------------------------------------------
+  COUNT                                  count()
+ --------------------------------------------------------------------
+  LIMIT                                  limit()
+ --------------------------------------------------------------------
+  DISTINCT                               distinct()
+ --------------------------------------------------------------------
+  SELECT                                 map()
+ --------------------------------------------------------------------
+  WHERE                                  filter() (before collecting)
+ --------------------------------------------------------------------
+  HAVING                                 filter() (after  collecting)
+ --------------------------------------------------------------------
+  JOIN                                   flatMap()
+ --------------------------------------------------------------------
+  UNION                                  concat(s0, s1).distinct()
+ --------------------------------------------------------------------
+  ORDER BY                               sorted()
+ --------------------------------------------------------------------
+  OFFSET                                 skip()
+ --------------------------------------------------------------------
+  GROUP BY                               collect(groupingBy())
+ --------------------------------------------------------------------
+       SEARCH FILMS WITH LENGTH > 120 MINUTES:
+  SELECT                             ←   final
+   `film_id`,`title`,`description`,      Optional<Film>longFilm =
+   `release_year`, `language_id`,          films.stream()
+   `original_language_id`,                .filter(
+   `rental_duration`,`rental_rate`,          Film.LENGTH.greaterThan(120)
+   `length`,`replacement_cost`,            )
+   `rating`,`special_features`,           .findAny();
+   `last_update`
+  FROM                                    Searches optimized in background!
+       `sakila`.`film
+  WHERE
+      (`length` > 120)
+  ```
+[[persistence.sql.speedment}]]

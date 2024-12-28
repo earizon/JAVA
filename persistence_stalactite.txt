@@ -1,0 +1,594 @@
+[[{persistence.stalactite,persistence.sql,persistence.101]]
+
+# Stalactite Persistence
+
+* <https://www.codefilarete.org/stalactite-doc/2.0.0/>
+
+3 main modules:
+*  sql: layer on top of JDBC to ease its usage.
+* core: manages persistence of Objects without relation management. Depends on sql.
+*  orm: deals with relations between entities and allows persistence description 
+        through a fluent API. Depends on core. (this doc).
+* org.codefilarete.Reflections:  (internal dep).
+* org.codefilarete.Tool : (internal dep).
+
+
+* Why?  ... Stalactite comes with the observation that teams hardly 
+master the framework even after years of practice ...  putting annotations
+on files is painless, but after some months of development, **entity graph 
+becomes a spaghetti plate where you can't get only a piece of it without
+loading the whole**.  ... Then you'll have to add additional annotation such
+as @NamedEntityGraph to specify what you want to load entity state 
+(attached, detached, etc.) is still a problem for newcomers, and **developers
+still struggle with it after years of practise**, or have rewritten (even
+if not optimized) a layer on top of repository to avoid dealing with it...
+...    then come the well-known and common exceptions LazyInitializationException,
+StaleStateObjectException, ...  also, by using annotations for mapping, we lack
+a non-intrusive way of declaring it (with XML being poorly maintained).
+
+## Stalactite "hard" choices:
+
+* no query language "a la HQL/JPQL": underperformant, complex for developers 
+  replaced by a fluent (compiler friendly) API for CRUD SQL writing and
+  describing produced ResultSet.
+* no attach/detach concept, no first-level cache : NO needed in first place.
+  no need to audit changes with the "attach" mechanism ...  a difference
+  algorithm computation is used to find changes ... using the modified and
+  unmodified version of a bean (best pattern a la "react"). ...<br/>
+  NOTE: Stalactite will load the entity graph on `update(..)` ... it may
+  seem cumbersome but matches the load-update-persist pattern that happens
+  behind the scene of JPA/Hibernate/...
+* no annotations, only Java 8+
+* no lazy loading: let developers assess what they are doing with the DDBB
+  (in terms of performance), avoid lazy exceptions, relations are always fetched.
+  ... TIP: developer is encouraged to create several aggregates instead of one
+  huge entity graph.
+* no bytecode enhancement, by reflection is used. [[PM.risk]]
+* only PreparedStatement: avoid SQL Injection.<br/>
+  WARN:  SELECT statement are not totally protected ... developers must care
+  that SQL queries don't concatenate unprotected sources.
+
+## Known limitations
+
+* tested against HSQLDB, H2, PostgreSQL, MySQL, MariaDB and Derby.<br/>
+  **WARN**: No mention of Oracle.[[PM.risk]]
+* No support Spring derived queries.
+
+2. Persistence configuration
+
+Here is an example:
+
+  ```
+final DataSource dataSource = ... // create one from whatever manner
+PersistenceContext persistCtx =  // persistCtx contains DB info such as JDBCConnection provider and a Dialect.
+  new PersistenceContext(
+   new JdbcConnectionProvider(dataSource), new MySQLDialect());
+
+final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+final EntityPersister<Country, Long, Table>
+EP = MappingEase
+       .entityBuilder(Country.class, Long.class)   // <·· "entry point" for Stalactite
+                                                   //     Builds an EntityPersister used 
+                                                   //     for CRUDs on entities and its graph.
+                                                   //     Builds an EntityPersister
+                                                   //     Set Unique ID identifier:
+    .mapKey(                                       //     <·· Alt 1: Single property (primary) Key
+                                                   //
+      Country::getId,                              //
+      IdentifierPolicy.afterInsert())              // <·· :=  After-insert  : integer-like auto-increment id column
+                                                   //      | Before-insert  : ask to custom "id-generator" just before
+                                                   //                         insert. (ex: PooledHighLowSequence)
+                                                   //                       
+                                                   //      | Already-assigned: Should be assigned by Stalactice.
+                                                   //
+                                                   // <·· Alt 1: Use default no-arg constructor
+    .usingConstructor(Person::new, "id")           // <·· Alt 2: Use custom  N-args constructor 
+                                                   //     promoting inmutable (safe) code [[qa.inmutability]]
+                                                   //     Allowed signature for constructors include:
+                                                   //     - Up to 3 column names. 
+                                                   //     - Up to 3 Columns, enforcing constructor arg types
+                                                   //       with Java Generics.
+    .usingFactory(                                 // <·· Alt 3: Use a factory builder using row as 
+      row -> new Country(row.apply(idColumn),      //     input.
+             row.apply(nameColumn)))               //
+    /*                                             //
+    .mapCompositeKey(                              //     <·· Alt 2: Composite key: you shall detail the 
+      Person::getId,                               //         mapping of the composite-object as a 2nd 
+      MappingEase.compositeKeyBuilder(PersonId.class)         argument.
+        .map(PersonId::getFirstName)               //         NOTE: A composite-key use always a policy
+        .map(PersonId::getLastName)                //         "before insert". 
+    ) */
+
+    .map(Country::getName).mandatory()             //     <·· 2. Add simple properties.
+                                                   //         mandatory() force NON-NULL constraint on column.
+                                                   //         Throws exception otherwise.[[qa.billion_dolar_mistake]]
+                                                   //         NOTE: primitive type properties are NON-NULL always.
+
+    .map(Country::setName)                         //     <··    setters can be used as well
+      .fieldName("country01")                      //     <··    fieldName: used when name doesn't match setters
+      .writeConverter(String::toUpperCase)         //     <·· Convert value at write time. (Java ··> DB)
+
+    .map(Country::getISO, "isoCode")               //     <·· "isoCode" overrides a property column name (ISO by default).
+      .readonly()                                  //     <·· readonly: Tell Stalactite NOT to write the property to DB.
+      .readConverter(String::toUpperCase)          //     <·· Convert value at read time.  (DB ··> Java)
+      .mandatory()                                 //
+
+    .map(Country::getCreationDate)                 //     <·· Advanced "converters" when DB/Java types do not match
+      .mandatory()                                 //
+      .sqlBinder(new NullAwareParameterBinder<>(   //
+        DefaultParameterBinders.STRING_BINDER.thenApply(dateFormatter::parse),  // on read  DB String ··> Java Date 
+        DefaultParameterBinders.STRING_BINDER.preApply(dateFormatter::format))) // on write Java Date ··> DB String
+
+    .map(Country::getMetadata)
+      .extraTableName("CountryMetadata")           // <·· If the property must be extored in "secondary" table
+
+    .mapEnum(Country::getLanguage, "locale")       // <·· Map enum is quite similar replacing map -> mapEnum
+                                                   //     2nd argument is optional. Just if property and column names differ
+      .byOrdinal()                                 // <·· (optional, discouraged) use ordinal values (vs enum names)
+      .mandatory()                                 //     when persisting.
+
+    .embed(                                        // <·· Embed Timestamp -"tuple" (creationDate, modificationDate)- 
+       Country::getTimestamp,                      //     into the Country table
+       MappingEase.embeddableBuilder(Timestamp.class) 
+      .map(Timestamp::getCreationDate)             //     <·· embed timestamp.creationDate     into Country table
+      .map(Timestamp::getModificationDate))        //     <·· embed timestamp.modificationDate into Country table
+      .exclude(Timestamp::getCreationDate)         //     <·· All java properties are persisted by default.
+      .overrideName(Timestamp::getCreationDate,    //     <·· just if java-property and DB-column names differ
+         "creation_date")                          //     KEY-POINT: candidates are computed from getter/setter bean
+                                                   //                 methods (vs instance fields), 
+    .embed(Country::getPresident,
+           MappingEase.embeddableBuilder(Person.class)
+		.map(Person::getId)
+		.map(Person::getName)
+		.embed(Person::getTimestamp,               // <·· Embedding of embedding
+               MappingEase.embeddableBuilder(Timestamp.class)
+			.map(Timestamp::getCreationDate)
+			.map(Timestamp::getModificationDate))
+			.overrideName(...)
+                                                   // Map a map: 
+    .mapMap(                                       // <·· Alt 1: non-complex-key/no-complex-value Map
+       Person::getPhoneNumbers,                    //     <·· key element type 
+       String.class, String.class)                 //     <··  value element type.
+    .mapMap(                                       // <·· Alt 2: complex-key/complex-value Map. complex == N-columns
+       Person::getAddresses, 
+       Period.class,
+       Address.class)
+      .withKeyMapping(                             //     <·· Describe key   columns
+         MappingEase.embeddableBuilder(Period.class)
+       .map(Period::getStartDate)
+       .map(Period::getEndDate))
+      .withValueMapping(                           //     <·· Describe value columns
+         MappingEase.embeddableBuilder(Address.class)
+        .map(Address::getStreet)
+        .map(Address::getZipCode))
+        .map(Address::getCity))
+
+
+    ...
+    .build(persistCtx);
+
+Country country = new Country(1);
+country.setName("France");
+EP.persist(country);                 // <·· *C*RUD
+EP.delete(country);                  // <·· CRU*D*
+Country loadedCountry = EP.select(1);// <·· C*R*UD
+
+3.1.3.5. Setting a column
+
+// When a Table instance (a Stalactite orm class) is already in place  
+// representing the DB table and its Column instances you can 
+// reference them in the map(..) method, as you do for a column name.
+final Table countryTable = new Table("country"); // <·· Declare a Table representing the one of the database schema
+Column<Table, String> isoCodeColumn = countryTable.addColumn("isoCode", String.class);
+
+MappingEase.entityBuilder(Country.class, Long.class)
+    .mapKey(Country::getId, IdentifierPolicy.afterInsert())
+    .map(Country::getName, isoCodeColumn)
+
+If you already have a Table instance (a Stalactite orm class) 
+representing the database table and its Column instances you can 
+reference them in the mapEnum(..) method, as you did for a column 
+name.
+Column type and property type must match, this is guaranteed by 
+generics type of the mapEnum(..) method signature.
+// Declaring a Table representing the one of the database schema
+Table countryTable = new Table("country");
+Column<Table, String> isoLocaleColumn = countryTable.addColumn("locale", Locale.class);
+MappingEase.entityBuilder(Country.class, Long.class)
+    .mapKey(Country::getId, IdentifierPolicy.afterInsert())
+    .mapEnum(Country::getLanguage, isoLocaleColumn)
+
+  ```
+
+## Relation configuration
+
+```
+FluentEntityMappingBuilder<City, Long> 
+  capitalMappingConfiguration 
+  = MappingEase.entityBuilder(City.class, Long.class)
+   .mapKey(Country::getId, ...)
+   .map(City::getName);
+
+MappingEase.entityBuilder(Country.class, Long.class)
+    .mapKey(Country::getId, ....)
+ // .mapOneToOne(                                           // 1-to-1 relation mapping
+ //   Country::getCapital,
+ //   capitalMappingConfiguration)
+    .mapOneToOne(                                           // 1-to-1 chaining. Encouraged to visualize 
+      Country::getCapital,                                  // the graph of relations added [[qa.best_pattern]]
+      MappingEase.entityBuilder(                            // 1-to-1 chain level 1
+         City.class, Long.class)
+        .mapKey(City::getId, ...)
+        .map(City::getName))
+        .mapOneToOne(
+           City::getMayor,
+            MappingEase.entityBuilder(                      // 1-to-1 chain level 2
+             Person.class, Long.class) 
+            .mapKey(Person::getId, ...)
+            .map(Person::getFirstName)
+            .map(Person::getLastName))
+            .mapOneToOne(
+              Person::getCar,
+              MappingEase.entityBuilder(                    // 1-to-1 chain level 3
+                 Car.class, Long.class)
+                .mapKey(Car::getId, ...)
+                .map(Car::getModelName))
+    ...
+    .mapOneToOne(
+       Country::getCapital,
+       MappingEase.entityBuilder(
+         City.class, Long.class)
+        .mapKey(City::getId, IdentifierPolicy.afterInsert())
+        .map(City::getName))
+    .mandatory()                                           // <·· Make it mandatory (NON-NULL)
+    .cascading(CascadeOptions.RelationMode.READ_ONLY)      // <·· defaults to ALL meaning that unsaved target instance
+                                                           //     is saved when root is saved, but not deleted when
+                                                           //     root is deleted.
+    .fetchSeparately()                                     // <·· Optional. Do not "join" (default). Execute a 2nd query  
+                                                           //     (performance boost in some situations).
+                                                           // <·· alt 1: unidirectional. Foreign key in "source" table
+    .mappedBy(City::getCountry)                            // <·· alt 2:  bidirectional. Foreign key in both     tables
+    .mappedBy(cityCountryPointer)                          // <·· alt 3: unidirectional. Foreign key in "target" table
+                                                           //     NOTE: cityCountryPointer pre-defined as
+                                                           //     Table cityTable = new Table("City");
+                                                           //     Column<Table, Long> cityCountryPointer = 
+                                                           //        cityTable.addColumn("countryId", Long.class);
+
+
+
+    .map(Country::getName)
+    .mapOneToMany(                                         // <·· Alt 1: 1-to-many "forward side" 
+       Country::getCities,                                        to related entity
+       MappingEase.entityBuilder(City.class, Long.class)
+         .mapKey(City::getId, IdentifierPolicy.afterInsert())
+         .map(City::getName)
+    )
+    .mapOneToMany(                                         // <·· Alt 2: 1-to-many bidirection "reverse side" 
+        Country::getCities,                                //     from related entity
+        MappingEase.entityBuilder(City.class, Long.class)
+          .mapKey(City::getId, IdentifierPolicy.afterInsert())
+          .map(City::getName))
+    .mappedBy(City::getCountry)                            //     <·· alt 2.1:  bidirectional
+    .mappedBy(cityCountryPointer)                          //     <·· alt 2.2: unidirectional, with:
+                                                           //     Table cityTable = new Table("City");
+                                                           //     Column<Table, Country> cityCountryPointer 
+                                                           //       = cityTable.addColumn("countryId", Country.class);
+
+
+MappingEase.entityBuilder(Answer.class, Long.class)
+    .mapKey(Answer::getId, IdentifierPolicy.afterInsert())
+    .mapManyToMany(                                        // <·· Many-to-Many
+      Answer::getChoices,
+      entityBuilder(Choice.class, Long.class)
+        .mapKey(Choice::getId, IdentifierPolicy.afterInsert())
+        .map(Choice::getLabel))
+        .fetchSeparately()                                 // <·· Optional. Do not "join", use 3 consecutives queries.
+        .indexed()                                         // <·· Optional. If property is a List|LinkedHashSet 
+                                                           //     keep their insertion order.
+                                                           //     NOTE: consider Sets when mapping collection, even
+                                                           //        if describing it as a "List"  because most of
+                                                           //        the time the feature doesn't deal with duplicate
+                                                           //        nor index.
+
+## default type for DB null properties:
+
+   ```
+               Default
+   Property    Instantiated 
+   type        type ¹
+   --------    --------- 
+   List        ArrayList
+   SortedSet   TreeSet
+   Set         HashSet
+   Deque       ArrayDeque
+   ¹ use initializeWith(..) to override default behaviour. Ex:
+     .map(City::getName))
+      .initializeWith( () -> new TreeSet<>(Comparator.comparing(City::getName)))
+
+
+   ```
+
+## Cascading policies
+
+```
+   Policy             | On root insert/update/deletion
+   ALL                | target     inserted|    updated if not already, not-deleted if target is de-associated 
+   ALL_ORPHAN_REMOVAL | target     inserted|    updated if not already,     deleted if target is deleted
+   READ_ONLY          | target not-inserted|not-updated if target not updated|not deleted, target is not deleted
+   ASSOCIATION_ONLY   | targets and association table records are inserted|updated, targets not-deleted, 
+                        association table record are deleted
+                        
+```
+6. Inheritance
+
+Do not use it. It is an antipattern. Refer to original doc for more information.
+
+7. Persisting entities
+
+  ```
+  | EntityPersister.insert(entity)  insert given entity with an insert order
+  | EntityPersister.update(entity)  update given entity with an update order
+  |                                 after loaded from database in order to compute
+  |                                 differences between it and given one.
+  |                                 It takes optimistic locking into account
+  | EntityPersister.persist(entity) insert|update given entity according to its persistence state,
+  |                                 based on entity id and depends on id policy.
+  |                                 if necessary, it will be loaded from database 
+  | EntityPersister.delete(entity)  delete given entity with a delete order. 
+  |                                 It takes optimistic locking into account
+  | EntityPersister.select(id)      load whole entity graph with a select order, or several of
+  |                                 them if graph is too complex to be loaded through a single
+  |                                 select with join. 
+  ```
+
+  ```
+  | (massive variant signature accepting an Iterable)
+  | EntityPersister.update(entity, allColumnStatement) allColumnStatement==false => only modified columns will be present in SQL.
+  |                                 Poor performance in batch when different columns apply to different entities.
+  | EntityPersister.update(id, entityConsumer) loads entity,  then apply Consumer on it and updates the result.
+  |                                 shortcut to apply some modifications on an entity without having to explicitly load it.
+  | EntityPersister.updateById(id)  update given entity with an update order on its primary key.
+  |                                 It doesn’t take optimistic lock into account.
+  | EntityPersister.deleteById(id)  delete given entity with a delete order on its primary key.
+  |                                 It doesn’t take optimistic lock into account
+  ```
+
+8. Querying database
+
+* Reminder: There is no query language "a la JPA".
+
+  ```
+  | EntityPersister<Country, Long> persister = ...
+  | final List<Country> countries = 
+  |   persister.selectWhere(
+  |    Country::getName,           // <·· Only properties used by mapping can be used as criteria.
+  |    Operators.startsWith("F"))  // <·· Select Criteria
+  |     .execute(Accumulators.toList());
+  |    
+  | final List<Country> select =   // <·· Select on manyt-to-many example
+  |   persister.selectWhere(
+  |     Country::getName,
+  |        Operators.startsWith("F"))
+  |          .andMany( Country::getCities,
+  |             City::getName,
+  |             Operators.eq("Grenoble"))
+  | 	.execute(Accumulators.toList());
+  | 
+  | persistCtx.newQuery(                                    // <·· Create Object from simple SQL query.
+  |    "select name, isoCode from Country", Country.class)  // <·· SQL query
+  |     .mapKey(Country::new, "name")                       // <·· target bean type.
+  |     .map("isoCode", Country::setIsoCode)                // <·· map properties.
+  |     .map("inhabitantCount",                             // <·· when column type doesn't match bean property, enforce type.
+  |          Country::setInhabitantCount, long.class)
+  |     .map("nuclearWeaponCount", 
+  |          Country::setHasNuclearWeapon, int.class,
+  |          weaponCount -> weaponCount > 0)                // <·· Use a conversor.
+  |     .execute(Accumulators.toSet());
+  | 
+  | persistCtx.newQuery(                                    // <·· parametrizable query
+  |     """
+  |     SELECT name, isoCode 
+  |       FROM Country 
+  |       WHERE isoCode = :code
+  |     """, Country.class )                                // <·· Parameters are named (vs indexed) and prefixed by ":" 
+  | 	.mapKey(Country::new, "name")
+  |     .set("code", "FR")
+  |     .execute(Accumulators.getFirst());
+  | 
+  | persistCtx.newQuery(
+  |       "select id, name, isoCode from Country", Country.class)
+  |     .mapKey(                     // <·· Using multiple-args constructor (inmutable code)
+  |        Country::new , "id", long.class, “name”, String.class, “isoCode”, String.class)
+  |     .execute(Accumulators.toSet());   // <··  getFirst to get just one element.
+  ```
+
+### Using a table metamodel
+
+(See original doc)
+
+  ```
+  | To-one relation "complex" model:
+  | persistCtx.newQuery(                                  // Query API: build tree-graph of beans
+  |   """
+  |     SELECT Country.id as countryId, Country.name as countryName, Country.isoCode, 
+  |            City.id as cityId, City.name as cityName
+  |       FROM Country
+  |       INNER JOIN City ON Country.capitalId = City.id
+  |   """, Country.class)
+  |   .mapKey(Country::new , "id", long.class)
+  |   .map("countryName", Country::setName)
+  |   .map("isoCode", Country::setIsoCode)
+  |   .map(
+  |     BeanRelationFixer.of( Country::setCapital ),      // <·· ¹ 
+  |       new ResultSetRowTransformer<>(                  // <·· ²
+  |         City.class, "cityId",
+  |         DefaultResultSetReaders.LONG_PRIMITIVE_READER, 
+  |         City::new) )
+  |   .execute(Accumulators.toSet());
+  |
+  |
+  |  ¹: BeanRelationFixer provides static (utility) accessor methods
+  |     (eg: to manage bidirectionality).
+  |  ²: ResultSetRowTransformer: in charge of the bean construction.
+  ```
+
+
+whereas passed ResultSetRowTransformer remains a bean creator as mentioned 
+for to-one relation.
+
+  ```
+  | To-many relation
+ | BeanRelationFixer<Country, City> cityCountryCombiner =  // <·· ¹
+  |     (country, city) -> {
+  |       if (country.getCities() == null) {
+  |         country.setCities(new HashSet<>());
+  |       }
+  |       country.getCities().add(city);
+  |     };
+  |
+  | ¹: To-many (vs to-one) combining 2 beans
+  | 
+  | NOTE: Alternatively you can use a code like:
+  |   BeanRelationFixer.of(
+  |     Country::setCities,
+  |     Country::getCities, HashSet::new) 
+  ```
+
+  ```
+  | persistCtx.newQuery(
+  | """
+  |  SELECT Country.id as countryId, Country.name as countryName, 
+  |         Country.isoCode, City.id as cityId, City.name as cityName
+  |    FROM Country INNER JOIN City ON Country.capitalId = City.id
+  | """, Country.class)
+  | .mapKey(Country::new , "id", long.class)
+  | .map("countryName", Country::setName)
+  | .map("isoCode", Country::setIsoCode)
+  | .map(
+  |   cityCountryCombiner,
+  |   new ResultSetRowTransformer<>(
+  |     City.class, "cityId",
+  |     DefaultResultSetReaders.LONG_PRIMITIVE_READER, City::new) )
+  | .execute(Accumulators.toSet()) ;
+  ```
+
+
+
+
+  ```
+  | manually Consume the ResultSet (very complex result builds)
+  | persistCtx.newQuery(
+  |  """
+  |    SELECT Country.id as countryId, Country.name as countryName,
+  |           Country.isoCode, City.id as cityId, City.name as cityName
+  |    FROM Country INNER JOIN City ON Country.capitalId = City.id
+  |  """, Country.class)
+  |  .mapKey(Country::new , "id", long.class)
+  |  .map("countryName", Country::setName)
+  |  .map("isoCode", Country::setIsoCode)
+  |  .map( (rootBean, resultSet) -> {                         // <·· set function "consumer" for
+  |    City city = new City(resultSet.getLong("cityId"));     //     root bean and ResultSet
+  |    city.setName(resultSet.getString("cityName"));
+  |    rootBean.setCity(city);
+  |  })
+  |  .execute(Accumulators.toSet());
+  ```
+
+  ```
+  | Targeting single table
+  |
+  | final Table myTable = new Table("MyTable");   // <·· Setup table
+  | final Column<Table, Long> idColumn =          // <·· add (type-safe) columns
+  |         myTable.addColumn("id", long.class);
+  | List<MyBean> myBeans = persistCtx
+  |   .select(                   // <·· Quick build with `.select`. No bean graph will be built.
+  |     MyBean::new,             // <·· 1st arg: bean factory (constructor or factory method)
+  |                              //     variants exists for constructors/factories with N args.
+  |     idColumn                 // <·· 2nd (3rd,..) args: columns appended from table (no joins allowed)
+  |     ...
+  |    ); 
+  ```
+
+  ```
+  | Single Table: Filling beans outside of constructor
+  |
+  | final Table table01 = new Table("Person");
+  | final Column<Table, Long   >   idColumn = table01.addColumn("id"  , long.class);
+  | final Column<Table, String > nameColumn = table01.addColumn("name", String.class);
+  | final Column<Table, Integer>  ageColumn = table01.addColumn("age" , int.class);
+  | List<Person> persons = persistCtx.select(
+  |   Person::new,                                  // <·· Ex: Person class: 1-arg constructor 
+  |   idColumn,                                     //     and 2 properties setters
+  |   select -> select
+  |             .add(nameColumn, Person::setName)
+  |             .add(ageColumn, Person::setAge),
+  |   where -> where                                // <·· Optional "where" filter (consumer of CriteriaChain)
+  |        .and(nameColumn, Operators.startsWith("Bob"))   //  NOTE: columns should be from same table/select clause
+  |        .and(ageColumn, Operators.gt(30)));
+  |
+  |   );
+  ```
+
+## Persistence listeners
+
+(See original doc)
+
+## Generating database schema
+
+(See original doc)
+
+## Transversal configuration
+
+(See original doc)
+
+## Spring integration
+
+(See original docs for more infor on Spring Integration)
+
+[[{qa.best_patterns]]
+## Architecture tips
+
+* Don’t create "a Persister to rule them all":<br/>
+  ... As project grows ... developers tend to add relations to
+  the existing persistence context ... but not chirurgically:
+  either using EAGER annotation or fetching relation in a
+  quite-centralized repository method.<br/>
+  ...  This combo leads to an ever-growing memory footprint 
+  since relations are always loaded, even if their properties
+  are not used in all situations.
+  * SOLUTION 1: aggregates or bounded context (promoted by 
+    Stalactite) dedicated to your "local" feature, as in
+    Command and Query Separation (CQS) architecture, implying
+    dedicated JPA persistence contexts for instance.<br/>
+    ... Then those must be named and wisely referenced in code, for
+    instance with the Spring @Qualifier annotation.
+    ... Stalactite lets you visualize big graph getting out
+    of control. 
+  * SOLUTION 2: JPA @NamedEntityGraph to the rescue ? <br/>
+    yes,  in order to configure some graph-loading contexts. ... 
+    But this as a drawback: you’re still using a unique entity graph
+    that is partially loaded, which doesn't help developer to know
+    which relation is loaded or not.
+
+* about performance ...  Stalactite uses JDBC Batch for inserts,
+  updates and deletes. But users have to keep in mind that inserts
+  performance can be corrupted by identifier policy.
+  * ... Using Stalactite to insert values into a single table: no problem.
+  * ... Using Stalactite to persist an object graph ... you may encounter
+    some trouble if you used after-insert policy.
+  * JDBC batch is used on PreparedStatement, which then expects to have 
+    all its values defined ... with 1-to-1 relation, it should know target
+    ids before they're persisted to fill owning column, which is impossible
+    with after-insert policy on target entities. ... Stalactite should persist
+    target entities before root, and extends this mechanism to the whole graph.
+    ...  As a consequence, to benefit from JDBC batch, after-insert policy needs
+    a different graph iteration algorithm than other policies. 
+    It may be possible, but not done yet!
+* Multiple entities targeting same table (legacy schema) is perfectly valid 
+  ... don't map same column twice, nor identifier. ... you may decide to 
+  split a table with "many" columns in "N" tables and eventually map some has
+  read-only for some domain context.
+
+[[qa.best_patterns}]]
+
+[[persistence.stalactite}]]

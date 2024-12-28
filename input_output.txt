@@ -782,14 +782,24 @@ AsynchronousFileChannel fileChannel =
 [[}]]
 
 
-[[{io.net.http,architecture.async.reactive.io.network,PM.low_code,doc_has.comparative,qa]]
+[[{io.network.http,PM.low_code]]
 ## java.net.http.HTTPClient
+
 * API REF: <https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html>
 * JEP: <https://openjdk.java.net/jeps/321>
 
 * TODO: HTTPClient Quick intro: <https://openjdk.java.net/groups/net/httpclient/intro.html>
 
-* Example JShell script for GET request:
+Example JShell script for a GET request. Common use-case scenarios include:  
+* You need to debug a containerized app in pre/production environements but you
+  have no access to kdebug, the container has no curl/wget/ping/... and no possibility
+  to mount them.
+* You have some non-standard TLS certificate chain and you want to debug certificate
+  issues.
+* You want to create advanced "readiness" probes in compex mesh (intelligent) network. [[qa.error_control]]
+[[troubleshooting.101,troubleshooting.network]]
+  
+[[{architecture.async.reactive,doc_has.comparative,qa]]
   ```
   import java.io.PrintWriter;
   import java.net.http.HttpClient

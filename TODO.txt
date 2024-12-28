@@ -1,6 +1,12 @@
 [[{PM.TODO]]
 # TODO 
 
+# 101: JSpecify 1.0.0 and Nullability in Java
+https://www.infoq.com/news/2024/08/jspecify-java-nullability/
+
+## QA 101: RefactorFirst/README.md at main · refactorfirst/RefactorFirst
+https://github.com/refactorfirst/RefactorFirst/blob/main/README.md
+
 # JHipster [[{PM.low_code.jhipster,spring.101,architecture.frontend]]
 * HomePage: <https://www.jhipster.tech/>
 * Development platform to generate, develop and deploy
@@ -1666,3 +1672,119 @@ http://docs.oracle.com/javase/tutorial/essential/concurrency/
 
 * 55 new features in jdk 7
   <https://www.youtube.com/results?search_query=55+New+Features+in+JDK+7>
+
+
+## Java: DTOs, Spring and Records: Lightweight JSON:
+
+API for internal REST endpoints
+https://blog.worldline.tech/2024/10/29/lightweight-json-api-for-internal-rest-apis.html?trk=feed_main-feed-card_feed-article-content
+
+## hypersistence-optimizer for JPA
+
+* https://vladmihalcea.com/hypersistence-optimizer/
+
+Hypersistence Optimizer checks your JPA and Hibernate® data access 
+layer and provides you tips about how you can optimize it.
+
+Hypersistence Optimizer can save you a lot of time that, otherwise, 
+you'd have to spend on figuring out why your application is barely 
+crawling.
+
+So, assuming you have the following JPA entity.
+
+@Entity(name = "PostComment")
+@Table(name = "post_comment")
+public class PostComment {
+  @Id private Long id;
+  @ManyToOne private Post post;
+  private String review;
+}
+
+
+Hypersistence Optimizer will detect the default EAGER fetching 
+strategy used by the many-to-one association.
+
+ERROR [main]: Hypersistence Optimizer - CRITICAL - EagerFetchingEvent -
+The [post] attribute in the [io.hypersistence.optimizer.hibernate.mapping.association.fetching.eager.PostComment] entity uses eager fetching.
+
+Consider using a lazy fetching which, not only that is more efficient, but it is way more flexible when it comes to fetching data.
+
+For more info about this event, check out this User Guide link - https://vladmihalcea.com/hypersistence-optimizer/docs/user-guide/#EagerFetchingEvent
+view raw HypersistenceOptimizerFetchTypeEagerLogEvent.txt hosted with
+
+## [[Persistence]] eclipselink
+https://eclipse.dev/eclipselink/
+
+JPA: standards based Object-Relational persistence solution...
+
+MOXy: efficiently bind Java classes to XML **Schemas**. MOXy 
+implements JAXB allowing developers to provide their mapping 
+information through annotations as well as providing support for 
+storing the mappings in XML format. The many advanced mappings enable 
+developers to handle the complex XML structures without having to 
+mirror the schema in their Java class model.
+
+DBWS: Declarative Web Service solution for accessing relational 
+databases. The DBWS Builder generates the necessary configuration 
+files based on the provided database artifacts so that EclipseLink's 
+relational and persistence services can be combined to handle the 
+requests.
+
+## QA jakarta Bean Validation 3.0
+
+* https://jakarta.ee/specifications/bean-validation/3.0/jakarta-bean-validation-spec-3.0.html#introduction qa.bean-validation
+
+
+## Structured login in Spring 3.4
+
+* https://spring.io/blog/2024/08/23/structured-logging-in-spring-boot-3-4
+
+* Related: logfmt for unstructured logs:
+  https://gitlab.com/dalibo/logfmt
+
+
+##  Code Reflection in Action: Translating Java to SPIR-V
+
+https://www.reddit.com/r/java/comments/1etcmeu/code_reflection_in_action_translating_java_to/
+
+## Persistence, JPA: https://thorben-janssen.com/access-strategies-in-jpa-and-hibernate/
+
+# Trustauthority client for java
+ Identity 
+
+https://github.com/intel/trustauthority-client-for-java
+
+* collection of packages that provide attestation services for both 
+  attesters and relying parties.
+
+- The Connector handles communication with Intel Trust Authority via REST APIs.
+  The Connector provides methods to get a nonce, request an 
+  attestation token, verify an attestation token, and get a copy of the 
+  JWK signing certificates used to sign tokens. Relying parties can use 
+  the Connector without installing a TEE adapter or Intel SGX DCAP.
+- Intel SGX Adapter com.intel.trustauthority.sgx — The Intel SGX 
+  adapter uses Intel SGX DCAP to collect evidence from an Intel SGX 
+  enclave.
+- Intel TDX Adapter com.intel.trustauthority.tdx — The Intel TDX 
+  adapter uses Intel SGX DCAP to collect evidence from an Intel TDX TD.
+- For more information, see Java Client Integration in the Intel 
+  Trust Authority documentation.
+
+
+## Java Agent vs. Micrometer Tracing with OpenTelemetry
+
+https://dzone.com/articles/opentelemetry-tracing-on-spring-boot-java-agent-vs-micrometer-testing
+
+
+In this post, compare three different ways to utilize OpenTelemetry 
+Tracing and Spring Boot components: Java agent v1, Java agent v2, and 
+Micrometer Tracing.
+
+My demo of OpenTelemetry Tracing features two Spring Boot components. 
+One uses the Java agent, and I noticed a different behavior when I 
+recently upgraded it from v1.x to v2.x. In the other one, I'm using 
+Micrometer Tracing because I compile to GraalVM native, and it can't 
+process Java agents.
+
+I want to compare these three different ways in this post:
+Java agent v1, Java agent v2, and Micrometer Tracing.

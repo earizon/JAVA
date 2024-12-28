@@ -78,6 +78,26 @@
   | }
   ```
 
+## JSpecify 
+
+* <https://www.infoq.com/news/2024/08/jspecify-java-nullability/>
+
+* initial goals are quite modest. Version 1.0.0 defines only four annotations:
+  ```
+  @Nullable      <·· can be applied to specific type usage (e.g. param.def.|method return values
+  @NonNull       <·· "                         "         "
+
+  @NullMarked    <·· can be broadly applied.  (module, package or type declarations)
+  @NullUnmarked  <·· "   "   "      "
+                     it indicates that any remaining unannotated type usages are not nullable.
+                     with exceptional cases being explicitly marked as @Nullable
+
+  ```
+* Out of the box IntelliJ supports JSpecify annotations, but generics are still not 
+  fully supported yet.
+* A reference checker is also available, but this is not really intended for use by
+  application developers.
+
 ## JBang: Simplified Java [[{qa.ux,devops.jbang,]]
 * [Official Doc](https://www.jbang.dev/documentation/guide/latest/debugging.html)
 * <https://www.youtube.com/watch?v=X4x2jM3Y0uE>

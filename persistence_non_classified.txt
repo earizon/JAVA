@@ -1,0 +1,206 @@
+# SQL persistence  (Non Classified)
+
+## Flyway: SQL schema versioning [[{persistence.sql,qa.data,PM.low_code,spring.*,persistence.jpa,PM.TODO]]
+* tool providing version control for database (SQL) schemas
+  and automated schema (tables, columns, sequences), data, views, procedures
+  and packages evolution.
+* Single source of truth for DDBB versioning.
+* highly reliable
+* Supports for many different SQL databases, including        [cloud]
+  cloud ones (Amazon RDS, Azure Database, Google Cloud SQL).
+
+### Flyway HowTO:
+* PRESETUP: The target database to manage and user with update privileges be created first,
+            "outside" of flyway.
+
+* Database changee are called   Migrations . They can be:
+  · Versioned  migrations: identified by a version number, applied in order exactly once.
+                           An optional revert migration version can be provided to roolback
+                           changes in case of error.
+  · Repeatable migrations:
+
+* Flyway used an internal flyway_schema_history ddbb to keep track of migrations applied .
+
+* SQL and JAVA  migrations in src/main/resources/db/migration/ are automatically      [spring]
+  applied in Spring Boot when  'org.flywaydb:flyway-core' compile dependency is
+  detected.
+  ```
+  | src/main/resources/db/migration/
+  | └ V1__Initial_schema.sql   ← Flyway expected file name
+  |                              "Verssion"__"Prefix".sql
+  |   CREATE TABLE table01 (
+  |    id      BIGSERIAL PRIMARY KEY NOT NULL,
+  |    column1 BIGINT NOT NULL,
+  |    column2 FLOAT8 NOT NULL,
+  |    column3 INTEGER NOT NULL,
+  |    column4 VARCHAR(255) UNIQUE NOT NULL,
+  |   );
+
+  | └ V2__Add_column5.sql
+  |   ALTER TABLE table01
+  |     ADD COLUMN column5 VARCHAR(255);
+  ```
+* Alternatives to Flyway include LiquidBase, Obevo, ... [TODO]
+
+## Obevo: DDBB change manager
+* <https://github.com/goldmansachs/obevo>
+- Obevo: ddbb deployment tool handling enterprise scale schemas and complexity.
+- By Goldman Sachs.
+- Obevo is a database deployment tool that helps teams manage database
+  changes in their Software Development Life Cycle (SDLC) process. In
+  addition to handling production deployments, Obevo aids the
+  development phase by defining a clean structure to maintain DB object
+  code, and helps the testing phase with features such as in-memory
+  database conversion. Notably, Obevo was designed for systems of
+  enterprise scale and complexity and can manage hundreds of DB objects
+  in a schema, while still handling new schemas in a simple manner.
+  “We feel our ability to onboard a large and long-lived system to a
+  clean SDLC process is a key differentiator in the open source
+  space,” said Shant, a vice president in the Technology Division.
+  “By publishing this to the open source community, we hope to aid
+  others in their own DB deployment estates while growing a strong
+  community around the tool.”
+
+
+> """ Deploying tables for a new application?
+>   Or looking to improve the DB Deployment of a years-old system with
+>   hundreds (or thousands) of tables, views, stored procedures, and
+>   other objects?<br/>
+>
+>   Obevo has your use case covered.<br/>
+>
+>   Supported platforms: DB2, H2, HSQLDB, Microsoft SQL Server, MongoDB,
+>   Oracle, PostgreSQL, Redshift (from Amazon), Sybase ASE, Sybase IQ
+> """
+
+* As a reference Spring Boot includes auto-configuration support for both Flyway and Liquibase.
+[[}]]
+
+## Other ORM/DSL SQL frameworks
+
+### Excluded ORM Framework Comparative [[{]]
+
+* <https://dzone.com/articles/best-java-orm-frameworks-for-postgresql>
+* .... The following frameworks have been excluded from the test due to lack
+  of support of one or more of the required features or because of
+  other problems. That isn't to say anything negative about
+  them—they're certainly promising—but they didn't suit my needs
+  for one or more reasons.
+* Exposed is the ORM for Kotlin implemented by JetBrains. I've tried
+  to use it in Jav,a but it was really hard, almost impossible. For
+  Scala developers, this may be a good option.
+* Reladomo is an enterprise ORM, but it does not support UDTs or other PostgreSQL advanced features.
+* Speedment does not support transactions in its current stable version.
+[[}]]
+
+### frameworks no longer developed or maintained: [[{]]
+* ActiveJPA seems like it never reached stable release, with the last commits from 2014.
+* Apache Torque had its last commit in 2013.
+* Carbonado is an inactive project.
+* Fjorm's last commit is two years old.
+* Hydrate's last version is from 2006.
+* IBM PureQuery's last version is from 2009.
+* JDO Instruments doesn't even have a working homepage.
+* ORMLite's last version is from 2013.
+* QuickDB ORM is available only in Google Archive, with its last commit being from 2010.
+* Speedo's last commit is from 2005.
+* TJDO Project's last commit is from 2008.
+[[}]]
+
+### Reladomo ORM (by Goldman Sachs) [[{persistence.sql.ORM,PM.low_code,PM.TODO]]
+* <https://github.com/goldmansachs/reladomo>
+Enterprise grade ORM framework featuring:
+- Strongly typed compile-time checked query language.
+- Bi-temporal chaining.
+- Transparent multi-schema support.
+- Full support for unit-testable code.
+[[}]]
+
+
+# JAVA Persistence "Others"
+
+[[{scalability.persistence.compression,persistence.fs,PM.TODO]]
+## Snappy Fast de/compressor
+* <https://github.com/xerial/snappy-java>
+Java port of the snappy <http://code.google.com/p/snappy/>
+[[scalability.persistence.compression}]]
+
+## JCache [[{scalability.cache,PM.TODO]]
+- Map-Like API optimized for caching.
+- 1.0 drawbacks:
+  - No async operations.
+- Implemented by Hazelcast and others
+[[}]]
+
+[[{architecture.async.reactive,persistence.sql,PM.TODO]]
+
+## R2DBC API
+<https://www.infoq.com/news/2018/10/springone-r2dbc>
+
+* Experimental Reactive Relational Database Connectivity Driver, Announced at SpringOne.
+
+* Project initiated by Pivotal to provide an async/reactive alternative to JDBC.
+
+* WARN : Since Spring Data R2dbc evolved very quickly, thre are plenty
+  of breaking changes introduced since Spring 5.2 and Spring Data R2dbc 1.2.
+  Breaking changes (Compared to Spring Data R2dbc 1.1):
+  * Spring Data R2dbc 1.1 DatabaseClient was split into two parts.
+    a simple new DatabaseClient is part of Spring framework, as an
+    alternative of Jdbc.
+  * Another part of the old DatabaseClient is reorganized into a new
+    class R2dbcEntityTemplate which acts as the role of JdbcTemplate.
+  Ex:
+  ```
+  connectionFactory.create()
+    .flatMapMany ( conn ->
+       conn.createStatement ( "SELECT value FROM test" )
+          .execute()
+            .flatMap (result ->
+              result.map(( row, metadata -→ row.get("value"))))
+  ```
+
+  ```
+  spring:
+    r2dbc:                 ← ... (src/main/resources/)application.yml  example:
+      username: XXX
+      password: XXX
+      url: r2dbc:postgresql://...:5432/ddbb_app01
+      pool:
+        max-create-connection-time: 5s
+        initial-size: 5        ←················ probably much lower numbers than
+        max-size: 10                             those used for JDBC.
+  ```
+* 
+[[}]]
+[[architecture.async.reactive}]]
+
+[[{scalability.distributed,scalability.cache,persistence.jpa,PM.low_code,PM.TODO]]
+## SwarmCache 
+
+* SwarmCache: simple but effective distributed cache using IP
+  multicast to efficiently communicate with any number of hosts on a
+  LAN. 
+* Specifically designed for use by clustered, database-driven web 
+  applications typically having many more read operations than
+  write operations, which allows SwarmCache to deliver the greatest
+  performance gains.
+* Internally it uses JavaGroups manage the membership and communications of
+  its distributed cache.
+* Wrappers have been written that allow SwarmCache to be used with the
+  Hibernate and JPOX persistence engines.
+[[}]]
+
+## jFleet [[{scalability.persistence,persistence.jpa,persistence.sql,PM.TODO]]
+
+* <https://github.com/jerolba/jfleet>
+* JFleet is a Java library which persist in database large collections
+  of Java POJOs as fast as possible, using the best available technique
+  in each database provider, achieving it with alternate persistence
+  methods from each JDBC driver implementation.
+* Its goal is to store a large amount of information in a single table
+  using available batch persistence techniques.
+* despite being able to use JPA annotations to map Java objects to
+  tables and columns, JFleet is not an ORM.
+[[}]]
+
+

@@ -1,0 +1,9 @@
+persistence_HikariCP.txt
+persistence_mybatis.txt
+persistence_stalactite.txt
+persistence_JPA_Hibernate.txt
+persistence_Jooq.txt
+persistence_QueryDSL.txt
+persistence_speedment.txt
+persistence_non_classified.txt
+

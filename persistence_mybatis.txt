@@ -1,0 +1,39 @@
+[[{persistence.sql.mybatis]]
+# MyBatis Persistence
+Summary from <https://www.infoq.com/articles/SQL-relevance-NoSQL/>
+*  """ SQL is everywhere in data processing, ... Humble detected an increasing discomfort
+   with “classic” ORMs such as Hibernate. These tools have solved two problems:<br/>
+   * The repetitiveness of CRUD<br/>
+   * Caching and thus speeding up disk access<br/>
+   """
+* Intelligent caching can be quite hard, even with Hibernate,  ...
+* JPA’s caching mechanism is only possible because the ORM strategy has
+  been deeply integrated with JPQL. Short of native querying, it is hard
+  to bypass the essential mechanisms used for caching.
+* Memory is getting cheaper ... What if data is no longer accessed from disk
+  (milliseconds), but from memory (nanoseconds) instead?
+* Will we still need complicated and complex second level caches, when the
+  database already “cached” all relevant data in memory?
+* Not only are databases capable of keeping live online transactional
+  data in memory all the time, they have already been doing some
+  sophisticated caching for quite a while now. Just consider Oracle’s
+  cursor cache, query result cache, and scalar subquery cache.
+* ...an increasing use of more SQL-centric alternatives such as
+  MyBatis or jOOQ (both being “post-JPA” frameworks) indicates a
+  certain need to get closer to SQL again.
+* ANSI-SQL standard is continually evolving ... things which are
+  very hard to get through the JCP and into next generations of JPA.
+  ....In all my conference talks about jOOQ, I have been asking the
+  audience about their happiness with CriteriaQuery. The answer was
+  always unanimously hostile.
+
+### MyBatis "vs" Jooq:
+* <https://blog.jooq.org/sql-templating-with-jooq-or-mybatis/>
+  * jOOQ is an internal domain-specific language modelling SQL through a Java fluent API.
+  * MyBatis is an SQL templating and mapping engine where dynamic SQL
+    can be created through an XML-DSL.
+* ...  MyBatis’ current success is mostly based on it having provided
+  a viable alternative to JPA in a time when JPA was still a
+  controversial standard, and when JPA had to prove that it is better
+  than JDO, which solves very similar problems.
+[[persistence.sql.mybatis}]]

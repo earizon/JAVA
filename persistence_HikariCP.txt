@@ -1,0 +1,18 @@
+[[{]]
+# HikariCP Connection Pool 
+
+* JDBC "zero-overhead" production ready JDBC connection pool 
+
+* <https://github.com/brettwooldridge/HikariCP>
+* <https://www.baeldung.com/hikaricp>
+
+* very light ~ 130KB.
+* one order of magniture faster than c3p0 (abandoned) dbcp2 tomcat vibur in
+  connections/sec. C&P from <https://github.com/brettwooldridge/HikariCP/wiki/Down-the-Rabbit-Hole>
+  """...  In order to make HikariCP as fast as it is, we went down to
+    bytecode-level engineering, and beyond. We pulled out every trick we
+    know to help the JIT help you. We studied the bytecode output of the
+    compiler, and even the assembly output of the JIT to limit key
+    routines to less than the JIT inline-threshold. We flattened
+    inheritance hierarchies, shadowed member variables, eliminated casts."""
+[[}]]
