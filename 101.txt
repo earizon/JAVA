@@ -449,7 +449,14 @@
 
 ## JAVA DONT's [[{java_lang.101.donts,scalability.101,qa.101,PM.WiP]]
 
-* Avoid Nulls, prefer final:
+* Avoid Nulls (The billion dollar mistake) as much as possible:
+  * Use inmutable variables (they are not variables but values after 
+    applying inmutability code patterns).
+  * Functions must never return nulls. They must throw instead.
+  * Code must never pass nulls to functions.
+  * Nulls must only be considered when using old (probably deprecated) APIs 
+    returning nulls, and they must be converted to any value as soon as
+    possible or throw if a non-null value is not possible.
   ```
   | WRONG:
   | ========================
@@ -484,6 +491,7 @@
   * Inmmutable Objects are faster (and safer)
   <https://docs.oracle.com/javase/tutorial/essential/concurrency/immutable.html>
   (A final variable is the simplest example of an immutable object)
+
 * Catch blocks must rethrow if the exception can not be fixed on the catch block.
   HINT: 99% of times it can NOT be fixed on the catch block.
   ```
@@ -513,21 +521,36 @@
     * Let some other process do the error recovery.
     * Do not program defensively.
     * **If you cannot handle the error, don’t try to recover**
+
 * **Avoid Strings as much as possible**. You are converting an strongly typed
-  language in a weak runtime one.
+  language in a weak runtime one. Also performance will dramatically decreate.
+  Replace Strings with enums whenever it's possible.
   If forced to use strings, try to protect them with (Checker framework) `@Fenum("country")`
   More info [here](./QA_and_testing.txt#Checkerframework).
+
 * **Avoid huge interfaces**. Prefer small, decoupled ones, with few exposed methods
   decoupled interfaces related to security from storage from cache from ...
   (This is unfortunatelly not the case if standard interfaces designed in the
-  original Java libraries, just don't imitate wrong design).
+  original Java libraries, just don't imitate wrong design).<br/>
+  Look also a the "hexagonal" architecture pattern.
+
+* **Avoid "God" classes**. (probably a class implementing a huge interface), 
+  implementing many unrelated functionalities.<br/>
+  Follow the Single Responsibility Principle (SRP), probably by defining
+  previously light interfaces with single reponsability.
+
 * Avoid interfaces that will ever be implemented by a single class, specially if such
   class is a data-like one with all inmutable (final) fields. Data classes can be
+
 * **Avoid checked exceptions**, specially avoid them to signal the non happy path in
   business operation. As a thumb of rule, each time a checked exception is found
   convert to a runtime (subclass) exception.  More info at:
   * <https://phauer.com/2015/checked-exceptions-are-evil/>
   * <https://dzone.com/articles/introduction-to-pragmatic-functional-java>
+
+* Do not skip tests. Don't be lazy!, you will end up working much more hours
+  fixing bugs in production that could have been fixed after minutes of
+  testing. (and with a much worst "atmosphere").
 
 * Make code as brief as possible ... **but no more**.<br/>
   We spend more time reading code than writing new one, so syntax sugar to 
@@ -535,9 +558,20 @@
   what the code is trying to do.<br/>
   For example inlining a function into a lambda can be an antipattern if 
   the original function name provided context on the intention of the code.
-  
 
-  
+* Avoid Hibernate and JPA when possible: <br/>
+    Hibernate and JPA were designed with the wrong assumption that 
+  Java Code will control the database, i.e, the SQL database will be 
+  the "slave" of the code. Most of the times, the database is the 
+  source of true that controls the code and Java code must adapt to it. 
+   While it is still possible to adapt the Java code to the SQL schema, 
+  it is tedious and error prone, even for experts with years of 
+  experience.  Prefer simpler approaches that do not try to hide the 
+  SQL. For example, MyBatis (recommended), JooQ, stalactite. <br/>
+    If Java code must really control the underlying database, consider
+  using No-SQL alternatives (vs SQL databases). Simple key-value caches
+  performs very well (Infinispan, Redis, ...). MongoDB can be an alternative
+  for complex persistence.
 [[java_lang.101.donts}]]
 
 ## JAVA Exceptions [[{java_lang.101.exceptions,qa.error_control]]
